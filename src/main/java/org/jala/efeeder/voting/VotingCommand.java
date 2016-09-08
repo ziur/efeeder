@@ -19,6 +19,7 @@ import java.util.List;
 public class VotingCommand implements CommandUnit {
     @Override
     public Out execute(In context) throws Exception {
+        String a = context.getParameter("a") + "- Param";
         Connection connection = context.getConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("Select * from items");
@@ -28,6 +29,7 @@ public class VotingCommand implements CommandUnit {
             votes.add(new Vote(resultSet.getString(1), resultSet.getString(2)));
         }
         out.addResult("votes", votes);
+        out.addResult("a", a);
         out.forward("voting/vote.jsp");
         return out;
     }
