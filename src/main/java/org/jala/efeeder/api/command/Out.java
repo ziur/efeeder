@@ -1,6 +1,8 @@
 package org.jala.efeeder.api.command;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -11,7 +13,11 @@ public interface Out {
     void addMessage(MessageType type, String message);
     void addResult(String key, Object value);
     List<String> getMessages(MessageType type);
-    List<Object> getResults(MessageType type);
+    Set<Map.Entry<String, Object>> getResults();
 
     void addError(Throwable e);
+
+    ResponseAction getResponseAction();
+    Out forward(String page);
+    Out redirect(String url);
 }

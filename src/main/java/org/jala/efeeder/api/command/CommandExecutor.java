@@ -32,6 +32,12 @@ public class CommandExecutor {
                 result.addError(e);
             }
             return result;
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
