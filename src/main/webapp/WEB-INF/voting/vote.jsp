@@ -5,6 +5,7 @@
 
 <t:template>
     <jsp:body>
+        From Param url: ${a}
         <ul>
             <c:forEach var="item" items="#{votes}">
                 <li>Item: ${item.name}</li>
