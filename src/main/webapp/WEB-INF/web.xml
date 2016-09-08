@@ -19,8 +19,11 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
-        <url-pattern>/command</url-pattern>
+        <url-pattern>/action/*</url-pattern>
     </servlet-mapping>
+    <listener>
+        <listener-class>org.jala.efeeder.servlets.ApplicationContextListener</listener-class>
+    </listener>
 
     <resource-ref>
         <description>DB Connection</description>

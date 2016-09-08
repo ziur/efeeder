@@ -26,6 +26,11 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.atteo.classindex</groupId>
+            <artifactId>classindex</artifactId>
+            <version>3.3</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
