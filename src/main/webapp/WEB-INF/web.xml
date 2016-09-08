@@ -12,4 +12,12 @@
         <servlet-name>GreetingServlet</servlet-name>
         <url-pattern>/Greeting</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>CreateSuggestionServlet</servlet-name>
+        <servlet-class>org.jala.efeeder.servlets.CreateSuggestionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateSuggestionServlet</servlet-name>
+        <url-pattern>/suggestions/create</url-pattern>
+    </servlet-mapping>
 </web-app>
