@@ -12,13 +12,13 @@ import java.util.*;
  */
 public class DefaultOut implements Out {
 
-    private List<String> errors;
+    private Map<MessageType, List<String>> messages;
     private ResponseAction responseAction;
     private Map<String, Object> context;
 
     public DefaultOut() {
         context = new HashMap<>();
-        errors = new ArrayList<>();
+        messages = new HashMap<>();
         responseAction = new ResponseAction();
     }
 
@@ -34,7 +34,13 @@ public class DefaultOut implements Out {
 
     @Override
     public void addMessage(MessageType type, String message) {
+        if (!messages.containsKey(type)) {
+            messages.put(MessageType.ERROR, new ArrayList<String>());
+        }
 
+        List<String> messageEntries = messages.get(type);
+        messageEntries.add(message);
+        messages.put(MessageType.ERROR, messageEntries);
     }
 
     @Override
@@ -44,7 +50,7 @@ public class DefaultOut implements Out {
 
     @Override
     public List<String> getMessages(MessageType type) {
-        return null;
+        return messages.get(type);
     }
 
 
@@ -55,7 +61,7 @@ public class DefaultOut implements Out {
 
     @Override
     public void addError(Throwable e) {
-        errors.add(e.getMessage());
+        addMessage(MessageType.ERROR, e.getMessage());
     }
 
     @Override
@@ -77,7 +83,9 @@ public class DefaultOut implements Out {
     @Override
     public String toString() {
         return "DefaultOut{" +
-                "errors=" + errors +
+                "messages=" + messages +
+                ", responseAction=" + responseAction +
+                ", context=" + context +
                 '}';
     }
 }

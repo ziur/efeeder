@@ -20,7 +20,8 @@ public class CommandServlet extends HttpServlet {
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+                                                                                                      IOException {
         processRequest(request, response);
     }
 
@@ -51,7 +52,8 @@ public class CommandServlet extends HttpServlet {
     }
 
     private CommandUnit getCommand(HttpServletRequest req) {
-        CommandFactory commandFactory = (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
+        CommandFactory commandFactory =
+                (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
         Matcher matcher = COMMAND_PATTERN.matcher(req.getRequestURI());
 
         if (!matcher.matches()) {

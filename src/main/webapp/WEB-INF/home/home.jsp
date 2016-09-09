@@ -5,10 +5,6 @@
 
 <t:template>
     <jsp:body>
-        <ul>
-            <c:forEach var="item" items="#{votes}">
-                <li>Item: ${item.name}</li>
-            </c:forEach>
-        </ul>
+        <h1>Welcome to Efeeder!!!</h1>
     </jsp:body>
 </t:template>
