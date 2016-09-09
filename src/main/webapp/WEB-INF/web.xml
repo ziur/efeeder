@@ -12,4 +12,19 @@
         <servlet-name>GreetingServlet</servlet-name>
         <url-pattern>/Greeting</url-pattern>
     </servlet-mapping>
+
+    <context-param>
+        <param-name>liquibase.changelog</param-name>
+        <param-value>db/db-incremental.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>liquibase.datasource</param-name>
+        <param-value>java:comp/env/jdbc/efeeder</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>
+    </listener>
+    
 </web-app>
