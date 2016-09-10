@@ -38,6 +38,12 @@ public class CommandServlet extends HttpServlet {
         In parameters = InBuilder.createIn(request);
 
         Out out = executor.executeCommand(parameters, getCommand(request));
+        if (out.getExitStatus() == ExitStatus.ERROR) {
+            for(String msg: out.getMessages(MessageType.ERROR)){
+                System.out.println("ERROR:" + msg);
+            }
+
+        }
 
         for (Map.Entry<String, Object> result : out.getResults()) {
             request.setAttribute(result.getKey(), result.getValue());
@@ -47,6 +53,8 @@ public class CommandServlet extends HttpServlet {
             response.sendRedirect(action.getUrl());
             return;
         }
+
+
 
         request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
     }

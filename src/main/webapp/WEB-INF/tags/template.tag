@@ -1,5 +1,6 @@
 <%@tag description="Page template" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@attribute name="javascript" fragment="true" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +16,9 @@
     <title>Efeeder</title>
 
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="/assets/css/datatables.min.css" rel="stylesheet">
     <link href="/assets/css/app.css" rel="stylesheet">
+    <link href="/assets/css/form.css" rel="stylesheet">
 </head>
 
 <body>
@@ -35,5 +38,9 @@
 
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/bootstrap.js"></script>
+<script src="/assets/js/datatables.min.js"></script>
+
+<jsp:invoke fragment="javascript"/>
+
 </body>
 </html>
