@@ -5,8 +5,26 @@
 
 <t:template>
     <jsp:body>     
-        <h2>${meetingName} Payment Summary</h2>
-        <p>Following the summary of the ${meetingName} food request:</p>
+        <legend>
+            <h2>${meetingName} Payment Summary</h2>        
+        </legend>
+        <p>Following the summary of the ${meetingName} food request, please add your order now!:</p>
+        
+        <form role="form" id="addForm" class="col-xs-12">
+            <div class="col-xs-3">
+                <input name="user" type="text" class="form-control" placeholder="User" required></input>
+            </div>
+            <div class="col-xs-5">
+                <input name="order" type="text" class="form-control" placeholder="Order" required></input>
+            </div>            
+            <div class="col-xs-2">
+                <input name="cost" type="number" class="form-control" placeholder="Price" required></input>
+            </div>
+            <div class="col-xs-2">
+                <button type="submit" id="add" class="btn btn-primary">Add</button> 
+            </div>
+        </form>
+        
         <table class="table table-striped">
           <thead>
               <tr>
@@ -25,7 +43,7 @@
             </c:forEach>            
           </tbody>
         </table>
-        <button type="button" class="btn btn-primary">Guardar</button>  
+                
     </jsp:body>
 </t:template>
 
