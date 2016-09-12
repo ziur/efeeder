@@ -11,11 +11,10 @@
 
 <t:template>
     <jsp:body>
-        From Param url: ${chosen}
-        <ul>
-            <c:forEach var="item" items="#{users1}">
-                <li>Item: ${item.name}</li>
-            </c:forEach>
-        </ul>
+		<canvas id="mainCanvas"/>
+		<script>
+			var JsonConfigurationText=${jsonData};
+		</script>		
+		<script src="bubbles.js"></script>
     </jsp:body>
 </t:template>
