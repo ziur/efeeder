@@ -28,7 +28,7 @@ public class WheeldecideCommand implements CommandUnit{
 //        String a = context.getParameter("a") + "- Param";
         Connection connection = context.getConnection();
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("Select * from User");
+        ResultSet resultSet = statement.executeQuery("Select * from user");
         Out out = new DefaultOut();
         List<User> userList = new ArrayList<User>();
         while (resultSet.next()) {
