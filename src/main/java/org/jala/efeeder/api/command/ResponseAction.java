@@ -30,4 +30,12 @@ public class ResponseAction {
     public void setRedirect(boolean redirect) {
         isRedirect = redirect;
     }
+
+    @Override
+    public String toString() {
+        return "ResponseAction{" +
+                "url='" + url + '\'' +
+                ", isRedirect=" + isRedirect +
+                '}';
+    }
 }
