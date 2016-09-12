@@ -32,4 +32,22 @@
             INSERT INTO efeeder.food_meeting (name, created_at, fellow_dinner_id) VALUES ('Trancapechos', '2016-09-09 20:15:02', 1);
         </sql>
     </changeSet>
+
+    <changeSet author="roger" id="insert.fellow_dinner.calama">
+        <insert catalogName="efeeder"
+                tableName="fellow_dinner">
+                <column name="name" value="Rellenos Calama"/>
+                <column name="nick" value="Calama"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.relleno">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+                <column name="name"             value="Rellenos"/>
+                <column name="created_at"       value="now()"/>
+                <column name="fellow_dinner_id" value="2"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

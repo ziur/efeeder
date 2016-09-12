@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class GreetingServlet extends HttpServlet {
 
-    /**
+    private static final long serialVersionUID = -5857802445351285080L;
+
+	/**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *

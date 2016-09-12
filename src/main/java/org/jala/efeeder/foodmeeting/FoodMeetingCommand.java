@@ -5,7 +5,6 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.voting.Vote;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

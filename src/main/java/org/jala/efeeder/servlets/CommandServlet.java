@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
  * Created by alejandro on 07-09-16.
  */
 public class CommandServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 5585317604797123555L;
+
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
     @Override
