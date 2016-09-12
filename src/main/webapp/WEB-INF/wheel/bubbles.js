@@ -436,22 +436,25 @@ function start()
 {
 	_updateCanvas();
 	
-	request = new XMLHttpRequest();
-	request.onreadystatechange = function () {
-		var DONE = this.DONE || 4;
-		if (this.readyState === DONE)
-		{
-			//_writeToScreen(request.responseText);
-			particleSystem = new ParticleSystem(request.responseText);
-		}
-	};	
-	request.open('GET', 'wheel');
-	request.send("");
+	if (typeof JsonConfigurationText === 'undefined')
+	{
+		request = new XMLHttpRequest();
+		request.onreadystatechange = function () {
+			var DONE = this.DONE || 4;
+			if (this.readyState === DONE)
+			{
+				//_writeToScreen(request.responseText);
+				particleSystem = new ParticleSystem(request.responseText);
+			}
+		};	
+		request.open('GET', 'wheel');
+		request.send("");
+	}
+	else
+	{
+		particleSystem = new ParticleSystem(JsonConfigurationText);
+	}	
 
-	//particleSystem = new ParticleSystem(
-	//	'{"chosen":4,"items":["Pepe","Hugo","Paco","Luis","Tod","Rod",
-	//  "Bart","Lisa","Homero","Tito","Rene","Nano"]}');
-	
 	document.onclick = function(e)
 	{
 		e.preventDefault();
