@@ -14,4 +14,13 @@
         );
         </sql>
     </changeSet>
+    <changeSet id="user.create" author="alexander">
+        <sql>
+        CREATE TABLE user (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            name varchar(25) NOT NULL,
+            PRIMARY KEY (id)
+        );
+        </sql>
+    </changeSet>
 </databaseChangeLog>
