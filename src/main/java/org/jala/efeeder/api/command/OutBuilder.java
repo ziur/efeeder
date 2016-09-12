@@ -8,6 +8,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class OutBuilder {
     public static Out newError(Throwable throwable) {
         Out out = new DefaultOut();
+        out.setExitStatus(ExitStatus.ERROR);
         out.addError(throwable);
         return out;
     }

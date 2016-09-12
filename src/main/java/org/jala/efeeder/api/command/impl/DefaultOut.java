@@ -15,21 +15,23 @@ public class DefaultOut implements Out {
     private Map<MessageType, List<String>> messages;
     private ResponseAction responseAction;
     private Map<String, Object> context;
+    private ExitStatus exitStatus;
 
     public DefaultOut() {
         context = new HashMap<>();
         messages = new HashMap<>();
         responseAction = new ResponseAction();
+        exitStatus = ExitStatus.SUCCESS;
     }
 
     @Override
     public void setExitStatus(ExitStatus status) {
-
+        exitStatus = status;
     }
 
     @Override
     public ExitStatus getExitStatus() {
-        return null;
+        return exitStatus;
     }
 
     @Override

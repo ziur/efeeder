@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
  * Created by alejandro on 07-09-16.
  */
 public class CommandServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 5585317604797123555L;
+
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
     @Override
@@ -38,6 +41,12 @@ public class CommandServlet extends HttpServlet {
         In parameters = InBuilder.createIn(request);
 
         Out out = executor.executeCommand(parameters, getCommand(request));
+        if (out.getExitStatus() == ExitStatus.ERROR) {
+            for(String msg: out.getMessages(MessageType.ERROR)){
+                System.out.println("ERROR:" + msg);
+            }
+
+        }
 
         for (Map.Entry<String, Object> result : out.getResults()) {
             request.setAttribute(result.getKey(), result.getValue());
@@ -47,6 +56,8 @@ public class CommandServlet extends HttpServlet {
             response.sendRedirect(action.getUrl());
             return;
         }
+
+
 
         request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
     }
