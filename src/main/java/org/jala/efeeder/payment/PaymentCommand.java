@@ -30,11 +30,21 @@ public class PaymentCommand implements CommandUnit {
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            payments.add(new Payment(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3), resultSet.getDouble(4)));
+            payments.add(new Payment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getDouble(4)));
+        }
+
+        List<Integer> users = new ArrayList<>();
+        preparedStatement = connection.prepareStatement("Select distinct id from users");
+        resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            users.add(resultSet.getInt(1));
         }
 
         out.addResult("meetingName", parameters.getParameter("meeting_name"));
         out.addResult("payments", payments);
+        out.addResult("id_food_meeting", Integer.valueOf(parameters.getParameter("id_food_meeting")));
+        out.addResult("users", users);
         out.forward("payment/payment.jsp");
 
         return out;

@@ -16,16 +16,13 @@ public class AddOrderUserCommand implements CommandUnit {
     @Override
     public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
-        if (parameters.getParameter("name") == null) {
-            return out.forward("foodmeeting/createFoodMeeting.jsp");
-        }
 
         PreparedStatement stm = parameters.getConnection()
-                                        .prepareStatement("insert into order(id_food_meeting, id_user, order_name, cost) values(?, ?, ?, ?)");
-        
+                                        .prepareStatement("insert into orders(id_food_meeting, id_user, order_name, cost) values(?, ?, ?, ?)");
+
         stm.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
         stm.setInt(2, Integer.valueOf(parameters.getParameter("id_user")));
-        stm.setString(3, parameters.getParameter("order_name"));
+        stm.setString(3, parameters.getParameter("order"));
         stm.setDouble(4, 0.00);
         stm.executeUpdate();
 
