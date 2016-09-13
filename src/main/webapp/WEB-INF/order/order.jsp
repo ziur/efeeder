@@ -10,7 +10,7 @@
         </legend>
         <p>Following the summary of the ${meetingName} food request, please add your order now!:</p>
         
-        <form action="/action/addOrderUser" method="post" role="form" id="addForm" class="col-xs-12">
+        <form action="/action/addOrder" method="post" role="form" id="addForm" class="col-xs-12">
             <input name="id_food_meeting" type="hidden" value=${id_food_meeting}></input>
             <div class="col-xs-3">
                 <select name="id_user" id="users" class="form-control">
