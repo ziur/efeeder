@@ -8,6 +8,11 @@
       $(document).ready(function () {
         $('#foodMeeting').DataTable();
       });
+      
+      $(".meeting-row").click(function() {
+        window.location.href = '/action/order?id_food_meeting=' +  
+                $(this).data("meetingId");
+      });
     </script>
   </jsp:attribute>
 
@@ -27,7 +32,7 @@
         </thead>
         <tbody>
           <c:forEach var="foodMeeting" items="#{foodMeetings}">
-            <tr>
+            <tr class="meeting-row" data-meeting-id=${foodMeeting.id}>
               <td>${foodMeeting.id}</td>
               <td>${foodMeeting.name}</td>
               <td>${foodMeeting.createdAt}</td>
