@@ -10,9 +10,14 @@
         </legend>
         <p>Following the summary of the ${meetingName} food request, please add your order now!:</p>
         
-        <form role="form" id="addForm" class="col-xs-12">
+        <form action="/action/addOrderUser" method="post" role="form" id="addForm" class="col-xs-12">
+            <input name="id_food_meeting" type="hidden" value=${id_food_meeting}></input>
             <div class="col-xs-3">
-                <input name="user" type="text" class="form-control" placeholder="User" required></input>
+                <select name="id_user" id="users" class="form-control">
+                    <c:forEach var="user" items="#{users}">  
+                        <option>${user}</option>                          
+                    </c:forEach>
+                </select>
             </div>
             <div class="col-xs-5">
                 <input name="order" type="text" class="form-control" placeholder="Order" required></input>

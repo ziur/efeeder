@@ -11,7 +11,7 @@
       
       $(".meeting-row").click(function() {
         window.location.href = '/action/payment?id_food_meeting=' +  
-                $(this).data("meetingId") + '&meeting_name=' + $(this).data("meetingName");
+                $(this).data("meetingId");
       });
     </script>
   </jsp:attribute>
@@ -32,7 +32,7 @@
         </thead>
         <tbody>
           <c:forEach var="foodMeeting" items="#{foodMeetings}">
-            <tr class="meeting-row" data-meeting-id=${foodMeeting.id} data-meeting-name=${foodMeeting.name}>
+            <tr class="meeting-row" data-meeting-id=${foodMeeting.id}>
               <td>${foodMeeting.id}</td>
               <td>${foodMeeting.name}</td>
               <td>${foodMeeting.createdAt}</td>
