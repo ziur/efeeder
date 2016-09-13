@@ -1,4 +1,4 @@
-package org.jala.efeeder.payment;
+package org.jala.efeeder.order;
 
 import lombok.Data;
 

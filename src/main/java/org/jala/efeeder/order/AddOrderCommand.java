@@ -1,4 +1,4 @@
-package org.jala.efeeder.payment;
+package org.jala.efeeder.order;
 
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
