@@ -26,6 +26,6 @@ public class AddOrderUserCommand implements CommandUnit {
         stm.setDouble(4, 0.00);
         stm.executeUpdate();
 
-        return out.redirect("action/payment?id_food_meeting="+parameters.getParameter("id_food_meeting")+"&meeting_name="+parameters.getParameter("meeting_name"));
+        return out.redirect("action/payment?id_food_meeting="+parameters.getParameter("id_food_meeting"));
     }
 }

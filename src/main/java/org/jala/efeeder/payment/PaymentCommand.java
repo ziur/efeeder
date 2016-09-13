@@ -40,8 +40,17 @@ public class PaymentCommand implements CommandUnit {
         while (resultSet.next()) {
             users.add(resultSet.getInt(1));
         }
+        
+        String meetingName = "";
+        preparedStatement = connection.prepareStatement("Select name from food_meeting where id = ?");
+        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+        resultSet = preparedStatement.executeQuery();
 
-        out.addResult("meetingName", parameters.getParameter("meeting_name"));
+        while (resultSet.next()) {
+            meetingName = resultSet.getString(1);
+        }
+
+        out.addResult("meetingName", meetingName);
         out.addResult("payments", payments);
         out.addResult("id_food_meeting", Integer.valueOf(parameters.getParameter("id_food_meeting")));
         out.addResult("users", users);
