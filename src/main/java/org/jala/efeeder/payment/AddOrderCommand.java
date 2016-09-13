@@ -12,7 +12,7 @@ import java.sql.*;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class AddOrderUserCommand implements CommandUnit {
+public class AddOrderCommand implements CommandUnit {
     @Override
     public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
@@ -26,6 +26,6 @@ public class AddOrderUserCommand implements CommandUnit {
         stm.setDouble(4, 0.00);
         stm.executeUpdate();
 
-        return out.redirect("action/payment?id_food_meeting="+parameters.getParameter("id_food_meeting"));
+        return out.redirect("action/order?id_food_meeting="+parameters.getParameter("id_food_meeting"));
     }
 }

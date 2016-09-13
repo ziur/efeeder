@@ -16,12 +16,12 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  * @author Mirko Terrazas
  */
 @Command
-public class PaymentCommand implements CommandUnit {
+public class OrderCommand implements CommandUnit {
 
     @Override
     public Out execute(In parameters) throws Exception {
 
-        List<Payment> payments = new ArrayList<>();
+        List<Order> orders = new ArrayList<>();
 
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
@@ -30,7 +30,7 @@ public class PaymentCommand implements CommandUnit {
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            payments.add(new Payment(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getDouble(4)));
+            orders.add(new Order(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getDouble(4)));
         }
 
         List<Integer> users = new ArrayList<>();
@@ -51,10 +51,10 @@ public class PaymentCommand implements CommandUnit {
         }
 
         out.addResult("meetingName", meetingName);
-        out.addResult("payments", payments);
+        out.addResult("payments", orders);
         out.addResult("id_food_meeting", Integer.valueOf(parameters.getParameter("id_food_meeting")));
         out.addResult("users", users);
-        out.forward("payment/payment.jsp");
+        out.forward("order/order.jsp");
 
         return out;
     }
