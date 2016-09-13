@@ -25,7 +25,7 @@ public class PaymentCommand implements CommandUnit {
 
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select o.id_food_meeting, u.name, o.order_name, o.cost from orders o, users u where o.id_food_meeting = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement("Select o.id_food_meeting, u.name, o.order_name, o.cost from orders o, users u where o.id_food_meeting = ? and o.id_user = u.id");
         preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
         ResultSet resultSet = preparedStatement.executeQuery();
 
