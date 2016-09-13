@@ -66,7 +66,7 @@
     </changeSet>
 
     <changeSet author="roger" id="createtable.order">
-        <createTable catalogName="efeeder" tableName="order">
+        <createTable catalogName="efeeder" tableName="orders">
             <column name="id_food_meeting" type="INT"/>
             <column name="id_user"         type="INT"/>
             <column name="order_name"      type="VARCHAR(200)"/>
@@ -77,13 +77,13 @@
     <changeSet author="roger" id="addPrimaryKey.table.order">
         <addPrimaryKey catalogName="efeeder"
                 columnNames="id_food_meeting, id_user"
-                constraintName="pk_order"
-                tableName="order"/>
+                constraintName="pk_orders"
+                tableName="orders"/>
     </changeSet>
 
     <changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
         <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="order"
+                baseTableName="orders"
                 constraintName="fk_id_food_meeting"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
@@ -93,7 +93,7 @@
 
     <changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
         <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="order"
+                baseTableName="orders"
                 constraintName="fk_id_user"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
