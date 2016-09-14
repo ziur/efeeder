@@ -17,15 +17,14 @@
             CREATE UNIQUE INDEX fellow_dinner_nick_uindex ON fellow_dinner (nick);
         </sql>
         <sql>
-            CREATE TABLE food_meeting
+	    CREATE TABLE food_meeting
             (
             id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
             name VARCHAR(120),
             created_at DATETIME,
-            fellow_dinner_id INT(11) NOT NULL,
-            CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
+            fellow_dinner_id INT(11) NOT NULL
             );
-            CREATE INDEX food_meeting_fellow_dinner_id_fk ON food_meeting (fellow_dinner_id);
+            ALTER TABLE food_meeting ADD CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner(id);
         </sql>
         <sql>
             INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
@@ -50,55 +49,23 @@
         </insert>
     </changeSet>
 
-    <changeSet author="roger" id="createtable.users">
-        <createTable catalogName="efeeder" tableName="users">
-            <column name="id"        type="INT" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name"      type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_name" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="email"     type="VARCHAR(80)" />
-        </createTable>
-    </changeSet>
-
-    <changeSet author="roger" id="createtable.order">
-        <createTable catalogName="efeeder" tableName="orders">
-            <column name="id_food_meeting" type="INT"/>
-            <column name="id_user"         type="INT"/>
-            <column name="order_name"      type="VARCHAR(200)"/>
-            <column name="Cost"            type="NUMBER"/>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="roger" id="addPrimaryKey.table.order">
-        <addPrimaryKey catalogName="efeeder"
-                columnNames="id_food_meeting, id_user"
-                constraintName="pk_orders"
-                tableName="orders"/>
-    </changeSet>
-
-    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="orders"
-                constraintName="fk_id_food_meeting"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
-    </changeSet>
-
-    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="orders"
-                constraintName="fk_id_user"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="users"/>
+    <changeSet id="user.table" author="rodrigo">
+        <sql>
+            CREATE TABLE user
+            (
+                id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                name VARCHAR(200),
+                last_name VARCHAR(200),
+                email VARCHAR(120) NOT NULL
+            );
+            CREATE UNIQUE INDEX user_id_uindex ON user (id);
+            CREATE UNIQUE INDEX user_email_uindex ON user (email);
+        </sql>
+        <sql>
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Alejandro', 'Ruiz', 'aruiz@gmail.com');
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Amir', 'Aranimar', 'aaranibar@gmail.com');
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Ricardo', 'Ramirez', 'rramirez@gmail.com');
+        </sql>
     </changeSet>
 
 </databaseChangeLog>
