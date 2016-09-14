@@ -17,14 +17,15 @@
             CREATE UNIQUE INDEX fellow_dinner_nick_uindex ON fellow_dinner (nick);
         </sql>
         <sql>
-	    CREATE TABLE food_meeting
+            CREATE TABLE food_meeting
             (
             id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
             name VARCHAR(120),
             created_at DATETIME,
-            fellow_dinner_id INT(11) NOT NULL
+            fellow_dinner_id INT(11) NOT NULL,
+            CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
             );
-            ALTER TABLE food_meeting ADD CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner(id);
+            CREATE INDEX food_meeting_fellow_dinner_id_fk ON food_meeting (fellow_dinner_id);
         </sql>
         <sql>
             INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
@@ -66,6 +67,42 @@
             INSERT INTO efeeder.user (name, last_name, email) VALUES ('Amir', 'Aranimar', 'aaranibar@gmail.com');
             INSERT INTO efeeder.user (name, last_name, email) VALUES ('Ricardo', 'Ramirez', 'rramirez@gmail.com');
         </sql>
+    </changeSet>
+
+    <changeSet author="roger" id="createtable.order">
+        <createTable catalogName="efeeder" tableName="orders">
+            <column name="id_food_meeting" type="INT"/>
+            <column name="id_user"         type="INT"/>
+            <column name="order_name"      type="VARCHAR(200)"/>
+            <column name="Cost"            type="NUMBER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="roger" id="addPrimaryKey.table.order">
+        <addPrimaryKey catalogName="efeeder"
+                columnNames="id_food_meeting, id_user"
+                constraintName="pk_orders"
+                tableName="orders"/>
+    </changeSet>
+
+    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="orders"
+                constraintName="fk_id_food_meeting"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+    </changeSet>
+
+    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="orders"
+                constraintName="fk_id_user"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="user"/>
     </changeSet>
 
 </databaseChangeLog>
