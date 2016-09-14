@@ -13,3 +13,10 @@ hs_err_pid*
 
 # Paths
 target/*
+/target/
+
+.idea
+*.iml
+/.classpath
+/.factorypath
+/.project

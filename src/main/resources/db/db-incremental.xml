@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="foodmeeting.table" author="roger">
+        <sql>
+            CREATE TABLE fellow_dinner
+            (
+            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            name VARCHAR(200),
+            nick VARCHAR(120) NOT NULL
+            );
+            CREATE UNIQUE INDEX fellow_dinner_id_uindex ON fellow_dinner (id);
+            CREATE UNIQUE INDEX fellow_dinner_nick_uindex ON fellow_dinner (nick);
+        </sql>
+        <sql>
+            CREATE TABLE food_meeting
+            (
+            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            name VARCHAR(120),
+            created_at DATETIME,
+            fellow_dinner_id INT(11) NOT NULL,
+            CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
+            );
+            CREATE INDEX food_meeting_fellow_dinner_id_fk ON food_meeting (fellow_dinner_id);
+        </sql>
+        <sql>
+            INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
+            INSERT INTO efeeder.food_meeting (name, created_at, fellow_dinner_id) VALUES ('Trancapechos', '2016-09-09 20:15:02', 1);
+        </sql>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.fellow_dinner.calama">
+        <insert catalogName="efeeder"
+                tableName="fellow_dinner">
+                <column name="name" value="Rellenos Calama"/>
+                <column name="nick" value="Calama"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.relleno">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+                <column name="name"             value="Rellenos"/>
+                <column name="created_at"       value="now()"/>
+                <column name="fellow_dinner_id" value="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="createtable.users">
+        <createTable catalogName="efeeder" tableName="users">
+            <column name="id"        type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name"      type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email"     type="VARCHAR(80)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet author="roger" id="createtable.order">
+        <createTable catalogName="efeeder" tableName="orders">
+            <column name="id_food_meeting" type="INT"/>
+            <column name="id_user"         type="INT"/>
+            <column name="order_name"      type="VARCHAR(200)"/>
+            <column name="Cost"            type="NUMBER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="roger" id="addPrimaryKey.table.order">
+        <addPrimaryKey catalogName="efeeder"
+                columnNames="id_food_meeting, id_user"
+                constraintName="pk_orders"
+                tableName="orders"/>
+    </changeSet>
+
+    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="orders"
+                constraintName="fk_id_food_meeting"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+    </changeSet>
+
+    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="orders"
+                constraintName="fk_id_user"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>
