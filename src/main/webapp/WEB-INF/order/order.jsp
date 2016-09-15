@@ -39,11 +39,11 @@
               </tr> 
           </thead>
           <tbody>
-            <c:forEach var="payment" items="#{payments}">  
+            <c:forEach var="order" items="#{orders}">  
                 <tr>
-                  <td>${payment.user}</td>
-                  <td>${payment.order}</td>
-                  <td class="number">${payment.cost}</td>
+                  <td>${order.user}</td>
+                  <td>${order.details}</td>
+                  <td class="number">${order.cost}</td>
                 </tr>
             </c:forEach>            
           </tbody>
