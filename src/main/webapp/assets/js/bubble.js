@@ -430,10 +430,10 @@ function _updateFrame()
 function _updateCanvas()
 {
 	CANVAS = document.getElementById('mainCanvas');
-	CANVAS.style.width = '100%';
-	CANVAS.style.height = '100%';
-	CANVAS.width = CANVAS.offsetWidth;
-	CANVAS.height = CANVAS.offsetHeight;
+	CANVAS.style.width = '70%';
+	CANVAS.style.height = '70%';
+//	CANVAS.width = CANVAS.offsetWidth;
+//	CANVAS.height = CANVAS.offsetHeight;
 	CTX = CANVAS.getContext('2d');
 }
 
@@ -517,12 +517,6 @@ function start()
 		e.stopPropagation();
 		return false;
 	};
-	
 	_updateFrame();
 };
-
-//window.onload = function()
-//{
-//    start();
-//};
 
