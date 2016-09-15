@@ -1,5 +1,7 @@
 package org.jala.efeeder.order;
 
+import org.jala.efeeder.user.User;
+
 import lombok.Data;
 
 /**
@@ -10,11 +12,11 @@ import lombok.Data;
 public class Order {
 
     private int idFoodMeeting;
-    private String user;
+    private User user;
     private String order;
     private Double cost;
 
-    public Order(int idFoodMeeting, String user, String order, Double cost) {
+    public Order(int idFoodMeeting, User user, String order, Double cost) {
         this.idFoodMeeting = idFoodMeeting;
         this.user = user;
         this.order = order;

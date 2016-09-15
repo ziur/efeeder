@@ -26,12 +26,15 @@ public class OrderCommand implements CommandUnit {
 
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select o.id_food_meeting, CONCAT(u.name,' ',u.last_name), o.order_name, o.cost from orders o, user u where o.id_food_meeting = ? and o.id_user = u.id");
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "Select o.id_food_meeting, o.order_name, o.cost, u.id, u.email, u.name, u.last_name " +
+                "from orders o, user u where o.id_food_meeting = ? and o.id_user = u.id");
         preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            orders.add(new Order(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getDouble(4)));
+            orders.add(new Order(resultSet.getInt(1), new User(resultSet.getInt(4), resultSet.getString(5),
+                    resultSet.getString(6), resultSet.getString(7)), resultSet.getString(2), resultSet.getDouble(3)));
         }
 
         List<User> users = new ArrayList<>();
