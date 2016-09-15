@@ -11,13 +11,15 @@
 
 <t:template>
     <jsp:body>
-        <canvas id="mainCanvas"/>
+        <canvas id="mainCanvas" />
         <script>
+            canvas = document.getElementById('mainCanvas');
+            canvas.style.height = window.innerHeight * 0.85 + "px";
+            canvas.style.width = "100%";
+            
             var JsonConfigurationText =${jsonData};
         </script>		
-        <script type="text/javascript" src="/assets/js/bubble.js"></script>
-        <script type="text/javascript">
-                start();
+        <script src="/assets/js/bubble.js">
         </script>
-    </jsp:body>
+    </jsp:body>        
 </t:template>
