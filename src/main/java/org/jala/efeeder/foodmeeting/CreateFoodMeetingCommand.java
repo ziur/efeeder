@@ -5,6 +5,8 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.order.Order;
+import org.jala.efeeder.user.User;
 
 import java.sql.*;
 
@@ -27,6 +29,15 @@ public class CreateFoodMeetingCommand implements CommandUnit {
         stm.setInt(3, 1);
         stm.executeUpdate();
 
-        return out.redirect("action/FoodMeeting");
+        int idFoodMeeting=-1;
+        stm = parameters.getConnection().prepareStatement("Select id from food_meeting where name = ?");
+        stm.setString(1, parameters.getParameter("name"));
+        ResultSet resultSet = stm.executeQuery();
+
+        while (resultSet.next()) {
+            idFoodMeeting = resultSet.getInt(1);
+        }
+
+        return out.redirect("action/suggestions?id_food_meeting="+idFoodMeeting);
     }
 }
