@@ -52,6 +52,13 @@
             </c:forEach>            
           </tbody>
         </table>
+        
+        <form action="/action/wheeldecide" method="post" role="form" id="wheeldecideactionForm" class=".col-xs-6 .col-md-4">
+            <input name="id_food_meeting2" type="hidden" value=${id_food_meeting}></input>
+            <div class="col-xs-12">
+                <button type="submit" id="wheeldbutton" class="btn btn-primary">who bought?</button> 
+            </div>
+        </form>    
                 
     </jsp:body>
 </t:template>
