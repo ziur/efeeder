@@ -105,4 +105,27 @@
                 referencedTableName="user"/>
     </changeSet>
 
+    <changeSet id="suggestions.table" author="amir">
+        <sql>
+            CREATE TABLE suggestions
+            (
+            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            id_food_meeting INT(11) NOT NULL,
+            id_user INT(11) NOT NULL,
+            place VARCHAR(120),
+            description TEXT,
+            created_at DATETIME,
+            CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
+            CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES users (id)
+            );
+            CREATE INDEX suggestions_id_food_meeting_fk ON suggestions (id_food_meeting);
+            CREATE INDEX suggestions_id_user_fk ON suggestions (id_user);
+        </sql>
+        <sql>
+            INSERT INTO efeeder.users (name, last_name, email) VALUES ('test', 'test', 'test@mail.com');
+        </sql>
+        <sql>
+            INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

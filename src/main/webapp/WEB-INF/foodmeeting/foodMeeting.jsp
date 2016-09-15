@@ -10,7 +10,7 @@
       });
       
       $(".meeting-row").click(function() {
-        window.location.href = '/action/order?id_food_meeting=' +  
+        window.location.href = '/action/suggestions?id_food_meeting=' +  
                 $(this).data("meetingId");
       });
     </script>
@@ -21,7 +21,7 @@
       <h1>Foot Meetings</h1>
     </div>
     <div class="row">
-      <div><a href="/action/createFoodMeeting">Create</a> </div>
+      <div><a href="/action/createFoodMeeting" class="btn btn-primary" role="button">Create</a></div>
       <table id="foodMeeting" class="table table-striped">
         <thead>
           <tr>
