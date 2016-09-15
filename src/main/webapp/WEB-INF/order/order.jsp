@@ -57,14 +57,6 @@
 </t:template>
 
 <script>
-   $( document ).ready(function() {
-       $('table').editableTableWidget(); 
-       
-       $('table .number').on('validate', function(evt, newValue) {  
-          return false;         
-        });
-   });
-   
    $(".delete-order").click(function() {
        var url = "/action/deleteOrder?id_food_meeting=" + $(this).data("meetingId") +"&id_user=" + $(this).data("userId");
        var deleteButton = $(this);
