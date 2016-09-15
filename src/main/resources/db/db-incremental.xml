@@ -50,19 +50,23 @@
         </insert>
     </changeSet>
 
-    <changeSet author="roger" id="createtable.users">
-        <createTable catalogName="efeeder" tableName="users">
-            <column name="id"        type="INT" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name"      type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_name" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="email"     type="VARCHAR(80)" />
-        </createTable>
+    <changeSet id="user.table" author="rodrigo">
+        <sql>
+            CREATE TABLE user
+            (
+                id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+                name VARCHAR(200),
+                last_name VARCHAR(200),
+                email VARCHAR(120) NOT NULL
+            );
+            CREATE UNIQUE INDEX user_id_uindex ON user (id);
+            CREATE UNIQUE INDEX user_email_uindex ON user (email);
+        </sql>
+        <sql>
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Alejandro', 'Ruiz', 'aruiz@gmail.com');
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Amir', 'Aranimar', 'aaranibar@gmail.com');
+            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Ricardo', 'Ramirez', 'rramirez@gmail.com');
+        </sql>
     </changeSet>
 
     <changeSet author="roger" id="createtable.order">
@@ -98,7 +102,30 @@
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
-                referencedTableName="users"/>
+                referencedTableName="user"/>
     </changeSet>
-    
+
+    <changeSet id="suggestions.table" author="amir">
+        <sql>
+            CREATE TABLE suggestions
+            (
+            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            id_food_meeting INT(11) NOT NULL,
+            id_user INT(11) NOT NULL,
+            place VARCHAR(120),
+            description TEXT,
+            created_at DATETIME,
+            CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
+            CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES users (id)
+            );
+            CREATE INDEX suggestions_id_food_meeting_fk ON suggestions (id_food_meeting);
+            CREATE INDEX suggestions_id_user_fk ON suggestions (id_user);
+        </sql>
+        <sql>
+            INSERT INTO efeeder.users (name, last_name, email) VALUES ('test', 'test', 'test@mail.com');
+        </sql>
+        <sql>
+            INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

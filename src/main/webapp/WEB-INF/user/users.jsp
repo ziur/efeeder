@@ -1,4 +1,10 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%-- 
+    Document   : users
+    Created on : Sep 13, 2016, 10:39:57 AM
+    Author     : rodrigo_ruiz
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
@@ -8,34 +14,31 @@
       $(document).ready(function () {
         $('#foodMeeting').DataTable();
       });
-      
-      $(".meeting-row").click(function() {
-        window.location.href = '/action/suggestions?id_food_meeting=' +  
-                $(this).data("meetingId");
-      });
     </script>
   </jsp:attribute>
 
   <jsp:body>
     <div class="page-header">
-      <h1>Foot Meetings</h1>
+      <h1>Users</h1>
     </div>
     <div class="row">
-      <div><a href="/action/createFoodMeeting" class="btn btn-primary" role="button">Create</a></div>
+      <div><a href="/action/user">Create</a> </div>
       <table id="foodMeeting" class="table table-striped">
         <thead>
           <tr>
             <th>#</th>
             <th>Name</th>
-            <th>Created At</th>
+            <th>Last Name</th>
+            <th>Email</th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="foodMeeting" items="#{foodMeetings}">
-            <tr class="meeting-row" data-meeting-id=${foodMeeting.id}>
-              <td>${foodMeeting.id}</td>
-              <td>${foodMeeting.name}</td>
-              <td>${foodMeeting.createdAt}</td>
+          <c:forEach var="foodUser" items="#{users}">
+            <tr>
+              <td>${foodUser.id}</td>
+              <td>${foodUser.name}</td>
+              <td>${foodUser.last_name}</td>
+              <td>${foodUser.email}</td>
             </tr>
           </c:forEach>
         </tbody>
