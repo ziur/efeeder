@@ -5,9 +5,8 @@
  */
 package org.jala.efeeder.wheel;
 
-import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -22,17 +21,20 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class WheeldecideCommand implements CommandUnit{
 
     @Override
-    public Out execute(In context) throws Exception {
-        Connection connection = context.getConnection();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("Select * from users");
+    public Out execute(In context) throws Exception {       
+        PreparedStatement pStatement = context.getConnection()
+                .prepareStatement("select name from users,orders where id_food_meeting=? and id=id_user");
         
+        pStatement.setInt(1, Integer.valueOf(context.getParameter("id_food_meeting2")));
+        
+        ResultSet resultSet = pStatement.executeQuery();
+                
         int count = 0;
         StringBuilder jsonData = new StringBuilder(0xFF);
         jsonData.append("'{\"items\":[");
         while (resultSet.next()) {
             if (count > 0) jsonData.append(",");
-            jsonData.append(escapeJsonString(resultSet.getString(2)));
+            jsonData.append(escapeJsonString(resultSet.getString(1)));
             ++count;
         }
 	jsonData.append("],\"chosen\":");
