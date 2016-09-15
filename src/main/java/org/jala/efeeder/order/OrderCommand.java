@@ -55,7 +55,7 @@ public class OrderCommand implements CommandUnit {
         }
 
         out.addResult("meetingName", meetingName);
-        out.addResult("payments", orders);
+        out.addResult("orders", orders);
         out.addResult("id_food_meeting", Integer.valueOf(parameters.getParameter("id_food_meeting")));
         out.addResult("users", users);
         out.forward("order/order.jsp");

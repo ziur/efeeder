@@ -13,13 +13,13 @@ public class Order {
 
     private int idFoodMeeting;
     private User user;
-    private String order;
+    private String details;
     private Double cost;
 
-    public Order(int idFoodMeeting, User user, String order, Double cost) {
+    public Order(int idFoodMeeting, User user, String details, Double cost) {
         this.idFoodMeeting = idFoodMeeting;
         this.user = user;
-        this.order = order;
+        this.details = details;
         this.cost = cost;
     }
 }
