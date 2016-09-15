@@ -31,7 +31,7 @@ public class User {
         this.name = name;
         this.last_name = last_name;
     }
-    
+
     public String toString()
     {
     	return this.name + " " + this.last_name;

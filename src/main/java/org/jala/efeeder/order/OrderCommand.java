@@ -26,7 +26,7 @@ public class OrderCommand implements CommandUnit {
 
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select o.id_food_meeting, u.name, o.order_name, o.cost from orders o, user u where o.id_food_meeting = ? and o.id_user = u.id");
+        PreparedStatement preparedStatement = connection.prepareStatement("Select o.id_food_meeting, CONCAT(u.name,' ',u.last_name), o.order_name, o.cost from orders o, user u where o.id_food_meeting = ? and o.id_user = u.id");
         preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -41,7 +41,7 @@ public class OrderCommand implements CommandUnit {
         while (resultSet.next()) {
             users.add(new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4)));
         }
-        
+
         String meetingName = "";
         preparedStatement = connection.prepareStatement("Select name from food_meeting where id = ?");
         preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
