@@ -15,7 +15,7 @@
             <div class="col-xs-3">
                 <select name="id_user" id="users" class="form-control">
                     <c:forEach var="user" items="#{users}">  
-                        <option>${user}</option>                          
+                        <option value="${user.id}">${user}</option>
                     </c:forEach>
                 </select>
             </div>
