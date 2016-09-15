@@ -23,7 +23,7 @@ public class WheeldecideCommand implements CommandUnit{
     @Override
     public Out execute(In context) throws Exception {       
         PreparedStatement pStatement = context.getConnection()
-                .prepareStatement("select name from users,orders where id_food_meeting=? and id=id_user");
+                .prepareStatement("select name from user,orders where id_food_meeting=? and id=id_user");
         
         pStatement.setInt(1, Integer.valueOf(context.getParameter("id_food_meeting2")));
         
