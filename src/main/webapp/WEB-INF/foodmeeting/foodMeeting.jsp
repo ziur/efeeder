@@ -10,7 +10,7 @@
       });
       
       $(".meeting-row").click(function() {
-        window.location.href = '/action/suggestions?id_food_meeting=' +  
+        window.location.href = '/action/order?id_food_meeting=' +  
                 $(this).data("meetingId");
       });
     </script>

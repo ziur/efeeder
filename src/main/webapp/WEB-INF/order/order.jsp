@@ -15,7 +15,7 @@
             <div class="col-xs-3">
                 <select name="id_user" id="users" class="form-control">
                     <c:forEach var="user" items="#{users}">  
-                        <option>${user}</option>                          
+                        <option value="${user.id}">${user}</option>
                     </c:forEach>
                 </select>
             </div>
@@ -36,14 +36,18 @@
                 <th>User</th>
                 <th>Order</th>
                 <th>Cost [Bs]</th>
+                <th>Delete</th>
               </tr> 
           </thead>
           <tbody>
-            <c:forEach var="payment" items="#{payments}">  
+            <c:forEach var="order" items="#{orders}">  
                 <tr>
-                  <td>${payment.user}</td>
-                  <td>${payment.order}</td>
-                  <td class="number">${payment.cost}</td>
+                  <td>${order.user}</td>
+                  <td>${order.details}</td>
+                  <td class="number">${order.cost}</td>
+                  <td>
+                      <button class="delete-order btn btn-danger btn-xs" data-user-id=${order.user.id} data-meeting-id=${order.idFoodMeeting}>Delete</button>
+                  </td>
                 </tr>
             </c:forEach>            
           </tbody>
@@ -66,6 +70,19 @@
        $('table .number').on('validate', function(evt, newValue) {  
           return false;         
         });
-   }); 
+   });
+   
+   $(".delete-order").click(function() {
+       var url = "/action/deleteOrder?id_food_meeting=" + $(this).data("meetingId") +"&id_user=" + $(this).data("userId");
+       var deleteButton = $(this);
+       $.post(url)
+        .done(function(order) {
+            deleteButton.closest('tr').remove();
+        })
+        .fail(function(err) {
+            console.log('Error when deleting the order');
+            console.log(err);
+        });
+    });
    
 </script>    
