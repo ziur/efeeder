@@ -23,7 +23,7 @@ public class AddOrderCommand implements CommandUnit {
         stm.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
         stm.setInt(2, Integer.valueOf(parameters.getParameter("id_user")));
         stm.setString(3, parameters.getParameter("order"));
-        stm.setDouble(4, 0.00);
+        stm.setDouble(4, Double.valueOf(parameters.getParameter("cost")));
         stm.executeUpdate();
 
         return out.redirect("action/order?id_food_meeting="+parameters.getParameter("id_food_meeting"));
