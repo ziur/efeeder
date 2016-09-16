@@ -5,6 +5,10 @@
 
 <t:template>
     <jsp:body>
-        <h1>Welcome to Efeeder  user ${user_name}!!!</h1>
+        <form action="login" method="post">  
+			Name:<input type="text" name="name"><br>  
+			Password:<input type="password" name="password"><br>  
+		<input type="submit" value="login">  
+		</form>
     </jsp:body>
 </t:template>

@@ -1,17 +1,27 @@
 package org.jala.efeeder.servlets;
 
-import org.jala.efeeder.api.command.*;
-import org.jala.efeeder.api.database.DatabaseManager;
-import org.jala.efeeder.servlets.support.InBuilder;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.jala.efeeder.api.command.CommandExecutor;
+import org.jala.efeeder.api.command.CommandFactory;
+import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.ExitStatus;
+import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MessageType;
+import org.jala.efeeder.api.command.Out;
+import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.api.database.DatabaseManager;
+import org.jala.efeeder.servlets.support.InBuilder;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -36,30 +46,50 @@ public class CommandServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DatabaseManager databaseManager = new DatabaseManager();
-        CommandExecutor executor = new CommandExecutor(databaseManager);
-        In parameters = InBuilder.createIn(request);
+    	
+    	HttpSession session = request.getSession();
+    	
+    	if(!request.getRequestURI().equals("/action/login") && session.getAttribute("user")==null){
+    		
+    		 request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
+    		 
+    	}else
+    	{
+    		DatabaseManager databaseManager = new DatabaseManager();
+            CommandExecutor executor = new CommandExecutor(databaseManager);
+            In parameters = InBuilder.createIn(request);
 
-        Out out = executor.executeCommand(parameters, getCommand(request));
-        if (out.getExitStatus() == ExitStatus.ERROR) {
-            for(String msg: out.getMessages(MessageType.ERROR)){
-                System.out.println("ERROR:" + msg);
+            Out out = executor.executeCommand(parameters, getCommand(request));
+            if(out.getUser()!=null)
+            {
+            	session.setAttribute("user", out.getUser());
+            	Cookie userCookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
+            	response.addCookie(userCookie);
+            }
+            if (out.getExitStatus() == ExitStatus.ERROR) {
+                for(String msg: out.getMessages(MessageType.ERROR)){
+                    System.out.println("ERROR:" + msg);
+                }
+
             }
 
-        }
+            for (Map.Entry<String, Object> result : out.getResults()) {
+                request.setAttribute(result.getKey(), result.getValue());
+            }
+            ResponseAction action = out.getResponseAction();
+            if (action.isRedirect()) {
+                response.sendRedirect(action.getUrl());
+                return;
+            }
 
-        for (Map.Entry<String, Object> result : out.getResults()) {
-            request.setAttribute(result.getKey(), result.getValue());
-        }
-        ResponseAction action = out.getResponseAction();
-        if (action.isRedirect()) {
-            response.sendRedirect(action.getUrl());
-            return;
-        }
+            String url = action.getFordwarUrl();
 
-
-
-        request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
+            request.getRequestDispatcher(url).forward(request, response);
+    	}
+    		
+    	
+    	
+        
     }
 
     private CommandUnit getCommand(HttpServletRequest req) {

@@ -1,11 +1,19 @@
 package org.jala.efeeder.api.command.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.user.User;
 
-import java.util.*;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -16,6 +24,7 @@ public class DefaultOut implements Out {
     private ResponseAction responseAction;
     private Map<String, Object> context;
     private ExitStatus exitStatus;
+    @Setter @Getter private User user;
 
     public DefaultOut() {
         context = new HashMap<>();
@@ -71,13 +80,15 @@ public class DefaultOut implements Out {
         return responseAction;
     }
 
-    public Out redirect(String url) {
+    @Override
+	public Out redirect(String url) {
         responseAction.setRedirect(true);
         responseAction.setUrl(url);
         return this;
     }
 
-    public Out forward(String page) {
+    @Override
+	public Out forward(String page) {
         responseAction.setUrl(page);
         return this;
     }
