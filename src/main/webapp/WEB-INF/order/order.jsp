@@ -28,7 +28,7 @@
                 <input name="cost" type="number" class="form-control" placeholder="Price" required></input>
             </div>
             <div class="col-xs-2">
-                <button type="submit" id="add-order" class="btn btn-primary">Add</button> 
+                <button disabled type="submit" id="add-order" class="btn btn-primary">Add</button> 
             </div>
         </form>
         
@@ -72,8 +72,11 @@
        var url = "/action/deleteOrder?id_food_meeting=" + $(this).data("meetingId") +"&id_user=" + $(this).data("userId");
        var deleteButton = $(this);
        $.post(url)
-        .done(function(order) {
+        .done(function(deletedOrder) {
             deleteButton.closest('tr').remove();
+            _.remove(orderUsers, function(user){
+                return user.id == deletedOrder.user.id;
+            });
         })
         .fail(function(err) {
             console.log('Error when deleting the order');
