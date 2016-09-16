@@ -11,7 +11,7 @@
         <p>Following the summary of the ${meetingName} food request, please add your order now!:</p>
         
         <form action="/action/addOrder" method="post" role="form" id="addForm" class="col-xs-12">
-            <input name="id_food_meeting" type="hidden" value=${id_food_meeting}></input>
+            <input id="meetingId" name="id_food_meeting" type="hidden" value=${id_food_meeting}></input>
             <div class="col-xs-3">
                 <select name="id_user" id="users" class="form-control">
                     <c:forEach var="user" items="#{users}">  
@@ -59,7 +59,12 @@
                 <button type="submit" id="wheeldbutton" class="btn btn-primary">who bought?</button> 
             </div>
         </form>    
-                
+             
+            
+        <div class="row">
+            <h1 id="goToBuyId" class="col-md-3">The lucky buyer is: </h1>
+            <h2 id="nameUserDecide" class="col-md-4"></h2>
+        </div>    
     </jsp:body>
 </t:template>
 
@@ -85,4 +90,17 @@
         });
     });
    
+   $( document ).ready(function() {
+      var url2 = "/action/wheeldecideBuyer?id_food_meeting=" + $("#meetingId").val();
+      $.post(url2)
+       .done(function(userDecide){
+           $("#nameUserDecide").text(userDecide.nameBuyer);
+           $("#wheeldbutton").hide();
+       })
+       .fail(function(err) {
+           console.log('Error when deleting the order');
+           console.log(err);
+           $("#goToBuyId").hide();
+       });
+   });
 </script>    
