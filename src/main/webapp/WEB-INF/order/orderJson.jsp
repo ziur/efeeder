@@ -3,7 +3,7 @@
 
 {
     "idFoodMeeting": "${order.idFoodMeeting}",
-    "idUser": {
+    "user": {
         "id":"${order.user.id}"
     }
 }

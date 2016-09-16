@@ -7,6 +7,7 @@ package org.jala.efeeder.wheel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
@@ -29,9 +30,32 @@ public class WheeldecideCommand implements CommandUnit{
         PreparedStatement pStatement = context.getConnection()
                 .prepareStatement("select id,name from user,orders where id_food_meeting=? and id=id_user");
         
-        pStatement.setInt(1, Integer.valueOf(context.getParameter("id_food_meeting2")));
+        String message = "";
         
-        ResultSet resultSet = pStatement.executeQuery();
+        String parameter = context.getParameter("id_food_meeting2");
+        
+        message = "Parameter is: " + parameter;
+        
+        try
+        {
+            pStatement.setInt(1, Integer.valueOf(parameter));
+        }
+        catch (NumberFormatException e)
+        {
+            message = "Not a number: " + parameter;
+        }
+        
+        ResultSet resultSet;
+        
+        try
+        {
+            resultSet = pStatement.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            resultSet = null;
+            message += ", query failed!";
+        }
                 
         int count = 0;
         List<User> users = new ArrayList<>();
