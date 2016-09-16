@@ -20,4 +20,9 @@ public interface Out {
     ResponseAction getResponseAction();
     Out forward(String page);
     Out redirect(String url);
+
+    String getBody();
+    void setBody(String body);
+    Map<String, String> getHeaders();
+    void addHeader(String name, String value);
 }

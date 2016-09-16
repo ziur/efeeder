@@ -1,6 +1,7 @@
 package org.jala.efeeder.servlets;
 
 import org.jala.efeeder.api.command.*;
+import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jala.efeeder.api.command.ResponseAction.ResponseType.REDIRECT;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -47,19 +50,32 @@ public class CommandServlet extends HttpServlet {
             }
 
         }
+        processResponse(out, request, response);
+    }
 
-        for (Map.Entry<String, Object> result : out.getResults()) {
-            request.setAttribute(result.getKey(), result.getValue());
-        }
+    private void processResponse(Out out, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         ResponseAction action = out.getResponseAction();
-        if (action.isRedirect()) {
-            response.sendRedirect(action.getUrl());
-            return;
+
+        switch (action.getResponseType()) {
+            case REDIRECT:
+                response.sendRedirect(action.getUrl());
+                break;
+            case FORWARD:
+                for (Map.Entry<String, Object> result : out.getResults()) {
+                    request.setAttribute(result.getKey(), result.getValue());
+                }
+                request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
+                break;
+            case MESSAGE:
+                String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+                for(Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+                    response.addHeader(header.getKey(), header.getValue());
+                }
+                response.setContentType(contentType);
+                response.getWriter().write(out.getBody());
         }
 
-
-
-        request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
     }
 
     private CommandUnit getCommand(HttpServletRequest req) {
