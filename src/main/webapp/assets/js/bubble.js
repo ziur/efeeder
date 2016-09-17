@@ -373,7 +373,7 @@ function _writeToScreen(text)
 }
 
 var g_oldTick = performance.now();
-var g_lastExpell = g_oldTick + 2000;
+var g_lastExpell = g_oldTick + 1800;
 function _updateFrame()
 {
 	var currentTick = performance.now();
@@ -392,7 +392,13 @@ function _updateFrame()
 		//_writeToScreenXY(particleSystem.jsonString, 2, 30);
 	}
 	
-	//_writeToScreen("FPS: " + (1000.0 / (currentTick - g_oldTick)).toFixed(2));
+        G_ITERATIONS_PER_TICK = Math.round(60 * (currentTick - g_oldTick) * 0.001);
+        if (G_ITERATIONS_PER_TICK <= 0) G_ITERATIONS_PER_TICK = 1;
+        
+	G_FORCE_STRENGTH = 0.0006 / G_ITERATIONS_PER_TICK;
+	G_INITIAL_SPIN_FACTOR = Math.pow(0.98, 1 / G_ITERATIONS_PER_TICK);
+        G_SLOWING_FACTOR = Math.pow(0.9, 1 / G_ITERATIONS_PER_TICK);  
+        
 	g_oldTick = currentTick;
 	
 	window.requestAnimationFrame(_updateFrame);
