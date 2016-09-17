@@ -39,7 +39,7 @@
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/bootstrap.js"></script>
 <script src="/assets/js/datatables.min.js"></script>
-<script src="/assets/js/editable-table.js"></script>
+<script src="/assets/js/lodash.js"></script>
 
 <jsp:invoke fragment="javascript"/>
 
