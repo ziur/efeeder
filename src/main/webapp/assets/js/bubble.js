@@ -397,7 +397,7 @@ function _updateFrame()
         
 	G_FORCE_STRENGTH = 0.0006 / G_ITERATIONS_PER_TICK;
 	G_INITIAL_SPIN_FACTOR = Math.pow(0.98, 1 / G_ITERATIONS_PER_TICK);
-        G_SLOWING_FACTOR = Math.pow(0.9, 1 / G_ITERATIONS_PER_TICK);  
+	G_SLOWING_FACTOR = Math.pow(0.9, 1 / G_ITERATIONS_PER_TICK);  
         
 	g_oldTick = currentTick;
 	
