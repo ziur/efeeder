@@ -8,11 +8,14 @@ package org.jala.efeeder.wheel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.user.User;
 
 
 /**
@@ -22,9 +25,10 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class WheeldecideCommand implements CommandUnit{
 
     @Override
-    public Out execute(In context) throws Exception {       
+    public Out execute(In context) throws Exception {    
+        int choseIndex = 0;
         PreparedStatement pStatement = context.getConnection()
-                .prepareStatement("select name from user,orders where id_food_meeting=? and id=id_user");
+                .prepareStatement("select id,name from user,orders where id_food_meeting=? and id=id_user");
         
         String message = "";
         
@@ -54,34 +58,39 @@ public class WheeldecideCommand implements CommandUnit{
         }
                 
         int count = 0;
+        List<User> users = new ArrayList<>();
         StringBuilder jsonData = new StringBuilder(0xFF);
-        
-        
-        if (resultSet != null)
-        {
-            jsonData.append("'{\"items\":[");
-            while (resultSet.next()) {
-                if (count > 0) jsonData.append(",");
-                jsonData.append(escapeJsonString(resultSet.getString(1)));
-                ++count;
-            }
-            jsonData.append("],\"chosen\":");
-            jsonData.append(getRandomIndexPerson(count));
-            jsonData.append("}'");
-            
+        jsonData.append("'{\"items\":[");
+        while (resultSet.next()) {
+            if (count > 0) jsonData.append(",");
+            int idUser = resultSet.getInt(1);
+            String nameUser = resultSet.getString(2);
+            jsonData.append(escapeJsonString(nameUser));
+            users.add(new User(idUser, nameUser));
+            ++count;
         }
-        else
-        {
-            jsonData.append("'{\"items\":[");
-            jsonData.append(escapeJsonString(message));
-            jsonData.append("],\"chosen\":0}'");
-        }
+        choseIndex = getRandomIndexPerson(count);
+	jsonData.append("],\"chosen\":");
+        jsonData.append(choseIndex);
+        jsonData.append("}'");
+        
+        insertNewBuyer(context, users.get(choseIndex).getId());
 	
 	Out out = new DefaultOut();
         out.addResult("jsonData", jsonData.toString());
         out.forward("wheeldecide/wheel.jsp");
         return out;
     }
+    
+    private static int insertNewBuyer(In context, int choseUserId) throws Exception{
+        PreparedStatement stm = context.getConnection()
+                                        .prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
+
+        stm.setInt(1, Integer.valueOf(context.getParameter("id_food_meeting2")));
+        stm.setInt(2, choseUserId);
+        return stm.executeUpdate();
+    }
+    
     
     private static int getRandomIndexPerson(int numberOfPersons){
         return (int)Math.floor(Math.random() * numberOfPersons);

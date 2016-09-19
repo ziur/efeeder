@@ -104,6 +104,40 @@
                 referencedColumnNames="id"
                 referencedTableName="user"/>
     </changeSet>
+    
+    <changeSet author="alexander" id="createtable.buyer">
+        <createTable catalogName="efeeder" tableName="buyer">
+            <column name="id_food_meeting" type="INT"/>
+            <column name="id_user"         type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="alexander" id="addPrimaryKey.table.buyer">
+        <addPrimaryKey catalogName="efeeder"
+                columnNames="id_food_meeting, id_user"
+                constraintName="pk_buyer"
+                tableName="buyer"/>
+    </changeSet>
+
+    <changeSet author="alexander" id="addForeignKeyConstraint.fk_id_food_meeting_by_buyer">
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="buyer"
+                constraintName="fk_id_food_meeting_by_buyer"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+    </changeSet>
+
+    <changeSet author="alexander" id="addForeignKeyConstraint.fk_id_user_by_buyer">
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="buyer"
+                constraintName="fk_id_user_by_buyer"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="user"/>
+    </changeSet>
 
     <changeSet id="suggestions.table" author="amir">
         <sql>
@@ -111,8 +145,7 @@
             (
             id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
             id_food_meeting INT(11) NOT NULL,
-            id_user INT(11) NOT NULL,
-            place VARCHAR(120),
+            id_user INT(11) NOT NULL,            place VARCHAR(120),
             description TEXT,
             created_at DATETIME,
             CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
