@@ -20,20 +20,4 @@ public class Buyer {
         this.foodMeetingId = foodMeetingId;
         this.userId = userId;
     }
-
-    public int getFoodMeetingId() {
-        return foodMeetingId;
-    }
-
-    public void setFoodMeetingId(int foodMeetingId) {
-        this.foodMeetingId = foodMeetingId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 }
