@@ -1,9 +1,9 @@
 package org.jala.efeeder.api.command;
 
-import org.jala.efeeder.api.database.DatabaseManager;
-
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.jala.efeeder.api.database.DatabaseManager;
 
 /**
  * Created by alejandro on 07-09-16.

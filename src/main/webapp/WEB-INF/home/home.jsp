@@ -5,6 +5,6 @@
 
 <t:template>
     <jsp:body>
-        <h1>Welcome to Efeeder!!!</h1>
+        <h1>Welcome to Efeeder  user ${user_name}!!!</h1>
     </jsp:body>
 </t:template>

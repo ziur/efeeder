@@ -9,3 +9,11 @@
 .sugg-vote {
   width: 14px;
 }
+.vote-button {
+  margin-top: 20PX;
+  width: 120px;
+}
+.order-food {
+  margin-left: 34px;
+  width: 120px;
+}

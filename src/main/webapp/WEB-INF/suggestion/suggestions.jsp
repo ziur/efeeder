@@ -8,6 +8,9 @@
       $(document).ready(function () {
         $('#suggestions').DataTable();
       });
+      $(".see-buyer").click(function() {
+        window.location.href = '/action/suggestions?id_food_meeting=' + $(this).data("meetingId");
+      });
     </script>
   </jsp:attribute>
 
@@ -21,7 +24,7 @@
             class="col-md-12 go-right">   
         
         <div class="row page-header">
-          <div class="col-sm-10 food-meeting-name">Demo Celebration:</div>     
+          <div class="col-sm-10 food-meeting-name">Food Meeting name:</div>     
           
           <div class="col-sm-2 add-suggestion">
             <a href="/action/createSuggestion?id_food_meeting=${param.id_food_meeting}" 
@@ -64,9 +67,10 @@
             </c:forEach>
           </select>
           
-          <button name="save" type="submit" class="btn btn-primary vote-button">Save vote</button>  
+          <button name="save" type="submit" class="btn btn-primary vote-button">Save vote</button>
         </div>
       </form>
+      <a href="/action/order?id_food_meeting=${param.id_food_meeting}" class="btn btn-primary order-food" role="button">Order food</a>  
     </div>
   </jsp:body>
 </t:template>
