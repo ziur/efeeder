@@ -148,6 +148,8 @@
             id_user INT(11) NOT NULL,            place VARCHAR(120),
             description TEXT,
             created_at DATETIME,
+            vote int(11) DEFAULT 0,
+            
             CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
             CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
             );
@@ -160,6 +162,25 @@
         <sql>
             INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
         </sql>
+    </changeSet>
+   
+    <changeSet author="ricardo" id="suggestions.table">
+        <addColumn schemaName="efeeder"
+                   tableName="suggestions">
+            <column name="counter" type="int(11)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="food_meeting_user.table" author="ricardo">
+        <sql>
+            CREATE TABLE food_meeting_user
+            (
+            id_food_meeting INT(11) NOT NULL,
+            id_user INT(11) NOT NULL,
+            CONSTRAINT food_meeting_user_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
+            CONSTRAINT food_meeting_user_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
+            );
+            </sql>
     </changeSet>
 
 	<changeSet author="roger" id="addColumn.username.user">
@@ -192,6 +213,4 @@
         </sql>
     </changeSet>
 
-    
-    
 </databaseChangeLog>

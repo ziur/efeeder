@@ -28,6 +28,7 @@ public class UserCommand implements CommandUnit{
 
         PreparedStatement stm = parameters.getConnection()
                                         .prepareStatement("insert into user(name, last_name, email) values(?, ?, ?)");
+        
         stm.setString(1, parameters.getParameter("name"));
         stm.setString(2, parameters.getParameter("last_name"));
         stm.setString(3, parameters.getParameter("email"));

@@ -14,18 +14,19 @@ public class Suggestion {
     private String place;
     private String description;
     private Date createdAt;
-
+    private int vote;
     public Suggestion() {
-        this(0, 0, 0, null, null, null);
+        this(0, 0, 0, null, null, null, 0);
     }
 
-    public Suggestion(int id, int idUser, int idFoodMeeting, String place, String description, Date createdAt) {
+    public Suggestion(int id, int idUser, int idFoodMeeting, String place, String description, Date createdAt, int vote) {
         this.id = id;
         this.idUser = idUser;
         this.idFoodMeeting = idFoodMeeting;
         this.place = place;
         this.description = description;
         this.createdAt = createdAt;
+        this.vote = vote;
     }
 
     public int getId() {
@@ -75,4 +76,14 @@ public class Suggestion {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
+    public int getVote() {
+        return vote;
+    }
+
+    public void setVote(int vote) {
+        this.vote = vote;
+    }
+    
+    
 }
