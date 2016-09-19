@@ -17,6 +17,7 @@
 
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
     <link href="/assets/css/datatables.min.css" rel="stylesheet">
+    <link href="/assets/css/select2.min.css" rel="stylesheet">
     <link href="/assets/css/app.css" rel="stylesheet">
     <link href="/assets/css/form.css" rel="stylesheet">
     <link href="/assets/css/font-awesome-4.6.3/css/font-awesome.css" rel="stylesheet">
@@ -41,7 +42,10 @@
 <script src="/assets/js/jquery.js"></script>
 <script src="/assets/js/bootstrap.js"></script>
 <script src="/assets/js/datatables.min.js"></script>
+<script src="/assets/js/editable-table.js"></script>
 <script src="/assets/js/lodash.js"></script>
+<script src="/assets/js/select2.js"></script>
+<script src="/assets/js/jsrender.js"></script>
 
 <jsp:invoke fragment="javascript"/>
 

@@ -4,11 +4,14 @@ package org.jala.efeeder.api.command;
  * Created by alejandro on 08-09-16.
  */
 public class ResponseAction {
+    public enum ResponseType {
+        FORWARD, REDIRECT, MESSAGE
+    }
+    private ResponseType responseType;
     private String url;
-    private boolean isRedirect;
 
     public ResponseAction() {
-        isRedirect = false;
+        responseType = ResponseType.FORWARD;
     }
 
     public String getUrl() {
@@ -23,19 +26,19 @@ public class ResponseAction {
         this.url = url;
     }
 
-    public boolean isRedirect() {
-        return isRedirect;
+    public ResponseType getResponseType() {
+        return responseType;
     }
 
-    public void setRedirect(boolean redirect) {
-        isRedirect = redirect;
+    public void setResponseType(ResponseType responseType) {
+        this.responseType = responseType;
     }
 
     @Override
     public String toString() {
         return "ResponseAction{" +
-                "url='" + url + '\'' +
-                ", isRedirect=" + isRedirect +
-                '}';
+                       "responseType=" + responseType +
+                       ", url='" + url + '\'' +
+                       '}';
     }
 }

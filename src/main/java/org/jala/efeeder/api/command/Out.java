@@ -24,4 +24,9 @@ public interface Out {
     Out redirect(String url);
     User getUser();
     void setUser(User user);
+    
+    String getBody();
+    void setBody(String body);
+    Map<String, String> getHeaders();
+    void addHeader(String name, String value);
 }
