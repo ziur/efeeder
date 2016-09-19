@@ -128,4 +128,37 @@
             INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
         </sql>
     </changeSet>
+
+	<changeSet author="roger" id="addColumn.username.user">
+	    <addColumn catalogName="efeeder"
+	               tableName="user">
+	        <column name="username" type="varchar(255)"/>
+	    </addColumn>
+	</changeSet>
+	
+	<changeSet author="roger" id="addColumn.password.user">
+        <addColumn catalogName="efeeder"
+                   tableName="user">
+            <column name="password" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+	
+	<changeSet author="roger" id="update.username.user" >
+        <sql>
+            Update user
+               set username = CONCAT(SUBSTRING(name,1,1),last_name)
+             where username is null; 
+        </sql>
+    </changeSet>
+    
+    <changeSet author="roger" id="update.password.user" >
+        <sql>
+            Update user
+               set password = CONCAT(SUBSTRING(name,1,1),last_name)
+             where password is null; 
+        </sql>
+    </changeSet>
+
+    
+    
 </databaseChangeLog>
