@@ -19,6 +19,8 @@
     <link href="/assets/css/datatables.min.css" rel="stylesheet">
     <link href="/assets/css/app.css" rel="stylesheet">
     <link href="/assets/css/form.css" rel="stylesheet">
+    <link href="/assets/css/font-awesome-4.6.3/css/font-awesome.css" rel="stylesheet">
+
 </head>
 
 <body>
