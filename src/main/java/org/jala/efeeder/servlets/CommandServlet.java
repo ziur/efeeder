@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jala.efeeder.api.command.*;
+import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.api.database.DatabaseManager;
+import org.jala.efeeder.servlets.support.InBuilder;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -73,20 +78,35 @@ public class CommandServlet extends HttpServlet {
                 }
             }
 
-            for (Map.Entry<String, Object> result : out.getResults()) {
-                request.setAttribute(result.getKey(), result.getValue());
-            }
-            ResponseAction action = out.getResponseAction();
-            if (action.isRedirect()) {
-                response.sendRedirect(action.getUrl());
-                return;
-            }
-
-            String url = action.getFordwarUrl();
-
-            request.getRequestDispatcher(url).forward(request, response);
+            processResponse(out, request, response);
         }
     }
+    
+    private void processResponse(Out out, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        ResponseAction action = out.getResponseAction();
+
+        switch (action.getResponseType()) {
+            case REDIRECT:
+                response.sendRedirect(action.getUrl());
+                break;
+            case FORWARD:
+                for (Map.Entry<String, Object> result : out.getResults()) {
+                    request.setAttribute(result.getKey(), result.getValue());
+                }
+                request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
+                break;
+            case MESSAGE:
+                String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+                for(Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+                    response.addHeader(header.getKey(), header.getValue());
+                }
+                response.setContentType(contentType);
+                response.getWriter().write(out.getBody());
+        }
+
+    }
+    
 
     private CommandUnit getCommand(HttpServletRequest req) {
         CommandFactory commandFactory =

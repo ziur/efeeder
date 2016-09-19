@@ -19,6 +19,9 @@ import lombok.Setter;
  * Created by alejandro on 07-09-16.
  */
 public class DefaultOut implements Out {
+    private static final String HEADER_RESPONSE = "__HEADER_RESPONSE__";
+    public static final String CONTENT_TYPE = "contentType";
+    private static final String BODY_RESPONSE = "__BODY_RESPONSE__";
 
     private Map<MessageType, List<String>> messages;
     private ResponseAction responseAction;
@@ -27,10 +30,12 @@ public class DefaultOut implements Out {
     @Setter @Getter private User user;
 
     public DefaultOut() {
+        Map<String, String> header = new HashMap<>();
         context = new HashMap<>();
         messages = new HashMap<>();
         responseAction = new ResponseAction();
         exitStatus = ExitStatus.SUCCESS;
+        context.put(HEADER_RESPONSE, header);
     }
 
     @Override
@@ -80,15 +85,34 @@ public class DefaultOut implements Out {
         return responseAction;
     }
 
-    @Override
-	public Out redirect(String url) {
-        responseAction.setRedirect(true);
+    public Out redirect(String url) {
+        responseAction.setResponseType(ResponseAction.ResponseType.REDIRECT);
         responseAction.setUrl(url);
         return this;
     }
 
     @Override
-	public Out forward(String page) {
+    public void setBody(String body) {
+        context.put(BODY_RESPONSE, body);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        getHeaders().put(name, value);
+    }
+
+    @Override
+    public String getBody() {
+        return (String) context.get(BODY_RESPONSE);
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return (Map<String, String>) context.get(HEADER_RESPONSE);
+    }
+
+
+    public Out forward(String page) {
         responseAction.setUrl(page);
         return this;
     }
