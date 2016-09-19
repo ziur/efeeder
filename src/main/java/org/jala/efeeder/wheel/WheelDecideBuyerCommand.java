@@ -32,7 +32,7 @@ public class WheelDecideBuyerCommand implements CommandUnit{
         ResultSet rSet = preparedStatement.executeQuery();
         Buyer buyer = null;
         
-        while (rSet.next()) {
+        if (rSet.next()) {
             buyer =new Buyer(rSet.getInt(1), rSet.getInt(2));
         }
         
@@ -41,7 +41,7 @@ public class WheelDecideBuyerCommand implements CommandUnit{
         rSet = preparedStatement.executeQuery();
         User user = null;
 
-        while (rSet.next()) {
+        if (rSet.next()) {
             user =new User(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4));
         }
         

@@ -114,7 +114,7 @@
       var url2 = "/action/wheeldecideBuyer?id_food_meeting=" + $("#meetingId").val();
       $.post(url2)
        .done(function(userDecide){
-           $("#nameUserDecide").text(userDecide.nameBuyer);
+           $("#nameUserDecide").text(userDecide.nameBuyer + " " + userDecide.lastNameBuyer);
            $("#wheeldbutton").hide();
        })
        .fail(function(err) {

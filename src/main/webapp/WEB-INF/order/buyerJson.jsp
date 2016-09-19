@@ -8,6 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 {
-    "nameBuyer": "${userDecide.name}"
+    "nameBuyer": "${userDecide.name}",
+    "lastNameBuyer": "${userDecide.last_name}"
 }
 
