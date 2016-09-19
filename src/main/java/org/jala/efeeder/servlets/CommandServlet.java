@@ -48,7 +48,11 @@ public class CommandServlet extends HttpServlet {
 
         HttpSession session = request.getSession(true);
 
-        if (!request.getRequestURI().equals("/action/login") && session.getAttribute("user") == null) {
+        if (request.getRequestURI().equals("/action/logout")) {
+            session.invalidate();
+            request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
+
+        } else if (!request.getRequestURI().equals("/action/login") && session.getAttribute("user") == null) {
 
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
