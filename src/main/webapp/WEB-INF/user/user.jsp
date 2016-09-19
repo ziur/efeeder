@@ -26,7 +26,16 @@
           <div class="form-group">
             <input id="name" name="last_name" type="text" class="form-control" required>
             <label for="last_name">Last Name</label>
-          </div>          
+          </div> 
+          <div class="form-group">
+            <input id="name" name="nick_name" type="text" class="form-control" required>
+            <label for="nick_name">Nick Name</label>
+          </div> 
+          <div class="form-group">
+            <input id="name" name="password" type="password" class="form-control" required>
+            <label for="password">Password</label>
+          </div> 
+          
           <button type="submit">Save</button>
         </form>
     </div>
