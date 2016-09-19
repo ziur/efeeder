@@ -19,6 +19,7 @@
     <link href="/assets/css/datatables.min.css" rel="stylesheet">
     <link href="/assets/css/app.css" rel="stylesheet">
     <link href="/assets/css/form.css" rel="stylesheet">
+    <link href="/assets/css/suggestion.css" rel="stylesheet">
 </head>
 
 <body>
