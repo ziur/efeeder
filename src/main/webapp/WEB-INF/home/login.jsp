@@ -6,9 +6,9 @@
 <t:template>
     <jsp:body>
         <form action="login" method="post">  
-			Name:<input type="text" name="name"><br>  
-			Password:<input type="password" name="password"><br>  
-		<input type="submit" value="login">  
-		</form>
+            Name:<input type="text" name="nick_name"><br>  
+            Password:<input type="password" name="password"><br>  
+        <input type="submit" value="login">  
+        </form>
     </jsp:body>
 </t:template>

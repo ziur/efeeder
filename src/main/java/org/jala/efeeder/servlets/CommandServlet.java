@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,33 +43,30 @@ public class CommandServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	HttpSession session = request.getSession();
-    	
-    	if(!request.getRequestURI().equals("/action/login") && session.getAttribute("user")==null){
-    		
-    		 request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
-    		 
-    	}else
-    	{
-    		DatabaseManager databaseManager = new DatabaseManager();
+
+        HttpSession session = request.getSession(true);
+
+        if (!request.getRequestURI().equals("/action/login") && session.getAttribute("user") == null) {
+
+            request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
+
+        } else {
+            DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
             In parameters = InBuilder.createIn(request);
 
             Out out = executor.executeCommand(parameters, getCommand(request));
-            if(out.getUser()!=null)
+            if(out.getUser()!=null && session.getAttribute("user")==null)
             {
-            	session.setAttribute("user", out.getUser());
-            	Cookie userCookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
-            	response.addCookie(userCookie);
+                session.setAttribute("user", out.getUser());
             }
+
             if (out.getExitStatus() == ExitStatus.ERROR) {
                 for(String msg: out.getMessages(MessageType.ERROR)){
                     System.out.println("ERROR:" + msg);
                 }
-
             }
 
             for (Map.Entry<String, Object> result : out.getResults()) {
@@ -85,11 +81,7 @@ public class CommandServlet extends HttpServlet {
             String url = action.getFordwarUrl();
 
             request.getRequestDispatcher(url).forward(request, response);
-    	}
-    		
-    	
-    	
-        
+        }
     }
 
     private CommandUnit getCommand(HttpServletRequest req) {

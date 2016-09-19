@@ -23,7 +23,8 @@ public class LoginCommand implements CommandUnit {
     	Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "Select id, email, name, last_name from user where name='Roger'");
+                "Select id, email, name, last_name from user where nick_name=?");
+        preparedStatement.setString(1, parameters.getParameter("nick_name"));
         ResultSet resultSet = preparedStatement.executeQuery();
         User user = null;
 
@@ -31,9 +32,19 @@ public class LoginCommand implements CommandUnit {
             user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
         }
         
-        out.setUser(user);
-        out.addResult("user_name", user.toString());
+        if (user!=null)
+        {
+        	out.setUser(user);
+            
+            out.addResult("user_name", user.toString());
+            
+            return out.forward("home/home.jsp");
+        }
+        else
+        {
+        	return out.forward("home/login.jsp");
+        }
+        	
         
-        return out.forward("home/home.jsp");
     }
 }
