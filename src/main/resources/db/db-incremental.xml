@@ -25,7 +25,7 @@
             fellow_dinner_id INT(11) NOT NULL,
             CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
             );
-            CREATE INDEX food_meeting_fellow_dinner_id_fk ON food_meeting (fellow_dinner_id);
+            CREATE INDEX food_meeting_fellow_dinner_id_fk1 ON food_meeting (fellow_dinner_id);
         </sql>
         <sql>
             INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
@@ -118,8 +118,6 @@
             CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
             CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
             );
-            CREATE INDEX suggestions_id_food_meeting_fk ON suggestions (id_food_meeting);
-            CREATE INDEX suggestions_id_user_fk ON suggestions (id_user);
         </sql>
         <sql>
             INSERT INTO efeeder.user (name, last_name, email) VALUES ('test', 'test', 'test@mail.com');
