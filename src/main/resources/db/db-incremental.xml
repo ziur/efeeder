@@ -61,8 +61,7 @@
     <changeSet author="roger" id="createIndex.food_meeting_fellow_dinner_id_fk">
         <createIndex catalogName="efeeder"
                 indexName="food_meeting_fellow_dinner_id_fk"
-                tableName="food_meeting"
-                unique="true">
+                tableName="food_meeting">
             <column name="fellow_dinner_id"/>
         </createIndex>
     </changeSet>
