@@ -38,7 +38,7 @@ public class LoginCommand implements CommandUnit {
 
             out.addResult("user_name", user.toString());
 
-            return out.forward("home/home.jsp");
+            return out.redirect("FoodMeeting");
         }
         else
         {
