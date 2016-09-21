@@ -1,0 +1,13 @@
+.meetings-container {
+    margin-top: 90px;
+    margin-bottom: 200px;
+}
+
+.grid-item { 
+    padding: 10px;
+}
+
+.grid-item-width { 
+    width: 200px; 
+}
+
