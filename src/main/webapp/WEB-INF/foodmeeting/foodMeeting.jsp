@@ -57,10 +57,13 @@
         <div class="meetings-container">
             <div class="row">
                 <form id="addMeeting" class="col s12" action="/action/createFoodMeeting">
+                    <div class="row ">
+                        <h5 class='center-align thin grey-text lighten-5'>You look hungry!.... Let's create a meeting!</h5>
+                    </div>
                     <div class="row">
                         <div class="input-field col s5">
-                            <input placeholder="You look hungry!...Let's add a new meeting!" id="meeting_name" name="meeting_name" type="text" class="validate">
-                            <label for="meeting_name">New Meeting Name</label>
+                            <input id="meeting_name" name="meeting_name" type="text" class="validate">
+                            <label for="meeting_name">Meeting Name</label>
                         </div>
                         <div class="input-field col s3">
                             <input id="date" type="date" name="date" class="datepicker">
