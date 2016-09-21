@@ -20,6 +20,7 @@
     <link href="/assets/css/app.css" rel="stylesheet">
     <link href="/assets/css/foodMeetings.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/materialize.css">
+    <link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   </head>
 
@@ -43,6 +44,7 @@
     <script src="/assets/js/lib/materialize.js"></script>
     
     <script src="/assets/js/foodMeetings.js"></script>
+    <script src="/assets/js/materialize.clockpicker.js"></script>
     
     <jsp:invoke fragment="javascript"/>
 
