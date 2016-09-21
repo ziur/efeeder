@@ -7,6 +7,9 @@
       <script>
         $(document).ready(function () {
           $('#foodMeeting').DataTable();
+          
+          
+          
         });
 
         $(".meeting-row").click(function () {
@@ -14,6 +17,27 @@
               $(this).data("meetingId");
         });
         
+        
+        $("#addMeeting").submit(function (event) {
+            
+            event.preventDefault();
+                        
+            var $form = $( this ),
+            meeting_name = $form.find( "input[name='meeting_name']" ).val(),
+            date = $form.find( "input[name='date']" ).val(),
+            time = $form.find( "input[name='time']" ).val(),
+            url = $form.attr( "action" );
+         
+            // {date=[1 September, 2016], meeting_name=[ffff], time=[14:10]}
+            
+            // Send the data using post
+            var posting = $.post( url, { meeting_name: meeting_name,  eventdate:moment(date+" "+time,"DD MMMM, YYYY hh:mm").format("DD/MM/YYYY HH:mm:ss")} );
+             
+            // Put the results in a div
+            posting.done(function( data ) {
+            	location.reload(); 
+            });
+          });
         
         $('.datepicker').pickadate({
             selectMonths: true, // Creates a dropdown to control month
@@ -32,7 +56,7 @@
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <form class="col s12" action="/action/createFoodMeeting" method="post">
+                <form id="addMeeting" class="col s12" action="/action/createFoodMeeting">
                     <div class="row">
                         <div class="input-field col s5">
                             <input placeholder="You look hungry!...Let's add a new meeting!" id="meeting_name" name="meeting_name" type="text" class="validate">
@@ -40,9 +64,11 @@
                         </div>
                         <div class="input-field col s3">
                             <input id="date" type="date" name="date" class="datepicker">
+                            <label for="date">Date of the Meeting</label>
                         </div>
                         <div class="input-field col s2">
                             <input id="timepicker" class="timepicker" type="time" name="time">
+                            <label for="timepicker">Time of the Meeting</label>
                         </div>
                         <div class="col s1">
                             <button class="btn-floating btn-large waves-effect waves-light" type="submit">
