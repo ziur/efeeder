@@ -250,23 +250,12 @@
             <column name="id"   type="INT(11)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" />
             </column>
-            <column name="id_food_meeting" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
             <column name="id_user"     type="INT(11)">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="Text"/>
             <column name="created_at"  type="DATETIME"/>
-            <column name="vote"        type="INT(11))"/>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="suggestions"
-                constraintName="suggestions_id_food_meeting_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
         <addForeignKeyConstraint baseColumnNames="id_user"
                 baseTableName="suggestions"
                 constraintName="suggestions_id_user_fk"
@@ -275,49 +264,77 @@
                 referencedColumnNames="id"
                 referencedTableName="user"/>
         <createIndex catalogName="efeeder"
-                indexName="suggestions_id_food_meeting_fk"
-                tableName="suggestions"
-                unique="true">
-            <column name="id_food_meeting"/>
-        </createIndex>
-        <createIndex catalogName="efeeder"
                 indexName="suggestions_id_user_fk"
                 tableName="suggestions"
                 unique="true">
             <column name="id_user"/>
         </createIndex>
     </changeSet>
-
-    <changeSet author="ricardo" id="suggestions.table">
-        <addColumn schemaName="efeeder"
-                   tableName="suggestions">
-            <column name="counter" type="int(11)"/>
-        </addColumn>
-    </changeSet>
-
+    
     <changeSet author="ricardo" id="food_meeting_user.table">
         <createTable catalogName="efeeder" tableName="food_meeting_user">
             <column name="id_food_meeting" type="INT(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="id_user"     type="INT(11)">
+            <column name="id_user" type="INT(11)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="suggestions"
+                baseTableName="food_meeting_user"
                 constraintName="food_meeting_user_id_food_meeting_fk"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="food_meeting"/>
         <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="suggestions"
+                baseTableName="food_meeting_user"
                 constraintName="food_meeting_user_id_user_fk"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="user"/>
+    </changeSet>
+    
+    <changeSet author="alexander" id="createtable.votes">
+        <createTable catalogName="efeeder" tableName="votes">
+            <column name="id" type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="id_food_meeting" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_suggestion"  type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counter" type="INT(11)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+            baseTableName="votes"
+            constraintName="votes_id_food_meeting_fk"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="food_meeting"/>
+        <addForeignKeyConstraint baseColumnNames="id_suggestion"
+            baseTableName="votes"
+            constraintName="votes_id_suggestion_fk"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="suggestions"/>
+        <createIndex catalogName="efeeder"
+                indexName="votes_id_food_meeting_fk"
+                tableName="votes"
+                unique="true">
+            <column name="id_food_meeting"/>
+        </createIndex>    
+        <createIndex catalogName="efeeder"
+                indexName="votes_id_suggestion_fk"
+                tableName="votes"
+                unique="true">
+            <column name="id_suggestion"/>
+        </createIndex>    
     </changeSet>
 
 </databaseChangeLog>
