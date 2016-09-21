@@ -33,7 +33,7 @@
             </div>  
             <div class="food-meetings">
                 <c:forEach var="foodMeeting" items="#{foodMeetings}">
-                    <div class="grid-item grid-item-width">             
+                    <div class="grid-item" style="width:${foodMeeting.getWidth()}px">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
                                 <img class="activator" src="${foodMeeting.imageLink}">

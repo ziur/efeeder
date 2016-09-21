@@ -23,11 +23,12 @@ public class FoodMeetingCommand implements CommandUnit {
         Connection connection = parameters.getConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement
-                .executeQuery("Select id, name, image_link, created_at from food_meeting order by created_at");
+                .executeQuery(
+                        "Select id, name, image_link, event_date, created_at from food_meeting order by created_at");
         List<FoodMeeting> foodMeetings = new ArrayList<>();
         while (resultSet.next()) {
             foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-                    resultSet.getDate(4)));
+                    resultSet.getDate(4), resultSet.getDate(5)));
         }
         out.addResult("foodMeetings", foodMeetings);
         return out.forward("foodmeeting/foodMeeting.jsp");
