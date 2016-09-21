@@ -42,28 +42,7 @@
             </column>
             <column name="name"             type="VARCHAR(200)"/>
             <column name="created_at"       type="DATETIME"/>
-            <column name="fellow_dinner_id" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
-    </changeSet>
-
-    <changeSet author="roger" id="addForeignKeyConstraint.food_meeting_fellow_dinner_id_fk">
-        <addForeignKeyConstraint baseColumnNames="fellow_dinner_id"
-                baseTableName="food_meeting"
-                constraintName="food_meeting_fellow_dinner_id_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="fellow_dinner"/>
-    </changeSet>
-    
-    <changeSet author="roger" id="createIndex.food_meeting_fellow_dinner_id_fk">
-        <createIndex catalogName="efeeder"
-                indexName="food_meeting_fellow_dinner_id_fk"
-                tableName="food_meeting">
-            <column name="fellow_dinner_id"/>
-        </createIndex>
     </changeSet>
 
     <changeSet author="roger" id="insert.fellow_dinner.porky">
@@ -79,7 +58,6 @@
                 tableName="food_meeting">
             <column name="name"             value="Trancapechos"/>
             <column name="created_at"       value="now()"/>
-            <column name="fellow_dinner_id" value="1"/>
         </insert>
     </changeSet>
 
@@ -96,7 +74,6 @@
                 tableName="food_meeting">
                 <column name="name"             value="Rellenos"/>
                 <column name="created_at"       value="now()"/>
-                <column name="fellow_dinner_id" value="2"/>
         </insert>
     </changeSet>
 
@@ -253,6 +230,9 @@
             <column name="id_user"     type="INT(11)">
                 <constraints nullable="false"/>
             </column>
+            <column name="fellow_dinner_id" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
             <column name="description" type="Text"/>
             <column name="created_at"  type="DATETIME"/>
         </createTable>
@@ -263,6 +243,13 @@
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="fellow_dinner_id"
+                baseTableName="suggestions"
+                constraintName="suggestions_fellow_dinner_id_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="fellow_dinner"/>
         <createIndex catalogName="efeeder"
                 indexName="suggestions_id_user_fk"
                 tableName="suggestions"
@@ -277,6 +264,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="id_user" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_suggestion"  type="INT(11)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -294,47 +284,13 @@
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="user"/>
-    </changeSet>
-    
-    <changeSet author="alexander" id="createtable.votes">
-        <createTable catalogName="efeeder" tableName="votes">
-            <column name="id" type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="id_food_meeting" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="id_suggestion"  type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="counter" type="INT(11)"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-            baseTableName="votes"
-            constraintName="votes_id_food_meeting_fk"
-            onDelete="CASCADE"
-            onUpdate="RESTRICT"
-            referencedColumnNames="id"
-            referencedTableName="food_meeting"/>
         <addForeignKeyConstraint baseColumnNames="id_suggestion"
-            baseTableName="votes"
-            constraintName="votes_id_suggestion_fk"
+            baseTableName="food_meeting_user"
+            constraintName="food_meeting_user_id_suggestion_fk"
             onDelete="CASCADE"
             onUpdate="RESTRICT"
             referencedColumnNames="id"
             referencedTableName="suggestions"/>
-        <createIndex catalogName="efeeder"
-                indexName="votes_id_food_meeting_fk"
-                tableName="votes"
-                unique="true">
-            <column name="id_food_meeting"/>
-        </createIndex>    
-        <createIndex catalogName="efeeder"
-                indexName="votes_id_suggestion_fk"
-                tableName="votes"
-                unique="true">
-            <column name="id_suggestion"/>
-        </createIndex>    
     </changeSet>
 
 </databaseChangeLog>
