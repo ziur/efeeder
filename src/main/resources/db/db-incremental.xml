@@ -5,98 +5,43 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet author="roger" id="fellow_dinner.table">
-        <createTable catalogName="efeeder" tableName="fellow_dinner">
-            <column name="id"   type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="name" type="VARCHAR(200)"/>
-            <column name="nick" type="VARCHAR(120)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="roger" id="createIndex.fellow_dinner_id_uindex">
-        <createIndex catalogName="efeeder"
-                indexName="fellow_dinner_id_uindex"
-                tableName="fellow_dinner"
-                unique="true">
-            <column name="id"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet author="roger" id="createIndex.fellow_dinner_nick_uindex">
-        <createIndex catalogName="efeeder"
-                indexName="fellow_dinner_nick_uindex"
-                tableName="fellow_dinner"
-                unique="true">
-            <column name="nick"/>
-        </createIndex>
-    </changeSet>
-
     <changeSet author="roger" id="food_meeting.table">
         <createTable catalogName="efeeder" tableName="food_meeting">
             <column name="id"         type="INT(11)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name"             type="VARCHAR(200)"/>
+            <column name="image_link"       type="VARCHAR(500)"/>
+            <column name="event_date"       type="DATE"/>
+            <column name="event_time"       type="TIME"/>
             <column name="created_at"       type="DATETIME"/>
-            <column name="fellow_dinner_id" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
 
-    <changeSet author="roger" id="addForeignKeyConstraint.food_meeting_fellow_dinner_id_fk">
-        <addForeignKeyConstraint baseColumnNames="fellow_dinner_id"
-                baseTableName="food_meeting"
-                constraintName="food_meeting_fellow_dinner_id_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="fellow_dinner"/>
-    </changeSet>
-    
-    <changeSet author="roger" id="createIndex.food_meeting_fellow_dinner_id_fk">
-        <createIndex catalogName="efeeder"
-                indexName="food_meeting_fellow_dinner_id_fk"
-                tableName="food_meeting">
-            <column name="fellow_dinner_id"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.fellow_dinner.porky">
-        <insert catalogName="efeeder"
-                tableName="fellow_dinner">
-            <column name="name" value="porky"/>
-            <column name="nick" value="porky"/>
-        </insert>
-    </changeSet>
-    
-    <changeSet author="roger" id="insert.food_meeting.Trancapechos">
+    <changeSet author="roger" id="insert.food_meeting.CoffeeTime">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
-            <column name="name"             value="Trancapechos"/>
+            <column name="name"             value="Coffee time"/>
+            <column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
             <column name="created_at"       value="now()"/>
-            <column name="fellow_dinner_id" value="1"/>
         </insert>
     </changeSet>
 
-    <changeSet author="roger" id="insert.fellow_dinner.calama">
-        <insert catalogName="efeeder"
-                tableName="fellow_dinner">
-                <column name="name" value="Rellenos Calama"/>
-                <column name="nick" value="Calama"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.food_meeting.relleno">
+    <changeSet author="roger" id="insert.food_meeting.DiaDelProgramador">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
-                <column name="name"             value="Rellenos"/>
-                <column name="created_at"       value="now()"/>
-                <column name="fellow_dinner_id" value="2"/>
+            <column name="name"             value="Dia del programador"/>
+            <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+            <column name="created_at"       value="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+            <column name="name"             value="Release celebration"/>
+            <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+            <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
 
