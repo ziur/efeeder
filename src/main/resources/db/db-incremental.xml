@@ -5,32 +5,82 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="foodmeeting.table" author="roger">
-        <sql>
-            CREATE TABLE fellow_dinner
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            name VARCHAR(200),
-            nick VARCHAR(120) NOT NULL
-            );
-            CREATE UNIQUE INDEX fellow_dinner_id_uindex ON fellow_dinner (id);
-            CREATE UNIQUE INDEX fellow_dinner_nick_uindex ON fellow_dinner (nick);
-        </sql>
-        <sql>
-            CREATE TABLE food_meeting
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            name VARCHAR(120),
-            created_at DATETIME,
-            fellow_dinner_id INT(11) NOT NULL,
-            CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
-            );
-            CREATE INDEX food_meeting_fellow_dinner_id_fk ON food_meeting (fellow_dinner_id);
-        </sql>
-        <sql>
-            INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
-            INSERT INTO efeeder.food_meeting (name, created_at, fellow_dinner_id) VALUES ('Trancapechos', '2016-09-09 20:15:02', 1);
-        </sql>
+    <changeSet author="roger" id="fellow_dinner.table">
+        <createTable catalogName="efeeder" tableName="fellow_dinner">
+            <column name="id"   type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(200)"/>
+            <column name="nick" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="roger" id="createIndex.fellow_dinner_id_uindex">
+        <createIndex catalogName="efeeder"
+                indexName="fellow_dinner_id_uindex"
+                tableName="fellow_dinner"
+                unique="true">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="roger" id="createIndex.fellow_dinner_nick_uindex">
+        <createIndex catalogName="efeeder"
+                indexName="fellow_dinner_nick_uindex"
+                tableName="fellow_dinner"
+                unique="true">
+            <column name="nick"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="roger" id="food_meeting.table">
+        <createTable catalogName="efeeder" tableName="food_meeting">
+            <column name="id"         type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name"             type="VARCHAR(200)"/>
+            <column name="created_at"       type="DATETIME"/>
+            <column name="fellow_dinner_id" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="roger" id="addForeignKeyConstraint.food_meeting_fellow_dinner_id_fk">
+        <addForeignKeyConstraint baseColumnNames="fellow_dinner_id"
+                baseTableName="food_meeting"
+                constraintName="food_meeting_fellow_dinner_id_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="fellow_dinner"/>
+    </changeSet>
+    
+    <changeSet author="roger" id="createIndex.food_meeting_fellow_dinner_id_fk">
+        <createIndex catalogName="efeeder"
+                indexName="food_meeting_fellow_dinner_id_fk"
+                tableName="food_meeting">
+            <column name="fellow_dinner_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.fellow_dinner.porky">
+        <insert catalogName="efeeder"
+                tableName="fellow_dinner">
+            <column name="name" value="porky"/>
+            <column name="nick" value="porky"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet author="roger" id="insert.food_meeting.Trancapechos">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+            <column name="name"             value="Trancapechos"/>
+            <column name="created_at"       value="now()"/>
+            <column name="fellow_dinner_id" value="1"/>
+        </insert>
     </changeSet>
 
     <changeSet author="roger" id="insert.fellow_dinner.calama">
@@ -50,23 +100,79 @@
         </insert>
     </changeSet>
 
-    <changeSet id="user.table" author="rodrigo">
-        <sql>
-            CREATE TABLE user
-            (
-                id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                name VARCHAR(200),
-                last_name VARCHAR(200),
-                email VARCHAR(120) NOT NULL
-            );
-            CREATE UNIQUE INDEX user_id_uindex ON user (id);
-            CREATE UNIQUE INDEX user_email_uindex ON user (email);
-        </sql>
-        <sql>
-            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Alejandro', 'Ruiz', 'aruiz@gmail.com');
-            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Amir', 'Aranimar', 'aaranibar@gmail.com');
-            INSERT INTO efeeder.user (name, last_name, email) VALUES ('Ricardo', 'Ramirez', 'rramirez@gmail.com');
-        </sql>
+    <changeSet author="rodrigo" id="user.table">
+        <createTable catalogName="efeeder" tableName="user">
+            <column name="id"   type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name"      type="VARCHAR(200)"/>
+            <column name="last_name" type="VARCHAR(200)"/>
+            <column name="username"  type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password"  type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email"     type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex catalogName="efeeder"
+                indexName="user_id_uindex"
+                tableName="user"
+                unique="true">
+            <column name="id"/>
+        </createIndex>
+        <createIndex catalogName="efeeder"
+                indexName="user_email_uindex"
+                tableName="user"
+                unique="true">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.user.test">
+        <insert catalogName="efeeder"
+                tableName="user">
+                <column name="name"      value="Test"/>
+                <column name="last_name" value="Test"/>
+                <column name="username"  value="Test"/>
+                <column name="password"  value="Test"/>
+                <column name="email"     value="test@test.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.user.alejandro">
+        <insert catalogName="efeeder"
+                tableName="user">
+                <column name="name"      value="Alejandro"/>
+                <column name="last_name" value="Ruiz"/>
+                <column name="username"  value="ARuiz"/>
+                <column name="password"  value="ARuiz"/>
+                <column name="email"     value="alejandro.ruiz@jalasoft.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.user.amir">
+        <insert catalogName="efeeder"
+                tableName="user">
+                <column name="name"      value="Amir"/>
+                <column name="last_name" value="Aranibar"/>
+                <column name="username"  value="AAranibar"/>
+                <column name="password"  value="AAranibar"/>
+                <column name="email"     value="amir.aranibar@jalasoft.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.user.ricardo">
+        <insert catalogName="efeeder"
+                tableName="user">
+                <column name="name"      value="Ricardo"/>
+                <column name="last_name" value="Ramirez"/>
+                <column name="username"  value="RRamirez"/>
+                <column name="password"  value="RRamirez"/>
+                <column name="email"     value="ricardo.ramirez@jalasoft.com"/>
+        </insert>
     </changeSet>
 
     <changeSet author="roger" id="createtable.order">
@@ -104,7 +210,7 @@
                 referencedColumnNames="id"
                 referencedTableName="user"/>
     </changeSet>
-    
+
     <changeSet author="alexander" id="createtable.buyer">
         <createTable catalogName="efeeder" tableName="buyer">
             <column name="id_food_meeting" type="INT"/>
@@ -139,78 +245,79 @@
                 referencedTableName="user"/>
     </changeSet>
 
-    <changeSet id="suggestions.table" author="amir">
-        <sql>
-            CREATE TABLE suggestions
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            id_food_meeting INT(11) NOT NULL,
-            id_user INT(11) NOT NULL,            place VARCHAR(120),
-            description TEXT,
-            created_at DATETIME,
-            vote int(11) DEFAULT 0,
-            
-            CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
-            CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
-            );
-            CREATE INDEX suggestions_id_food_meeting_fk ON suggestions (id_food_meeting);
-            CREATE INDEX suggestions_id_user_fk ON suggestions (id_user);
-        </sql>
-        <sql>
-            INSERT INTO efeeder.user (name, last_name, email) VALUES ('test', 'test', 'test@mail.com');
-        </sql>
-        <sql>
-            INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
-        </sql>
+    <changeSet author="amir" id="suggestions.table">
+        <createTable catalogName="efeeder" tableName="suggestions">
+            <column name="id"   type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="id_food_meeting" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_user"     type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="Text"/>
+            <column name="created_at"  type="DATETIME"/>
+            <column name="vote"        type="INT(11))"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="suggestions"
+                constraintName="suggestions_id_food_meeting_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="suggestions"
+                constraintName="suggestions_id_user_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="user"/>
+        <createIndex catalogName="efeeder"
+                indexName="suggestions_id_food_meeting_fk"
+                tableName="suggestions"
+                unique="true">
+            <column name="id_food_meeting"/>
+        </createIndex>
+        <createIndex catalogName="efeeder"
+                indexName="suggestions_id_user_fk"
+                tableName="suggestions"
+                unique="true">
+            <column name="id_user"/>
+        </createIndex>
     </changeSet>
-   
+
     <changeSet author="ricardo" id="suggestions.table">
         <addColumn schemaName="efeeder"
                    tableName="suggestions">
             <column name="counter" type="int(11)"/>
         </addColumn>
     </changeSet>
-    
-    <changeSet id="food_meeting_user.table" author="ricardo">
-        <sql>
-            CREATE TABLE food_meeting_user
-            (
-            id_food_meeting INT(11) NOT NULL,
-            id_user INT(11) NOT NULL,
-            CONSTRAINT food_meeting_user_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
-            CONSTRAINT food_meeting_user_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
-            );
-            </sql>
-    </changeSet>
 
-	<changeSet author="roger" id="addColumn.username.user">
-	    <addColumn catalogName="efeeder"
-	               tableName="user">
-	        <column name="username" type="varchar(255)"/>
-	    </addColumn>
-	</changeSet>
-	
-	<changeSet author="roger" id="addColumn.password.user">
-        <addColumn catalogName="efeeder"
-                   tableName="user">
-            <column name="password" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
-	
-	<changeSet author="roger" id="update.username.user" >
-        <sql>
-            Update user
-               set username = CONCAT(SUBSTRING(name,1,1),last_name)
-             where username is null; 
-        </sql>
-    </changeSet>
-    
-    <changeSet author="roger" id="update.password.user" >
-        <sql>
-            Update user
-               set password = CONCAT(SUBSTRING(name,1,1),last_name)
-             where password is null; 
-        </sql>
+    <changeSet author="ricardo" id="food_meeting_user.table">
+        <createTable catalogName="efeeder" tableName="food_meeting_user">
+            <column name="id_food_meeting" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_user"     type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="suggestions"
+                constraintName="food_meeting_user_id_food_meeting_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="suggestions"
+                constraintName="food_meeting_user_id_user_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="user"/>
     </changeSet>
 
 </databaseChangeLog>
