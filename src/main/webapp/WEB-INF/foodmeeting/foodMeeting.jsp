@@ -13,20 +13,41 @@
           window.location.href = '/action/suggestions?id_food_meeting=' +
               $(this).data("meetingId");
         });
+        
+        
+        $('.datepicker').pickadate({
+            selectMonths: true, // Creates a dropdown to control month
+            selectYears: 15 // Creates a dropdown of 15 years to control year
+          });
+        
+        $('#timepicker').pickatime({
+            autoclose: false,
+            twelvehour: false
+          });
+      
+        
       </script>
     </jsp:attribute>
 
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <form class="col s12">
+                <form class="col s12" action="/action/createFoodMeeting" method="post">
                     <div class="row">
-                        <div class="input-field col s11">
-                            <input placeholder="You look hungry!...Let's add a new meeting!" id="meeting_name" type="text" class="validate">
+                        <div class="input-field col s5">
+                            <input placeholder="You look hungry!...Let's add a new meeting!" id="meeting_name" name="meeting_name" type="text" class="validate">
                             <label for="meeting_name">New Meeting Name</label>
                         </div>
+                        <div class="input-field col s3">
+                            <input id="date" type="date" name="date" class="datepicker">
+                        </div>
+                        <div class="input-field col s2">
+                            <input id="timepicker" class="timepicker" type="time" name="time">
+                        </div>
                         <div class="col s1">
-                            <a class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">add</i></a>
+                            <button class="btn-floating btn-large waves-effect waves-light" type="submit">
+                                <i class="material-icons" >add</i>
+                            </button>
                         </div>
                     </div>
                 </form>
