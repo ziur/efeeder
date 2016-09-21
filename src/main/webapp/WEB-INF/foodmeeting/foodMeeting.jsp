@@ -80,18 +80,26 @@
             </div>  
             <div class="food-meetings">
                 <c:forEach var="foodMeeting" items="#{foodMeetings}">
-                    <div class="grid-item" style="width:${foodMeeting.getWidth()}px">
+                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date=${foodMeeting.eventDate.toString()}>
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
-                                <img class="activator" src="${foodMeeting.imageLink}">
+                                <img  src="${foodMeeting.imageLink}">
                             </div>
                             <div class="card-content">
-                                <span class="card-title activator grey-text text-darken-4">${foodMeeting.name}<i class="material-icons right">more_vert</i></span>
-                                <p class="meeting-date grey-text lighten-1" data-date=${foodMeeting.eventDate.toString()}></p>                                
+                                <span class="card-title activator grey-text text-darken-4">
+                                    ${foodMeeting.name}                                    
+                                    <i class="material-icons right">more_vert</i>
+                                </span>
+                                <p class="quick-view-date grey-text lighten-1"></p>                                
                             </div>
+
                             <div class="card-reveal">
                                 <span class="card-title grey-text text-darken-4">${foodMeeting.name}<i class="material-icons right">close</i></span>
-                                <p>Here is some more information about this meeting that is only revealed once clicked on.</p>
+                                <p class="detailed-view-date grey-text lighten-1"></p>
+                                
+                                <div class="fixed-action-btn" style="bottom: 25px; right: 25px;">
+                                    <a class="btn-floating btn-small waves-effect waves-light"><i class="material-icons">settings</i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
