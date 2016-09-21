@@ -40,6 +40,7 @@
     <script src="/assets/js/lib/select2.js"></script>
     <script src="/assets/js/lib/jsrender.js"></script>
     <script src="/assets/js/lib/masonry.min.js"></script>
+    <script src="/assets/js/lib/moment.min.js"></script>
     <script src="/assets/js/lib/materialize.js"></script>
     
     <script src="/assets/js/foodMeetings.js"></script>

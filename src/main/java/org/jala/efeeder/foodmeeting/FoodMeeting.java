@@ -31,7 +31,7 @@ public class FoodMeeting {
     
     public int getWidth()
     {
-        int width = 600;
+        int width = 500;
 
         LocalDate today = new LocalDate();
         LocalDate endEventDate = new LocalDate(eventDate);
