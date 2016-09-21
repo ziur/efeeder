@@ -27,11 +27,12 @@ public class UserCommand implements CommandUnit{
         }
 
         PreparedStatement stm = parameters.getConnection()
-                                        .prepareStatement("insert into user(name, last_name, email) values(?, ?, ?)");
-        
+                                        .prepareStatement("insert into user(name, last_name, email, username, password) values(?, ?, ?, ?, ?)");
         stm.setString(1, parameters.getParameter("name"));
         stm.setString(2, parameters.getParameter("last_name"));
         stm.setString(3, parameters.getParameter("email"));
+        stm.setString(4, parameters.getParameter("nick_name"));
+        stm.setString(5, parameters.getParameter("password"));
         stm.executeUpdate();
 
         return out.redirect("action/users");
