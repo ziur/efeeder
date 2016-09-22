@@ -44,18 +44,5 @@ public class GetAllPlacesCommand implements CommandUnit {
         
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaginationResult(suggestions)));
     }
-
-//    private String getPlaceByFellowDiner(int idFellowDiner) throws SQLException {
-//        PreparedStatement preparedStatement = connection.prepareStatement("Select name from fellow_dinner where id=?");
-//        preparedStatement.setInt(1, idFellowDiner);
-//        ResultSet resultSet = preparedStatement.executeQuery();
-//        String placeResult = "";
-//        
-//        if (resultSet.next()) {
-//            placeResult = resultSet.getString("name");
-//        }
-//        
-//        return placeResult;
-//    }
     
 }
