@@ -35,7 +35,7 @@ public class SettingMeetingCommand implements CommandUnit {
 
         while (resultSet.next()) {
             foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
-                    resultSet.getDate(3), resultSet.getDate(4)));
+                    resultSet.getTimestamp(3), resultSet.getTimestamp(4)));
         }
 
         out.addResult("foodMeeting", foodMeeting);
