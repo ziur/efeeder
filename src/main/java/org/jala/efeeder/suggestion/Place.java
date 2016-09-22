@@ -18,9 +18,9 @@ public class Place {
     private String name;
     private String description;
     private String phone;
-    private Date direction;
+    private String direction;
 
-    public Place(int id, String name, String description, String phone, Date direction) {
+    public Place(int id, String name, String description, String phone, String direction) {
         this.id = id;
         this.name = name;
         this.description = description;

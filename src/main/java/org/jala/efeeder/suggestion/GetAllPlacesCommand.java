@@ -39,7 +39,7 @@ public class GetAllPlacesCommand implements CommandUnit {
                     resultSet.getString("name"), 
                     resultSet.getString("description"), 
                     resultSet.getString("phone"),
-                    resultSet.getDate("direction")));
+                    resultSet.getString("direction")));
         }
         
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaginationResult(places)));
