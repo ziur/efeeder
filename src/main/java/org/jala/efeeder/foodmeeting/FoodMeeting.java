@@ -38,9 +38,9 @@ public class FoodMeeting {
 
         int days = Days.daysBetween(today, endEventDate).getDays();
 
-        width = (50 * days) < 400 ?
+        width = (50 * days) < 350 ?
                 width - (50 * days) :
-                200;
+                150;
 
         return width;
     }
