@@ -39,12 +39,13 @@ public class SuggestionsCommand implements CommandUnit {
         }
         
         Out out = new DefaultOut();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select * from suggestions where id_food_meeting = ? order by created_at");
-        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+        PreparedStatement preparedStatement = connection.prepareStatement("Select * from suggestions order by created_at");
+//        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+//        preparedStatemenaddForeignKeyConstraintt.setInt(1, 1);
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Suggestion> suggestions = new ArrayList<>();
+        List<Place> suggestions = new ArrayList<>();
         while (resultSet.next()) {
-            suggestions.add(new Suggestion(resultSet.getInt("id"), resultSet.getInt("id_user"), resultSet.getInt("id_food_meeting"), resultSet.getString("place"), resultSet.getString("description"), resultSet.getDate("created_at"), resultSet.getInt("vote")));
+            suggestions.add(new Place(resultSet.getInt("id"), "china", resultSet.getString("description"), resultSet.getString("phone"), resultSet.getDate("created_at")));
         }
         
         // get users
