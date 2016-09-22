@@ -30,7 +30,7 @@ public class FoodMeetingCommand implements CommandUnit {
         List<FoodMeeting> foodMeetings = new ArrayList<>();
         while (resultSet.next()) {
             foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-                    resultSet.getDate(4), resultSet.getDate(5)));
+                    resultSet.getTimestamp(4), resultSet.getTimestamp(5)));
         }
         out.addResult("foodMeetings", foodMeetings);
         return out.forward("foodmeeting/foodMeeting.jsp");

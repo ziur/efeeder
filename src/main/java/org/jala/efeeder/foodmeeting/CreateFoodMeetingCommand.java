@@ -58,7 +58,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
         FoodMeeting foodMeeting = new FoodMeeting(meetingId, parameters.getParameter("meeting_name"),
                 "https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg",
-                new Date(eventDate.getTime()), new Date(createdAt.getTime()));
+                new Timestamp(eventDate.getTime()), new Timestamp(createdAt.getTime()));
 
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(foodMeeting));
     }

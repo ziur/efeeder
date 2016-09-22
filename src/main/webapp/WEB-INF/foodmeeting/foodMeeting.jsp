@@ -83,7 +83,7 @@
             </div>  
             <div class="food-meetings">
                 <c:forEach var="foodMeeting" items="#{foodMeetings}">
-                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date=${foodMeeting.eventDate.toString()}>
+                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
                                 <img  src="${foodMeeting.imageLink}">
