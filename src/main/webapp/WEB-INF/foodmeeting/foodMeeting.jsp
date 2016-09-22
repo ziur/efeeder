@@ -61,17 +61,17 @@
                         <h5 class='center-align thin grey-text lighten-5'>You look hungry!.... Let's create a meeting!</h5>
                     </div>
                     <div class="row">
-                        <div class="input-field col s5">
+                        <div class="input-field col s6">
                             <input id="meeting_name" name="meeting_name" type="text" class="validate" autocomplete="off">
                             <label for="meeting_name">Meeting Name</label>
                         </div>
                         <div class="input-field col s3">
                             <input id="date" type="date" name="date" class="datepicker">
-                            <label for="date">Date of the Meeting</label>
+                            <label for="date">Date</label>
                         </div>
                         <div class="input-field col s2">
                             <input id="timepicker" class="timepicker" type="time" name="time">
-                            <label for="timepicker">Time of the Meeting</label>
+                            <label for="timepicker">Time</label>
                         </div>
                         <div class="col s1">
                             <button class="btn-floating btn-large waves-effect waves-light" type="submit">
