@@ -33,16 +33,16 @@ public class GetAllPlacesCommand implements CommandUnit {
         
         PreparedStatement preparedStatement = connection.prepareStatement("Select * from places order by created_at");
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Place> suggestions = new ArrayList<>();
+        List<Place> places = new ArrayList<>();
         while (resultSet.next()) {
-            suggestions.add(new Place(resultSet.getInt("id"), 
+            places.add(new Place(resultSet.getInt("id"), 
                     resultSet.getString("name"), 
                     resultSet.getString("description"), 
                     resultSet.getString("phone"),
                     resultSet.getDate("direction")));
         }
         
-        return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaginationResult(suggestions)));
+        return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaginationResult(places)));
     }
     
 }
