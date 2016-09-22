@@ -3,46 +3,25 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
-    <jsp:attribute name="javascript">
-      <script>
-        $(document).ready(function () {
-          $('#foodMeeting').DataTable();
-        });
-
-        $(".meeting-row").click(function () {
-          window.location.href = '/action/suggestions?id_food_meeting=' +
-              $(this).data("meetingId");
-        });
-        
-        
-        $('.datepicker').pickadate({
-            selectMonths: true, // Creates a dropdown to control month
-            selectYears: 15 // Creates a dropdown of 15 years to control year
-          });
-        
-        $('#timepicker').pickatime({
-            autoclose: false,
-            twelvehour: false
-          });
-      
-        
-      </script>
-    </jsp:attribute>
-
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <form class="col s12" action="/action/createFoodMeeting" method="post">
+                <form id="addMeeting" class="col s12" action="/action/createFoodMeeting">
+                    <div class="row ">
+                        <h5 class='center-align thin grey-text lighten-5'>You look hungry!.... Let's create a meeting!</h5>
+                    </div>
                     <div class="row">
-                        <div class="input-field col s5">
-                            <input placeholder="You look hungry!...Let's add a new meeting!" id="meeting_name" name="meeting_name" type="text" class="validate">
-                            <label for="meeting_name">New Meeting Name</label>
+                        <div class="input-field col s6">
+                            <input id="meeting_name" name="meeting_name" type="text" class="validate" autocomplete="off">
+                            <label for="meeting_name">Meeting Name</label>
                         </div>
                         <div class="input-field col s3">
                             <input id="date" type="date" name="date" class="datepicker">
+                            <label for="date">Date</label>
                         </div>
                         <div class="input-field col s2">
                             <input id="timepicker" class="timepicker" type="time" name="time">
+                            <label for="timepicker">Time</label>
                         </div>
                         <div class="col s1">
                             <button class="btn-floating btn-large waves-effect waves-light" type="submit">
@@ -54,10 +33,10 @@
             </div>  
             <div class="food-meetings">
                 <c:forEach var="foodMeeting" items="#{foodMeetings}">
-                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date=${foodMeeting.eventDate.toString()}>
+                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
-                                <img  src="${foodMeeting.imageLink}">
+                                <img  class="meeting-img" data-meeting-id=${foodMeeting.id} src="${foodMeeting.imageLink}">
                             </div>
                             <div class="card-content">
                                 <span class="card-title activator grey-text text-darken-4">
@@ -72,7 +51,9 @@
                                 <p class="detailed-view-date grey-text lighten-1"></p>
                                 
                                 <div class="fixed-action-btn" style="bottom: 25px; right: 25px;">
-                                    <a href="action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons">settings</i></a>
+                                    <a href="action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
+                                        <i class="material-icons">settings</i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

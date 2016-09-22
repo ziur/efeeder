@@ -1,6 +1,7 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -15,13 +16,13 @@ public class FoodMeeting {
     private int id;
     private String name;
     private String imageLink;
-    private Date eventDate;
-    private Date createdAt;
+    private Timestamp eventDate;
+    private Timestamp createdAt;
 
     public FoodMeeting() {
     }
 
-    public FoodMeeting(int id, String name,String imageLink, Date eventDate, Date createdAt) {
+    public FoodMeeting(int id, String name,String imageLink, Timestamp eventDate, Timestamp createdAt) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
@@ -38,7 +39,7 @@ public class FoodMeeting {
 
         int days = Days.daysBetween(today, endEventDate).getDays();
 
-        width = (50 * days) < 400 ?
+        width = (50 * days) < 300 ?
                 width - (50 * days) :
                 200;
 

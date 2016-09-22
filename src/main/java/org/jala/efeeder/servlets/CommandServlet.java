@@ -66,10 +66,15 @@ public class CommandServlet extends HttpServlet {
             CommandExecutor executor = new CommandExecutor(databaseManager);
             In parameters = InBuilder.createIn(request);
 
-            Out out = executor.executeCommand(parameters, getCommand(request));
-            if(out.getUser()!=null && session.getAttribute("user")==null)
+            Out out = executor.executeCommand(parameters, getCommand(request)); 
+            if(!request.getRequestURI().equals("/action/login"))
             {
-                session.setAttribute("user", out.getUser());
+                out.addResult("showNavBar", true);
+            }
+                        
+            if(out.getUser()!=null && session.getAttribute("user")==null)
+            {                                
+                session.setAttribute("user", out.getUser());                                                
             }
 
             if (out.getExitStatus() == ExitStatus.ERROR) {
