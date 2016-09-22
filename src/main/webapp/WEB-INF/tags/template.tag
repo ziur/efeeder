@@ -31,8 +31,9 @@
     <div class="container">
       <jsp:doBody/>
     </div>
-
-    <t:footer/>
+    
+    <!--<t:footer/>-->
+    
 
     <script src="/assets/js/lib/jquery.js"></script>
     <script src="/assets/js/lib/bootstrap.js"></script>

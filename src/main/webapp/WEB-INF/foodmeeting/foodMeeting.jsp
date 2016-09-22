@@ -62,7 +62,7 @@
                     </div>
                     <div class="row">
                         <div class="input-field col s5">
-                            <input id="meeting_name" name="meeting_name" type="text" class="validate">
+                            <input id="meeting_name" name="meeting_name" type="text" class="validate" autocomplete="off">
                             <label for="meeting_name">Meeting Name</label>
                         </div>
                         <div class="input-field col s3">
