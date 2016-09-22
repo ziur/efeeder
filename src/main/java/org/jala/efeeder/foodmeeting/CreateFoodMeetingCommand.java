@@ -45,7 +45,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
         stm.setString(1, parameters.getParameter("meeting_name"));
-        stm.setString(2, "https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg");
+        stm.setString(2, "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg");
         stm.setTimestamp(3, eventDate);
         stm.setTimestamp(4, createdAt);
 
