@@ -34,6 +34,6 @@ public class CreateUserCommand implements CommandUnit{
         stm.setString(5, parameters.getParameter("password"));
         stm.executeUpdate();
 
-        return out.redirect("action/login");
+        return out.redirect("login");
     }
 }
