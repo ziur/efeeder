@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet author="roger" id="places.table">
+    <changeSet author="alexander" id="places.table">
         <createTable catalogName="efeeder" tableName="places">
             <column name="id"   type="INT(11)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" />
@@ -19,7 +19,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="roger" id="createIndex.places_id_uindex">
+    <changeSet author="alexexander" id="createIndex.places_id_uindex">
         <createIndex catalogName="efeeder"
                 indexName="places_id_uindex"
                 tableName="places"
@@ -34,11 +34,13 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name"             type="VARCHAR(200)"/>
+            <column name="image_link"       type="VARCHAR(500)"/>
+            <column name="event_date"       type="DATETIME"/>
             <column name="created_at"       type="DATETIME"/>
         </createTable>
     </changeSet>
 
-    <changeSet author="roger" id="insert.place.rellenos">
+    <changeSet author="alexander" id="insert.place.rellenos">
         <insert catalogName="efeeder"
                 tableName="places">
             <column name="name" value="rellenos calama"/>
@@ -48,10 +50,32 @@
         </insert>
     </changeSet>
     
-    <changeSet author="roger" id="insert.food_meeting.Trancapechos">
+    <changeSet author="roger" id="insert.food_meeting.CoffeeTime">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
-            <column name="name"             value="cumpleaños de alejandro"/>
+            <column name="name"             value="Coffee time"/>
+            <column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
+            <column name="event_date"       valueDate="now()"/>
+            <column name="created_at"       value="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.DiaDelProgramador">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+            <column name="name"             value="Dia del programador"/>
+            <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+            <column name="created_at"       value="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+            <column name="name"             value="Release celebration"/>
+            <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
             <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
@@ -65,12 +89,24 @@
                 <column name="direction" value="av/san martin"/>
         </insert>
     </changeSet>
-
-    <changeSet author="roger" id="insert.food_meeting.relleno">
+    
+    <changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
-                <column name="name"             value="Vamo a comer pollo!!"/>
-                <column name="created_at"       value="now()"/>
+            <column name="name"             value="Lunes de escabeche"/>
+            <column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
+            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+            <column name="created_at"       value="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="roger" id="insert.food_meeting.fideosuchu">
+        <insert catalogName="efeeder"
+                tableName="food_meeting">
+            <column name="name"             value="fideosuchu"/>
+            <column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
+            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+            <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
 
