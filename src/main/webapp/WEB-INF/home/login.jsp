@@ -35,12 +35,13 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-xs-4 right">
+                                    <a href="user">Create New User</a>
                                     <button class="btn btn-primary" type="submit">Login</button>
                                 </div>
                             </div>
-                    </form>                        
-                  </div>                     
-                </div>          
+                    </form>
+                  </div>
+                </div>
         </div>
     </jsp:body>
 </t:template>
