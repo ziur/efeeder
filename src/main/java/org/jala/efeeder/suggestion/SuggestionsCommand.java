@@ -22,7 +22,9 @@ public class SuggestionsCommand implements CommandUnit {
     @Override
     public Out execute(In parameters) throws Exception {
         Connection connection = parameters.getConnection();
+        String id = parameters.getParameter("id_food_meeting");
         
+        /*
         if (parameters.getParameter("save") != null) {
             String suggestion = parameters.getParameter("suggestion");
             String user = parameters.getParameter("user");
@@ -58,6 +60,11 @@ public class SuggestionsCommand implements CommandUnit {
         out.addResult("suggestions", suggestions);
         out.addResult("users", users);
         
+
+*/
+        
+        Out out = new DefaultOut();
+        out.addResult("id", id);
         return out.forward("suggestion/suggestions.jsp");
     }
 }

@@ -26,7 +26,7 @@
 
     <t:header/>
 
-    <div class="container">
+    <div class="container" >
       <jsp:doBody/>
     </div>
 
