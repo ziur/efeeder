@@ -74,11 +74,28 @@
 
 <div id="mainSideNav" class='side-nav fixed' >
     <p>${id} ooo</p>
+    <input id="ss"type="submit" value="postAjax"/>
 </div>
 
 <div style="height:20px;"> </div>
 <canvas id="mainCanvas" style="width:82.5vw;height:65vh;"/>
 </jsp:body>
-    
-    
 </t:template>
+<script>
+    $("#ss").click(function (){
+        var sendInfo = {name: "ñoño",description: "ñels",phone: "564654",direction:"c/ñoooo"};
+        $.ajax({
+           type: "POST",
+           url: "/action/createplace",
+           dataType: "json",
+           success: function (msg) {
+               if (msg) {
+                   alert(" was added in list !");
+               } else {
+                   alert("Cannot add to list !");
+               }
+           },
+           data: sendInfo
+       });
+    });
+</script>
