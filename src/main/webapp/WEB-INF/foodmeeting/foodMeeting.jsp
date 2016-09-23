@@ -51,7 +51,7 @@
                                 <p class="detailed-view-date grey-text lighten-1"></p>
                                 
                                 <div class="fixed-action-btn" style="bottom: 25px; right: 25px;">
-                                    <a href="action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
+                                    <a href="/action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
                                         <i class="material-icons">settings</i>
                                     </a>
                                 </div>

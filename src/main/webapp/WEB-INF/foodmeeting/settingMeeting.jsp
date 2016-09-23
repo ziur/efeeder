@@ -68,7 +68,9 @@
                         </div>
                     </div>                                       
                     <div class="row right"><br><br>
-                        <button class="waves-effect waves-light btn" action="/action/fooMeetings">Cancel</button> 
+                        <button class="waves-effect waves-light btn">
+                            <a href="/action/FoodMeeting" class="white-text">Cancel</a>
+                        </button> 
                         <button type="submit" id="edit-meeting" class="waves-effect waves-light btn">Save</button> 
                     </div>
                 </form>

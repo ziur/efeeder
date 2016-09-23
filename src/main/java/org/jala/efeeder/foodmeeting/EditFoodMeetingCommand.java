@@ -10,11 +10,15 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
+import java.sql.Timestamp;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -28,15 +32,17 @@ public class EditFoodMeetingCommand implements CommandUnit {
         Out out = new DefaultOut();
 
         PreparedStatement stm = parameters.getConnection()
-                .prepareStatement("UPDATE food_meeting SET name= ?, image_link= ? WHERE id= ?;");
-
-        /*DateFormat df = new SimpleDateFormat("yyyy/MM/dd"); 
-         Date startDate = (Date) df.parse(date*/
+                .prepareStatement("UPDATE food_meeting SET name= ?, image_link= ?, event_date=? WHERE id= ?;");
+        
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
+        DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
+        Timestamp eventDate = new Timestamp(dateTime.getMillis());        
+        
         try {
             stm.setString(1, parameters.getParameter("meeting_name"));
             stm.setString(2, parameters.getParameter("image_link"));
-            //stm.setDate(3, startDate);
-            stm.setInt(3, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+            stm.setTimestamp(3, eventDate);
+            stm.setInt(4, Integer.valueOf(parameters.getParameter("id_food_meeting")));
             stm.executeUpdate();
         } catch (Exception e) {
         }
