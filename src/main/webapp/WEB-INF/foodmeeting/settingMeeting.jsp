@@ -68,7 +68,7 @@
                     </div>
                 </form>
             </div>  
-        </div
+        </div>
     </jsp:body>
 </t:template>
 

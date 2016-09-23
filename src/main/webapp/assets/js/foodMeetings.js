@@ -10,8 +10,6 @@ $(document).ready(function () {
         time = $form.find( "input[name='time']" ).val(),
         url = $form.attr( "action" );
 
-        // {date=[1 September, 2016], meeting_name=[ffff], time=[14:10]}
-
         // Send the data using post
         var posting = $.post( url, { meeting_name: meeting_name,  eventdate:moment(date+" "+time,"DD MMMM, YYYY hh:mm").format("DD/MM/YYYY HH:mm:ss")} );
 
@@ -28,7 +26,9 @@ $(document).ready(function () {
 
     $('#timepicker').pickatime({
         autoclose: false,
-        twelvehour: false
+        twelvehour: false,
+        autoclose: true,
+        vibrate: true
     });
     
     $(".meeting-img").click(function () {
@@ -43,7 +43,7 @@ $(document).ready(function () {
             foodMeetings.masonry({
                 itemSelector: '.grid-item',
                 columnWidth: 50
-            });                
+            });
         });
 
     $(".quick-view-date").each(function(){                           
