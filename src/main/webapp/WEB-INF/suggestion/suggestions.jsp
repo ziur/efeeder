@@ -49,12 +49,8 @@
             <c:forEach var="suggestion" items="#{suggestions}">
               <tr class="sugg-row" data-suggestion-id=${suggestion.id}>
                 <td>${suggestion.id}</td>
-                <td>${suggestion.place}</td>
+                <td>${suggestion.name}</td>
                 <td>${suggestion.description}</td>
-                <td class="sugg-vote">
-                  <input type="radio" name="suggestion" value="${suggestion.id}">
-                </td>
-                <td>${suggestion.vote}</td>
               </tr>
             </c:forEach>
           </tbody>
@@ -72,5 +68,20 @@
       </form>
       <a href="/action/order?id_food_meeting=${param.id_food_meeting}" class="btn btn-primary order-food" role="button">Order food</a>  
     </div>
+    <div>
+        <input id="ss" type="submit" value="ajaaxxx"/>
+    </div>
   </jsp:body>
 </t:template>
+<script>
+    $("#ss").click(function (){
+        $.get("action/getallplaces")
+        .done(function(places) {
+            alert("its succesfull " + places.valueOf());
+        })
+        .fail(function(err) {
+            console.log('Error when deleting the order');
+            console.log(err);
+        });
+    });
+</script>

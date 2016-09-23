@@ -31,7 +31,7 @@ public class GetAllPlacesCommand implements CommandUnit {
     public Out execute(In parameters) throws Exception {
         connection = parameters.getConnection();
         
-        PreparedStatement preparedStatement = connection.prepareStatement("Select * from places order by created_at");
+        PreparedStatement preparedStatement = connection.prepareStatement("Select * from places");
         ResultSet resultSet = preparedStatement.executeQuery();
         List<Place> places = new ArrayList<>();
         while (resultSet.next()) {
@@ -42,7 +42,7 @@ public class GetAllPlacesCommand implements CommandUnit {
                     resultSet.getString("direction")));
         }
         
-        return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaginationResult(places)));
+        return OutBuilder.response("application/json", JsonConverter.objectToJSON(places));
     }
     
 }
