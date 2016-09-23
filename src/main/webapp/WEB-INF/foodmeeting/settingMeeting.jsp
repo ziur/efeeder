@@ -12,14 +12,6 @@
 <t:template>
     <jsp:attribute name="javascript">
         <script>
-            $('.datepicker').pickadate({
-                selectMonths: true,
-                selectYears: 15
-            });
-            $('#timepicker').pickatime({
-                autoclose: false,
-                twelvehour: false
-            });
             //Format date
             var time = moment($("#date").val()).format("HH:mm");
             $("#timepicker").val(time);
