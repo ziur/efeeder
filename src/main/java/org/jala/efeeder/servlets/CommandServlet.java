@@ -5,11 +5,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jala.efeeder.api.command.*;
-import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.api.database.DatabaseManager;
-import org.jala.efeeder.servlets.support.InBuilder;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +19,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 
@@ -57,7 +53,9 @@ public class CommandServlet extends HttpServlet {
             session.invalidate();
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
-        } else if (!request.getRequestURI().equals("/action/login") && session.getAttribute("user") == null) {
+        } else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
+                && !request.getRequestURI().equals("/action/CreateUser")
+            && session.getAttribute("user") == null) {
 
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
@@ -67,14 +65,15 @@ public class CommandServlet extends HttpServlet {
             In parameters = InBuilder.createIn(request);
 
             Out out = executor.executeCommand(parameters, getCommand(request)); 
-            if(!request.getRequestURI().equals("/action/login"))
+            if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
+                    && !request.getRequestURI().equals("/action/CreateUser"))
             {
                 out.addResult("showNavBar", true);
             }
                         
             if(out.getUser()!=null && session.getAttribute("user")==null)
             {                                
-                session.setAttribute("user", out.getUser());                                                
+                session.setAttribute("user", out.getUser());
             }
 
             if (out.getExitStatus() == ExitStatus.ERROR) {
