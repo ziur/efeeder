@@ -1,5 +1,6 @@
 package org.jala.efeeder.api.command.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,9 @@ public class DefaultIn implements In {
         if(!parameters.containsKey(key) || parameters.isEmpty()) {
             return null;
         }
-        return parameters.get(key).get(0);
+        String value = parameters.get(key).get(0);
+        value = new String(value.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        return value;
     }
 
     @Override
