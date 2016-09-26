@@ -66,6 +66,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-xs-4 right">
+                                    <button id="LoginCancel"  class="btn" >Cancel</button>
                                     <button class="btn btn-primary" type="submit">Add User</button>
                                 </div>
                             </div>

@@ -48,6 +48,7 @@
     <script src="/assets/js/lib/materialize.clockpicker.js"></script>
     
     <script src="/assets/js/foodMeetings.js"></script>
+    <script src="/assets/js/login.js"></script>
     
     <jsp:invoke fragment="javascript"/>
 
