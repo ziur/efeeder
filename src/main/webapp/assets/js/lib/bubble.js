@@ -406,8 +406,9 @@ function _updateFrame()
 
 function _resizeCanvas()
 {
-    CANVAS.width = CANVAS.parentNode.clientWidth;
-    CANVAS.height = CANVAS.parentNode.clientHeight;
+    CANVAS.width = CANVAS.clientWidth;
+    CANVAS.height = CANVAS.clientHeight;
+    particleSystem.resize();
 }
 
 function _startBubble()
@@ -415,12 +416,10 @@ function _startBubble()
 	CANVAS = document.getElementById('mainCanvas');
 	CTX = CANVAS.getContext('2d');
 	
-	_resizeCanvas();
-        
+       
 	window.addEventListener("resize",
 		function() {
 			_resizeCanvas();
-			particleSystem.resize();
 		},
 		false);        
 	
@@ -441,13 +440,9 @@ function _startBubble()
 	else
 	{
 		particleSystem = new ParticleSystem(JsonConfigurationText);
-	}	
+        }
+        
+	_resizeCanvas();        
 
 	_updateFrame();
 };
-
-window.addEventListener("load",
-    function() {
-        _startBubble();
-    },
-    false);
