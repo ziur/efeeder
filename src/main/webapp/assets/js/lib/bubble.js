@@ -446,9 +446,3 @@ function _startBubble()
 
 	_updateFrame();
 };
-
-window.addEventListener("load",
-    function() {
-        _startBubble();
-    },
-    false);

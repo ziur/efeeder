@@ -62,9 +62,14 @@
       
       
         var JsonConfigurationText ='{"chosen":0,"items":["test","test2"]}';
+        window.addEventListener("load",
+            function() {
+                _startBubble();
+            },
+            false);        
         
         </script>		
-        <script src="/assets/js/bubble.js">
+        <script src="/assets/js/lib/bubble.js">
         </script>        
     </script>
   </jsp:attribute>
@@ -77,8 +82,9 @@
     <input id="ss"type="submit" value="postAjax"/>
 </div>
 
-<div style="height:20px;"> </div>
-<canvas id="mainCanvas" style="width:82.5vw;height:65vh;"/>
+<div style="height:25px;"> </div>
+<canvas id="mainCanvas" style="width:82.3vw;height:75vh;"/>
+
 </jsp:body>
 </t:template>
 <script>
