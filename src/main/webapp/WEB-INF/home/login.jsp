@@ -5,9 +5,9 @@
 
 <t:template>
     <jsp:body>
-        <div class="row" style="margin-top: 10%;margin-left: 30%">
+        <div class="row" style="margin-top: 10%;">
             <div class="row">
-                <div class="col s12 m6">
+                <div class="col offset-m3 s12 m6">
                   <div class="card">
                     <div class="card-content">
                       <form role="form" action="login" method="post">                                                        
@@ -15,7 +15,7 @@
                                 <i class="large teal-text material-icons prefix">account_circle</i>
                             </div>
                             <div class="row">
-                                <h6 class='center thin grey-text'>Welcome to Efeeder!... wanna eat something?</h6>
+                                <h6 class='center lighten-1 grey-text'>Welcome to Efeeder!... wanna eat something?</h6>
                             </div> 
                             <div class="row">
                                 <div class="form-group col-xs-12 center-align">
@@ -35,13 +35,16 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-xs-4 right">
-                                    <a href="user">Create New User</a>
                                     <button class="btn btn-primary" type="submit">Login</button>
                                 </div>
                             </div>
                     </form>
                   </div>
                 </div>
+                <div class="row">
+                    <h6 class='right lighten-5 grey-text'>Don't you have an account yet?? <a href="user">Let's create one!</a></h6> 
+                </div>
+            </div>
         </div>
     </jsp:body>
 </t:template>
