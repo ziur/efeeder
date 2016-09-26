@@ -60,11 +60,9 @@
 		},
 		false);
       
-      
-        var JsonConfigurationText ='{"chosen":0,"items":["test","test2"]}';
         window.addEventListener("load",
             function() {
-                _startBubble();
+                _startBubble(JSON.parse('{"chosen":0,"items":["item1","item2"]}'));
             },
             false);        
         
