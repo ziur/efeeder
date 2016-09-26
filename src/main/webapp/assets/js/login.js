@@ -1,13 +1,14 @@
 $(document).ready(function () {
-
-	document.getElementById("LoginCancel").onclick = function () {
+	
+	
+	$("#CreateUserForm").validate();
+		
+	
+	
+	$("#LoginCancel").click(function () {
         location.href = "/action/login";
-    };
+    });
+	
+	
+	
 });
-
-        
-        
-        
-        
-      
-

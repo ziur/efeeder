@@ -15,7 +15,7 @@
                 <div class="col offset-m3 s12 m6">
                     <div class="card">
                         <div class="card-content">
-                            <form role="form" action="CreateUser" method="post">
+                            <form id="CreateUserForm" role="form" >
                                 <div class="row center-align">
                                     <i class="large teal-text material-icons prefix">account_circle</i>
                                 </div>
@@ -32,7 +32,7 @@
                                         <label for="last_name">Last Name.</label>
                                     </div>
                                     <div class="input-field col s12">                                        
-                                        <input class="form-control" id="email" type="text" name="email" required autocomplete="off"/>
+                                        <input class="form-control" id="email" type="email" name="email" required autocomplete="off"/>
                                         <label for="email">Email.</label>
                                     </div>
                                     <div class="input-field col s12">                                        
@@ -42,6 +42,10 @@
                                     <div class="input-field col s12">
                                         <input class="form-control" id="password" type="password" name="password" required/>
                                         <label for="pasword">Password.</label>
+                                    </div>
+                                    <div class="input-field col s12">
+                                        <input class="form-control" id="confirm_password" type="password" name="confirm_password" required/>
+                                        <label for="confirm_password">Confirm Password.</label>
                                     </div>
                                 </div>
                                 <div class="row">
