@@ -1,0 +1,17 @@
+.meetings-container {
+    margin-top: 90px;
+    margin-bottom: 200px;
+}
+
+.grid-item { 
+    padding: 10px;
+}
+
+.grid-item .card {     
+    box-shadow: 0;
+    transition: box-shadow 0.5s;
+}
+
+.grid-item .card:hover {
+    box-shadow: 0 0 10px #515151;
+}

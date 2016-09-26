@@ -1,27 +1,41 @@
 package org.jala.efeeder.api.command.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.user.User;
 
-import java.util.*;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by alejandro on 07-09-16.
  */
 public class DefaultOut implements Out {
+    private static final String HEADER_RESPONSE = "__HEADER_RESPONSE__";
+    public static final String CONTENT_TYPE = "contentType";
+    private static final String BODY_RESPONSE = "__BODY_RESPONSE__";
 
     private Map<MessageType, List<String>> messages;
     private ResponseAction responseAction;
     private Map<String, Object> context;
     private ExitStatus exitStatus;
+    @Setter @Getter private User user;
 
     public DefaultOut() {
+        Map<String, String> header = new HashMap<>();
         context = new HashMap<>();
         messages = new HashMap<>();
         responseAction = new ResponseAction();
         exitStatus = ExitStatus.SUCCESS;
+        context.put(HEADER_RESPONSE, header);
     }
 
     @Override
@@ -72,10 +86,31 @@ public class DefaultOut implements Out {
     }
 
     public Out redirect(String url) {
-        responseAction.setRedirect(true);
+        responseAction.setResponseType(ResponseAction.ResponseType.REDIRECT);
         responseAction.setUrl(url);
         return this;
     }
+
+    @Override
+    public void setBody(String body) {
+        context.put(BODY_RESPONSE, body);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        getHeaders().put(name, value);
+    }
+
+    @Override
+    public String getBody() {
+        return (String) context.get(BODY_RESPONSE);
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return (Map<String, String>) context.get(HEADER_RESPONSE);
+    }
+
 
     public Out forward(String page) {
         responseAction.setUrl(page);

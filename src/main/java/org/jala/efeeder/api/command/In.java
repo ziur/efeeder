@@ -3,6 +3,8 @@ package org.jala.efeeder.api.command;
 import java.sql.Connection;
 import java.util.List;
 
+import org.jala.efeeder.user.User;
+
 /**
  * Created by alejandro on 07-09-16.
  */
@@ -13,4 +15,6 @@ public interface In {
 
     void setConnection(Connection connection);
     Connection getConnection();
+    User getUser();
+    void setUser(User user);
 }

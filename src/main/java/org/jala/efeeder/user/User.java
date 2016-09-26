@@ -32,6 +32,11 @@ public class User {
         this.last_name = last_name;
     }
 
+    public User(int idUser, String nameUser) {
+        this.id = idUser;
+        this.name = nameUser;
+    }
+
     public String toString()
     {
     	return this.name + " " + this.last_name;

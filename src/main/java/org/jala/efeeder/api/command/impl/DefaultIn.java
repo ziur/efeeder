@@ -1,11 +1,15 @@
 package org.jala.efeeder.api.command.impl;
 
-import org.jala.efeeder.api.command.In;
-
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.user.User;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -13,6 +17,7 @@ import java.util.Map;
 public class DefaultIn implements In {
     private Connection connection;
     private final Map<String, List<String>> parameters;
+    @Setter @Getter private User user;
 
     public DefaultIn() {
         parameters = new HashMap<>();

@@ -11,7 +11,19 @@
 
 <t:template>
     <jsp:body>
-        <canvas id="mainCanvas" />
+        <div class="row">
+            <div class="col-md-12">
+                <canvas id="mainCanvas"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" id="comeBackId" class="btn btn-default">
+                    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+                    Come Back 
+                </button> 
+            </div>
+        </div>    
         <script>
             canvas = document.getElementById('mainCanvas');
             canvas.style.height = window.innerHeight * 0.85 + "px";
@@ -23,3 +35,10 @@
         </script>
     </jsp:body>        
 </t:template>
+
+<script>
+    $("#comeBackId").click(function() {
+        window.location.href = '/action/FoodMeeting'
+    });
+        
+</script>
