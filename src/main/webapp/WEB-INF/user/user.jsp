@@ -9,6 +9,10 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
+    <jsp:attribute name="javascript">
+        <script src="/assets/js/login.js"></script>
+    </jsp:attribute>
+    
     <jsp:body>
         <div class="row" style="margin-top: 10%;">
             <div class="row">

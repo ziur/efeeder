@@ -3,6 +3,10 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
+    <jsp:attribute name="javascript">
+        <script src="/assets/js/foodMeetings.js"></script>
+    </jsp:attribute>
+        
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
