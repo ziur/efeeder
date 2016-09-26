@@ -25,12 +25,13 @@ public class CreatePlaceCommand implements CommandUnit{
         Connection connection = parameters.getConnection();
         
          PreparedStatement stm = connection
-                .prepareStatement("insert into places(name, description, phone, direction) values(?, ?, ?, ?)");
+                .prepareStatement("insert into places(name, description, phone, direction, image_link) values(?, ?, ?, ?, ?)");
 
         stm.setString(1, parameters.getParameter("name"));
         stm.setString(2, parameters.getParameter("description"));
         stm.setString(3, parameters.getParameter("phone"));
         stm.setString(4, parameters.getParameter("direction"));
+        stm.setString(5, parameters.getParameter("image_link"));
         stm.executeUpdate();
         
         return OutBuilder.response("text/plain", "Its insert into places a new data");

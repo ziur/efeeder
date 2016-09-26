@@ -16,6 +16,7 @@
             <column name="direction" type="VARCHAR(120)">
                 <constraints nullable="false"/>
             </column>
+            <column name="image_link" type="VARCHAR(200)"/>
         </createTable>
     </changeSet>
 
@@ -47,6 +48,7 @@
             <column name="description" value="relleno"/>
             <column name="phone" value="4666666"/>
             <column name="direction" value="c/calama"/>
+            <column name="image_link" value="http://www.guiaji.com.bo/archivos/especialidad_74_image.jpg"/>
         </insert>
     </changeSet>
     
@@ -87,6 +89,7 @@
                 <column name="description" value="pollo frito con arroz branco"/>
                 <column name="phone" value="4556565"/>
                 <column name="direction" value="av/san martin"/>
+                <column name="image_link" value="http://3.bp.blogspot.com/-qN5kZKaQDI8/VaQXIVteKyI/AAAAAAAADK0/y14wMy_3xjk/s200/Pollos-Panchita-Review-Cochabamba-Logo.jpg"/>
         </insert>
     </changeSet>
     
