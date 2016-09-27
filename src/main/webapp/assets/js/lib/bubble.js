@@ -88,11 +88,12 @@ var DisplayParticle = function (particle)
 	this.name = particle.name;
 };
 
-var ParticleSystem = function (jsonData)
+// @param json must be an instance of JSON.parse('{}');
+var ParticleSystem = function (json)
 {
-	this.jsonString = jsonData;
-	this.json = JSON.parse(jsonData);
-	this.maxParticles = this.json.items.length;
+	//this.jsonString = jsonData;
+	//this.json = JSON.parse(jsonData);
+	this.maxParticles = json.items.length;
 	this.selected = this.maxParticles;
 	this.remaining = this.maxParticles;
 	this.particles = [];
@@ -105,8 +106,8 @@ var ParticleSystem = function (jsonData)
 		var p = new Particle();
 		p.randomizePosition();
 		p.randomizeColor();
-		p.name = this.json.items[i];
-		if (this.json.chosen === i)
+		p.name = json.items[i];
+		if (json.chosen === i)
 		{
 			p.charge *= 0.9;
 		}
@@ -406,48 +407,27 @@ function _updateFrame()
 
 function _resizeCanvas()
 {
-    CANVAS.width = CANVAS.parentNode.clientWidth;
-    CANVAS.height = CANVAS.parentNode.clientHeight;
+    CANVAS.width = CANVAS.clientWidth;
+    CANVAS.height = CANVAS.clientHeight;
+    particleSystem.resize();
 }
 
-function _startBubble()
+function _startBubble(jsonObject)
 {
 	CANVAS = document.getElementById('mainCanvas');
 	CTX = CANVAS.getContext('2d');
 	
-	_resizeCanvas();
-        
+       
 	window.addEventListener("resize",
 		function() {
 			_resizeCanvas();
-			particleSystem.resize();
 		},
 		false);        
 	
-	if (typeof JsonConfigurationText === 'undefined')
-	{
-		request = new XMLHttpRequest();
-		request.onreadystatechange = function () {
-			var DONE = this.DONE || 4;
-			if (this.readyState === DONE)
-			{
-				//_writeToScreen(request.responseText);
-				particleSystem = new ParticleSystem(request.responseText);
-			}
-		};	
-		request.open('GET', 'wheel');
-		request.send("");
-	}
-	else
-	{
-		particleSystem = new ParticleSystem(JsonConfigurationText);
-	}	
+
+        particleSystem = new ParticleSystem(jsonObject);
+        
+	_resizeCanvas();        
 
 	_updateFrame();
 };
-
-window.addEventListener("load",
-    function() {
-        _startBubble();
-    },
-    false);
