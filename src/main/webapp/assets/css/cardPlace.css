@@ -1,0 +1,178 @@
+/* left navbar wrapper */
+.left-nav-bar-prapper {
+    padding: 12px;
+    position: relative;
+}
+
+/* add new place wrapper*/
+.place-toggle-container {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%);
+}
+.add-new-place {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    background-color: #2bbbad;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .3s ease-out;
+}
+.add-new-place:hover {
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}
+.plus-icon {
+    font-size: 30px;
+    color: white;
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+/* form-place-container */
+.form-place-container {
+    padding: 10px;
+    display: none;
+    transition-property: all;
+    transition-duration: .5s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+.submit-place-button {
+    position: relative;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%);
+}
+
+/* placess container */
+.places-container {
+    /*padding: 10px;*/
+    position: relative;
+    top: 48px;
+}
+
+/* custom place card*/
+[class="container-img"] {
+  border: 1px #ffffff solid;
+  width: 78px;
+  height: 78px;
+  border-radius: 50px;
+  background-color: #ffffff;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 1px;
+  transition: background-size 200ms ease-in;
+  -moz-transition: background-size 200ms ease-in;
+  -web-kit-transition: background-size 200ms ease-in;
+}
+[class="border-gray"] {
+  border: 1px  #DEDEDE solid;
+  width: 78px;
+  height: 78px;
+  border-radius: 60px;
+  display: table-cell;
+  vertical-align: middle;
+  overflow: hidden;
+  text-align: center;
+  margin: 1px 16px;
+}
+[class="container-card"] {
+  background-color: transparent;
+  height: 80px;
+  margin: 5px;
+  float: left;
+  display: table;
+  color: #303030;
+  width: 322px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;[class="container-img"] {
+  border: 1px #ffffff solid;
+  width: 78px;
+  height: 78px;
+  border-radius: 50px;
+  background-color: #ffffff;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 1px;
+  transition: background-size 200ms ease-in;
+  -moz-transition: background-size 200ms ease-in;
+  -web-kit-transition: background-size 200ms ease-in;
+}
+[class="border-gray"] {
+  border: 1px  #DEDEDE solid;
+  width: 78px;
+  height: 78px;
+  border-radius: 60px;
+  display: table-cell;
+  vertical-align: middle;
+  overflow: hidden;
+  text-align: center;
+  margin: 1px 16px;
+}
+[class="container-card"] {
+  background-color: transparent;
+  height: 80px;
+  margin: 5px;
+  float: left;
+  display: table;
+  color: #303030;
+  width: 322px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+[class="container-card"]:hover {
+  color: #3287ff;
+  cursor: default;
+  -webkit-transition: color 200ms;
+  -moz-transition: color 200ms;
+  -o-transition: color 200ms;
+  -ms-transition: color 200ms;
+  transition: color 200ms;
+}
+}
+[class="container-card"]:hover {
+  color: #3287ff;
+  cursor: default;
+  -webkit-transition: color 200ms;
+  -moz-transition: color 200ms;
+  -o-transition: color 200ms;
+  -ms-transition: color 200ms;
+  transition: color 200ms;
+}
+.containerinformation {
+  height: 80px;
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 16px;
+}
+.card-data {
+  font-family: "DINNextRoundedLTPro-Regular";
+  font-size: 12px;
+}
+.card-name {
+  font-family: "DINNextRoundedLTPro-Light";
+  font-size: 16px;
+}
+.card-place {
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+}
+.card-place:hover {
+    background-color: #e0e0e0;
+}
+

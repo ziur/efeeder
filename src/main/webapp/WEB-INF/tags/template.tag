@@ -21,7 +21,26 @@
     <link href="/assets/css/foodMeetings.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/materialize.css">
     <link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
+    <link rel="stylesheet" href="/assets/css/cardPlace.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    
+    <script src="/assets/js/lib/jquery.js"></script>
+    <script src="/assets/js/lib/bootstrap.js"></script>
+    <script src="/assets/js/lib/datatables.min.js"></script>
+    <script src="/assets/js/lib/lodash.js"></script>
+    <script src="/assets/js/lib/select2.js"></script>
+    <script src="/assets/js/lib/jsrender.js"></script>
+    <script src="/assets/js/lib/masonry.min.js"></script>
+    <script src="/assets/js/lib/imagesLoaded.min.js"></script>
+    <script src="/assets/js/lib/moment.min.js"></script>
+    <script src="/assets/js/lib/materialize.js"></script>
+    <script src="/assets/js/lib/materialize.clockpicker.js"></script>
+    <script src="/assets/js/lib/jquery.validate.js"></script>
+    <script src="/assets/js/placeCard.js"></script>
+    <script src="/assets/js/toggleNewPlace.js"></script>
+    <jsp:invoke fragment="javascript"/>
+    
   </head>
 
   <body>
@@ -36,7 +55,7 @@
     
 
 
-    <script src="/assets/js/lib/jquery.js"></script>
+    <!--script src="/assets/js/lib/jquery.js"></script>
     <script src="/assets/js/lib/bootstrap.js"></script>
     <script src="/assets/js/lib/datatables.min.js"></script>
     <script src="/assets/js/lib/lodash.js"></script>
@@ -48,8 +67,8 @@
     <script src="/assets/js/lib/materialize.js"></script>
     <script src="/assets/js/lib/materialize.clockpicker.js"></script>
     <script src="/assets/js/lib/jquery.validate.js"></script>
-    
-    <jsp:invoke fragment="javascript"/>
+    <script src="/assets/js/placeCard.js"></script>
+    <script src="/assets/js/toggleNewPlace.js"></script-->
 
   </body>
 </html>

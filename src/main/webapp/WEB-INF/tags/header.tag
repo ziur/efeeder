@@ -1,5 +1,4 @@
 <%@tag description="Header Tag" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:if test="${showNavBar}">  
     <nav class="light-blue lighten-1" role="navigation">
