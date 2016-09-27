@@ -40,7 +40,7 @@
                     <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
-                                <img  class="meeting-img" data-meeting-id="${foodMeeting.id}" src="${foodMeeting.imageLink}">
+                                <img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">
                             </div>
                             <div class="card-content">
                                 <span class="card-title activator grey-text text-darken-4">

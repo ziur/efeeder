@@ -2,7 +2,6 @@ package org.jala.efeeder.foodmeeting;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -25,8 +24,8 @@ import org.joda.time.format.DateTimeFormatter;
 public class CreateFoodMeetingCommand implements CommandUnit {
 
 
-    private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, event_date, created_at) "
-            + "values(?, ?, ?, ?)";
+    private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
+            + "values(?, ?, ?, ?, ?)";
 
     @Override
     public Out execute(In parameters) throws Exception {
@@ -46,8 +45,9 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
         stm.setString(1, parameters.getParameter("meeting_name"));
         stm.setString(2, "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg");
-        stm.setTimestamp(3, eventDate);
-        stm.setTimestamp(4, createdAt);
+        stm.setString(3, "Places");
+        stm.setTimestamp(4, eventDate);
+        stm.setTimestamp(5, createdAt);
 
         stm.executeUpdate();
 

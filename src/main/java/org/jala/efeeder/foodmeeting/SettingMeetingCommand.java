@@ -7,9 +7,9 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -39,7 +39,7 @@ public class SettingMeetingCommand implements CommandUnit {
         }
 
         out.addResult("foodMeeting", foodMeeting);
-        
+
         out.forward("foodmeeting/settingMeeting.jsp");
 
         return out;

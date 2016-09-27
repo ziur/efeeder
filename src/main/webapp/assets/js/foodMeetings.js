@@ -13,7 +13,8 @@ $(document).ready(function () {
     });
 
     $(".meeting-img").click(function () {
-        window.location.href = '/action/suggestions?id_food_meeting=' +
+        var page = $(this).data("meetingStatus") == "Places" ? "suggestions" : "suggestions";
+        window.location.href = '/action/'+page+'?id_food_meeting=' +
         $(this).data("meetingId");
     });
 
@@ -27,7 +28,7 @@ $(document).ready(function () {
             });
         });
 
-    $(".quick-view-date").each(function(){                           
+    $(".quick-view-date").each(function(){
         $(this).text(moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").calendar());
     });
 
@@ -60,7 +61,7 @@ $(document).ready(function () {
             time: "Please enter a time",
         }
     });
-    
+
     $("#addMeeting").submit(function (event) {
 
         event.preventDefault();
