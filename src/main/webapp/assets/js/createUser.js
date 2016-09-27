@@ -6,6 +6,8 @@ $(document).ready(function () {
               if (placement) {
                 $(placement).append(error)
               } else {
+                $(error).addClass("red-text");
+                $(element).addClass("invalid ");
                 error.insertAfter(element);
               }
         },

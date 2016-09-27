@@ -20,7 +20,7 @@
                 <div class="col offset-m3 s12 m6">
                     <div class="card">
                         <div class="card-content">
-                            <form id="CreateUserForm" role="form" >
+                            <form id="CreateUserForm" role="form" action="CreateUser">
                                 <div class="row center-align">
                                     <i class="large teal-text material-icons prefix">account_circle</i>
                                 </div>
@@ -45,8 +45,8 @@
                                         <label for="username">User name.</label>
                                     </div>
                                     <div class="input-field col s12">
-                                        <input id="password" type="password" name="password" />
-                                        <label class="validate" for="pasword">Password.</label>
+                                        <input class="validate" id="password" type="password" name="password" />
+                                        <label for="pasword">Password.</label>
                                     </div>
                                     <div class="input-field col s12">
                                         <input class="validate" id="confirm_password" type="password" name="confirm_password" />
@@ -55,8 +55,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="right">
-                                        <button id="LoginCancel" class="btn btn-primary" type="button">Cancel</button>      
-                                        <button class="btn btn-primary" type="submit">Add User</button>                                    
+                                        <button id="LoginCancel" class="btn btn-primary" type="button">Cancel</button>
+                                        <button class="btn btn-primary" type="submit">Add User</button>
                                     </div>
                                 </div>
                             </form>
