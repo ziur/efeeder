@@ -3,6 +3,7 @@ package org.jala.efeeder.suggestion;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -23,25 +24,98 @@ public class createSuggestionCommand implements CommandUnit {
     public Out execute(In parameters) throws Exception {
         Connection connection = parameters.getConnection();
         PreparedStatement stm;
-        int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
-        int idPlace = Integer.parseInt(parameters.getParameter("id_place"));
-        int idUser = Integer.parseInt(parameters.getParameter("id_user"));
         
-        if (idPlace <= 0) {
-            stm = connection.prepareStatement("delete from food_meeting_user where id_user=? and id_food_meeting=?");
-            stm.setInt(1, idUser);
+        String parameter = "";
+        int idFoodMeeting = -1;
+        try
+        {
+            parameter = parameters.getParameter("id_food_meeting");
+            idFoodMeeting = Integer.parseInt(parameter);
+            stm = connection.prepareStatement("select id from food_meeting where id=?");
             stm.setInt(1, idFoodMeeting);
             stm.executeQuery();
-            return OutBuilder.response("text/plain", "Its out of the suggestions");
+        }
+        catch (NumberFormatException | SQLException e)
+        {
+            return OutBuilder.response("text/plain", "Invalid food meeting id: " +
+                    parameter + ". " + e.toString());
+        }  
+        
+        int idPlace;
+        try 
+        {
+            parameter = parameters.getParameter("id_place");
+            idPlace = Integer.parseInt(parameter);
+            if (idPlace >= 0)
+            {
+                stm = connection.prepareStatement("select id from places where id=?");
+                stm.setInt(1, idPlace);
+                stm.executeQuery();     
+            } 
+        }
+        catch (NumberFormatException e)
+        {
+            idPlace = -1;
+        }    
+        catch (SQLException e)
+        {
+            return OutBuilder.response("text/plain", "Invalid place id " +
+                            parameter + ". " + e.toString());            
+        }
+        
+       
+        int idUser;
+        try
+        {
+            parameter = parameters.getParameter("id_user");
+            idUser = Integer.parseInt(parameter);
+            stm = connection.prepareStatement("select id from user where id=?");
+            stm.setInt(1, idUser);
+            stm.executeQuery();
+        }
+        catch (NumberFormatException | SQLException e)
+        {
+            return OutBuilder.response("text/plain", "Invalid user id " +
+                    parameter + ". " + e.toString());
+        }        
+        
+        stm = connection.prepareStatement(
+                "delete from food_meeting_user where id_user=? and id_food_meeting=?");
+        stm.setInt(1, idUser);
+        stm.setInt(2, idFoodMeeting);
+        try
+        {
+            stm.executeUpdate();
+        }
+        catch (Exception e)
+        {
+            if (idPlace < 0)
+            {
+                return OutBuilder.response("text/plain", "Failed to remove: " + e.toString());
+            }
         }
 
-        stm = connection
-                .prepareStatement("insert into food_meeting_user(id_food_meeting, id_user, id_place) values(?, ?, ?)");
-        stm.setInt(1, idFoodMeeting);
-        stm.setInt(2, idUser);
-        stm.setInt(3, idPlace);
-        stm.executeUpdate();
+        if (idPlace >= 0) {
+            stm = connection.prepareStatement(
+                    "insert into food_meeting_user(id_food_meeting, id_user, id_place) values(?, ?, ?)");
+            stm.setInt(1, idFoodMeeting);
+            stm.setInt(2, idUser);
+            stm.setInt(3, idPlace);
+            try
+            {
+                stm.executeUpdate();
+                return OutBuilder.response("text/plain", "Inserted user id " +
+                    idUser + ", place id " + idPlace +
+                    " to food meeting id " + idFoodMeeting);
+            }
+            catch (Exception e)
+            {
+                return OutBuilder.response("text/plain", "Failed to insert: " + e.toString());
+            }
+        }
 
-        return OutBuilder.response("text/plain", "Its insert into food_meeting_user a new data");
+        return OutBuilder.response("text/plain", "Removed user id " + 
+                idUser + " from food meeting id " + 
+                idFoodMeeting);
     }
 }

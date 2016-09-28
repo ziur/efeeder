@@ -43,7 +43,7 @@ public class getUserAndPLaceByFoodMeetingCommand implements CommandUnit {
         }
         
         ps = connection.prepareStatement(
-                "select places.id,places.name,places.description,places.phone,places.direction,places.image_link from food_meeting_user,places where food_meeting_user.id_food_meeting=? and food_meeting_user.id_place=places.id");
+                "SELECT DISTINCT places.id,places.name,places.description,places.phone,places.direction,places.image_link FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id");
         ps.setInt(1, idFoodMeeting);
         resSet = ps.executeQuery();
         
