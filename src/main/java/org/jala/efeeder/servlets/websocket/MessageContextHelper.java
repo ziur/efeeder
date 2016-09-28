@@ -4,19 +4,17 @@ import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.codehaus.plexus.util.StringOutputStream;
-import org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
-import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by alejandro on 21-09-16.
  */
 public class MessageContextHelper {
+    private final static Logger log = Logger.getLogger(MessageContextHelper.class.toString());
+
     public static String serialize(MessageContext messageContext) {
         try {
             StringOutputStream out = new StringOutputStream();
@@ -28,7 +26,7 @@ public class MessageContextHelper {
             out.close();
             return out.toString();
         } catch (IOException e) {
-            System.out.println("Error writing Avro");
+            log.severe("Error serializing Avro" + e.getMessage());
         }
         return null;
     }
@@ -39,7 +37,7 @@ public class MessageContextHelper {
             Decoder decoder = DecoderFactory.get().jsonDecoder(MessageContext.getClassSchema(), message);
             return reader.read(null, decoder);
         } catch (IOException e) {
-            System.out.println("Error writing Avro");
+            log.severe("Error deserialing Avro: " + e.getMessage());
         }
         return null;
     }
