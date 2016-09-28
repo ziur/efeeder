@@ -31,6 +31,8 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 
+import org.jala.efeeder.user.User;
+
 /**
  * Created by alejandro on 07-09-16.
  */
@@ -51,7 +53,7 @@ public class CommandServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
+                                                                                                      IOException {
         processRequest(request, response);
     }
 
@@ -61,7 +63,7 @@ public class CommandServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -97,7 +99,7 @@ public class CommandServlet extends HttpServlet {
 
         } else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
                 && !request.getRequestURI().equals("/action/CreateUser")
-                && session.getAttribute("user") == null) {
+            && session.getAttribute("user") == null) {
 
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
@@ -105,19 +107,21 @@ public class CommandServlet extends HttpServlet {
             DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
             In parameters = InBuilder.createIn(request);
-
-            Out out = executor.executeCommand(parameters, getCommand(request));
+            parameters.setUser(User.class.cast(session.getAttribute("user")));
+            Out out = executor.executeCommand(parameters, getCommand(request)); 
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-                    && !request.getRequestURI().equals("/action/CreateUser")) {
+                    && !request.getRequestURI().equals("/action/CreateUser"))
+            {
                 out.addResult("showNavBar", true);
             }
-
-            if (out.getUser() != null && session.getAttribute("user") == null) {
+                        
+            if(out.getUser()!=null && session.getAttribute("user")==null)
+            {                                
                 session.setAttribute("user", out.getUser());
             }
 
             if (out.getExitStatus() == ExitStatus.ERROR) {
-                for (String msg : out.getMessages(MessageType.ERROR)) {
+                for(String msg: out.getMessages(MessageType.ERROR)){
                     System.out.println("ERROR:" + msg);
                 }
             }
@@ -154,7 +158,7 @@ public class CommandServlet extends HttpServlet {
                 break;
             case MESSAGE:
                 String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-                for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+                for(Map.Entry<String, String> header : out.getHeaders().entrySet()) {
                     response.addHeader(header.getKey(), header.getValue());
                 }
                 response.setContentType(contentType);
@@ -162,10 +166,11 @@ public class CommandServlet extends HttpServlet {
         }
 
     }
+    
 
     private CommandUnit getCommand(HttpServletRequest req) {
-        CommandFactory commandFactory
-                = (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
+        CommandFactory commandFactory =
+                (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
         Matcher matcher = COMMAND_PATTERN.matcher(req.getRequestURI());
 
         if (!matcher.matches()) {

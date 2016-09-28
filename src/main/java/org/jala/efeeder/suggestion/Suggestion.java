@@ -1,89 +1,26 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.jala.efeeder.suggestion;
 
-import java.sql.Date;
+import lombok.Data;
+import java.util.List;
 
 /**
  *
- * @author Amir
+ * @author 0x3
  */
+@Data 
 public class Suggestion {
-
-    private int id;
-    private int idUser;
-    private int idFoodMeeting;
-    private String place;
-    private String description;
-    private Date createdAt;
-    private int vote;
-    public Suggestion() {
-        this(0, 0, 0, null, null, null, 0);
-    }
-
-    public Suggestion(int id, int idUser, int idFoodMeeting, String place, String description, Date createdAt, int vote) {
-        this.id = id;
-        this.idUser = idUser;
-        this.idFoodMeeting = idFoodMeeting;
-        this.place = place;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.vote = vote;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
-
-    public int getIdFoodMeeting() {
-        return idFoodMeeting;
-    }
-
-    public void setIdFoodMeeting(int idFoodMeeting) {
-        this.idFoodMeeting = idFoodMeeting;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public int getVote() {
-        return vote;
-    }
-
-    public void setVote(int vote) {
-        this.vote = vote;
-    }
+    private List<UserAndPlace> userList;
+    private List<Place> placeList;
+    private int userId;
     
-    
+    public Suggestion(List<UserAndPlace> userList, List<Place> placeList, int userId) {
+        this.userList = userList;
+        this.placeList = placeList;
+        this.userId = userId;
+    }
 }

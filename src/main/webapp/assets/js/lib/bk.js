@@ -1,0 +1,1340 @@
+'use strict';
+
+let BkCoord = function(x, y, w, h, z = 0, type = 0)
+{
+	// x,y denotes the center of the object
+	// w,h are the dimensions of the object
+	// z is the z order of the object for drawing
+	// type is the type of coordinates
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	this.w = w;
+	this.h = h;
+	this.type = type;
+	
+	// Type 0:
+	// x, y, w, h are absolute and movable
+	// x is guaranteed to be in screen for [-ratio..ratio]
+	// y is guaranteed to be in screen for [-1..1]
+	// Type 0 can become Type 1 if the object is docked to borders
+	// Type 0 can become Type 2 if the object is docked to center
+
+	// Type 1:
+	// x, y are relative to the borders and movable
+	// x positive is anchored to the left
+	// x negative is anchored to the right
+	// y positive is anchored to the top
+	// y negative is anchored to the bottom
+	// x, y negative can use -0.
+	// w, h are absolute
+	// x is guaranteed to be in screen for [-ratio..ratio]
+	// y is guaranteed to be in screen for [-1..1]
+	// h, w are proportional to current canvas dimensions
+	// Type 1 can become Type 0 if the object is undocked
+	
+	// Type 6:
+	// x, y, w, h are relative to current canvas dimensions and fixed
+	// x, y are guaranteed to be in screen for [0..1]
+	// if x, y are negative [-1..0[ they are relative to right or bottom.
+	// h, w are proportional to the current smaller canvas dimension
+	
+	// Type 7:
+	// x, y, w, h are relative to current canvas dimensions and fixed
+	// if x, y are negative [-1..0[ they are relative to right or bottom.
+	// x, y are guaranteed to be in screen for [0..1]
+	// h, w are proportional to current canvas dimensions
+	
+	// Type 8 and later:
+	// Automatic distribution of objects
+	// x defines an order and it is displayed depending on type:
+	//   8: Higher orders are displayed in the middle in bigger size.
+	// y contains {x, y} normalized to current size, order and scale
+	// sx [0..1[ 
+	// sy floor([0..1[ * 1048576)
+	// y = sx + sy
+	// w contains {w, h} preferred absolute size [0..16[
+	// sw [0..16[ * 1/16
+	// sh floor([0..16[ * 1/16 * 1048576)
+	// w = sw + sh
+	// h contains {w, h} normalized to current size, order and scale
+	// sw [0..1[ 
+	// sh floor([0..1[ * 1048576)
+	// h = sw + sh
+	// Type 2 can become Type 0 if the object is undocked
+}
+
+const BKCOORD_P_HIGH = 1048576;
+const BKCOORD_P_D_FACTOR = 16;
+
+const BKCOORD_P_INV_HIGH = 1 / BKCOORD_P_HIGH;
+const BKCOORD_P_D_INV_FACTOR = 1 / BKCOORD_P_D_FACTOR;
+const BKCOORD_P_P_HIGH = (BKCOORD_P_HIGH - 1) / BKCOORD_P_HIGH;
+const BKCOORD_P_D_HIGH = BKCOORD_P_D_FACTOR * BKCOORD_P_P_HIGH;
+
+function BkCoordDimToNum(w, h)
+{
+	if (w < 0) w = 0;
+	if (w > BKCOORD_P_D_HIGH) w = BKCOORD_P_D_HIGH;
+	if (h < 0) h = 0;
+	if (h > BKCOORD_P_D_HIGH) h = BKCOORD_P_D_HIGH;
+	w *= BKCOORD_P_D_INV_FACTOR;
+	h *= BKCOORD_P_D_INV_FACTOR;
+	return Math.floor(h * BKCOORD_P_HIGH) + w;
+}
+
+function BkCoordNumToDim(n)
+{
+	let x = n;
+	let y = Math.floor(x);
+	x -= y;
+	y *= BKCOORD_P_INV_HIGH;
+	x *= BKCOORD_P_D_FACTOR;
+	y *= BKCOORD_P_D_FACTOR;
+	return {w:x, h:y};
+}
+
+function BkCoordPosToNum(x, y)
+{
+	if (x < 0) x = 0;
+	if (x > BKCOORD_P_P_HIGH) x = BKCOORD_P_P_HIGH;
+	if (y < 0) y = 0;
+	if (y > BKCOORD_P_P_HIGH) y = BKCOORD_P_P_HIGH;
+	return Math.floor(y * BKCOORD_P_HIGH) + x;
+}
+
+function BkCoordNumToPos(n)
+{
+	let x = n;
+	let y = Math.floor(x);
+	x -= y;
+	y *= BKCOORD_P_INV_HIGH;
+	return {x:x, y:y};
+}
+
+BkCoord.prototype.toScreen = function(transform)
+{
+	if (this.type === 0)
+	{
+		let scale = transform.scale;
+		return new BkCoord(
+			this.x * scale + transform.dx,
+			this.y * scale + transform.dy,
+			this.w * scale,
+			this.h * scale,
+			this.z);
+	}
+	else if (this.type >= 8)
+	{
+		let sw = transform.dx * 2;
+		let sh = transform.dy * 2;
+		
+		let x = this.y;
+		let y = Math.floor(x);
+		x -= y;
+		y *= BKCOORD_P_INV_HIGH;
+		
+		let w = this.h;
+		let h = Math.floor(w);
+		w = w - h;
+		h *= BKCOORD_P_INV_HIGH;
+		
+		return new BkCoord(
+			x * sw,
+			y * sh,
+			w * sw * BKCOORD_P_D_FACTOR,
+			h * sh * BKCOORD_P_D_FACTOR,
+			this.z);
+	}
+	else if (this.type === 6)
+	{
+		let sw = transform.dx * 2;
+		let sh = transform.dy * 2;
+		let sm = sw < sh ? sw : sh;
+		let w = this.w;
+		let h = this.h;
+		return new BkCoord(
+			(this.x + ((this.x < 0) ? (1 - w * 0.5) : (w * 0.5))) * sm,
+			(this.y + ((this.y < 0) ? (1 - h * 0.5) : (h * 0.5))) * sm,
+			w * sm,
+			h * sm,
+			this.z);
+	}
+	else if (this.type === 7)
+	{
+		let sw = transform.dx * 2;
+		let sh = transform.dy * 2;
+		let w = this.w;
+		let h = this.h;
+		return new BkCoord(
+			(this.x + ((this.x < 0) ? (1 - w * 0.5) : (w * 0.5))) * sw,
+			(this.y + ((this.y < 0) ? (1 - h * 0.5) : (h * 0.5))) * sh,
+			w * sw,
+			h * sh,
+			this.z);
+	}	
+	return null;
+}
+
+BkCoord.prototype.toAbsolute = function(transform)
+{
+	// Only for non absolute coordinates
+	if (this.type >= 8)
+	{
+		let scale = transform.invScale;
+		let sw = transform.dx * 2;
+		let sh = transform.dy * 2;
+		
+		let x = this.y;
+		let y = Math.floor(x);
+		x -= y;
+		y *= BKCOORD_P_INV_HIGH;
+		
+		let w = this.h;
+		let h = Math.floor(w);
+		w = w - h;
+		h *= BKCOORD_P_INV_HIGH;
+		
+		return new BkCoord(
+			(x * sw - transform.dx) * scale,
+			(y * sh - transform.dy) * scale,
+			(w * sw) * scale * BKCOORD_P_D_FACTOR,
+			(h * sh) * scale * BKCOORD_P_D_FACTOR,
+			this.z);
+	}
+	else if (this.type === 6)
+	{
+		let scale = 2.0 * transform.invScale;
+		let sw = transform.dx * scale;
+		let sh = transform.dy * scale;
+		let sm = sw < sh ? sw : sh;
+		let w = this.w * sm;
+		let h = this.h * sm;
+
+		return new BkCoord(
+			(this.x + (this.x < 0 ? 1 : 0) - 0.5) * sw,
+			(this.y + (this.y < 0 ? 1 : 0) - 0.5) * sh,
+			w,
+			h,
+			this.z);
+	}
+	else if (this.type === 7)
+	{
+		let scale = 2.0 * transform.invScale;
+		let sw = transform.dx * scale;
+		let sh = transform.dy * scale;
+		let w = this.w;
+		let h = this.h;
+
+		return new BkCoord(
+			(this.x + ((this.x < 0) ? (1 - w * 0.5) : (w * 0.5)) - 0.5) * sw,
+			(this.y + ((this.y < 0) ? (1 - h * 0.5) : (h * 0.5)) - 0.5) * sh,
+			w * sw,
+			h * sh,
+			this.z);
+	}
+	return null;
+}
+
+BkCoord.prototype.fromScreen = function(transform)
+{
+	// Only for absolute coordinates
+	if (this.type !== 0) return null;
+	
+	let scale = transform.invScale;
+	return new BkCoord(
+		(this.x - transform.dx) * scale,
+		(this.y - transform.dy) * scale,
+		this.w * scale,
+		this.h * scale,
+		this.z);
+}
+
+BkCoord.prototype.anisotropicGrow = function(scale)
+{
+	// Only for absolute coordinates
+	if (this.type !== 0) return null;
+	
+	let amount = this.w < this.h ? this.w : this.h;
+	amount *= scale - 1;
+	return new BkCoord(
+		this.x,
+		this.y,
+		this.w + amount,
+		this.h + amount,
+		this.z);
+}
+
+let BkObject = function(coord)
+{
+	if (typeof BkObject.counter == 'undefined') BkObject.counter = 0;
+	this._id = BkObject.counter++;
+	this.coord = coord;
+}
+
+BkObject.prototype.resize = function()
+{
+}
+
+BkObject.prototype.draw = function()
+{
+}
+
+let BkTransform = function(width, height, ratio)
+{
+	this.resize(width, height, ratio);
+}
+
+BkTransform.prototype.resize = function(width, height, ratio)
+{
+	this.dx = Math.floor(width * 0.5);
+	this.dy = Math.floor(height * 0.5);
+	let newRatio = this.dx / this.dy;
+	this.scale = (newRatio < ratio) ? (this.dx / ratio) : this.dy;
+	this.invScale = 1 / this.scale;
+}
+
+let BkSystem = function(canvasName, ratio = null)
+{
+	this.item = [];
+	this.selected = -1;
+	this.selectedDx = 0;
+	this.selectedDy = 0;
+	this.transform = new BkTransform(1, 1, 1);
+	this.canvas = document.getElementById(canvasName);
+	this.ctx = this.canvas.getContext('2d');
+	this.ratio = (ratio !== null) ? ratio : (window.screen.width / window.screen.height);
+	
+	this.redraw = false;
+	this.mouse = {
+		button: 0,
+		action: 0,
+		x0: 0,
+		y0: 0,
+		x: 0,
+		y: 0
+	};
+	
+	this.bgImg = null;
+	this.resize();
+};
+
+BkSystem.prototype.resize = function()
+{
+	this.width = this.canvas.clientWidth;
+	this.height = this.canvas.clientHeight;
+	this.canvas.width = this.width;
+	this.canvas.height = this.height;
+	this.coord = new BkCoord(this.width * 0.5, this.height * 0.5, this.width, this.height);
+
+	this.transform.resize(this.width, this.height, this.ratio);
+	
+	this.redistribute(false);
+	
+	// Execute custom resize for each UI object
+	let count = this.item.length;
+	for (let i = 0; i < count; ++i)
+	{
+		this.item[i].resize();
+	}
+
+	this.draw();
+}
+
+BkSystem.prototype.setBackgroundImage = function(src)
+{
+	if (this.bgImg === null)
+	{
+		this.bgImg = new Image();
+		this.bgImg.src = src;
+		this.bgImg.addEventListener("load", this.onLoad.bind(this), false);
+	}
+}
+
+function _getDivisorsCloseToRatio(n, ratio) 
+{
+	//console.log("n: " + n + ", r: " + ratio);
+	if (n <= 1) return {w:1, h:1};
+		
+	let sqrtN = Math.sqrt(n);
+	let sqrtInvRatio = Math.sqrt(1 / ratio);
+	let w = sqrtN * sqrtInvRatio * ratio;
+	let h = sqrtN * sqrtInvRatio;
+	//console.log("w: " + w + ", h: " + h);
+	
+	w = Math.floor(w);
+	h = Math.floor(h);
+	
+	if (w < 1) 
+	{
+		return {w:1, h:n};
+	}
+	if (h < 1) 
+	{
+		return {w:n, h:1};
+	}
+	
+	if (w * h < n)
+	{
+		if (ratio > 1)
+		{
+			++w;
+			if ((h * w) < n)
+			{
+				--w;
+				++h;
+				if ((h * w) < n)
+				{
+					++w;
+				}
+			}
+		}
+		else
+		{
+			++h;
+			if ((h * w) < n)
+			{
+				--h;
+				++w;
+				if ((h * w) < n)
+				{
+					++h;
+				}
+			}
+		}
+	}
+	
+	while ((h * w) >= (n + w))
+	{
+		--h;
+	}
+	
+	while ((h * w) >= (n + h))
+	{
+		--w;
+	}	
+
+	//console.log("w: " + w + ", h: " + h);
+	return {w:w, h:h};
+}
+
+BkSystem.prototype.redistribute = function(resizeAndRedraw = true)
+{
+	// Update calculable coordinates
+
+	let selectedIdx = -1;
+	let objects = [];
+	{
+		const count = this.item.length;
+		for (let i = 0; i < count; ++i)
+		{
+			if (this.item[i].coord.type >= 8)
+			{
+				if (i === this.selected)
+				{
+					selectedIdx = objects.length;
+					console.log(selectedIdx);
+				}
+				objects.push(this.item[i]);
+			}
+		}
+	}
+	
+	const count = objects.length;
+	if (count <= 0) return;
+	
+	objects.sort(function(a, b) {
+		return a.coord.x - b.coord.x;
+	});
+	
+	let c = objects[0].coord;
+	let preferredDim = BkCoordNumToDim(c.w);
+	let preferredRatio = preferredDim.w / preferredDim.h;
+	
+	
+	let minorDim = this.width < this.height ? this.width : this.height;
+	let padding = 0.04 * minorDim;
+	let paddingH = padding / this.height;
+	let paddingW = padding / this.width;
+	
+	//let dim = _getDivisorsCloseToRatio(count, this.width / (this.height * preferredRatio));
+	let dim = _getDivisorsCloseToRatio(count, this.width / (this.height * preferredRatio));
+	
+	//console.log(this.width / (this.height * preferredRatio));
+	
+	let cellH = ((1 - paddingH) / dim.h) - paddingH;
+	
+	/*
+	1 = (w + p) * n + p
+	1 - p = (w + p) * n
+	(1 - p) / n = w + p
+	((1 - p) / n) - p = w
+	*/
+	
+	let index = count - 1;
+	for (let j = 0; j < dim.h; ++j)
+	{
+		let rowCols = dim.w;
+		
+		if (((j + 1) * dim.w) > count)
+		{
+			rowCols = count - (j * dim.w);
+		}
+		
+		let cellW = ((1 - paddingW) / rowCols) - paddingW;
+
+		for (let i = 0; i < dim.w; ++i)
+		{
+			if (index < 0) break;
+			
+			let selectedFactor = (index === selectedIdx) ? (cellW + paddingW) / cellW : 1;
+			
+			let c = objects[index].coord;
+			c.h = BkCoordDimToNum(cellW * selectedFactor, cellH * selectedFactor);
+			c.y = BkCoordPosToNum((cellW + paddingW) * (rowCols - 1 - i) + paddingW + cellW * 0.5, (cellH + paddingH) * (dim.h - 1 - j) + paddingH + cellH * 0.5);
+			
+			--index;
+		}
+	}
+	
+	if (resizeAndRedraw)
+	{
+		for (let i = 0; i < count; ++i)
+		{
+			objects[i].resize();
+		}
+		
+		this.redraw = true;
+	}
+}
+
+let BkSystemInstancesList = [];
+
+function BkMainUpdateFrame()
+{
+	for (let i of BkSystemInstancesList)
+	{
+		if (i.redraw) i.draw();
+	}
+
+	window.requestAnimationFrame(BkMainUpdateFrame);
+}
+
+BkSystem.prototype.run = function()
+{
+	let first = BkSystemInstancesList.length === 0;
+	
+	
+	window.addEventListener("resize", this.resize.bind(this), false);
+	
+	
+	BkSystemInstancesList.push(this);
+	
+	if (first) BkMainUpdateFrame();
+}
+
+
+BkSystem.prototype.draw = function()
+{
+	this.redraw = false;
+	this.ctx.clearRect(0, 0, this.width, this.height);
+	if (this.bgImg !== null)
+	{
+		this.bgImg.drawFill(this.ctx, this.coord);
+	}
+	
+	let count = this.item.length;
+	for (let i = 0; i < count; ++i)
+	{
+		this.item[i].draw();
+	}
+}
+
+BkSystem.prototype.onLoad = function()
+{
+	this.redraw = true;
+}
+
+BkSystem.prototype.create = function(coord)
+{ 
+	let o = new BkObject(coord)
+	this.item.push(o);
+	return o;
+}
+
+BkSystem.prototype.add = function(o)
+{ 
+	if (this.item.indexOf(o) === -1) this.item.push(o);
+}
+
+BkSystem.prototype.remove = function(o)
+{ 
+	let i = this.item.indexOf(o);
+	if (i !== -1) this.item.splice(i, 1);
+}
+
+BkSystem.prototype.isSelected = function(o)
+{
+	let index = this.item.indexOf(o);
+	if (index === -1) return false;
+	return this.selected === index;
+}
+
+BkSystem.prototype.unselect = function()
+{
+	this.selected = -1;
+}
+
+BkSystem.prototype.select = function(x, y)
+{ 
+	let sdx = 0;
+	let sdy = 0;
+	let selected = -1;
+	let coord = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	//let minDistance = Number.MAX_SAFE_INTEGER;
+	let count = this.item.length;
+	for (let i = count - 1; i >= 0; --i)
+	{
+		let p = this.item[i].coord;
+		if (p.type !== 0)
+		{
+			p = p.toAbsolute(this.transform);
+		}
+			
+		if ((coord.x >= (p.x - p.w * 0.5)) && (coord.x < (p.x + p.w * 0.5)) &&
+			(coord.y >= (p.y - p.h * 0.5)) && (coord.y < (p.y + p.h * 0.5)))
+		{
+			let dx = p.x - coord.x;
+			let dy = p.y - coord.y;
+			//let distance2 = dx * dx + dy * dy;
+			
+			//if (distance2 < minDistance)
+			{
+				sdx = dx;
+				sdy = dy;
+				selected = i;
+				break;
+				//minDistance = distance2;
+			}
+		}
+	}
+	this.selected = selected;
+	this.selectedDx = sdx;
+	this.selectedDy = sdy;
+}
+
+BkSystem.prototype.moveSelected = function(x, y)
+{ 
+	if (this.selected < 0) return;
+	
+	let selectedItem = this.item[this.selected];
+	let coord = selectedItem.coord;
+	if (coord.type !== 0)
+	{
+		coord = coord.toAbsolute(this.transform);
+		selectedItem.coord = coord;
+		this.redistribute();
+	}
+	let nCoord = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	coord.x = nCoord.x + this.selectedDx;
+	coord.y = nCoord.y + this.selectedDy;
+	
+	if (this.selected !== (this.item.length - 1))
+	{
+		this.item.splice(this.selected, 1);
+		this.item.push(selectedItem);
+		this.selected = this.item.length - 1;
+	}
+}
+
+BkSystem.prototype.writeToScreenXY = function(text, x, y)
+{
+	this.ctx.textAlign = "left";
+	this.ctx.textBaseline = "top";
+	this.ctx.font = "12px Arial";
+	this.ctx.fillStyle = "#000";
+	this.ctx.fillText(text, x, y);
+}
+
+BkSystem.prototype.writeToScreen = function(text)
+{
+	this.writeToScreenXY(text, 2, 10);
+}
+
+// The following functions only use screen coordinates
+function bkDrawRectangle(ctx, coord)
+{
+	ctx.rect(coord.x - coord.w * 0.5, coord.y - coord.h * 0.5, coord.w, coord.h);
+}
+
+Image.prototype.drawFit = function(ctx, coord)
+{
+	try
+	{
+		let w = this.width;
+		let h = this.height;
+		let f = ((w * coord.h) > (coord.w * h)) ?
+			(coord.w / this.width) : (coord.h / this.height);
+		w *= f;
+		h *= f;
+		ctx.drawImage(this, 0, 0, this.width, this.height,
+			coord.x - w * 0.5, coord.y - h * 0.5,
+			w, h);
+	}
+	catch(err)
+	{
+	}
+}
+
+Image.prototype.draw = function(ctx, coord)
+{
+	try
+	{
+		ctx.drawImage(this, 0, 0, this.width, this.height,
+			coord.x - coord.w * 0.5, coord.y - coord.h * 0.5,
+			coord.w, coord.h);
+	}
+	catch(err)
+	{
+	}
+}
+
+Image.prototype.drawFill = function(ctx, coord)
+{
+	try
+	{
+		let x = 0;
+		let y = 0;
+		let w = this.width;
+		let h = this.height;
+		if ((w * coord.h) < (coord.w * h))
+		{
+			h = (w * coord.h) / coord.w;
+			y = (this.height - h) * 0.5;
+		}
+		else
+		{
+			w = (h * coord.w) / coord.h;
+			x = (this.width - w) * 0.5;
+		}
+		
+		ctx.drawImage(this, x, y, w, h,
+			coord.x - coord.w * 0.5, coord.y - coord.h * 0.5,
+			coord.w, coord.h);
+	}
+	catch(err)
+	{
+	}
+}
+
+function bkDrawRoundRectangle(ctx, coord, relRadius)
+{
+	let width = coord.w;
+	let height = coord.h;
+	let x = coord.x - width * 0.5;
+	let y = coord.y - height * 0.5;
+	let radius = (width < height ? width: height) * relRadius;
+	ctx.beginPath();
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x + width - radius, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	ctx.lineTo(x + width, y + height - radius);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	ctx.lineTo(x + radius, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	ctx.lineTo(x, y + radius);
+	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
+}
+
+function bkDrawGlassButton(ctx, coord, color)
+{
+	let coordInner = coord.anisotropicGrow(0.96);
+	let colorStr = BkColorToStr(color);
+	let satColor = BkColorSaturate(color);
+	let lightColor = BkColorLighten(color);
+	let lightColorStr = BkColorToStr(lightColor);
+	let darkColorStr = BkColorToStr(BkColorMix31(color, color & 0xFF000000));
+	let satColorStr = BkColorToStr(BkColorMix31(satColor, satColor | 0xFF000000));
+	
+	//console.log('sat + alpha: ' + satColorStr + ' only sat: ' + BkColorToStr(satColor));
+
+	ctx.lineWidth = (coord.w - coordInner.w);
+	
+	let x = coord.x + coord.w * 0.5;
+	let y = coord.y + coord.h * 0.5;
+	let r = (coord.w < coord.h) ? coord.h : coord.w;
+	
+	let grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+	grad.addColorStop(0, lightColorStr);
+	grad.addColorStop(0.1, satColorStr);
+	grad.addColorStop(0.6, colorStr);
+	grad.addColorStop(0.65, darkColorStr);
+	grad.addColorStop(0.7, colorStr)
+	grad.addColorStop(0.72, satColorStr);
+	grad.addColorStop(1, colorStr);
+	//grad.addColorStop(0.94, satColorStr);
+	//grad.addColorStop(1, colorStr);
+
+	ctx.fillStyle = grad;
+	bkDrawRoundRectangle(ctx, coord, 0.125);
+	ctx.fill();
+	ctx.save();
+	ctx.clip();
+	
+	grad = ctx.createLinearGradient(
+		coord.x - coord.w * 0.5,
+		coord.y - coord.h * 0.5,
+		coord.x + coord.w * 0.5,
+		coord.y + coord.h * 0.5);
+	grad.addColorStop(0, colorStr);
+	grad.addColorStop(0.15, satColorStr);
+	grad.addColorStop(0.2, '#fff');
+	grad.addColorStop(0.25, satColorStr);
+	grad.addColorStop(0.5, colorStr);
+	grad.addColorStop(0.7, darkColorStr);
+	grad.addColorStop(0.8, colorStr);
+	grad.addColorStop(0.85, satColorStr);
+	grad.addColorStop(0.9, '#fff');
+	grad.addColorStop(0.95, satColorStr);
+	grad.addColorStop(1, colorStr);
+
+	ctx.strokeStyle = grad;
+	bkDrawRoundRectangle(ctx, coord, 0.125);
+	ctx.stroke();
+	
+	ctx.restore();
+}
+
+function _bkDrawGlassScrew(ctx, x, y, r)
+{
+	ctx.translate(x, y);
+	ctx.beginPath();
+	ctx.arc(0, 0, r, 0, 2 * Math.PI);
+	ctx.fill();
+	ctx.translate(-x, -y);
+}
+
+function bkDrawGlassBoard(ctx, coord, col, drawShadow = false)
+{
+	ctx.globalCompositeOperation='source-over';
+	//ctx.globalCompositeOperation='lighter';
+
+	let innerCoord = coord.anisotropicGrow(0.98);
+	let lineWidth = coord.w - innerCoord.w;
+	
+	let darkerCol = BkColorMix(col, col & 0xFF000000);
+	let darkCol = BkColorMix(darkerCol, col);
+	let color = BkColorToStr(col);
+	let saturatedColor = BkColorToStr(BkColorSaturate(col));
+	let darkColor = BkColorToStr(darkCol);
+	let darkerColor = BkColorToStr(darkerCol);
+	
+	let x = coord.x;
+	let y = coord.y;
+	let w = coord.w;
+	let h = coord.h;
+	let x0 = x - w * 0.5;
+	let y0 = y - h * 0.5;
+
+	let m = w < h ? w : h;
+	
+	
+	let grd=ctx.createLinearGradient(x0,y0,x0 + w,y0 + h);
+	grd.addColorStop(0,darkerColor);
+	grd.addColorStop(0.1,color);
+	grd.addColorStop(0.13,saturatedColor);
+	grd.addColorStop(0.15,"#fff");
+	grd.addColorStop(0.17,saturatedColor);
+	grd.addColorStop(0.2,color);
+	grd.addColorStop(0.5,darkerColor);
+	grd.addColorStop(0.6,color);
+	grd.addColorStop(0.63,saturatedColor);
+	grd.addColorStop(0.65,"#fff");
+	grd.addColorStop(0.67,saturatedColor);
+	grd.addColorStop(0.7,color);
+	grd.addColorStop(1,darkerColor);
+
+	
+
+	ctx.lineWidth = lineWidth;
+	ctx.strokeStyle = grd;
+	
+	ctx.beginPath();
+	ctx.rect(coord.x - coord.w * 0.5 + lineWidth * 0.5,
+		coord.y - coord.h * 0.5 + lineWidth * 0.5,
+		coord.w - lineWidth, coord.h - lineWidth);
+	ctx.stroke();
+	
+	
+	
+	let grad=ctx.createRadialGradient(x - w,y - h * 0.3,0,x - w,y - h * 0.3,w * 2);
+	grad.addColorStop(0,darkColor);
+	grad.addColorStop(0.45,color);
+	grad.addColorStop(0.455,darkerColor);
+	grad.addColorStop(1,darkColor);
+	
+	ctx.fillStyle = grad;
+	
+	ctx.beginPath();
+	ctx.rect(innerCoord.x - innerCoord.w * 0.5,
+		innerCoord.y - innerCoord.h * 0.5,
+		innerCoord.w, innerCoord.h);
+	
+	ctx.globalAlpha = 0.75;
+	if (drawShadow)
+	{
+		ctx.save();
+		ctx.shadowBlur = lineWidth <= 2 ? 1 : lineWidth * 0.5;
+		ctx.shadowOffsetX = lineWidth * 3;
+		ctx.shadowOffsetY = lineWidth * 3;
+		ctx.shadowColor = 'rgba(0,0,0,0.7)';
+	}
+	
+	ctx.fill();
+	
+	if (drawShadow) ctx.restore();
+	
+	grad=ctx.createRadialGradient(x + w * 0.1,y + h * 2,0,x + w * 0.1,y + h * 2,h * 3);
+	grad.addColorStop(0.6,color);
+	grad.addColorStop(0.75,darkerColor);
+	grad.addColorStop(0.755,color);
+	grad.addColorStop(1,darkColor);
+	
+
+	ctx.fillStyle = grad;
+	ctx.beginPath();
+	ctx.rect(innerCoord.x - innerCoord.w * 0.5,
+		innerCoord.y - innerCoord.h * 0.5,
+		innerCoord.w, innerCoord.h);
+	ctx.fill();
+	ctx.globalAlpha = 1;
+	
+	
+	grad = ctx.createLinearGradient(
+		 - lineWidth,  - lineWidth,  + lineWidth,  + lineWidth);
+	grad.addColorStop(0.2, '#fff');
+	grad.addColorStop(0.35, saturatedColor);
+	grad.addColorStop(0.8, darkerColor);
+	ctx.fillStyle = grad;
+	
+	
+	let c = coord.anisotropicGrow(0.9);
+	_bkDrawGlassScrew(ctx, c.x - c.w * 0.5, c.y - c.h * 0.5, lineWidth);
+	_bkDrawGlassScrew(ctx, c.x + c.w * 0.5, c.y - c.h * 0.5, lineWidth);
+	_bkDrawGlassScrew(ctx, c.x - c.w * 0.5, c.y + c.h * 0.5, lineWidth);
+	_bkDrawGlassScrew(ctx, c.x + c.w * 0.5, c.y + c.h * 0.5, lineWidth);
+}
+
+
+const BK_INV_255 = 1 / 255;
+function BkColorToStr(colorNumber)
+{
+	return 'rgba(' + 
+		((colorNumber >> 16) & 0xFF).toString() + ',' +
+		((colorNumber >> 8) & 0xFF).toString() + ',' +
+		(colorNumber & 0xFF).toString() + ',' +
+		(((colorNumber >> 24) & 0xFF) * BK_INV_255).toString() + ')';
+}
+
+function BkColorMix(colorA, colorB)
+{
+	return ((((colorA >> 1) & 0x7F807F80) + ((colorB >> 1) & 0x7F807F80)) & 0xFF00FF00) |
+		((((colorA & 0xFF00FF) + (colorB & 0xFF00FF)) >> 1) & 0x00FF00FF);
+}
+
+function BkColorMix31(colorA, colorB)
+{
+	return (((((colorA >> 2) & 0x3FC03FC0) * 3) + ((colorB >> 2) & 0x3FC03FC0)) & 0xFF00FF00) |
+		(((((colorA & 0xFF00FF) * 3) + (colorB & 0xFF00FF)) >> 2) & 0x00FF00FF);
+}
+
+function BkColorSaturate(color)
+{
+	let r = (color >> 16) & 0xFF;
+	let g = (color >> 8) & 0xFF;
+	let b = color & 0xFF;
+	let m = Math.max(r, g, b);
+	if (m === 0) return 0x808080 | (color & 0xff000000);
+	
+	let factor = 255 / m;
+	r = Math.floor(r * factor);
+	g = Math.floor(g * factor);
+	b = Math.floor(b * factor);
+	return b + (g << 8) + (r << 16) | (color & 0xff000000);
+}
+
+function BkColorLighten(color)
+{
+	let r = (color >> 16) & 0xFF;
+	let g = (color >> 8) & 0xFF;
+	let b = color & 0xFF;
+	let luminance = r * 0.298828125 + g * 0.5869140625 + b * 0.1142578125
+
+	if (luminance < 128)
+	{
+		let sat = BkColorSaturate(color);
+		return BkColorMix(0xFFFFFFFF, sat) | 0xFF000000;
+	}
+	return 0xFFFFFFFF;
+}
+
+let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
+	alignment = 4, leadingFactor = 1.2)
+{
+	//let start = new Date().getTime();
+	
+	this.lines = [];
+	this.fontName = fontName;
+	this.baseFontRelHeight = fontRelHeight;
+	this.alignment = alignment;
+	// relative to the coord to provide when drawing
+	this.coord = coord;
+	this.fontRelHeight = null;
+	this.leadingFactor = leadingFactor;
+	this.padding = 0;
+	
+	this.words = text.split(' ');
+	this.text = this.words.join(' ');
+	
+	let count = this.words.length;
+	this.__endPositionBuffer = new ArrayBuffer(count * 4);
+	this.__endPosition = new Int32Array(this.__endPositionBuffer);
+	this.__textWidthBuffer = new ArrayBuffer(count * 4);
+	this.__textWidth = new Int32Array(this.__textWidthBuffer);
+	this.__linesIndexesBuffer = new ArrayBuffer(count * 4);
+	this.__linesIndexes = new Int32Array(this.__linesIndexesBuffer);
+	this.__linesIndexesUsed = 0;
+
+	let index = 0;
+	for (let i = 0; i < count; ++i)
+	{
+		index += this.words[i].length;
+		this.__endPosition[i] = index;
+		++index;
+	}
+	
+	//let end = new Date().getTime();
+	//console.log ('BkTextArea creation ' + (end - start));
+}
+
+BkTextArea.prototype.resize = function(ctx, width, height)
+{
+	//let start = new Date().getTime();
+	
+	let transform = new BkTransform(width, height, 1);
+	let coord = this.coord.toScreen(transform);
+	this.adjustLines(ctx, coord.w, coord.h);
+	
+	//let end = new Date().getTime();
+	//console.log ('adjustLines time ' + (end - start));
+}
+
+BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
+{
+	let posCount = this.__endPosition.length;
+	if (posCount <= 0)
+	{
+		this.__linesIndexesUsed = 0;
+		return 0;
+	}
+	
+	ctx.font = (this.fontRelHeight * height).toString() + 'px ' + this.fontName;
+	
+	let count = this.words.length;
+	for (let i = 0; i < count; ++i)
+	{
+		this.__textWidth[i] = ctx.measureText(this.words[i]).width;
+	}
+	let spaceWidth = ctx.measureText(' ').width;
+	
+	let minPadding = maxWidth;
+	let baseIndex = 0;
+	let linesCount = 0;
+	let done = false;
+	while (baseIndex < posCount)
+	{
+		let prevlineWidth, lineWidth = 0;
+		let usedWords = 0;
+		do
+		{
+			prevlineWidth = lineWidth;
+			if (baseIndex + usedWords >= posCount)
+			{
+				done = true;
+				break;
+			}
+			
+			if (usedWords !== 0) lineWidth += spaceWidth;
+			lineWidth += this.__textWidth[baseIndex + usedWords];
+
+			++usedWords;
+		}
+		while (lineWidth < maxWidth);
+		
+		if (usedWords > 1)
+		{
+			if (!done)
+			{
+				--usedWords;
+			}
+		}
+		else
+		{
+			// Only one word that doesn't even fit
+			prevlineWidth = lineWidth;
+		}
+		
+		this.__linesIndexes[linesCount++] = baseIndex + usedWords - 1;
+		
+		baseIndex += usedWords;
+		let padding = maxWidth - prevlineWidth;
+		if (padding < minPadding)
+		{
+			minPadding = padding;
+		}
+	}
+	
+	this.__linesIndexesUsed = linesCount;
+	return minPadding / maxWidth;
+}
+
+BkTextArea.prototype._getLineWidth = function(index)
+{
+	let wordStart = index ? this.__linesIndexes[index - 1] : 0;
+	let wordEnd = this.__linesIndexes[index];
+	let lineWidth = 0;
+	for (let i = wordStart; i <= wordEnd; ++i) lineWidth += this.__textWidth[i];
+	return lineWidth;
+}
+
+BkTextArea.prototype.adjustLines = function(ctx, width, height)
+{
+	this.fontRelHeight = this.baseFontRelHeight;
+	for (let i = 0; i < 3; ++i)
+	{
+		//console.log("Retry: " + i);
+		let newfactor, factor = 1;
+		let oldFontHeight = (this.fontRelHeight * height);
+		// Shrink if one word line does not fit
+		let padding = this.defineLines(ctx, width, height);
+				
+		this.padding = padding;
+		if (padding < 0)
+		{
+			newfactor = 1 / (1 - padding);
+			if (newfactor < factor) factor = newfactor;
+		}
+		
+		// Shrink if height does not fit
+		padding = 1 - this.fontRelHeight * 
+			(this.leadingFactor * (this.__linesIndexesUsed - 1) + 1);
+		if (padding < 0)
+		{
+			newfactor = 1 / (1 - padding);
+			if (newfactor < factor) factor = newfactor;
+		}
+		
+		
+		if (factor < 1)
+		{
+			if (i < 2)
+			{
+				factor = Math.sqrt(factor);
+			}
+			
+			this.fontRelHeight *= factor;
+			// Make sure the updated height changes 
+			if ((oldFontHeight - (this.fontRelHeight * height)) < 1)
+			{
+				if (oldFontHeight <= 1)
+				{
+					this.fontRelHeight = 0;
+				}
+				else
+				{
+					this.fontRelHeight = (oldFontHeight - 1) / height;
+				}
+			}
+			
+			continue;
+		}
+		
+		break;
+	}
+	
+	
+	// Fix ugly two lines 
+	let endPos = this.__endPosition;
+	if (this.__linesIndexesUsed == 2)
+	{
+		while (this.__linesIndexes[0] >= 1)
+		{
+			if (this._getLineWidth(0) > this._getLineWidth(1) * 1.5)
+			{
+				--this.__linesIndexes[0];
+				if (this._getLineWidth(0) > this._getLineWidth(1) * 0.8)
+				{
+					continue;
+				}
+				++this.__linesIndexes[0];
+			}
+			break;
+		}
+	}
+	
+
+	let text = this.text;
+	let lines = [];
+	for (let i = 0; i < this.__linesIndexesUsed; ++i)
+	{
+		lines.push(text.substring(
+			(i === 0 ? 0 : endPos[this.__linesIndexes[i - 1]] + 1), 
+			endPos[this.__linesIndexes[i]]));
+	}
+	this.lines = lines;
+}
+
+BkTextArea.prototype.draw = function(ctx, coord)
+{
+	let transform = new BkTransform(coord.w, coord.h, 1);
+	let nCoord = this.coord.toScreen(transform);
+	nCoord.x += coord.x - coord.w * 0.5;
+	nCoord.y += coord.y - coord.h * 0.5;
+	
+	switch(this.alignment)
+	{
+	case 4:
+		this._drawCenter(ctx, nCoord);
+		break;
+	case 3:
+		this._drawLeft(ctx, nCoord);
+		break;
+	case 3.5:
+		this._drawPadLeft(ctx, nCoord);
+		break;
+	case 1:
+		this._drawTopLeft(ctx, nCoord);
+		break;
+	case 5:
+		this._drawRight(ctx, nCoord);
+		break;
+	} 
+}
+
+BkTextArea.prototype._drawCenter = function(ctx, coord)
+{
+	let lines = this.lines;
+	let maxLines = lines.length;
+	if (maxLines <= 0) return;
+	
+	  
+	let fontHeight = (this.fontRelHeight * coord.h);
+	if (fontHeight < 1) return;
+	
+	ctx.textBaseline = 'top';
+	ctx.textAlign = 'center';
+	
+	ctx.font = fontHeight.toString() +'px ' + this.fontName;
+	let lineHeight = fontHeight * this.leadingFactor;
+	// Center text
+	let x = coord.x;
+	let y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+	for (let i = 0; i < maxLines; ++i)
+	{
+		ctx.fillText(lines[i], x, y + lineHeight * i);
+	}
+}
+
+BkTextArea.prototype._drawPadLeft = function(ctx, coord)
+{
+	let lines = this.lines;
+	let maxLines = lines.length;
+	if (maxLines <= 0) return;
+	
+	let fontHeight = (this.fontRelHeight * coord.h);
+	if (fontHeight < 1) return;
+	
+	ctx.textBaseline = 'top';
+	ctx.textAlign = 'left';
+	
+	ctx.font = fontHeight.toString() +'px ' + this.fontName;
+	let lineHeight = fontHeight * this.leadingFactor;
+	// Center text
+	let x = coord.x - (1 - this.padding) * coord.w * 0.5;
+	let y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+	for (let i = 0; i < maxLines; ++i)
+	{
+		ctx.fillText(lines[i], x, y + lineHeight * i);
+	}
+}
+
+BkTextArea.prototype._drawLeft = function(ctx, coord)
+{
+	let lines = this.lines;
+	let maxLines = lines.length;
+	if (maxLines <= 0) return;
+	
+	let fontHeight = (this.fontRelHeight * coord.h);
+	if (fontHeight < 1) return;
+	
+	ctx.textBaseline = 'top';
+	ctx.textAlign = 'left';
+	
+	ctx.font = fontHeight.toString() +'px ' + this.fontName;
+	let lineHeight = fontHeight * this.leadingFactor;
+	// Center text
+	let x = coord.x - coord.w * 0.5;
+	let y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+	for (let i = 0; i < maxLines; ++i)
+	{
+		ctx.fillText(lines[i], x, y + lineHeight * i);
+	}
+}
+
+BkTextArea.prototype._drawRight = function(ctx, coord)
+{
+	let lines = this.lines;
+	let maxLines = lines.length;
+	if (maxLines <= 0) return;
+	
+	let fontHeight = (this.fontRelHeight * coord.h);
+	if (fontHeight < 1) return;
+	
+	ctx.textBaseline = 'top';
+	ctx.textAlign = 'right';
+	
+	ctx.font = fontHeight.toString() +'px ' + this.fontName;
+	let lineHeight = fontHeight * this.leadingFactor;
+	// Center text
+	let x = coord.x + coord.w * 0.5;
+	let y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+	for (let i = 0; i < maxLines; ++i)
+	{
+		ctx.fillText(lines[i], x, y + lineHeight * i);
+	}
+}
+
+BkTextArea.prototype._drawTopLeft = function(ctx, coord)
+{
+	let lines = this.lines;
+	let maxLines = lines.length;
+	if (maxLines <= 0) return;
+	
+	let fontHeight = (this.fontRelHeight * coord.h);
+	if (fontHeight < 1) return;
+	
+	ctx.textBaseline = 'top';
+	ctx.textAlign = 'left';
+	
+	ctx.font = fontHeight.toString() +'px ' + this.fontName;
+	let lineHeight = fontHeight * this.leadingFactor;
+	// Center text
+	let x = coord.x + (this.padding - 1) * coord.w * 0.5;
+	let y = coord.y - coord.h * 0.5;
+	for (let i = 0; i< maxLines; ++i)
+	{
+		ctx.fillText(lines[i], x, y + lineHeight * i);
+	}
+}
+

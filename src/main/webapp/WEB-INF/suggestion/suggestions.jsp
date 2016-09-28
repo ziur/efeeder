@@ -4,73 +4,45 @@
 
 <t:template>
   <jsp:attribute name="javascript">
-    <script>
-      $(document).ready(function () {
-        $('#suggestions').DataTable();
-      });
-      $(".see-buyer").click(function() {
-        window.location.href = '/action/suggestions?id_food_meeting=' + $(this).data("meetingId");
-      });
-    </script>
+        <script src="/assets/js/lib/bubble.js">
+        </script> 
   </jsp:attribute>
 
-  <jsp:body>
-    <div class="row sugg-container">
-      <form role="form"
-            name="suggestion"
-            method="post"
-            action="/action/suggestions?id_food_meeting=${param.id_food_meeting}" 
-            id="suggestion"
-            class="col-md-12 go-right">   
-        
-        <div class="row page-header">
-          <div class="col-sm-10 food-meeting-name">Food Meeting name:</div>     
-          
-          <div class="col-sm-2 add-suggestion">
-            <a href="/action/createSuggestion?id_food_meeting=${param.id_food_meeting}" 
-               class="btn btn-default" 
-               role="button">Add Suggestion</a>
-          </div>
-        </div>
+    
+<jsp:body>
 
-        <span hidden="hidden" name="id_food_meeting">${param.id_food_meeting}</span>
+<div id="mainSideNav" class='side-nav fixed' >
+    <p>Food meeting id: ${id}</p>
+    <input id="ss"type="submit" value="postAjax"/>
+</div>
 
-        <table class="table table-striped sugg-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Place</th>
-              <th>Description</th>
-              <th>Vote</th>
-              <th>Counter</th>
-            </tr>
-          </thead>
-          <tbody>
-            <c:forEach var="suggestion" items="#{suggestions}">
-              <tr class="sugg-row" data-suggestion-id=${suggestion.id}>
-                <td>${suggestion.id}</td>
-                <td>${suggestion.place}</td>
-                <td>${suggestion.description}</td>
-                <td class="sugg-vote">
-                  <input type="radio" name="suggestion" value="${suggestion.id}">
-                </td>
-                <td>${suggestion.vote}</td>
-              </tr>
-            </c:forEach>
-          </tbody>
-        </table>
+<div style="height:25px;"> </div>
+<canvas id="mainCanvas" style="width:82.3vw;height:80vh;"/>
 
-        <div class="row col-sm-2 user-container">
-          <select name="user" class="form-control">
-            <c:forEach var="user" items="#{users}">
-              <option value="${user.id}" >${user.name} ${user.last_name}</option>
-            </c:forEach>
-          </select>
-          
-          <button name="save" type="submit" class="btn btn-primary vote-button">Save vote</button>
-        </div>
-      </form>
-      <a href="/action/order?id_food_meeting=${param.id_food_meeting}" class="btn btn-primary order-food" role="button">Order food</a>  
-    </div>
-  </jsp:body>
+</jsp:body>
 </t:template>
+<script src="/assets/js/lib/bk.js">
+</script>
+<script>
+    var g_idFoodMeeting = '${id}';
+</script>
+<script src="/assets/js/voting.js">
+</script>
+<script>
+    $("#ss").click(function (){
+        var sendInfo = {name: "ñoño",description: "ñels",phone: "564654",direction:"c/ñoooo"};
+        $.ajax({
+           type: "POST",
+           url: "/action/createplace",
+           dataType: "json",
+           success: function (msg) {
+               if (msg) {
+                   alert(" was added in list !");
+               } else {
+                   alert("Cannot add to list !");
+               }
+           },
+           data: sendInfo
+       });
+    });
+</script>

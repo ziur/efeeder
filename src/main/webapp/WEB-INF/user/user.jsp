@@ -8,71 +8,62 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
+
 <t:template>
-
-
-  <jsp:body>
-      <div class="row" style="margin-top: 10%;margin-left: 30%">
+    <jsp:attribute name="javascript">
+        <script src="/assets/js/createUser.js"></script>
+    </jsp:attribute>
+    
+    <jsp:body>
+        <div class="row" style="margin-top: 10%;">
             <div class="row">
-                <div class="col s12 m6">
-                  <div class="card">
-                    <div class="card-content">
-                      <form role="form" action="CreateUser" method="post">
-                            <div class="row center-align">
-                                <i class="large teal-text material-icons prefix">account_circle</i>
-                            </div>
-                            <div class="row">
-                                <h6 class='center thin grey-text'>Please write in the following fields</h6>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12 center-align">
-                                    <div class="input-field col s8 offset-s2">                                        
-                                        <input class="form-control" id="name" type="text" name="name" required autocomplete="off"/>
-                                        <label for="name">Name.</label>
-                                    </div>
+                <div class="col offset-m3 s12 m6">
+                    <div class="card">
+                        <div class="card-content">
+                            <form id="CreateUserForm" role="form" action="CreateUser">
+                                <div class="row center-align">
+                                    <i class="large teal-text material-icons prefix">account_circle</i>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12 center-align">
-                                    <div class="input-field col s8 offset-s2">                                        
-                                        <input class="form-control" id="last_name" type="text" name="last_name" required autocomplete="off"/>
+                                <div class="row">
+                                    <h6 class='center thin grey-text'>Please write in the following fields</h6>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s6">
+                                        <input class="validate" id="name" type="text" name="name"  autocomplete="off"/>
+                                        <label for="name"  >Name.</label>
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <input class="validate" id="last_name" type="text" name="last_name"  autocomplete="off"/>
                                         <label for="last_name">Last Name.</label>
                                     </div>
-                                </div>
-                            </div> 
-                            <div class="row">
-                                <div class="form-group col-xs-12 center-align">
-                                    <div class="input-field col s8 offset-s2">                                        
-                                        <input class="form-control" id="email" type="text" name="email" required autocomplete="off"/>
+                                    <div class="input-field col s12">
+                                        <input class="validate" id="email" type="email" name="email"  autocomplete="off"/>
                                         <label for="email">Email.</label>
                                     </div>
-                                </div>
-                            </div> 
-                            <div class="row">
-                                <div class="form-group col-xs-12 center-align">
-                                    <div class="input-field col s8 offset-s2">                                        
-                                        <input class="form-control" id="username" type="text" name="username" required autocomplete="off"/>
+                                    <div class="input-field col s12">
+                                        <input class="validate" id="username" type="text" name="username"  autocomplete="off"/>
                                         <label for="username">User name.</label>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <div class="input-field col s8 offset-s2">
-                                        <input class="form-control" id="password" type="password" name="password" required/>
+                                    <div class="input-field col s12">
+                                        <input class="validate" id="password" type="password" name="password" />
                                         <label for="pasword">Password.</label>
                                     </div>
+                                    <div class="input-field col s12">
+                                        <input class="validate" id="confirm_password" type="password" name="confirm_password" />
+                                        <label for="confirm_password" >Confirm Password.</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-4 right">
-                                    <button id="LoginCancel"  class="btn" >Cancel</button>
-                                    <button class="btn btn-primary" type="submit">Add User</button>
+                                <div class="row">
+                                    <div class="right">
+                                        <button id="LoginCancel" class="btn btn-primary" type="button">Cancel</button>
+                                        <button class="btn btn-primary" type="submit">Add User</button>
+                                    </div>
                                 </div>
-                            </div>
-                    </form>
-                  </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-        </div>
-  </jsp:body>
+            </div>
+          </div>
+    </jsp:body>
 </t:template>

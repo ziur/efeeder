@@ -22,7 +22,9 @@ public class SuggestionsCommand implements CommandUnit {
     @Override
     public Out execute(In parameters) throws Exception {
         Connection connection = parameters.getConnection();
+        String id = parameters.getParameter("id_food_meeting");
         
+        /*
         if (parameters.getParameter("save") != null) {
             String suggestion = parameters.getParameter("suggestion");
             String user = parameters.getParameter("user");
@@ -39,12 +41,13 @@ public class SuggestionsCommand implements CommandUnit {
         }
         
         Out out = new DefaultOut();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select * from suggestions where id_food_meeting = ? order by created_at");
-        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+        PreparedStatement preparedStatement = connection.prepareStatement("Select * from places");
+//        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+//        preparedStatemenaddForeignKeyConstraintt.setInt(1, 1);
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Suggestion> suggestions = new ArrayList<>();
+        List<Place> suggestions = new ArrayList<>();
         while (resultSet.next()) {
-            suggestions.add(new Suggestion(resultSet.getInt("id"), resultSet.getInt("id_user"), resultSet.getInt("id_food_meeting"), resultSet.getString("place"), resultSet.getString("description"), resultSet.getDate("created_at"), resultSet.getInt("vote")));
+            suggestions.add(new Place(resultSet.getInt("id"), "china", resultSet.getString("description"), resultSet.getString("phone"), resultSet.getString("description")));
         }
         
         // get users
@@ -57,6 +60,11 @@ public class SuggestionsCommand implements CommandUnit {
         out.addResult("suggestions", suggestions);
         out.addResult("users", users);
         
+
+*/
+        
+        Out out = new DefaultOut();
+        out.addResult("id", id);
         return out.forward("suggestion/suggestions.jsp");
     }
 }

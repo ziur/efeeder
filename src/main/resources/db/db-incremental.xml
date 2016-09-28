@@ -5,37 +5,30 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-<<<<<<< HEAD
-    <changeSet id="foodmeeting.table" author="roger">
-        <sql>
-            CREATE TABLE fellow_dinner
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            name VARCHAR(200),
-            nick VARCHAR(120) NOT NULL
-            );
-            CREATE UNIQUE INDEX fellow_dinner_id_uindex ON fellow_dinner (id);
-            CREATE UNIQUE INDEX fellow_dinner_nick_uindex ON fellow_dinner (nick);
-        </sql>
-        <sql>
-            CREATE TABLE food_meeting
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            name VARCHAR(120),
-            created_at DATETIME,
-            fellow_dinner_id INT(11) NOT NULL,
-            CONSTRAINT food_meeting_fellow_dinner_id_fk FOREIGN KEY (fellow_dinner_id) REFERENCES fellow_dinner (id)
-            );
-            CREATE INDEX food_meeting_fellow_dinner_id_fk1 ON food_meeting (fellow_dinner_id);
-        </sql>
-        <sql>
-            INSERT INTO efeeder.fellow_dinner (name, nick) VALUES ('porky', 'porky');
-            INSERT INTO efeeder.food_meeting (name, created_at, fellow_dinner_id) VALUES ('Trancapechos', '2016-09-09 20:15:02', 1);
-        </sql>
+    <changeSet author="alexander" id="places.table">
+        <createTable catalogName="efeeder" tableName="places">
+            <column name="id"   type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(200)"/>
+            <column name="description" type="VARCHAR(200)"/>
+            <column name="phone" type="VARCHAR(50)"/>
+            <column name="direction" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_link" type="VARCHAR(200)"/>
+        </createTable>
     </changeSet>
 
-    <changeSet author="roger" id="insert.fellow_dinner.calama">
-=======
+    <changeSet author="alexexander" id="createIndex.places_id_uindex">
+        <createIndex catalogName="efeeder"
+                indexName="places_id_uindex"
+                tableName="places"
+                unique="true">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+
     <changeSet author="roger" id="food_meeting.table">
         <createTable catalogName="efeeder" tableName="food_meeting">
             <column name="id"         type="INT(11)" autoIncrement="true">
@@ -48,6 +41,17 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="alexander" id="insert.place.rellenos">
+        <insert catalogName="efeeder"
+                tableName="places">
+            <column name="name" value="rellenos calama"/>
+            <column name="description" value="relleno"/>
+            <column name="phone" value="4666666"/>
+            <column name="direction" value="c/calama"/>
+            <column name="image_link" value="http://www.guiaji.com.bo/archivos/especialidad_74_image.jpg"/>
+        </insert>
+    </changeSet>
+    
     <changeSet author="roger" id="insert.food_meeting.CoffeeTime">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
@@ -69,7 +73,6 @@
     </changeSet>
 
     <changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
->>>>>>> cadf2a29e858281f2d560d9bb0bd7baf471ac049
         <insert catalogName="efeeder"
                 tableName="food_meeting">
             <column name="name"             value="Release celebration"/>
@@ -79,6 +82,17 @@
         </insert>
     </changeSet>
 
+    <changeSet author="roger" id="insert.place.pollo">
+        <insert catalogName="efeeder"
+                tableName="places">
+                <column name="name" value="panchita"/>
+                <column name="description" value="pollo frito con arroz branco"/>
+                <column name="phone" value="4556565"/>
+                <column name="direction" value="av/san martin"/>
+                <column name="image_link" value="http://3.bp.blogspot.com/-qN5kZKaQDI8/VaQXIVteKyI/AAAAAAAADK0/y14wMy_3xjk/s200/Pollos-Panchita-Review-Cochabamba-Logo.jpg"/>
+        </insert>
+    </changeSet>
+    
     <changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
         <insert catalogName="efeeder"
                 tableName="food_meeting">
@@ -210,28 +224,6 @@
                 referencedTableName="user"/>
     </changeSet>
 
-<<<<<<< HEAD
-    <changeSet id="suggestions.table" author="amir">
-        <sql>
-            CREATE TABLE suggestions
-            (
-            id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-            id_food_meeting INT(11) NOT NULL,
-            id_user INT(11) NOT NULL,
-            place VARCHAR(120),
-            description TEXT,
-            created_at DATETIME,
-            CONSTRAINT suggestions_id_food_meeting_fk FOREIGN KEY (id_food_meeting) REFERENCES food_meeting (id),
-            CONSTRAINT suggestions_id_user_fk FOREIGN KEY (id_user) REFERENCES user (id)
-            );
-        </sql>
-        <sql>
-            INSERT INTO efeeder.user (name, last_name, email) VALUES ('test', 'test', 'test@mail.com');
-        </sql>
-        <sql>
-            INSERT INTO efeeder.suggestions (id_food_meeting, id_user, place, description, created_at) VALUES (1, 1, 'Trancas de la case', 'trancapechos o silpanchos', '2016-09-09 20:15:02');
-        </sql>
-=======
     <changeSet author="alexander" id="createtable.buyer">
         <createTable catalogName="efeeder" tableName="buyer">
             <column name="id_food_meeting" type="INT"/>
@@ -265,81 +257,40 @@
                 referencedColumnNames="id"
                 referencedTableName="user"/>
     </changeSet>
-
-    <changeSet author="amir" id="suggestions.table">
-        <createTable catalogName="efeeder" tableName="suggestions">
-            <column name="id"   type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="id_food_meeting" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="id_user"     type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="Text"/>
-            <column name="created_at"  type="DATETIME"/>
-            <column name="vote"        type="INT(11))"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="suggestions"
-                constraintName="suggestions_id_food_meeting_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="suggestions"
-                constraintName="suggestions_id_user_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="user"/>
-        <createIndex catalogName="efeeder"
-                indexName="suggestions_id_food_meeting_fk"
-                tableName="suggestions"
-                unique="true">
-            <column name="id_food_meeting"/>
-        </createIndex>
-        <createIndex catalogName="efeeder"
-                indexName="suggestions_id_user_fk"
-                tableName="suggestions"
-                unique="true">
-            <column name="id_user"/>
-        </createIndex>
->>>>>>> cadf2a29e858281f2d560d9bb0bd7baf471ac049
-    </changeSet>
-
-    <changeSet author="ricardo" id="suggestions.table">
-        <addColumn schemaName="efeeder"
-                   tableName="suggestions">
-            <column name="counter" type="int(11)"/>
-        </addColumn>
-    </changeSet>
-
+    
     <changeSet author="ricardo" id="food_meeting_user.table">
         <createTable catalogName="efeeder" tableName="food_meeting_user">
             <column name="id_food_meeting" type="INT(11)">
                 <constraints nullable="false"/>
             </column>
-            <column name="id_user"     type="INT(11)">
+            <column name="id_user" type="INT(11)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_place"  type="INT(11)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="suggestions"
+                baseTableName="food_meeting_user"
                 constraintName="food_meeting_user_id_food_meeting_fk"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="food_meeting"/>
         <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="suggestions"
+                baseTableName="food_meeting_user"
                 constraintName="food_meeting_user_id_user_fk"
                 onDelete="CASCADE"
                 onUpdate="RESTRICT"
                 referencedColumnNames="id"
                 referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="id_place"
+            baseTableName="food_meeting_user"
+            constraintName="food_meeting_user_id_place_fk"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="places"/>
     </changeSet>
 
 </databaseChangeLog>

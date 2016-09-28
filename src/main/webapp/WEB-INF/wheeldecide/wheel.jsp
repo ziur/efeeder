@@ -12,9 +12,7 @@
 <t:template>
     <jsp:body>
         <div class="row">
-            <div class="col-md-12">
-                <canvas id="mainCanvas"/>
-            </div>
+            <canvas id="mainCanvas" style="position:fixed;padding:0;margin:0;top:0;left:0;width:100%;height:100%;"/>
         </div>
         <div class="row">
             <div class="col-md-12">
