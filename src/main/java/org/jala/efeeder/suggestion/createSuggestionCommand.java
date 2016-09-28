@@ -9,9 +9,6 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
-import org.jala.efeeder.api.command.PaginationResult;
-import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.api.utils.JsonConverter;
 
 /**
  *
@@ -64,21 +61,8 @@ public class createSuggestionCommand implements CommandUnit {
         }
         
        
-        int idUser;
-        try
-        {
-            parameter = parameters.getParameter("id_user");
-            idUser = Integer.parseInt(parameter);
-            stm = connection.prepareStatement("select id from user where id=?");
-            stm.setInt(1, idUser);
-            stm.executeQuery();
-        }
-        catch (NumberFormatException | SQLException e)
-        {
-            return OutBuilder.response("text/plain", "Invalid user id " +
-                    parameter + ". " + e.toString());
-        }        
-        
+        int idUser = parameters.getUser().getId();
+         
         stm = connection.prepareStatement(
                 "delete from food_meeting_user where id_user=? and id_food_meeting=?");
         stm.setInt(1, idUser);

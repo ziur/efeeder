@@ -16,9 +16,11 @@ import java.util.List;
 public class Suggestion {
     private List<UserAndPlace> userList;
     private List<Place> placeList;
+    private int userId;
     
-    public Suggestion(List<UserAndPlace> userList, List<Place> placeList) {
+    public Suggestion(List<UserAndPlace> userList, List<Place> placeList, int userId) {
         this.userList = userList;
         this.placeList = placeList;
+        this.userId = userId;
     }
 }

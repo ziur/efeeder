@@ -58,7 +58,7 @@ public class getUserAndPLaceByFoodMeetingCommand implements CommandUnit {
                     resSet.getString("places.image_link")));
         }
         
-        Suggestion suggestion = new Suggestion(usersAndPlaces, places);
+        Suggestion suggestion = new Suggestion(usersAndPlaces, places, parameters.getUser().getId());
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(suggestion));
     }
     
