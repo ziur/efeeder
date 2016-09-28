@@ -15,11 +15,9 @@ import lombok.Data;
 public class UserAndPlace {
     private int id_User;
     private int id_Place;
-    private String name;
 
-    public UserAndPlace(int id_User, int id_Place, String name) {
+    public UserAndPlace(int id_User, int id_Place) {
         this.id_User = id_User;
         this.id_Place = id_Place;
-        this.name = name;
     }
 }

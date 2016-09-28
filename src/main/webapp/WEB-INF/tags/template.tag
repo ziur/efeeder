@@ -34,8 +34,6 @@
     
     <!--<t:footer/>-->
     
-
-
     <script src="/assets/js/lib/jquery.js"></script>
     <script src="/assets/js/lib/bootstrap.js"></script>
     <script src="/assets/js/lib/datatables.min.js"></script>
@@ -48,6 +46,7 @@
     <script src="/assets/js/lib/materialize.js"></script>
     <script src="/assets/js/lib/materialize.clockpicker.js"></script>
     <script src="/assets/js/lib/jquery.validate.js"></script>
+    <script src="/assets/js/lib/bundle.js"></script>
     
     <jsp:invoke fragment="javascript"/>
 

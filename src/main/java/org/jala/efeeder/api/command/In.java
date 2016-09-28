@@ -3,6 +3,8 @@ package org.jala.efeeder.api.command;
 import java.sql.Connection;
 import java.util.List;
 
+import org.apache.avro.Protocol;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.user.User;
 
 /**
@@ -17,4 +19,6 @@ public interface In {
     Connection getConnection();
     User getUser();
     void setUser(User user);
+    MessageContext getMessageContext();
+    void setMessageContext(MessageContext messageContext);
 }

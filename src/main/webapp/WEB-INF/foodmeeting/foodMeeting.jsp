@@ -6,25 +6,25 @@
     <jsp:attribute name="javascript">
         <script src="/assets/js/foodMeetings.js"></script>
     </jsp:attribute>
-
+        
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <form id="addMeeting" class="col s12" role="form"  action="/action/createFoodMeeting">
+                <form id="addMeeting" class="col s12" action="/action/createFoodMeeting">
                     <div class="row ">
                         <h5 class='center-align thin grey-text lighten-5'>You look hungry!.... Let's create a meeting!</h5>
                     </div>
                     <div class="row">
                         <div class="input-field col s6">
-                            <input class="validate" id="meeting_name" type="text" name="meeting_name"  autocomplete="off"/>
+                            <input id="meeting_name" name="meeting_name" type="text" class="validate" autocomplete="off">
                             <label for="meeting_name">Meeting Name</label>
                         </div>
                         <div class="input-field col s3">
-                            <input id="date" type="date" name="date" class="datepicker validate">
+                            <input id="date" type="date" name="date" class="datepicker">
                             <label for="date">Date</label>
                         </div>
                         <div class="input-field col s2">
-                            <input id="time" type="time" name="time" class="validate">
+                            <input id="timepicker" class="timepicker" type="time" name="time">
                             <label for="timepicker">Time</label>
                         </div>
                         <div class="col s1">
@@ -40,14 +40,14 @@
                     <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
-                                <img  class="meeting-img" data-meeting-id="${foodMeeting.id}" src="${foodMeeting.imageLink}">
+                                <img  class="meeting-img" data-meeting-id=${foodMeeting.id} src="${foodMeeting.imageLink}">
                             </div>
                             <div class="card-content">
                                 <span class="card-title activator grey-text text-darken-4">
-                                    ${foodMeeting.name}
+                                    ${foodMeeting.name}                                    
                                     <i class="material-icons right">more_vert</i>
                                 </span>
-                                <p class="quick-view-date grey-text lighten-1"></p>
+                                <p class="quick-view-date grey-text lighten-1"></p>                                
                             </div>
 
                             <div class="card-reveal">
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                </c:forEach>
+                </c:forEach>  
             </div>
         </div>
     </jsp:body>

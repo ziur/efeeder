@@ -5,7 +5,7 @@
 <t:template>
   <jsp:attribute name="javascript">
         <script src="/assets/js/lib/bubble.js">
-        </script> 
+        </script>
   </jsp:attribute>
 
     
@@ -14,6 +14,7 @@
 <div id="mainSideNav" class='side-nav fixed' >
     <p>Food meeting id: ${id}</p>
     <input id="ss"type="submit" value="postAjax"/>
+    <input id="raffle" type="submit" value="Start raffle"/>
 </div>
 
 <div style="height:25px;"> </div>
@@ -45,4 +46,33 @@
            data: sendInfo
        });
     });
+
+    $(function () {
+      var communicationService = new CommunicationService();
+
+      communicationService.onMessage(function (event) {
+
+        $.each(event.events, function(index, item) {
+          var eventType = Object.getOwnPropertyNames(item.event)[0];
+          var eventMessage = item.event[eventType];
+          switch (eventType) {
+            case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
+              break;
+            case "org.jala.efeeder.servlets.websocket.avro.RaffleEvent":
+              _startBubble(eventMessage);
+              break;
+          }
+        });
+
+
+      });
+
+      var foodMeeting = 4;
+      communicationService.connect('ws://localhost:8080/ws', foodMeeting);
+
+      $("#raffle").click(function () {
+        communicationService.sendMessage({user:1, room: 4, command:"Wheeldecide", events:[]});
+      });
+    });
+
 </script>
