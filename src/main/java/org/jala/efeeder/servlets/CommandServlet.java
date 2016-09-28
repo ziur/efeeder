@@ -1,15 +1,23 @@
 package org.jala.efeeder.servlets;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.servlet.ServletConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import org.jala.efeeder.api.command.CommandExecutor;
 import org.jala.efeeder.api.command.CommandFactory;
@@ -33,6 +41,15 @@ public class CommandServlet extends HttpServlet {
     private static final long serialVersionUID = 5585317604797123555L;
 
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
+    private File diretorio;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+//        String path = config.getInitParameter("diretorio");
+//        diretorio = new File(path);
+//        diretorio.mkdirs();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -48,6 +65,31 @@ public class CommandServlet extends HttpServlet {
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        if (isMultipart) {
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setRepository(diretorio);
+
+            ServletFileUpload upload = new ServletFileUpload(factory);
+
+            try {
+                List<FileItem> items = upload.parseRequest(request);
+                for (FileItem item : items) {
+                    if (!item.isFormField()) {
+                        processUploadedFile(item);
+                    } else {
+                        String nomeDoCampo = item.getFieldName();
+                        String valorDoCampo = item.getString();
+                        System.out.println(nomeDoCampo + ": " + valorDoCampo);
+                    }
+                }
+
+            } catch (Exception e) {
+                System.out.println("ERROR:" + e.getMessage());
+                return;
+            }
+        }
 
         HttpSession session = request.getSession(true);
 
@@ -87,7 +129,19 @@ public class CommandServlet extends HttpServlet {
             processResponse(out, request, response);
         }
     }
-    
+
+    private void processUploadedFile(FileItem item) throws Exception {
+        String webAppPath;
+        webAppPath = getServletContext().getRealPath("/");
+        diretorio = new File(Paths.get(webAppPath, "assets", "img").toString());
+        if(!diretorio.exists()){
+            diretorio.mkdirs();                    
+        }
+        String fileName = item.getName();
+        File uploadedFile = new File(diretorio, fileName);
+        item.write(uploadedFile);
+    }
+
     private void processResponse(Out out, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         ResponseAction action = out.getResponseAction();
