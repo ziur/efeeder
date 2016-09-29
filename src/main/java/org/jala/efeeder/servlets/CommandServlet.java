@@ -31,8 +31,6 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 
-import org.jala.efeeder.user.User;
-
 /**
  * Created by alejandro on 07-09-16.
  */
@@ -107,7 +105,7 @@ public class CommandServlet extends HttpServlet {
             DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
             In parameters = InBuilder.createIn(request);
-            parameters.setUser(User.class.cast(session.getAttribute("user")));
+
             Out out = executor.executeCommand(parameters, getCommand(request)); 
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
                     && !request.getRequestURI().equals("/action/CreateUser"))

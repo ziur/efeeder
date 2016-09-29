@@ -25,19 +25,23 @@ public class CommandExecutor {
             result.setExitStatus(ExitStatus.SUCCESS);
             return result;
         }catch(Throwable throwable) {
+
             Out result = OutBuilder.newError(throwable);
             try {
                 connection.rollback();
             } catch (SQLException e) {
                 result.addError(e);
             }
-            return result;
+            throw new RuntimeException(throwable);
+            //return result;
         }finally {
             try {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                return OutBuilder.DEFAULT;
             }
+
         }
     }
 }
