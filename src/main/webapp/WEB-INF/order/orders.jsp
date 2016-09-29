@@ -10,51 +10,24 @@
 
 <t:template>
     <div class="row">
-        <form class="col s12" action="order" method="post" enctype="multipart/form-data">
-            <div class="row">
-            <input  type="text" name="texto">
-            <input  type="file" name="arquivo">
-            <input  type="submit" value="Upload">
-            </div>
-        </form>
-        <img class=" circle responsive-img" src="../assets/img/googlebot-1327931529.jpg">
     </div>
 
     <div class="row">
         <div class="col-sm-12">
             <ul class="collection">
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">perm_identity</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br>
-                        Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">perm_identity</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br>
-                        Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">perm_identity</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br>
-                        Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">perm_identity</i>
-                    <span class="title">Title</span>
-                    <p>First Line <br>
-                        Second Line
-                    </p>
-                    <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
+                <c:forEach var="user" items="#{users}">  
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle">perm_identity</i>
+                        <span class="title">${user.name} ${user.last_name}</span>
+                        <p>${user.email}<br>
+                            Details
+                        </p>
+                        <a href="#!" class="btn-edit"><i class="material-icons">mode_edit</i></a>
+                        <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
+                        <label class="secondary-content" for="chk-${user.id}"></label>
+                        
+                    </li>                
+                </c:forEach>
             </ul>
         </div>
     </div>
