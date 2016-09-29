@@ -1,5 +1,10 @@
 package org.jala.efeeder.api.command.impl;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.user.User;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.HashMap;
@@ -18,7 +23,12 @@ import lombok.Setter;
 public class DefaultIn implements In {
     private Connection connection;
     private final Map<String, List<String>> parameters;
-    @Setter @Getter private User user;
+    @Setter
+    @Getter
+    private User user;
+    @Setter
+    @Getter
+    private MessageContext messageContext;
 
     public DefaultIn() {
         parameters = new HashMap<>();
