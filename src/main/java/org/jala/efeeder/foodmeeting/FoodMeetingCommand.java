@@ -18,7 +18,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 @Command
 public class FoodMeetingCommand implements CommandUnit {
 
-    private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, status, event_date, created_at" 
+    private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, status, event_date, created_at " 
             + "from food_meeting where event_date >= ? order by event_date";
 
     @Override
