@@ -25,6 +25,11 @@
             $("#timepicker").val(time);
             var value = moment($("#date").val()).format("D MMMM, YYYY");
             $("#date").val(value);
+            
+            // Initialization Select component
+            $(document).ready(function() {
+            $('select').material_select();
+            });
         </script>
     </jsp:attribute>
     <jsp:body>
@@ -48,6 +53,15 @@
                              <div class="input-field col s12">
                                 <input name="image_link" id="image_link" value="${foodMeeting.imageLink}" type="text" class="validate">
                                 <label for="image_link">Image Link</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <select name="status" id="status">
+                                  <option value="Voting" ${foodMeeting.status == 'Voting' ? 'selected' : ''} >Voting</option>
+                                  <option value="Order" ${foodMeeting.status == 'Order' ? 'selected' : ''} >Order</option>
+                                  <option value="Raffle" ${foodMeeting.status == 'Raffle' ? 'selected' : ''} >Raffle</option>
+                                  <option value="Finish" ${foodMeeting.status == 'Finish' ? 'selected' : ''} >Finish</option>
+                                </select>
+                                <label>Status</label>
                             </div>
                             <div class="input-field col s7">
                                 <input id="date" type="date" name="date" class="datepicker" value="${foodMeeting.eventDate}">

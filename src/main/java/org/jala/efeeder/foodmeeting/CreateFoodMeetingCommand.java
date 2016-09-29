@@ -45,7 +45,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
         stm.setString(1, parameters.getParameter("meeting_name"));
         stm.setString(2, "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg");
-        stm.setString(3, "Places");
+        stm.setString(3, FoodMeetingStatus.Voting.name());
         stm.setTimestamp(4, eventDate);
         stm.setTimestamp(5, createdAt);
 

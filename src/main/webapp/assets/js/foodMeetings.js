@@ -12,8 +12,10 @@ $(document).ready(function () {
         vibrate: true
     });
 
+    var FoodMeetingStatus = Java.type('FoodMeetingStatus');
     $(".meeting-img").click(function () {
-        var page = $(this).data("meetingStatus") == "Places" ? "suggestions" : "suggestions";
+        alert($(this).data("meetingStatus"));
+        var page = $(this).data("meetingStatus") === FoodMeetingStatus.Voting.toString() ? "suggestions" : "suggestions";
         window.location.href = '/action/'+page+'?id_food_meeting=' +
         $(this).data("meetingId");
     });
