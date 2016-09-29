@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jala.efeeder.api.database.DatabaseManager;
-import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 
 /**
  * Created by alejandro on 07-09-16.

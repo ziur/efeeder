@@ -1,6 +1,5 @@
 package org.jala.efeeder.foodmeeting;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.joda.time.Days;
@@ -29,7 +28,7 @@ public class FoodMeeting {
         this.eventDate = eventDate;
         this.imageLink = imageLink;
     }
-    
+
     public int getWidth()
     {
         int width = 500;

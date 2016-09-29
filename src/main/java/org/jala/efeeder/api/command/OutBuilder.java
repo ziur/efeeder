@@ -1,6 +1,5 @@
 package org.jala.efeeder.api.command;
 
-import org.apache.avro.Protocol;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 
