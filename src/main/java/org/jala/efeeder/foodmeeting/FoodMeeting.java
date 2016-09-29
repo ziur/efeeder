@@ -34,7 +34,7 @@ public class FoodMeeting {
         this.eventDate = eventDate;
         this.imageLink = imageLink;
     }
-    
+
     public int getWidth()
     {
         int width = 500;

@@ -17,7 +17,7 @@ public class InBuilder {
         DefaultIn in = new DefaultIn();
         for (Map.Entry<String, String[]> parameter : request.getParameterMap().entrySet()) {
             in.addParameter(parameter.getKey(), Arrays.asList(parameter.getValue()));
-            in.setUser((User) request.getSession().getAttribute("User"));
+            in.setUser((User) request.getSession().getAttribute("user"));
         }
 
         return in;

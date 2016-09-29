@@ -23,7 +23,6 @@ import org.joda.time.format.DateTimeFormatter;
 @Command
 public class CreateFoodMeetingCommand implements CommandUnit {
 
-
     private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
             + "values(?, ?, ?, ?, ?)";
 
