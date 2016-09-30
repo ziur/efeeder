@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 var 
-	G_SCREEN_COVERAGE = 0.7,
-	G_ITERATIONS_PER_TICK = 1,
+	G_SCREEN_COVERAGE = 0.9,
+	G_ITERATIONS_PER_TICK = 4,
 	G_DEFAULT_CHARGE = 1.0,
-	G_FORCE_STRENGTH = 0.0006 / G_ITERATIONS_PER_TICK,
-	G_INITIAL_SPIN_FACTOR = Math.pow(0.98, 1 / G_ITERATIONS_PER_TICK),
-        G_SLOWING_FACTOR = Math.pow(0.9, 1 / G_ITERATIONS_PER_TICK),
+	G_FORCE_STRENGTH = 0.0002,
+	G_INITIAL_SPIN_FACTOR = 0.99,
+    G_SLOWING_FACTOR = 0.99,
 	PI_2 = Math.PI * 2.0;
 	
 var	g_mouse = {
@@ -127,7 +127,7 @@ ParticleSystem.prototype.resize = function(particle)
 	this.X0 = CANVAS.width * 0.5;
 	this.Y0 = CANVAS.height * 0.5;
 	this.scale = ((this.X0 > this.Y0) ? this.Y0 : this.X0) * G_SCREEN_COVERAGE;
-	this.ParticleRadius = 1 / Math.sqrt(this.remaining);
+	this.ParticleRadius = G_SCREEN_COVERAGE / Math.sqrt(this.remaining);
 	this.ParticleTargetRadius = this.ParticleRadius;
 }
 
@@ -296,7 +296,6 @@ function _drawBubble(x, y, r, colorTip)
 	_drawDisk(x - r * 0.56, y - r * 0.56, r * 0.1, "#fff");
 }
 
-var g_frameCount = 0;
 ParticleSystem.prototype.draw = function()
 {
 	var total = this.particles.length;
@@ -355,8 +354,6 @@ ParticleSystem.prototype.draw = function()
 		CTX.fillStyle = '#fff';
 		CTX.fillText(p.name, x, y);		
 	}
-
-	++g_frameCount;
 };
 
 function _writeToScreenXY(text, x, y)
@@ -374,7 +371,11 @@ function _writeToScreen(text)
 }
 
 var g_oldTick = performance.now();
-var g_lastExpell = g_oldTick + 1800;
+var g_lastExpell = g_oldTick + 3000;
+
+var g_frameCount = 0;
+var g_ZeroTick = 0;
+var g_FpsCalculated = false;
 function _updateFrame()
 {
 	var currentTick = performance.now();
@@ -382,7 +383,7 @@ function _updateFrame()
 	if (particleSystem)
 	{
 	
-		if ((currentTick - g_lastExpell) > (500 / particleSystem.maxParticles))
+		if ((currentTick - g_lastExpell) > (200 / particleSystem.maxParticles))
 		{
 			particleSystem.expellOne();
 			g_lastExpell = currentTick;
@@ -390,18 +391,26 @@ function _updateFrame()
 	
 		particleSystem.updateSystem();
 		particleSystem.draw();
-		//_writeToScreenXY(particleSystem.jsonString, 2, 30);
 	}
 	
-        G_ITERATIONS_PER_TICK = Math.round(60 * (currentTick - g_oldTick) * 0.001);
-        if (G_ITERATIONS_PER_TICK <= 0) G_ITERATIONS_PER_TICK = 1;
-        
-	G_FORCE_STRENGTH = 0.0006 / G_ITERATIONS_PER_TICK;
-	G_INITIAL_SPIN_FACTOR = Math.pow(0.98, 1 / G_ITERATIONS_PER_TICK);
-	G_SLOWING_FACTOR = Math.pow(0.9, 1 / G_ITERATIONS_PER_TICK);  
-        
+	if (!g_FpsCalculated)
+	{
+		if (g_frameCount == 0)
+		{
+			g_ZeroTick = currentTick;
+		}
+		else
+		{
+			let fps = 1000 / ((currentTick - g_ZeroTick) / g_frameCount);
+			let frames = Math.floor(240 / fps);
+			if (frames < 1) frames = 1;
+			if (frames > 100) frames = 100;
+			G_ITERATIONS_PER_TICK = frames;
+		}
+	}
+		
 	g_oldTick = currentTick;
-	
+	++g_frameCount;
 	window.requestAnimationFrame(_updateFrame);
 };
 
@@ -424,8 +433,7 @@ function _startBubble(jsonObject)
 		},
 		false);        
 	
-
-        particleSystem = new ParticleSystem(jsonObject);
+    particleSystem = new ParticleSystem(jsonObject);
         
 	_resizeCanvas();        
 
