@@ -58,7 +58,7 @@
       communicationService.connect('ws://' + location.host + '/ws', foodMeeting);
 
       $("#raffle").click(function () {
-        communicationService.sendMessage({user:1, room: 4, command:"Wheeldecide", events:[]});
+        communicationService.sendMessage({user:1, room: ${id}, command:"Wheeldecide", events:[]});
       });
     });
 
