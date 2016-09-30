@@ -43,7 +43,7 @@ public class getUserAndPLaceByFoodMeetingCommand implements CommandUnit {
         }
         
         ps = connection.prepareStatement(
-                "SELECT DISTINCT places.id,places.name,places.description,places.phone,places.direction,places.image_link FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id");
+                "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(*) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id");
         ps.setInt(1, idFoodMeeting);
         resSet = ps.executeQuery();
         
@@ -55,7 +55,8 @@ public class getUserAndPLaceByFoodMeetingCommand implements CommandUnit {
                     resSet.getString("places.description"), 
                     resSet.getString("places.phone"),
                     resSet.getString("places.direction"),
-                    resSet.getString("places.image_link")));
+                    resSet.getString("places.image_link"),
+                    resSet.getInt("votes")));
         }
         
         Suggestion suggestion = new Suggestion(usersAndPlaces, places, parameters.getUser().getId());
