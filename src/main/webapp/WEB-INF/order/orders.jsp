@@ -17,14 +17,16 @@
             <ul class="collection">
                 <li class="collection-item avatar">
                     <i class="material-icons circle">perm_identity</i>
-                    <span class="title">${myOrder.idFoodMeeting} ${myOrder.idUser}</span>
-                    <p>${myOrder.cost}<br>
-                        Details
-                    </p>
-                    <a href="#!" class="btn-edit"><i class="material-icons">mode_edit</i></a>
+                    <!-- <input type="text" name="details" value="${myOrder.details}" placeholder="Details"/> -->
+                    <span class="title">${myOrder.details}</span>
+                    <!-- <input type="number" name="cost" value="${myOrder.cost}" placeholder="Cost"/> -->
+                    <p>${myOrder.cost}</p>
+                    <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
+                    <a href="#!" id="btn-edit-my-order" class="btn-edit"><i class="material-icons">mode_edit</i></a>
                     <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
                     <label class="secondary-content" for="chk-${user.id}"></label>
                 </li>
+
                 <c:forEach var="order" items="#{orders}">
                     <li class="collection-item avatar">
                         <i class="material-icons circle">perm_identity</i>
