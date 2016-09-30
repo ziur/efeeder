@@ -12,27 +12,25 @@
 <t:template>
     <jsp:attribute name="javascript">
         <script>
-            $('.datepicker').pickadate({
-                selectMonths: true,
-                selectYears: 15
-            });
-            $('#timepicker').pickatime({
-                autoclose: false,
-                twelvehour: false
-            });
-            //Format date
-            var time = moment($("#date").val()).format("HH:mm");
-            $("#timepicker").val(time);
-            var value = moment($("#date").val()).format("D MMMM, YYYY");
-            $("#date").val(value);
-            
-            // Initialization Select component
-            $( document ).ready(function() {
-                $(document).ready(function() {
-                $('select').material_select();
+            $(function() {
+                $('.datepicker').pickadate({
+                    selectMonths: true,
+                    selectYears: 15
                 });
+                $('#timepicker').pickatime({
+                    autoclose: false,
+                    twelvehour: false
+                });
+                //Format date
+                var time = moment($("#date").val()).format("HH:mm");
+                $("#timepicker").val(time);
+                var value = moment($("#date").val()).format("D MMMM, YYYY");
+                $("#date").val(value);
+
+                // Initialization Select component
+                $('select').material_select();
             });
-            
+
         </script>
     </jsp:attribute>
     <jsp:body>

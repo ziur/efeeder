@@ -25,8 +25,8 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
     private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
             + "values(?, ?, ?, ?, ?)";
-    private static final String foodMeetingStatus = FoodMeetingStatus.Voting.name();
-    private static final String imageLink = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
+    private static final String FOOD_MEETING_STATUS = FoodMeetingStatus.Voting.name();
+    private static final String IMAGE_LINK = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
 
     @Override
     public Out execute(In parameters) throws Exception {
@@ -45,8 +45,8 @@ public class CreateFoodMeetingCommand implements CommandUnit {
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
         stm.setString(1, parameters.getParameter("meeting_name"));
-        stm.setString(2, imageLink);
-        stm.setString(3, foodMeetingStatus);
+        stm.setString(2, IMAGE_LINK);
+        stm.setString(3, FOOD_MEETING_STATUS);
         stm.setTimestamp(4, eventDate);
         stm.setTimestamp(5, createdAt);
 
