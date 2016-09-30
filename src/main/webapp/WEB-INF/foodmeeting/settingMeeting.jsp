@@ -27,9 +27,12 @@
             $("#date").val(value);
             
             // Initialization Select component
-            $(document).ready(function() {
-            $('select').material_select();
+            $( document ).ready(function() {
+                $(document).ready(function() {
+                $('select').material_select();
+                });
             });
+            
         </script>
     </jsp:attribute>
     <jsp:body>
