@@ -40,7 +40,7 @@ public class GetAllPlacesCommand implements CommandUnit {
                     resultSet.getString("description"), 
                     resultSet.getString("phone"),
                     resultSet.getString("direction"),
-                    resultSet.getString("image_link")));
+                    resultSet.getString("image_link"), 0));
         }
         
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(places));

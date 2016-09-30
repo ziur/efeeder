@@ -12,9 +12,13 @@
 <jsp:body>
 
 <div id="mainSideNav" class='side-nav fixed' >
-    <p>Food meeting id: ${id}</p>
-    <input id="ss"type="submit" value="postAjax"/>
-    <input id="raffle" type="submit" value="Start raffle"/>
+    <div style='text-align:center;'>
+        <p style='text-align:center;'>Food meeting id: ${id}</p>
+        <input id="raffle" type="submit" value="Start raffle"/>
+        <br>
+        <br>
+        <div id='debugDiv'></div>
+    </div>  
 </div>
 
 <div style="height:25px;"> </div>
@@ -30,23 +34,6 @@
 <script src="/assets/js/voting.js">
 </script>
 <script>
-    $("#ss").click(function (){
-        var sendInfo = {name: "ñoño",description: "ñels",phone: "564654",direction:"c/ñoooo"};
-        $.ajax({
-           type: "POST",
-           url: "/action/createplace",
-           dataType: "json",
-           success: function (msg) {
-               if (msg) {
-                   alert(" was added in list !");
-               } else {
-                   alert("Cannot add to list !");
-               }
-           },
-           data: sendInfo
-       });
-    });
-
     $(function () {
       var communicationService = new CommunicationService();
 
@@ -57,17 +44,18 @@
           var eventMessage = item.event[eventType];
           switch (eventType) {
             case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
-              alert('ws connected');
+              document.getElementById('debugDiv').innerHTML = 'WebSockets connected';
               break;
             case "org.jala.efeeder.servlets.websocket.avro.RaffleEvent":
+              document.getElementById('debugDiv').innerHTML = 'Starting raffle';
               _startBubble(eventMessage);
               break;
           }
         });
       });
 
-      var foodMeeting = 4;
-      communicationService.connect('ws://localhost:8080/ws', foodMeeting);
+      var foodMeeting = ${id};
+      communicationService.connect('ws://' + location.host + '/ws', foodMeeting);
 
       $("#raffle").click(function () {
         communicationService.sendMessage({user:1, room: 4, command:"Wheeldecide", events:[]});
