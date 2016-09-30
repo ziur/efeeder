@@ -20,7 +20,6 @@ import org.jala.efeeder.user.User;
 public class DeleteOrderCommand implements CommandUnit {
     @Override
     public Out execute(In parameters) throws Exception {
-                
         Out out = new DefaultOut();           
         Connection connection = parameters.getConnection();
         
@@ -29,13 +28,13 @@ public class DeleteOrderCommand implements CommandUnit {
         preparedStatement.setInt(2, Integer.valueOf(parameters.getParameter("id_user")));
         preparedStatement.executeUpdate();                
         
-        Order deletedOrder = new Order(
-                Integer.valueOf(parameters.getParameter("id_food_meeting")), 
-                new User(Integer.valueOf(parameters.getParameter("id_user")), "", "", ""), 
-                "", 
-                0.0);
-        
-        out.addResult("order", deletedOrder);
+//        Order deletedOrder = new Order(
+//                Integer.valueOf(parameters.getParameter("id_food_meeting")), 
+//                new User(Integer.valueOf(parameters.getParameter("id_user")), "", "", ""), 
+//                "", 
+//                0.0);
+//        
+        out.addResult("order", null);
         return out.forward("order/orderJson.jsp"); 
     }    
 }

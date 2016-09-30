@@ -15,17 +15,27 @@
     <div class="row">
         <div class="col-sm-12">
             <ul class="collection">
-                <c:forEach var="user" items="#{users}">  
+                <li class="collection-item avatar">
+                    <i class="material-icons circle">perm_identity</i>
+                    <span class="title">${myOrder.idFoodMeeting} ${myOrder.idUser}</span>
+                    <p>${myOrder.cost}<br>
+                        Details
+                    </p>
+                    <a href="#!" class="btn-edit"><i class="material-icons">mode_edit</i></a>
+                    <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
+                    <label class="secondary-content" for="chk-${user.id}"></label>
+                </li>
+                <c:forEach var="order" items="#{orders}">
                     <li class="collection-item avatar">
                         <i class="material-icons circle">perm_identity</i>
-                        <span class="title">${user.name} ${user.last_name}</span>
-                        <p>${user.email}<br>
+                        <span class="title">${order.idFoodMeeting} ${order.idUser}</span>
+                        <p>${order.cost}<br>
                             Details
                         </p>
-                        <a href="#!" class="btn-edit"><i class="material-icons">mode_edit</i></a>
+
                         <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
                         <label class="secondary-content" for="chk-${user.id}"></label>                        
-                    </li>                
+                    </li>
                 </c:forEach>
             </ul>
         </div>
