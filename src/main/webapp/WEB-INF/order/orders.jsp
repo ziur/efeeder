@@ -24,8 +24,7 @@
                         </p>
                         <a href="#!" class="btn-edit"><i class="material-icons">mode_edit</i></a>
                         <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
-                        <label class="secondary-content" for="chk-${user.id}"></label>
-                        
+                        <label class="secondary-content" for="chk-${user.id}"></label>                        
                     </li>                
                 </c:forEach>
             </ul>

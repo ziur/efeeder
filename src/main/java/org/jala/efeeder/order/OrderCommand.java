@@ -19,6 +19,8 @@ import org.jala.efeeder.user.User;
 @Command
 public class OrderCommand implements CommandUnit {
 
+    private final String users_query = "Select id, email, name, last_name from user";
+    
     @Override
     public Out execute(In parameters) throws Exception {
 
@@ -26,7 +28,7 @@ public class OrderCommand implements CommandUnit {
         Connection connection = parameters.getConnection();
 
         List<User> users = new ArrayList<>();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select id, email, name, last_name from user");
+        PreparedStatement preparedStatement = connection.prepareStatement(users_query);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
