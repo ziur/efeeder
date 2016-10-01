@@ -60,7 +60,7 @@ let BkCoord = function(x, y, w, h, z = 0, type = 0)
 	// h, w are proportional to current canvas dimensions
 	
 	// Type 8 and later:
-	// Automatic distribution of objects
+	// Automatic distribution of objects inside an area
 	// x defines an order and it is displayed depending on type:
 	//   8: Higher orders are displayed in the middle in bigger size.
 	// y contains {x, y} normalized to current size, order and scale
@@ -396,6 +396,13 @@ BkObject.prototype.draw = function()
 {
 }
 
+let BkArea = function(coord, ratio = 1, padding = 0.04)
+{
+	this.coord = coord;
+	this.ratio = ratio;
+	this.padding = padding;
+}
+
 function BkObjectIsSelected(o)
 {
 	return (o.flags & 0x80000000) !== 0;
@@ -409,6 +416,7 @@ function BkObjectSetSelected(o)
 let BkSystem = function(canvasName, ratio = null)
 {
 	this.item = [];
+	this.area = [];
 	this.__running = false;
 	this.selectedIndex = -1;
 	this.selectedDx = 0;
@@ -417,8 +425,7 @@ let BkSystem = function(canvasName, ratio = null)
 	this.canvas = document.getElementById(canvasName);
 	this.ctx = this.canvas.getContext('2d');
 	this.ratio = (ratio !== null) ? ratio : (window.screen.width / window.screen.height);
-	this.__distributionArea = new BkCoord(0,0,1,1,0,7);
-	
+
 	this.redraw = false;
 	this.mouse = {
 		button: 0,
@@ -426,7 +433,9 @@ let BkSystem = function(canvasName, ratio = null)
 		x0: 0,
 		y0: 0,
 		x: 0,
-		y: 0
+		y: 0,
+		dx: 0,
+		dy: 0
 	};
 	
 	this.bgImg = null;
@@ -473,11 +482,6 @@ BkSystem.prototype.getCoord = function()
 BkSystem.prototype.setBackgroundImage = function(src)
 {
 	this.bgImg = this.createImage(src);
-}
-
-BkSystem.prototype.setDistributionArea = function(coord)
-{
-	this.__distributionArea = coord;
 }
 
 function _getDivisorsCloseToRatio(n, ratio) 
@@ -549,7 +553,20 @@ function _getDivisorsCloseToRatio(n, ratio)
 
 BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
 {
-	// Update calculable coordinates
+	let count = this.area.length;
+	for (let i = 0; i < count; ++i)
+	{
+		this.redistributeArea(i, this.area[i], updateSizesAndRedraw);
+	}
+	
+	if (updateSizesAndRedraw)
+	{
+		this.redraw = true;
+	}
+}
+
+BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
+{
 	let objects = [];
 	{
 		const count = this.item.length;
@@ -557,36 +574,32 @@ BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
 		{
 			if (this.item[i].coord.type >= 8)
 			{
-				objects.push(this.item[i]);
+				if (this.item[i].coord.z === id)
+				{
+					objects.push(this.item[i]);
+				}
 			}
 		}
 	}
 	
 	const count = objects.length;
-	if (count <= 0)
-	{
-		if (updateSizesAndRedraw) this.redraw = true;
-		return;
-	}
+	if (count <= 0) return;
 	
 	objects.sort(function(a, b) {
-		return a.coord.x - b.coord.x;
+		return a.coord.x < b.coord.x;
 	});
 	
 	let selItem = this.selectedIndex < 0 ? null : this.item[this.selectedIndex];
-	let c = objects[0].coord;
-	let preferredDim = BkCoordNumToDim(c.w);
-	let preferredRatio = preferredDim.w / preferredDim.h;
 
-	let coord = this.__distributionArea.toScreenCoord(this.__coord);
+	let coord = area.coord.toScreenCoord(this.__coord);
 	let minorDim = coord.w < coord.h ? coord.w: coord.h;
-	let padding = 0.04 * minorDim;
+	let padding = area.padding * minorDim;
 	let padH = padding / coord.h;
 	let padW = padding / coord.w;
 	
-	let dim = _getDivisorsCloseToRatio(count, coord.w / (coord.h * preferredRatio));
+	let dim = _getDivisorsCloseToRatio(count, coord.w / (coord.h * area.ratio));
 	
-	coord = this.__distributionArea;
+	coord = area.coord;
 	
 	let cellH = ((1 - padH) / dim.h) - padH;
 	
@@ -597,7 +610,7 @@ BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
 	((1 - p) / n) - p = w
 	*/
 	
-	let index = count - 1;
+	let index = 0;
 	for (let j = 0; j < dim.h; ++j)
 	{
 		let rowCols = dim.w;
@@ -611,7 +624,7 @@ BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
 
 		for (let i = 0; i < dim.w; ++i)
 		{
-			if (index < 0) break;
+			if (index >= count) break;
 			let o = objects[index];
 			let oIsSelected = BkObjectIsSelected(o);
 			
@@ -626,18 +639,16 @@ BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
 				((cellW + padW) * (rowCols - 1 - i) + padW + cellW * 0.5) * coord.w + coord.x,
 				((cellH + padH) * (dim.h - 1 - j) + padH + cellH * 0.5) * coord.h + coord.y);
 			
-			--index;
+			++index;
 		}
 	}
 	
-	if (updateSizesAndRedraw)
+	if (updateSizes)
 	{
 		for (let i = 0; i < count; ++i)
 		{
 			objects[i].resize();
 		}
-		
-		this.redraw = true;
 	}
 }
 
@@ -658,6 +669,74 @@ function BkMainUpdateFrame()
 	window.requestAnimationFrame(BkMainUpdateFrame);
 }
 
+BkSystem.prototype.doOnClick = function(e)
+{
+	this.onclick();
+	
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
+}
+
+BkSystem.prototype.doOnMouseOut = function(e)
+{
+	if (this.onmouseout) this.onmouseout();
+	
+	this.mouse.button = 0;
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
+}
+
+BkSystem.prototype.doOnMouseUp = function(e)
+{
+	if (this.onmouseup) this.onmouseup();
+	
+	this.mouse.button = 0;
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
+}
+
+BkSystem.prototype.doOnMouseMove = function(e)
+{
+	let rect = this.canvas.getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+	this.mouse.dx = x - this.mouse.x;
+	this.mouse.dy = y - this.mouse.y;
+	this.mouse.x = x;
+	this.mouse.y = y;
+	
+	this.onmousemove();
+	
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
+}
+
+BkSystem.prototype.doOnMouseDown = function(e)
+{
+	let rect = this.canvas.getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+	this.mouse.x0 = x
+	this.mouse.y0 = y
+	this.mouse.x = x;
+	this.mouse.y = y;
+	this.mouse.dx = 0;
+	this.mouse.dy = 0;
+	this.mouse.button = e.which;
+	this.mouse.action = 0;
+
+	if (this.onmousedown) this.onmousedown();
+	
+	e.preventDefault();
+	e.stopPropagation();
+	return false;
+}
+
+
 BkSystem.prototype.run = function()
 {
 	if (this.__running === true) return;
@@ -666,6 +745,20 @@ BkSystem.prototype.run = function()
 	let first = BkSystemInstancesList.length === 0;
 	
 	window.addEventListener("resize", this.resize.bind(this), false);
+	
+	if (this.onmousemove)
+	{
+		this.canvas.addEventListener("mousemove", this.doOnMouseMove.bind(this), false);
+	}
+	
+	this.canvas.addEventListener("mousedown", this.doOnMouseDown.bind(this), false);
+	this.canvas.addEventListener("mouseup", this.doOnMouseUp.bind(this), false);
+	this.canvas.addEventListener("mouseout", this.doOnMouseOut.bind(this), false);
+	
+	if (this.onclick)
+	{
+		this.canvas.addEventListener("click", this.doOnClick.bind(this), false);
+	}
 
 	BkSystemInstancesList.push(this);
 	
@@ -678,6 +771,12 @@ BkSystem.prototype.stop = function()
 	this.__running = false;
 	
 	window.removeEventListener("resize", this.resize.bind(this), false);
+	
+	this.canvas.removeEventListener("click", this.doOnClick.bind(this), false);
+	this.canvas.removeEventListener("mouseout", this.doOnMouseOut.bind(this), false);
+	this.canvas.removeEventListener("mouseup", this.doOnMouseUp.bind(this), false);
+	this.canvas.removeEventListener("mousemove", this.doOnMouseMove.bind(this), false);
+	this.canvas.removeEventListener("mousedown", this.doOnMouseDown.bind(this), false);
 	
 	let i = BkSystemInstancesList.indexOf(this);
 	if (i !== -1) BkSystemInstancesList.splice(i, 1);
@@ -721,6 +820,22 @@ BkSystem.prototype.remove = function(o)
 	let i = this.item.indexOf(o);
 	if (i === this.selectedIndex) this.selectedIndex = -1;
 	if (i !== -1) this.item.splice(i, 1);
+}
+
+BkSystem.prototype.addArea = function(o)
+{ 
+	let index = this.area.indexOf(o);
+	if (index === -1)
+	{
+		index = this.area.length;
+		this.area.push(o);
+	}
+	return index;
+}
+
+BkSystem.prototype.removeAllAreas = function()
+{
+	this.area = [];
 }
 
 BkSystem.prototype.isSelected = function(o)
@@ -893,7 +1008,7 @@ function bkDrawRoundRectangle(ctx, coord, relRadius)
 	ctx.closePath();
 }
 
-function bkDrawGlassButton(ctx, coord, color, drawFlat = false)
+function bkDrawGlassButton(ctx, coord, color, drawFlat = false, relRadius = 0.125)
 {
 	let coordInner = coord.anisotropicGrow(0.96);
 	let lighterColor = BkColorLighten(color);
@@ -939,7 +1054,7 @@ function bkDrawGlassButton(ctx, coord, color, drawFlat = false)
 	}
 	
 	ctx.fillStyle = grad;
-	bkDrawRoundRectangle(ctx, coord, 0.125);
+	bkDrawRoundRectangle(ctx, coord, relRadius);
 	ctx.fill();
 	ctx.save();
 	ctx.clip();
@@ -962,7 +1077,7 @@ function bkDrawGlassButton(ctx, coord, color, drawFlat = false)
 	grad.addColorStop(1, colorStr);
 
 	ctx.strokeStyle = grad;
-	bkDrawRoundRectangle(ctx, coord, 0.125);
+	bkDrawRoundRectangle(ctx, coord, relRadius);
 	ctx.stroke();
 	
 	ctx.restore();
@@ -982,15 +1097,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	let shadowCol = BkShadowColor(col);
 	let colStr = BkColorToStr(shadowCol);
 	let fade = BkColorToStr(shadowCol & 0xFFFFFF);
-	
-	/*
-	ctx.fillStyle = '#000';
-	ctx.beginPath();
-	ctx.rect(coord.x - coord.w * 0.5,
-		coord.y - coord.h * 0.5,
-		coord.w, coord.h);
-	ctx.fill();*/
-	
 	let x0 = Math.floor(coord.x - coord.w * 0.5);
 	let y0 = Math.floor(coord.y - coord.h * 0.5);
 	let w = Math.floor(coord.w);
@@ -1003,21 +1109,17 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	
 	ctx.fillStyle = colStr;
 	ctx.beginPath();
-	ctx.rect(
-		x0 + blur, y0 + blur,
-		w - blur2, h - blur2);
+	ctx.rect(x0 + blur, y0 + blur, w - blur2, h - blur2);
 	ctx.fill();
 	
 	let grad = ctx.createLinearGradient(
 		0, y0, 0, y0 + blur);
 	grad.addColorStop(0, fade);
 	grad.addColorStop(1, colStr);
+	
 	ctx.fillStyle = grad;
-	
-	
 	ctx.beginPath();
-	ctx.rect(
-		x0 + blur, y0, w - blur2, blur);
+	ctx.rect(x0 + blur, y0, w - blur2, blur);
 	ctx.fill();
 	
 	grad = ctx.createLinearGradient(
@@ -1026,10 +1128,8 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 	
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
-	ctx.rect(x0 + blur, y1 - blur,
-		w - blur2, blur);
+	ctx.rect(x0 + blur, y1 - blur, w - blur2, blur);
 	ctx.fill();
 	
 	grad = ctx.createLinearGradient(
@@ -1038,10 +1138,8 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, colStr);
 	
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
-	ctx.rect(
-		x0, y0 + blur, blur, h - blur2);
+	ctx.rect(x0, y0 + blur, blur, h - blur2);
 	ctx.fill();
 	
 	grad = ctx.createLinearGradient(
@@ -1050,10 +1148,8 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
-	ctx.rect(
-		x1 - blur, y0 + blur, blur, h - blur2);
+	ctx.rect(x1 - blur, y0 + blur, blur, h - blur2);
 	ctx.fill();
 	
 	let x = x0 + blur;
@@ -1063,7 +1159,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
 	ctx.rect(x - blur, y - blur, blur, blur);
 	ctx.fill();
@@ -1074,7 +1169,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
 	ctx.rect(x - blur, y, blur, blur);
 	ctx.fill();
@@ -1085,7 +1179,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
 	ctx.rect(x, y, blur, blur);
 	ctx.fill();
@@ -1096,7 +1189,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	
 	ctx.beginPath();
 	ctx.rect(x, y - blur, blur, blur);
 	ctx.fill();
@@ -1104,9 +1196,6 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 
 function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = false)
 {
-	ctx.globalCompositeOperation='source-over';
-	//ctx.globalCompositeOperation='lighter';
-
 	let innerCoord = coord.anisotropicGrow(0.98);
 	let lineWidth = coord.w - innerCoord.w;
 	
@@ -1117,21 +1206,13 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	let darkColor = BkColorToStr(darkCol);
 	let darkerColor = BkColorToStr(darkerCol);
 	
-	
 	if (drawShadow)
 	{
 		let sCoord = coord.clone();
 		sCoord.x += lineWidth * 4;
 		sCoord.y += lineWidth * 4;
 		bkDrawShadowRect(ctx, sCoord, lineWidth * 2, col);
-
-		//ctx.save();
-		//ctx.shadowBlur = lineWidth <= 2 ? 1 : lineWidth * 0.5;
-		//ctx.shadowOffsetX = lineWidth * 3;
-		//ctx.shadowOffsetY = lineWidth * 3;
-		//ctx.shadowColor = 'rgba(0,0,0,0.7)';
 	}
-
 	
 	let x = coord.x;
 	let y = coord.y;
@@ -1139,11 +1220,9 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	let h = coord.h;
 	let x0 = x - w * 0.5;
 	let y0 = y - h * 0.5;
-
 	let m = w < h ? w : h;
-	
-	
 	let grd=ctx.createLinearGradient(x0,y0,x0 + w,y0 + h);
+	
 	grd.addColorStop(0,darkerColor);
 	grd.addColorStop(0.1,color);
 	grd.addColorStop(0.13,lightColor);
@@ -1157,8 +1236,6 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	grd.addColorStop(0.67,lightColor);
 	grd.addColorStop(0.7,color);
 	grd.addColorStop(1,darkerColor);
-
-	
 
 	ctx.lineWidth = lineWidth;
 	ctx.strokeStyle = grd;
@@ -1178,7 +1255,6 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 		grad.addColorStop(0.45,color);
 		grad.addColorStop(0.455,darkerColor);
 		grad.addColorStop(1,darkColor);
-		
 		ctx.fillStyle = grad;
 	}
 	else
@@ -1190,14 +1266,7 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	ctx.rect(innerCoord.x - innerCoord.w * 0.5,
 		innerCoord.y - innerCoord.h * 0.5,
 		innerCoord.w, innerCoord.h);
-	
 	ctx.fill();
-	
-
-	
-	
-	
-	//if (drawShadow) ctx.restore();
 	
 	if (!plainColor)
 	{
@@ -1214,10 +1283,8 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 			innerCoord.y - innerCoord.h * 0.5,
 			innerCoord.w, innerCoord.h);
 		ctx.fill();
-		
+		ctx.globalAlpha = 1;
 	}
-	
-	ctx.globalAlpha = 1;
 	
 	grad = ctx.createLinearGradient(
 		 - lineWidth,  - lineWidth,  + lineWidth,  + lineWidth);
@@ -1236,8 +1303,6 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 	alignment = 4, leadingFactor = 1.2)
 {
-	//let start = new Date().getTime();
-	
 	this.lines = [];
 	this.fontName = fontName;
 	this.baseFontRelHeight = fontRelHeight;
@@ -1256,6 +1321,7 @@ let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 	this.__endPosition = new Int32Array(this.__endPositionBuffer);
 	this.__textWidthBuffer = new ArrayBuffer(count * 4);
 	this.__textWidth = new Int32Array(this.__textWidthBuffer);
+	this.__spaceWidth = 0;
 	this.__linesIndexesBuffer = new ArrayBuffer(count * 4);
 	this.__linesIndexes = new Int32Array(this.__linesIndexesBuffer);
 	this.__linesIndexesUsed = 0;
@@ -1267,9 +1333,6 @@ let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 		this.__endPosition[i] = index;
 		++index;
 	}
-	
-	//let end = new Date().getTime();
-	//console.log ('BkTextArea creation ' + (end - start));
 }
 
 BkTextArea.prototype.resize = function()
@@ -1294,7 +1357,7 @@ BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
 		this.__textWidth[i] = ctx.measureText(this.words[i]).width;
 	}
 	let spaceWidth = ctx.measureText(' ').width;
-	
+	this.__spaceWidth = spaceWidth;
 	let minPadding = maxWidth;
 	let baseIndex = 0;
 	let linesCount = 0;
@@ -1348,10 +1411,16 @@ BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
 
 BkTextArea.prototype._getLineWidth = function(index)
 {
-	let wordStart = index ? this.__linesIndexes[index - 1] : 0;
+	let wordStart = index ? (this.__linesIndexes[index - 1] + 1) : 0;
 	let wordEnd = this.__linesIndexes[index];
 	let lineWidth = 0;
-	for (let i = wordStart; i <= wordEnd; ++i) lineWidth += this.__textWidth[i];
+	
+	for (let i = wordStart; i <= wordEnd; ++i)
+	{	
+		if (i > wordStart) lineWidth += this.__spaceWidth;
+		lineWidth += this.__textWidth[i];
+	}
+
 	return lineWidth;
 }
 
@@ -1410,9 +1479,7 @@ BkTextArea.prototype.adjustLines = function(ctx, width, height)
 		break;
 	}
 	
-	
 	// Fix ugly two lines 
-	let endPos = this.__endPosition;
 	if (this.__linesIndexesUsed == 2)
 	{
 		while (this.__linesIndexes[0] >= 1)
@@ -1428,9 +1495,14 @@ BkTextArea.prototype.adjustLines = function(ctx, width, height)
 			}
 			break;
 		}
+		// Fix padding
+		let padding0 = width - this._getLineWidth(0);
+		let padding1 = width - this._getLineWidth(1);
+		
+		this.padding = (padding0 < padding1 ? padding0 : padding1) / width;
 	}
 	
-
+	let endPos = this.__endPosition;
 	let text = this.text;
 	let lines = [];
 	for (let i = 0; i < this.__linesIndexesUsed; ++i)
@@ -1453,11 +1525,11 @@ BkTextArea.prototype.draw = function(ctx, screenCoord, border = null)
 		this.adjustLines(ctx, coord.w, coord.h);
 	}
 	
-	let fontHeight = (this.fontRelHeight * coord.h);
-	if (fontHeight < 1) return;
+	let fontH = (this.fontRelHeight * coord.h);
+	if (fontH < 1) return;
 	
-	ctx.font = fontHeight.toString() +'px ' + this.fontName;
-	let lineHeight = fontHeight * this.leadingFactor;
+	ctx.font = fontH.toString() +'px ' + this.fontName;
+	let lineHeight = fontH * this.leadingFactor;
 	let maxLines = this.lines.length;
 	let x, y;
 	
@@ -1468,22 +1540,22 @@ BkTextArea.prototype.draw = function(ctx, screenCoord, border = null)
 	case 4:  // Center middle
 		ctx.textAlign = 'center';
 		x = coord.x;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
 		break;
 	case 3:  // Left middle
 		ctx.textAlign = 'left';
 		x = coord.x - coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
 		break;
 	case 3.5:// Left middle with padding
 		ctx.textAlign = 'left';
 		x = coord.x - (1 - this.padding) * coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
 		break;
 	case 5:  // Right middle
 		ctx.textAlign = 'right';
 		x = coord.x + coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontHeight) * 0.5;
+		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
 		break;
 	case 0:  // Left top
 		ctx.textAlign = 'left';
@@ -1508,35 +1580,52 @@ BkTextArea.prototype.draw = function(ctx, screenCoord, border = null)
 	case 6:  // Left bottom
 		ctx.textAlign = 'left';
 		x = coord.x - coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontHeight);
+		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
 		break;
 	case 6.5:  // Left bottom with padding
 		ctx.textAlign = 'left';
 		x = coord.x + (this.padding - 1) * coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontHeight);
+		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
 		break;
 	case 7:  // Center bottom
 		ctx.textAlign = 'center';
 		x = coord.x;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontHeight);
+		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
 		break;
 	case 8:  // Right bottom
 		ctx.textAlign = 'right';
 		x = coord.x + coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontHeight);
+		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
 		break;
 	}
 	
 	let lines = this.lines;
 
-	if ((border !== null) && (fontHeight >= 6))
+	if ((border !== null) && (fontH >= 4))
 	{
-		let s = 1.75 + fontHeight * 0.1;
-		ctx.lineWidth = s;
-		ctx.strokeStyle = border;
-		for (let i = 0; i < maxLines; ++i)
+		if (fontH < 60)
 		{
-			ctx.strokeText(lines[i], x, y + lineHeight * i);
+			let oldStyle = ctx.fillStyle;
+			ctx.fillStyle = border;
+			let amount = fontH < 30 ? 1 : 1.45;
+			for (let i = 0; i < maxLines; ++i)
+			{
+				let py = y + lineHeight * i;
+				ctx.fillText(lines[i], x + amount, py);
+				ctx.fillText(lines[i], x - amount, py);
+				ctx.fillText(lines[i], x, py + amount);
+				ctx.fillText(lines[i], x, py - amount);
+			}
+			ctx.fillStyle = oldStyle;
+		}
+		else
+		{
+			ctx.lineWidth = (fontH >= 100) ? 4 : (fontH * 0.04);
+			ctx.strokeStyle = border;
+			for (let i = 0; i < maxLines; ++i)
+			{
+				ctx.strokeText(lines[i], x, y + lineHeight * i);
+			}
 		}
 	}
 	
