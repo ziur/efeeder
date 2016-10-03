@@ -22,7 +22,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
  * @author alexander_castro
  */
 @Command
-public class getUserAndPlaceByFoodMeetingCommand implements CommandUnit {
+public class GetSuggestionsCommand implements CommandUnit {
 
     private static final String SELECT_USERS_BY_MEETING_SQL =
             "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
