@@ -1,6 +1,6 @@
-const USER_COLOR = 0x303030;
+var USER_COLOR = 0x303030;
 
-let ef_User = function(coord, drawer, id, name, placeId)
+var ef_User = function(coord, drawer, id, name, placeId)
 {
 	this.id = id;
 	this.coord = coord;
@@ -29,7 +29,7 @@ ef_User.prototype.resize = function()
 	this.textArea.resize();
 }
 
-let ef_UserDrawer = function(bkSystem)
+var ef_UserDrawer = function(bkSystem)
 {
 	this._ctx = bkSystem.ctx;
 	this._transform = bkSystem.transform;
@@ -38,17 +38,17 @@ let ef_UserDrawer = function(bkSystem)
 
 ef_UserDrawer.prototype.draw = function(o)
 {
-	let coord = o.coord.toScreen(this._transform);
-	let ctx = this._ctx;
+	var coord = o.coord.toScreen(this._transform);
+	var ctx = this._ctx;
 	
-	let isSelected = ef_myUser === o;
+	var isSelected = ef_myUser === o;
 	bkDrawGlassButton(ctx, coord, (isSelected ? 0x90FFC080 : 0x90000000) | USER_COLOR, true, 0.5);
 
 	ctx.fillStyle = isSelected ? '#653' : '#eee';
 	o.textArea.draw(ctx, coord);
 }
 
-let ef_Place = function(coord, drawer, id, name, description, phone, direction, votes, imgSrc, isSelected)
+var ef_Place = function(coord, drawer, id, name, description, phone, direction, votes, imgSrc, isSelected)
 {
 	this.id = id;
 	this.coord = coord;
@@ -62,9 +62,9 @@ let ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	
 	this.img = drawer._system.createImage(imgSrc);
 	
-	let fontName = 'serif';
+	var fontName = 'serif';
 		
-	let smallFontName = 'Tahoma';
+	var smallFontName = 'Tahoma';
 	
 	this.textArea = new BkTextArea(
 		new BkCoord(0.05, 0.05, 0.9, 0.3, 0, 7),
@@ -93,7 +93,7 @@ ef_Place.prototype.resize = function()
 	this.votesTextArea.resize();
 }
 
-let ef_PlaceDrawer = function(bkSystem)
+var ef_PlaceDrawer = function(bkSystem)
 {
 	this._ctx = bkSystem.ctx;
 	this._transform = bkSystem.transform;
@@ -102,15 +102,15 @@ let ef_PlaceDrawer = function(bkSystem)
 
 ef_PlaceDrawer.prototype.draw = function(o)
 {
-	let coord = o.coord.toScreen(this._transform);
-	let ctx = this._ctx;
+	var coord = o.coord.toScreen(this._transform);
+	var ctx = this._ctx;
 	
-	let isSelectedInUi = (o === g_selectedPlace) || o.isSelected;
+	var isSelectedInUi = (o === g_selectedPlace) || o.isSelected;
 	
 	bkDrawGlassBoard(ctx, coord, o.isSelected ? 0xff808080 : 0x60808080, o.isSelected,
 		o.img != null);
 	
-	let coordInner = coord.anisotropicGrow(0.96);
+	var coordInner = coord.anisotropicGrow(0.96);
 	if (o.img)
 	{
 		if (!isSelectedInUi) ctx.globalAlpha = 0.5;
@@ -120,7 +120,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	
 	
 	ctx.fillStyle = '#ff8';
-	let border = 'rgba(80,70,30,1)';
+	var border = 'rgba(80,70,30,1)';
 	o.textArea.draw(ctx, coord, border);
 	ctx.fillStyle = '#fff';
 	border = 'rgba(0,0,0,1)';
@@ -135,17 +135,17 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	o.votesTextArea.draw(ctx, coord, isSelectedInUi ? '#000' : null);
 }
 
-let ef_places = [];
+var ef_places = [];
 function ef_getPlaceByObject(o)
 {
 	return ef_places.indexOf(o) === -1 ? null : o;
 }
 
-let ef_users = [];
+var ef_users = [];
 function ef_getUserById(userId)
 {
-	let count = ef_users.length;
-	for (let i = 0; i < count; ++i)
+	var count = ef_users.length;
+	for (var i = 0; i < count; ++i)
 	{
 		if (ef_users[i].id === userId)
 		{
@@ -155,54 +155,52 @@ function ef_getUserById(userId)
 	return null;
 }
 
-let ef_placeDrawer = null;
-let ef_userDrawer = null;
-let ef_myUser = null;
+var ef_placeDrawer = null;
+var ef_userDrawer = null;
+var ef_myUser = null;
 
-function _processUserPlaceJson(jsonString)
+function _processUserPlaceJson(json)
 {
-	if (!jsonString || jsonString.length == 0) return;
-	let json;
+	console.log("DATA:\n" + JSON.stringify(json));
 	
-	try
+	if (!json.userId)
 	{
-		json = JSON.parse(jsonString);
-	}
-	catch (e)
-	{
-		request.open('GET', '/action/getUserAndPLaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
-		request.send('');
+		$.ajax({
+			url: '/action/getSuggestions?id_food_meeting=' + g_idFoodMeeting.toString(),
+			success: function(result){
+				_processUserPlaceJson(result);
+			}
+		});
 		return;
 	}
 	
 	ef_myUserId = json.userId;
-
-	let count = ef_users.length;
-	for (let i = 0; i < count; ++i)
+	var count = ef_users.length;
+	for (var i = 0; i < count; ++i)
 	{
 		ef_users[i].drawer = null;
 	}
 	
 	
 	count = ef_places.length;
-	for (let i = 0; i < count; ++i)
+	for (var i = 0; i < count; ++i)
 	{
 		bkSystem.remove(ef_places[i]);
 	}
 	
 	ef_myUser = null;
-	let list = json.userList;
+	var list = json.userList;
 	count = list.length;
 	
-	let pad = 0.02;
-	let cellW = 0.25 - pad * 2;
-	let cellH = ((1 - pad) / count) - pad;
+	var pad = 0.02;
+	var cellW = 0.25 - pad * 2;
+	var cellH = ((1 - pad) / count) - pad;
 	
-	for (let i = 0; i < count; ++i)
+	for (var i = 0; i < count; ++i)
 	{
-		let userId = list[i].id_User;
-		let item = ef_getUserById(userId);
-		let coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
+		var userId = list[i].id_User;
+		var item = ef_getUserById(userId);
+		var coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
 		
 		if (item === null)
 		{
@@ -227,7 +225,7 @@ function _processUserPlaceJson(jsonString)
 	
 	list = [];
 	count = ef_users.length;
-	for (let i = 0; i < count; ++i)
+	for (var i = 0; i < count; ++i)
 	{
 		if (ef_users[i].drawer === null)
 		{
@@ -243,11 +241,11 @@ function _processUserPlaceJson(jsonString)
 	ef_places = [];
 	list = json.placeList;
 	count = list.length;
-	for (let i = 0; i < count; ++i)
+	for (var i = 0; i < count; ++i)
 	{
-		let isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
+		var isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
 		
-		let item = new ef_Place(
+		var item = new ef_Place(
 			new BkCoord(list[i].name, 0, BkCoordDimToNum(0.3, 0.2), 0, 0, 8),
 			ef_placeDrawer,
 			list[i].id, list[i].name, list[i].description,
@@ -267,33 +265,32 @@ function _processUserPlaceJson(jsonString)
 	bkSystem.redistribute(true);
 }
 
-let request = null;
-let bkSystem;
-let mainSideNav = document.getElementById('mainSideNav');
-mainSideNav.style.transition = 'visibility 1s, left 1s'
-let mainCanvas = document.getElementById('mainCanvas');
-let g_selectedPlace = null;
+var bkSystem;
+var g_selectedPlace = null;
 var g_sideBarHidden = false;
 
 function _restoreSideBar()
 {
 	if (!g_sideBarHidden) return;
 	
-	var list = document.getElementsByTagName("footer");
+	var list = $('footer');
 	for (var i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}
-	var list = document.getElementsByTagName("nav");
+	
+	var list = $('nav');
 	for (var i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}                        
 
+	var mainSideNav = $('#mainSideNav').get(0);
 	var w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'visible';
 	mainSideNav.style.left = '0px';
 
+	var mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "width:82.5vw;height:80vh;";
 	g_sideBarHidden = false;
 	bkSystem.resize();
@@ -303,29 +300,65 @@ function _hideSideBar()
 {
 	if (g_sideBarHidden) return;
 	
-	var list = document.getElementsByTagName("footer");
+	var list = $('footer');
 	for (var i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}
-	var list = document.getElementsByTagName("nav");
+	
+	var list = $('nav');
 	for (var i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}                        
 
+	var mainSideNav = $('#mainSideNav').get(0);
 	var w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'hidden';
 	mainSideNav.style.left = '-' + w + 'px';
 
+	var mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "position:fixed;padding:0;margin:0;top:0;left:0;width:100%;height:100%;";
 	
 	g_sideBarHidden = true;
 	bkSystem.resize();
 }
 
+function _onMouseDown()
+{
+	var button = this.mouse.button;
+	if (1 === button)
+	{
+		if (this.item.length === 0)
+		{
+			_restoreSideBar();
+			return;
+		}
+		
+		g_selectedPlace = this.select(this.mouse.x, this.mouse.y);
+		this.redistribute(true);
+		if (g_selectedPlace === null) return;
+		
+		var place = ef_getPlaceByObject(g_selectedPlace);
+		if (place === null) return;
+		
+		var idPlace = place.isSelected ? -1 : place.id;
+		if (idPlace === -1) _restoreSideBar();
+		
+		$.ajax({
+			url: '/action/createSuggestion?id_food_meeting=' +
+				g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString(),
+			success: function(result){
+				_processUserPlaceJson(result);
+			}
+		});
+	}
+}
+
 function _start()
 {
+	$('#mainSideNav').get(0).style.transition = 'visibility 1s, left 1s';
+
 	bkSystem = new BkSystem('mainCanvas');
 	bkSystem.addArea(new BkArea(new BkCoord(0.2,0,0.8,1,0,7), 1.3));
 	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.2,1,0,7), 3));
@@ -333,47 +366,23 @@ function _start()
 	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
 	ef_userDrawer = new ef_UserDrawer(bkSystem);
 	
-	request = new XMLHttpRequest();
-	request.onreadystatechange = function () {
-		let DONE = this.DONE || 4;
-		if (this.readyState === DONE)
-		{
-			_processUserPlaceJson(request.responseText);
+	$.ajax({
+		url: '/action/getSuggestions?id_food_meeting=' + g_idFoodMeeting.toString(),
+		success: function(result){
+			_processUserPlaceJson(result);
 		}
-	};
-	request.open('GET', '/action/getUserAndPlaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
-	request.send('');
+	});
 
-	mainSideNav.addEventListener("mousedown",
-		function() {
-			_hideSideBar();
-		},
-		false);        
+	$("#mainSideNav").on("mousedown", function() {
+		_hideSideBar();
+	});
 
-	bkSystem.onmousedown = function ()
-	{
-		let button = this.mouse.button;
-		if (1 !== button) return;
-		
-		g_selectedPlace = this.select(this.mouse.x, this.mouse.y);
-		this.redistribute(true);
-		if (g_selectedPlace === null) return;
-		
-		let place = ef_getPlaceByObject(g_selectedPlace);
-		if (place === null) return;
-		
-		let idPlace = place.isSelected ? -1 : place.id;
-		if (idPlace === -1) _restoreSideBar();
-		request.open('GET', '/action/createSuggestion?id_food_meeting=' +
-			g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString());
-		request.send('');
-	};
+	bkSystem.onmousedown = _onMouseDown;
 	
 	bkSystem.run();
 }
 
-window.addEventListener("load",
-	function() {
-		_start();
-	},
-	false);
+// Requires g_idFoodMeeting to be defined and valid
+$(window).on("load", function() {
+	_start();
+});
