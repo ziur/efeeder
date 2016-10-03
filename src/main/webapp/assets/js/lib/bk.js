@@ -479,11 +479,6 @@ BkSystem.prototype.createImage = function(src)
 	return img;
 }
 
-/*
-BkSystem.prototype.getCoord = function()
-{
-	return this.__coord;
-}*/
 
 BkSystem.prototype.setBackgroundImage = function(src)
 {
@@ -492,14 +487,12 @@ BkSystem.prototype.setBackgroundImage = function(src)
 
 function _getDivisorsCloseToRatio(n, ratio) 
 {
-	//console.log("n: " + n + ", r: " + ratio);
 	if (n <= 1) return {w:1, h:1};
 		
 	let sqrtN = Math.sqrt(n);
 	let sqrtInvRatio = Math.sqrt(1 / ratio);
 	let w = sqrtN * sqrtInvRatio * ratio;
 	let h = sqrtN * sqrtInvRatio;
-	//console.log("w: " + w + ", h: " + h);
 	
 	w = Math.floor(w);
 	h = Math.floor(h);
@@ -553,7 +546,6 @@ function _getDivisorsCloseToRatio(n, ratio)
 		--w;
 	}	
 
-	//console.log("w: " + w + ", h: " + h);
 	return {w:w, h:h};
 }
 
@@ -607,11 +599,11 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 	
 	let cellH = ((1 - padH) / dim.h) - padH;
 	
-	/*
-	1 = (w + p) * n + p
-	1 - p = (w + p) * n
-	(1 - p) / n = w + p
-	((1 - p) / n) - p = w
+	/* Equation for pad calculation: 
+		1 = (w + p) * n + p
+		1 - p = (w + p) * n
+		(1 - p) / n = w + p
+		((1 - p) / n) - p = w
 	*/
 	
 	let index = 0;
@@ -740,7 +732,6 @@ BkSystem.prototype.doOnMouseDown = function(e)
 	return false;
 }
 
-
 BkSystem.prototype.run = function()
 {
 	if (this.__running === true) return;
@@ -852,11 +843,10 @@ BkSystem.prototype.moveToTail = function(o)
 	this.item.push(o);
 }
 
-/*
 BkSystem.prototype.bringToFront = function(o)
 {
+	this.moveToTail(o);
 }
-*/
 
 BkSystem.prototype.undock = function(o)
 {
@@ -891,8 +881,6 @@ BkSystem.prototype.dockToArea = function(o, x, y)
 		if ((p.x >= (c.x - c.w * 0.5)) && (p.x < (c.x + c.w * 0.5)) &&
 			(p.y >= (c.y - c.h * 0.5)) && (p.y < (c.y + c.h * 0.5)))
 		{
-			//this.area[i];
-			
 			coord.z = i;
 			coord.type = 8;
 			
