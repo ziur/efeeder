@@ -1,22 +1,15 @@
 package org.jala.efeeder.servlets;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.ServletConfig;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import org.jala.efeeder.api.command.CommandExecutor;
@@ -29,6 +22,7 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.ResponseAction;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
+import org.jala.efeeder.api.utils.ImageResourceManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 
 import org.jala.efeeder.user.User;
@@ -41,19 +35,10 @@ public class CommandServlet extends HttpServlet {
     private static final long serialVersionUID = 5585317604797123555L;
 
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
-    private File diretorio;
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-//        String path = config.getInitParameter("diretorio");
-//        diretorio = new File(path);
-//        diretorio.mkdirs();
-    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-                                                                                                      IOException {
+            IOException {
         processRequest(request, response);
     }
 
@@ -63,32 +48,14 @@ public class CommandServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (isMultipart) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setRepository(diretorio);
-
-            ServletFileUpload upload = new ServletFileUpload(factory);
-
-            try {
-                List<FileItem> items = upload.parseRequest(request);
-                for (FileItem item : items) {
-                    if (!item.isFormField()) {
-                        processUploadedFile(item);
-                    } else {
-                        String nomeDoCampo = item.getFieldName();
-                        String valorDoCampo = item.getString();
-                        System.out.println(nomeDoCampo + ": " + valorDoCampo);
-                    }
-                }
-
-            } catch (Exception e) {
-                System.out.println("ERROR:" + e.getMessage());
-                return;
-            }
+            //TODO mover toda esta parte
+            ImageResourceManager sourceImageM = new ImageResourceManager(getServletContext());
+            sourceImageM.saveImage(request);
         }
 
         HttpSession session = request.getSession(true);
@@ -99,7 +66,7 @@ public class CommandServlet extends HttpServlet {
 
         } else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
                 && !request.getRequestURI().equals("/action/CreateUser")
-            && session.getAttribute("user") == null) {
+                && session.getAttribute("user") == null) {
 
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
@@ -108,38 +75,24 @@ public class CommandServlet extends HttpServlet {
             CommandExecutor executor = new CommandExecutor(databaseManager);
             In parameters = InBuilder.createIn(request);
             parameters.setUser(User.class.cast(session.getAttribute("user")));
-            Out out = executor.executeCommand(parameters, getCommand(request)); 
+            Out out = executor.executeCommand(parameters, getCommand(request));
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-                    && !request.getRequestURI().equals("/action/CreateUser"))
-            {
+                    && !request.getRequestURI().equals("/action/CreateUser")) {
                 out.addResult("showNavBar", true);
             }
-                        
-            if(out.getUser()!=null && session.getAttribute("user")==null)
-            {                                
+
+            if (out.getUser() != null && session.getAttribute("user") == null) {
                 session.setAttribute("user", out.getUser());
             }
 
             if (out.getExitStatus() == ExitStatus.ERROR) {
-                for(String msg: out.getMessages(MessageType.ERROR)){
+                for (String msg : out.getMessages(MessageType.ERROR)) {
                     System.out.println("ERROR:" + msg);
                 }
             }
 
             processResponse(out, request, response);
         }
-    }
-
-    private void processUploadedFile(FileItem item) throws Exception {
-        String webAppPath;
-        webAppPath = getServletContext().getRealPath("/");
-        diretorio = new File(Paths.get(webAppPath, "assets", "img").toString());
-        if(!diretorio.exists()){
-            diretorio.mkdirs();                    
-        }
-        String fileName = item.getName();
-        File uploadedFile = new File(diretorio, fileName);
-        item.write(uploadedFile);
     }
 
     private void processResponse(Out out, HttpServletRequest request, HttpServletResponse response)
@@ -158,7 +111,7 @@ public class CommandServlet extends HttpServlet {
                 break;
             case MESSAGE:
                 String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-                for(Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+                for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
                     response.addHeader(header.getKey(), header.getValue());
                 }
                 response.setContentType(contentType);
@@ -166,11 +119,10 @@ public class CommandServlet extends HttpServlet {
         }
 
     }
-    
 
     private CommandUnit getCommand(HttpServletRequest req) {
-        CommandFactory commandFactory =
-                (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
+        CommandFactory commandFactory
+                = (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
         Matcher matcher = COMMAND_PATTERN.matcher(req.getRequestURI());
 
         if (!matcher.matches()) {
