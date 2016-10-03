@@ -59,6 +59,7 @@
 
       $("#raffle").click(function () {
         communicationService.sendMessage({user:1, room: ${id}, command:"Wheeldecide", events:[]});
+        _hideSideBar();
       });
     });
 
