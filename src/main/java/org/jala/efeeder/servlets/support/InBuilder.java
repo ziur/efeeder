@@ -15,19 +15,16 @@ import java.util.Map;
 public class InBuilder {
     public static In createIn(HttpServletRequest request) {
         DefaultIn in = new DefaultIn();
+        in.setUser((User) request.getSession().getAttribute("user"));
         for (Map.Entry<String, String[]> parameter : request.getParameterMap().entrySet()) {
             in.addParameter(parameter.getKey(), Arrays.asList(parameter.getValue()));
-            in.setUser((User) request.getSession().getAttribute("user"));
         }
-
         return in;
-
     }
 
     public static In createIn(String message) {
         DefaultIn in = new DefaultIn();
         in.setMessageContext(MessageContextHelper.deserialize(message));
         return in;
-
     }
 }

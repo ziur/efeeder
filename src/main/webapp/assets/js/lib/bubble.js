@@ -370,15 +370,29 @@ function _writeToScreen(text)
 	_writeToScreenXY(text, 2, 10);
 }
 
-var g_oldTick = performance.now();
-var g_lastExpell = g_oldTick + 3000;
+var g_oldTick;
+var g_lastExpell;
+var g_ZeroTick;
 
 var g_frameCount = 0;
-var g_ZeroTick = 0;
-var g_FpsCalculated = false;
 function _updateFrame()
 {
 	var currentTick = performance.now();
+	
+	if (g_frameCount == 0)
+	{
+		g_ZeroTick = currentTick;
+		g_oldTick = performance.now();
+		g_lastExpell = g_oldTick + 3000;
+	}
+	else
+	{
+		let fps = 1000 / ((currentTick - g_ZeroTick) / g_frameCount);
+		let frames = Math.floor(240 / fps);
+		if (frames < 1) frames = 1;
+		if (frames > 100) frames = 100;
+		G_ITERATIONS_PER_TICK = frames;
+	}
 
 	if (particleSystem)
 	{
@@ -391,22 +405,6 @@ function _updateFrame()
 	
 		particleSystem.updateSystem();
 		particleSystem.draw();
-	}
-	
-	if (!g_FpsCalculated)
-	{
-		if (g_frameCount == 0)
-		{
-			g_ZeroTick = currentTick;
-		}
-		else
-		{
-			let fps = 1000 / ((currentTick - g_ZeroTick) / g_frameCount);
-			let frames = Math.floor(240 / fps);
-			if (frames < 1) frames = 1;
-			if (frames > 100) frames = 100;
-			G_ITERATIONS_PER_TICK = frames;
-		}
 	}
 		
 	g_oldTick = currentTick;
@@ -425,16 +423,16 @@ function _startBubble(jsonObject)
 {
 	CANVAS = document.getElementById('mainCanvas');
 	CTX = CANVAS.getContext('2d');
-	
-       
+
+
 	window.addEventListener("resize",
 		function() {
 			_resizeCanvas();
 		},
 		false);        
-	
-    particleSystem = new ParticleSystem(jsonObject);
-        
+
+	particleSystem = new ParticleSystem(jsonObject);
+
 	_resizeCanvas();        
 
 	_updateFrame();

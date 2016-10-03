@@ -13,7 +13,7 @@ ef_User.prototype.setName = function(name)
 {
 	this.name = name;
 	this.textArea = new BkTextArea(
-		new BkCoord(0.05, 0.05, 0.9, 0.9, 0, 7),
+		new BkCoord(0.05, 0.1, 0.9, 0.8, 0, 7),
 		name,
 		'Tahoma',
 		//'Edwardian Script ITC',
@@ -43,7 +43,7 @@ ef_UserDrawer.prototype.draw = function(o)
 	let ctx = this._ctx;
 	
 	let isSelected = ef_myUser === o;
-	bkDrawGlassButton(ctx, coord, (isSelected ? 0xA0FFC080 : 0xA0000000) | USER_COLOR, true);
+	bkDrawGlassButton(ctx, coord, (isSelected ? 0x90FFC080 : 0x90000000) | USER_COLOR, true, 0.5);
 
 	ctx.fillStyle = isSelected ? '#653' : '#eee';
 	o.textArea.draw(ctx, coord);
@@ -112,19 +112,23 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	
 	let isSelectedInUi = this._system.isSelected(o) || o.isSelected;
 	
-	bkDrawGlassBoard(ctx, coord, o.isSelected ? 0xff010100 : 0x60010100, o.isSelected,
-		true);
+	bkDrawGlassBoard(ctx, coord, o.isSelected ? 0xff808080 : 0x60808080, o.isSelected,
+		o.img != null);
 	
 	let coordInner = coord.anisotropicGrow(0.96);
-	ctx.globalAlpha = isSelectedInUi ? 1 : 0.5;
-	o.img.drawFill(ctx, coordInner);
-	ctx.globalAlpha = 1;
+	if (o.img)
+	{
+		if (!isSelectedInUi) ctx.globalAlpha = 0.5;
+		o.img.drawFill(ctx, coordInner);
+		if (!isSelectedInUi) ctx.globalAlpha = 1;
+	}
 	
 	
 	ctx.fillStyle = '#ff8';
-	let border = o.isSelected ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)';
+	let border = 'rgba(80,70,30,1)';
 	o.textArea.draw(ctx, coord, border);
 	ctx.fillStyle = '#fff';
+	border = 'rgba(0,0,0,1)';
 	o.descriptionTextArea.draw(ctx, coord, border);
 	o.directionTextArea.draw(ctx, coord, border);
 	o.phoneTextArea.draw(ctx, coord, border);
@@ -133,8 +137,8 @@ ef_PlaceDrawer.prototype.draw = function(o)
 		toScreenCoord(coord);
 	
 	bkDrawGlassButton(ctx, bCoord, isSelectedInUi ? 0xD0fff080 : 0xff050400, true);
-	ctx.fillStyle = isSelectedInUi ? '#653' : '#fff';
-	o.votesTextArea.draw(ctx, coord);
+	ctx.fillStyle = '#fff';
+	o.votesTextArea.draw(ctx, coord, isSelectedInUi ? '#000' : null);
 }
 
 let ef_places = [];
@@ -217,7 +221,8 @@ function _processUserPlaceJson(jsonString)
 		//console.log("user: " + list[i].name + " [" + list[i].id_User + "] place:" + list[i].id_Place);
 		let userId = list[i].id_User;
 		let item = ef_getUserById(userId);
-		let coord = new BkCoord(pad, pad + (cellH + pad) * i, cellW, cellH, 0, 7);
+		//let coord = new BkCoord(pad, pad + (cellH + pad) * i, cellW, cellH, 0, 7);
+		let coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
 		
 		if (item === null)
 		{
@@ -266,7 +271,7 @@ function _processUserPlaceJson(jsonString)
 		let isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
 		
 		let item = new ef_Place(
-			new BkCoord(list[i].id, 0, BkCoordDimToNum(0.3, 0.2), 0, 0, 8),
+			new BkCoord(list[i].name, 0, BkCoordDimToNum(0.3, 0.2), 0, 0, 8),
 			ef_placeDrawer,
 			list[i].id, list[i].name, list[i].description,
 			list[i].phone, list[i].direction,
@@ -348,7 +353,8 @@ function _hideSideBar()
 function _start()
 {
 	bkSystem = new BkSystem('mainCanvas');
-	bkSystem.setDistributionArea(new BkCoord(0.25,0,0.75,1,0,7));
+	bkSystem.addArea(new BkArea(new BkCoord(0.25,0,0.75,1,0,7), 1.5));
+	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.25,1,0,7), 2.5));
 	bkSystem.setBackgroundImage('/assets/img/b0.svg');
 	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
 	ef_userDrawer = new ef_UserDrawer(bkSystem);
@@ -370,91 +376,23 @@ function _start()
 		},
 		false);        
 
-	/*
-	bkSystem.canvas.onclick = function (e)
+	bkSystem.onmousedown = function ()
 	{
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}*/
-
-	/*
-	bkSystem.canvas.onmouseout = function (e)
-	{
-		bkSystem.mouse.button = 0;
-		//bkSystem.unselect();
+		let button = this.mouse.button;
+		if (1 !== button) return;
 		
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}
-
-	bkSystem.canvas.onmouseup = function (e)
-	{
-		bkSystem.mouse.button = 0;
-		//bkSystem.unselect();
+		this.select(this.mouse.x, this.mouse.y);
+		this.redistribute(true);
+		if (this.selectedIndex < 0) return;
 		
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}*/
-
-	/*
-	bkSystem.canvas.onmousemove = function (e)
-	{
-		let rect = bkSystem.canvas.getBoundingClientRect();
-		let x = e.clientX - rect.left;
-		let y = e.clientY - rect.top;
-		if (1 == bkSystem.mouse.button)
-		{
-			//bkSystem.moveSelected(x, y);
-		}
-
-		bkSystem.mouse.x = x;
-		bkSystem.mouse.y = y;
+		let place = ef_getPlaceByObject(this.item[this.selectedIndex]);
+		if (place === null) return;
 		
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}*/
-
-	bkSystem.canvas.onmousedown = function (e)
-	{
-		let rect = bkSystem.canvas.getBoundingClientRect();
-		let x = e.clientX - rect.left;
-		let y = e.clientY - rect.top;
-		let button = e.which;
-		bkSystem.mouse.x0 = x
-		bkSystem.mouse.y0 = y
-		bkSystem.mouse.x = x;
-		bkSystem.mouse.y = y;
-		bkSystem.mouse.button = button;
-		bkSystem.mouse.action = 0;
-
-		if (1 == button)
-		{
-			bkSystem.select(x, y);
-			bkSystem.redistribute(true);
-			
-			if (bkSystem.selectedIndex >= 0)
-			{
-				let place = ef_getPlaceByObject(bkSystem.item[bkSystem.selectedIndex]);
-				if (place)
-				{
-					let idPlace = place.isSelected ? -1 : place.id;
-					
-					if (idPlace === -1) _restoreSideBar();
-					
-					request.open('GET', '/action/createSuggestion?id_food_meeting=' +
-						g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString());
-					request.send('');
-				}
-			}
-		}
-
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
+		let idPlace = place.isSelected ? -1 : place.id;
+		if (idPlace === -1) _restoreSideBar();
+		request.open('GET', '/action/createSuggestion?id_food_meeting=' +
+			g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString());
+		request.send('');
 	};
 	
 	bkSystem.run();
