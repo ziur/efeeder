@@ -20,13 +20,15 @@ public class Place {
     private String phone;
     private String direction;
     private String image_link;
+    private int votes;
 
-    public Place(int id, String name, String description, String phone, String direction, String image_link) {
+    public Place(int id, String name, String description, String phone, String direction, String image_link, int votes) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.phone = phone;
         this.direction = direction;
         this.image_link = image_link;
+        this.votes = votes;
     }
 }

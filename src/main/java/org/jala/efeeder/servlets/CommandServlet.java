@@ -1,7 +1,9 @@
 package org.jala.efeeder.servlets;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,9 +29,8 @@ import org.jala.efeeder.servlets.support.InBuilder;
  * Created by alejandro on 07-09-16.
  */
 public class CommandServlet extends HttpServlet {
-
     private static final long serialVersionUID = 5585317604797123555L;
-
+    private final static Logger log = Logger.getLogger(CommandServlet.class.toString());   
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
     @Override
@@ -44,9 +45,8 @@ public class CommandServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+        protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession(true);
 
         if (request.getRequestURI().equals("/action/logout")) {
@@ -78,14 +78,14 @@ public class CommandServlet extends HttpServlet {
 
             if (out.getExitStatus() == ExitStatus.ERROR) {
                 for(String msg: out.getMessages(MessageType.ERROR)){
-                    System.out.println("ERROR:" + msg);
+                    log.severe(msg);
                 }
             }
 
             processResponse(out, request, response);
         }
     }
-    
+
     private void processResponse(Out out, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         ResponseAction action = out.getResponseAction();
