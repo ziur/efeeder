@@ -15,12 +15,18 @@ public class FoodMeeting {
     private int id;
     private String name;
     private String imageLink;
+    private String status;
     private Timestamp eventDate;
     private Timestamp createdAt;
 
     public FoodMeeting() {
     }
 
+    public FoodMeeting(int id, String name,String imageLink, String status, Timestamp eventDate, Timestamp createdAt) {
+        this(id, name, imageLink, eventDate, createdAt);
+        this.status = status;
+    }
+    
     public FoodMeeting(int id, String name,String imageLink, Timestamp eventDate, Timestamp createdAt) {
         this.id = id;
         this.name = name;

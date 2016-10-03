@@ -18,7 +18,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 @Command
 public class FoodMeetingCommand implements CommandUnit {
 
-    private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, event_date, created_at "
+    private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, status, event_date, created_at " 
             + "from food_meeting where event_date >= ? order by event_date";
 
     @Override
@@ -32,7 +32,7 @@ public class FoodMeetingCommand implements CommandUnit {
         List<FoodMeeting> foodMeetings = new ArrayList<>();
         while (resultSet.next()) {
             foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-                    resultSet.getTimestamp(4), resultSet.getTimestamp(5)));
+                    resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6)));
         }
         out.addResult("foodMeetings", foodMeetings);
         return out.forward("foodmeeting/foodMeeting.jsp");
