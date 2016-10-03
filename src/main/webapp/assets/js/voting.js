@@ -159,24 +159,20 @@ let ef_placeDrawer = null;
 let ef_userDrawer = null;
 let ef_myUser = null;
 
-function _processUserPlaceJson(jsonString)
+function _processUserPlaceJson(json)
 {
-	if (!jsonString || jsonString.length == 0) return;
-	let json;
-	
-	try
+	if (!json.userId)
 	{
-		json = JSON.parse(jsonString);
-	}
-	catch (e)
-	{
-		request.open('GET', '/action/getUserAndPLaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
-		request.send('');
+		$.ajax({
+			url: '/action/getSuggestions?id_food_meeting=' + g_idFoodMeeting.toString(),
+			success: function(result){
+				_processUserPlaceJson(result);
+			}
+		});
 		return;
 	}
 	
 	ef_myUserId = json.userId;
-
 	let count = ef_users.length;
 	for (let i = 0; i < count; ++i)
 	{
@@ -267,33 +263,32 @@ function _processUserPlaceJson(jsonString)
 	bkSystem.redistribute(true);
 }
 
-let request = null;
 let bkSystem;
-let mainSideNav = document.getElementById('mainSideNav');
-mainSideNav.style.transition = 'visibility 1s, left 1s'
-let mainCanvas = document.getElementById('mainCanvas');
 let g_selectedPlace = null;
-var g_sideBarHidden = false;
+let g_sideBarHidden = false;
 
 function _restoreSideBar()
 {
 	if (!g_sideBarHidden) return;
 	
-	var list = document.getElementsByTagName("footer");
-	for (var i = 0; i < list.length; ++i)
+	let list = $('footer');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}
-	var list = document.getElementsByTagName("nav");
-	for (var i = 0; i < list.length; ++i)
+	
+	list = $('nav');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}                        
 
-	var w = mainSideNav.offsetWidth;
+	let mainSideNav = $('#mainSideNav').get(0);
+	let w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'visible';
 	mainSideNav.style.left = '0px';
 
+	let mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "width:82.5vw;height:80vh;";
 	g_sideBarHidden = false;
 	bkSystem.resize();
@@ -303,57 +298,40 @@ function _hideSideBar()
 {
 	if (g_sideBarHidden) return;
 	
-	var list = document.getElementsByTagName("footer");
-	for (var i = 0; i < list.length; ++i)
+	let list = $('footer');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}
-	var list = document.getElementsByTagName("nav");
-	for (var i = 0; i < list.length; ++i)
+	
+	list = $('nav');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}                        
 
-	var w = mainSideNav.offsetWidth;
+	let mainSideNav = $('#mainSideNav').get(0);
+	let w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'hidden';
 	mainSideNav.style.left = '-' + w + 'px';
 
+	let mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "position:fixed;padding:0;margin:0;top:0;left:0;width:100%;height:100%;";
 	
 	g_sideBarHidden = true;
 	bkSystem.resize();
 }
 
-function _start()
+function _onMouseDown()
 {
-	bkSystem = new BkSystem('mainCanvas');
-	bkSystem.addArea(new BkArea(new BkCoord(0.2,0,0.8,1,0,7), 1.3));
-	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.2,1,0,7), 3));
-	bkSystem.setBackgroundImage('/assets/img/b0.svg');
-	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
-	ef_userDrawer = new ef_UserDrawer(bkSystem);
-	
-	request = new XMLHttpRequest();
-	request.onreadystatechange = function () {
-		let DONE = this.DONE || 4;
-		if (this.readyState === DONE)
-		{
-			_processUserPlaceJson(request.responseText);
-		}
-	};
-	request.open('GET', '/action/getUserAndPlaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
-	request.send('');
-
-	mainSideNav.addEventListener("mousedown",
-		function() {
-			_hideSideBar();
-		},
-		false);        
-
-	bkSystem.onmousedown = function ()
+	let button = this.mouse.button;
+	if (1 === button)
 	{
-		let button = this.mouse.button;
-		if (1 !== button) return;
+		if (this.item.length === 0)
+		{
+			_restoreSideBar();
+			return;
+		}
 		
 		g_selectedPlace = this.select(this.mouse.x, this.mouse.y);
 		this.redistribute(true);
@@ -364,16 +342,45 @@ function _start()
 		
 		let idPlace = place.isSelected ? -1 : place.id;
 		if (idPlace === -1) _restoreSideBar();
-		request.open('GET', '/action/createSuggestion?id_food_meeting=' +
-			g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString());
-		request.send('');
-	};
+		
+		$.ajax({
+			url: '/action/createSuggestion?id_food_meeting=' +
+				g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString(),
+			success: function(result){
+				_processUserPlaceJson(result);
+			}
+		});
+	}
+}
+
+function _start()
+{
+	$('#mainSideNav').get(0).style.transition = 'visibility 1s, left 1s';
+
+	bkSystem = new BkSystem('mainCanvas');
+	bkSystem.addArea(new BkArea(new BkCoord(0.2,0,0.8,1,0,7), 1.3));
+	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.2,1,0,7), 3));
+	bkSystem.setBackgroundImage('/assets/img/b0.svg');
+	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
+	ef_userDrawer = new ef_UserDrawer(bkSystem);
+	
+	$.ajax({
+		url: '/action/getSuggestions?id_food_meeting=' + g_idFoodMeeting.toString(),
+		success: function(result){
+			_processUserPlaceJson(result);
+		}
+	});
+
+	$("#mainSideNav").on("mousedown", function() {
+		_hideSideBar();
+	});
+
+	bkSystem.onmousedown = _onMouseDown;
 	
 	bkSystem.run();
 }
 
-window.addEventListener("load",
-	function() {
-		_start();
-	},
-	false);
+// Requires g_idFoodMeeting to be defined and valid
+$(window).on("load", function() {
+	_start();
+});
