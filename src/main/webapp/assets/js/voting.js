@@ -16,7 +16,6 @@ ef_User.prototype.setName = function(name)
 		new BkCoord(0.05, 0.1, 0.9, 0.8, 0, 7),
 		name,
 		'Tahoma',
-		//'Edwardian Script ITC',
 		0.8);
 }
 
@@ -63,7 +62,7 @@ let ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	
 	this.img = drawer._system.createImage(imgSrc);
 	
-	let fontName = 'serif';//'Edwardian Script ITC';
+	let fontName = 'serif';
 		
 	let smallFontName = 'Tahoma';
 	
@@ -158,11 +157,7 @@ function ef_getUserById(userId)
 
 let ef_placeDrawer = null;
 let ef_userDrawer = null;
-
 let ef_myUser = null;
-
-
-//coord, drawer, name, description, direction, phone, img
 
 function _processUserPlaceJson(jsonString)
 {
@@ -175,19 +170,13 @@ function _processUserPlaceJson(jsonString)
 	}
 	catch (e)
 	{
-		//console.log("Received: " + jsonString);
 		request.open('GET', '/action/getUserAndPLaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
 		request.send('');
 		return;
 	}
 	
-	//console.log("Received JSON: " + jsonString);
-	
 	ef_myUserId = json.userId;
-		
-	//console.log("userlist: " + json.userList.length);
-	//console.log("placelist: " + json.placeList.length);
-	
+
 	let count = ef_users.length;
 	for (let i = 0; i < count; ++i)
 	{
@@ -211,10 +200,8 @@ function _processUserPlaceJson(jsonString)
 	
 	for (let i = 0; i < count; ++i)
 	{
-		//console.log("user: " + list[i].name + " [" + list[i].id_User + "] place:" + list[i].id_Place);
 		let userId = list[i].id_User;
 		let item = ef_getUserById(userId);
-		//let coord = new BkCoord(pad, pad + (cellH + pad) * i, cellW, cellH, 0, 7);
 		let coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
 		
 		if (item === null)
@@ -238,7 +225,6 @@ function _processUserPlaceJson(jsonString)
 		}
 	}
 	
-	
 	list = [];
 	count = ef_users.length;
 	for (let i = 0; i < count; ++i)
@@ -259,8 +245,6 @@ function _processUserPlaceJson(jsonString)
 	count = list.length;
 	for (let i = 0; i < count; ++i)
 	{
-		//console.log("name: " + list[i].name + " [" + list[i].id + "] phone:" + list[i].phone + " votes: " + list[i].votes);
-		
 		let isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
 		
 		let item = new ef_Place(
@@ -280,21 +264,17 @@ function _processUserPlaceJson(jsonString)
 		ef_places.push(item);
 		bkSystem.add(item);
 	}
-
-
 	bkSystem.redistribute(true);
 }
 
 let request = null;
-
 let bkSystem;
-
 let mainSideNav = document.getElementById('mainSideNav');
 mainSideNav.style.transition = 'visibility 1s, left 1s'
 let mainCanvas = document.getElementById('mainCanvas');
 let g_selectedPlace = null;
-
 var g_sideBarHidden = false;
+
 function _restoreSideBar()
 {
 	if (!g_sideBarHidden) return;
