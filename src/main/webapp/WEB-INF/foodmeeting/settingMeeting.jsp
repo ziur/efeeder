@@ -83,7 +83,7 @@
                                 <label for="private">Private</label>
                             </div><br>     
                         </div>
-                    </div>                                       
+                    </div>
                     <div class="row right"><br><br>
                         <button class="waves-effect waves-light btn">
                             <a href="/action/FoodMeeting" class="white-text">Cancel</a>
