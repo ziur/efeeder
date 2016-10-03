@@ -73,12 +73,9 @@ let ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	this.descriptionTextArea = new BkTextArea(
 		new BkCoord(0.05, 0.4, 0.9, 0.35, 0, 7),
 		description, fontName, 0.4, 3.5);
-	this.directionTextArea = new BkTextArea(
-		new BkCoord(0.05, 0.8, 0.7, 0.075, 0, 7),
-		'Address: ' + direction, smallFontName, 0.8, 3);
-	this.phoneTextArea = new BkTextArea(
-		new BkCoord(0.05, 0.875, 0.7, 0.075, 0, 7),
-		'Phone: ' + phone, smallFontName, 0.8, 3);
+	this.locationTextArea = new BkTextArea(
+		new BkCoord(0.05, -0.05, 0.7, 0.15, 0, 6),
+		'Address: ' + direction + '\n' + 'Phone: ' + phone, smallFontName, 0.5, 6);
 	this.votesTextArea = new BkTextArea(
 		new BkCoord(-0.02, -0.02, 0.2, 0.18, 0, 6),
 		votes.toString(), smallFontName, 0.8, 4);
@@ -93,8 +90,7 @@ ef_Place.prototype.resize = function()
 {
 	this.textArea.resize();
 	this.descriptionTextArea.resize();
-	this.directionTextArea.resize();
-	this.phoneTextArea.resize();
+	this.locationTextArea.resize();
 	this.votesTextArea.resize();
 }
 
@@ -110,7 +106,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
 	
-	let isSelectedInUi = this._system.isSelected(o) || o.isSelected;
+	let isSelectedInUi = (o === g_selectedPlace) || o.isSelected;
 	
 	bkDrawGlassBoard(ctx, coord, o.isSelected ? 0xff808080 : 0x60808080, o.isSelected,
 		o.img != null);
@@ -130,8 +126,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	ctx.fillStyle = '#fff';
 	border = 'rgba(0,0,0,1)';
 	o.descriptionTextArea.draw(ctx, coord, border);
-	o.directionTextArea.draw(ctx, coord, border);
-	o.phoneTextArea.draw(ctx, coord, border);
+	o.locationTextArea.draw(ctx, coord, border);
 
 	bCoord = new BkCoord(-0.02, -0.02, 0.2, 0.2, 0, 6).
 		toScreenCoord(coord);
@@ -209,8 +204,6 @@ function _processUserPlaceJson(jsonString)
 	ef_myUser = null;
 	let list = json.userList;
 	count = list.length;
-	
-	bkSystem.unselect();
 	
 	let pad = 0.02;
 	let cellW = 0.25 - pad * 2;
@@ -296,9 +289,10 @@ let request = null;
 
 let bkSystem;
 
-var mainSideNav = document.getElementById('mainSideNav');
+let mainSideNav = document.getElementById('mainSideNav');
 mainSideNav.style.transition = 'visibility 1s, left 1s'
-var mainCanvas = document.getElementById('mainCanvas');
+let mainCanvas = document.getElementById('mainCanvas');
+let g_selectedPlace = null;
 
 var g_sideBarHidden = false;
 function _restoreSideBar()
@@ -353,8 +347,8 @@ function _hideSideBar()
 function _start()
 {
 	bkSystem = new BkSystem('mainCanvas');
-	bkSystem.addArea(new BkArea(new BkCoord(0.25,0,0.75,1,0,7), 1.5));
-	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.25,1,0,7), 2.5));
+	bkSystem.addArea(new BkArea(new BkCoord(0.2,0,0.8,1,0,7), 1.3));
+	bkSystem.addArea(new BkArea(new BkCoord(0,0,0.2,1,0,7), 3));
 	bkSystem.setBackgroundImage('/assets/img/b0.svg');
 	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
 	ef_userDrawer = new ef_UserDrawer(bkSystem);
@@ -381,11 +375,11 @@ function _start()
 		let button = this.mouse.button;
 		if (1 !== button) return;
 		
-		this.select(this.mouse.x, this.mouse.y);
+		g_selectedPlace = this.select(this.mouse.x, this.mouse.y);
 		this.redistribute(true);
-		if (this.selectedIndex < 0) return;
+		if (g_selectedPlace === null) return;
 		
-		let place = ef_getPlaceByObject(this.item[this.selectedIndex]);
+		let place = ef_getPlaceByObject(g_selectedPlace);
 		if (place === null) return;
 		
 		let idPlace = place.isSelected ? -1 : place.id;
