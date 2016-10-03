@@ -1,6 +1,6 @@
-var USER_COLOR = 0x303030;
+const USER_COLOR = 0x303030;
 
-var ef_User = function(coord, drawer, id, name, placeId)
+let ef_User = function(coord, drawer, id, name, placeId)
 {
 	this.id = id;
 	this.coord = coord;
@@ -29,7 +29,7 @@ ef_User.prototype.resize = function()
 	this.textArea.resize();
 }
 
-var ef_UserDrawer = function(bkSystem)
+let ef_UserDrawer = function(bkSystem)
 {
 	this._ctx = bkSystem.ctx;
 	this._transform = bkSystem.transform;
@@ -38,17 +38,17 @@ var ef_UserDrawer = function(bkSystem)
 
 ef_UserDrawer.prototype.draw = function(o)
 {
-	var coord = o.coord.toScreen(this._transform);
-	var ctx = this._ctx;
+	let coord = o.coord.toScreen(this._transform);
+	let ctx = this._ctx;
 	
-	var isSelected = ef_myUser === o;
+	let isSelected = ef_myUser === o;
 	bkDrawGlassButton(ctx, coord, (isSelected ? 0x90FFC080 : 0x90000000) | USER_COLOR, true, 0.5);
 
 	ctx.fillStyle = isSelected ? '#653' : '#eee';
 	o.textArea.draw(ctx, coord);
 }
 
-var ef_Place = function(coord, drawer, id, name, description, phone, direction, votes, imgSrc, isSelected)
+let ef_Place = function(coord, drawer, id, name, description, phone, direction, votes, imgSrc, isSelected)
 {
 	this.id = id;
 	this.coord = coord;
@@ -62,9 +62,9 @@ var ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	
 	this.img = drawer._system.createImage(imgSrc);
 	
-	var fontName = 'serif';
+	let fontName = 'serif';
 		
-	var smallFontName = 'Tahoma';
+	let smallFontName = 'Tahoma';
 	
 	this.textArea = new BkTextArea(
 		new BkCoord(0.05, 0.05, 0.9, 0.3, 0, 7),
@@ -93,7 +93,7 @@ ef_Place.prototype.resize = function()
 	this.votesTextArea.resize();
 }
 
-var ef_PlaceDrawer = function(bkSystem)
+let ef_PlaceDrawer = function(bkSystem)
 {
 	this._ctx = bkSystem.ctx;
 	this._transform = bkSystem.transform;
@@ -102,15 +102,15 @@ var ef_PlaceDrawer = function(bkSystem)
 
 ef_PlaceDrawer.prototype.draw = function(o)
 {
-	var coord = o.coord.toScreen(this._transform);
-	var ctx = this._ctx;
+	let coord = o.coord.toScreen(this._transform);
+	let ctx = this._ctx;
 	
-	var isSelectedInUi = (o === g_selectedPlace) || o.isSelected;
+	let isSelectedInUi = (o === g_selectedPlace) || o.isSelected;
 	
 	bkDrawGlassBoard(ctx, coord, o.isSelected ? 0xff808080 : 0x60808080, o.isSelected,
 		o.img != null);
 	
-	var coordInner = coord.anisotropicGrow(0.96);
+	let coordInner = coord.anisotropicGrow(0.96);
 	if (o.img)
 	{
 		if (!isSelectedInUi) ctx.globalAlpha = 0.5;
@@ -120,7 +120,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	
 	
 	ctx.fillStyle = '#ff8';
-	var border = 'rgba(80,70,30,1)';
+	let border = 'rgba(80,70,30,1)';
 	o.textArea.draw(ctx, coord, border);
 	ctx.fillStyle = '#fff';
 	border = 'rgba(0,0,0,1)';
@@ -135,17 +135,17 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	o.votesTextArea.draw(ctx, coord, isSelectedInUi ? '#000' : null);
 }
 
-var ef_places = [];
+let ef_places = [];
 function ef_getPlaceByObject(o)
 {
 	return ef_places.indexOf(o) === -1 ? null : o;
 }
 
-var ef_users = [];
+let ef_users = [];
 function ef_getUserById(userId)
 {
-	var count = ef_users.length;
-	for (var i = 0; i < count; ++i)
+	let count = ef_users.length;
+	for (let i = 0; i < count; ++i)
 	{
 		if (ef_users[i].id === userId)
 		{
@@ -155,14 +155,12 @@ function ef_getUserById(userId)
 	return null;
 }
 
-var ef_placeDrawer = null;
-var ef_userDrawer = null;
-var ef_myUser = null;
+let ef_placeDrawer = null;
+let ef_userDrawer = null;
+let ef_myUser = null;
 
 function _processUserPlaceJson(json)
 {
-	console.log("DATA:\n" + JSON.stringify(json));
-	
 	if (!json.userId)
 	{
 		$.ajax({
@@ -175,32 +173,32 @@ function _processUserPlaceJson(json)
 	}
 	
 	ef_myUserId = json.userId;
-	var count = ef_users.length;
-	for (var i = 0; i < count; ++i)
+	let count = ef_users.length;
+	for (let i = 0; i < count; ++i)
 	{
 		ef_users[i].drawer = null;
 	}
 	
 	
 	count = ef_places.length;
-	for (var i = 0; i < count; ++i)
+	for (let i = 0; i < count; ++i)
 	{
 		bkSystem.remove(ef_places[i]);
 	}
 	
 	ef_myUser = null;
-	var list = json.userList;
+	let list = json.userList;
 	count = list.length;
 	
-	var pad = 0.02;
-	var cellW = 0.25 - pad * 2;
-	var cellH = ((1 - pad) / count) - pad;
+	let pad = 0.02;
+	let cellW = 0.25 - pad * 2;
+	let cellH = ((1 - pad) / count) - pad;
 	
-	for (var i = 0; i < count; ++i)
+	for (let i = 0; i < count; ++i)
 	{
-		var userId = list[i].id_User;
-		var item = ef_getUserById(userId);
-		var coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
+		let userId = list[i].id_User;
+		let item = ef_getUserById(userId);
+		let coord = new BkCoord(list[i].name, 0, BkCoordDimToNum(0.1, 0.1), 0, 1, 8);
 		
 		if (item === null)
 		{
@@ -225,7 +223,7 @@ function _processUserPlaceJson(json)
 	
 	list = [];
 	count = ef_users.length;
-	for (var i = 0; i < count; ++i)
+	for (let i = 0; i < count; ++i)
 	{
 		if (ef_users[i].drawer === null)
 		{
@@ -241,11 +239,11 @@ function _processUserPlaceJson(json)
 	ef_places = [];
 	list = json.placeList;
 	count = list.length;
-	for (var i = 0; i < count; ++i)
+	for (let i = 0; i < count; ++i)
 	{
-		var isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
+		let isSelected = ef_myUser && (ef_myUser.placeId === list[i].id);
 		
-		var item = new ef_Place(
+		let item = new ef_Place(
 			new BkCoord(list[i].name, 0, BkCoordDimToNum(0.3, 0.2), 0, 0, 8),
 			ef_placeDrawer,
 			list[i].id, list[i].name, list[i].description,
@@ -265,32 +263,32 @@ function _processUserPlaceJson(json)
 	bkSystem.redistribute(true);
 }
 
-var bkSystem;
-var g_selectedPlace = null;
-var g_sideBarHidden = false;
+let bkSystem;
+let g_selectedPlace = null;
+let g_sideBarHidden = false;
 
 function _restoreSideBar()
 {
 	if (!g_sideBarHidden) return;
 	
-	var list = $('footer');
-	for (var i = 0; i < list.length; ++i)
+	let list = $('footer');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}
 	
-	var list = $('nav');
-	for (var i = 0; i < list.length; ++i)
+	list = $('nav');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'visible';
 	}                        
 
-	var mainSideNav = $('#mainSideNav').get(0);
-	var w = mainSideNav.offsetWidth;
+	let mainSideNav = $('#mainSideNav').get(0);
+	let w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'visible';
 	mainSideNav.style.left = '0px';
 
-	var mainCanvas = $('#mainCanvas').get(0);
+	let mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "width:82.5vw;height:80vh;";
 	g_sideBarHidden = false;
 	bkSystem.resize();
@@ -300,24 +298,24 @@ function _hideSideBar()
 {
 	if (g_sideBarHidden) return;
 	
-	var list = $('footer');
-	for (var i = 0; i < list.length; ++i)
+	let list = $('footer');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}
 	
-	var list = $('nav');
-	for (var i = 0; i < list.length; ++i)
+	list = $('nav');
+	for (let i = 0; i < list.length; ++i)
 	{
 		list[i].style.visibility = 'hidden';
 	}                        
 
-	var mainSideNav = $('#mainSideNav').get(0);
-	var w = mainSideNav.offsetWidth;
+	let mainSideNav = $('#mainSideNav').get(0);
+	let w = mainSideNav.offsetWidth;
 	mainSideNav.style.visibility = 'hidden';
 	mainSideNav.style.left = '-' + w + 'px';
 
-	var mainCanvas = $('#mainCanvas').get(0);
+	let mainCanvas = $('#mainCanvas').get(0);
 	mainCanvas.style = "position:fixed;padding:0;margin:0;top:0;left:0;width:100%;height:100%;";
 	
 	g_sideBarHidden = true;
@@ -326,7 +324,7 @@ function _hideSideBar()
 
 function _onMouseDown()
 {
-	var button = this.mouse.button;
+	let button = this.mouse.button;
 	if (1 === button)
 	{
 		if (this.item.length === 0)
@@ -339,10 +337,10 @@ function _onMouseDown()
 		this.redistribute(true);
 		if (g_selectedPlace === null) return;
 		
-		var place = ef_getPlaceByObject(g_selectedPlace);
+		let place = ef_getPlaceByObject(g_selectedPlace);
 		if (place === null) return;
 		
-		var idPlace = place.isSelected ? -1 : place.id;
+		let idPlace = place.isSelected ? -1 : place.id;
 		if (idPlace === -1) _restoreSideBar();
 		
 		$.ajax({
