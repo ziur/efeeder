@@ -21,8 +21,8 @@ public class AddOrderCommand implements CommandUnit {
                                         .prepareStatement("insert into orders(id_food_meeting, id_user, order_name, cost) values(?, ?, ?, ?)");
 
         stm.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
-        stm.setInt(2, Integer.valueOf(parameters.getParameter("id_user")));
-        stm.setString(3, parameters.getParameter("order"));
+        stm.setInt(2, Integer.valueOf(parameters.getUser().getId()));
+        stm.setString(3, parameters.getParameter("details"));
         stm.setDouble(4, Double.valueOf(parameters.getParameter("cost")));
         stm.executeUpdate();
 

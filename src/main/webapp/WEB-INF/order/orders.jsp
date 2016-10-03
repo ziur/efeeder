@@ -9,37 +9,49 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
-    <div class="row">
-    </div>
+    <jsp:attribute name="javascript">
+        <script src="/assets/js/orders.js"></script>
+    </jsp:attribute>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <ul class="collection">
-                <li class="collection-item avatar">
-                    <i class="material-icons circle">perm_identity</i>
-                    <!-- <input type="text" name="details" value="${myOrder.details}" placeholder="Details"/> -->
-                    <span class="title">${myOrder.details}</span>
-                    <!-- <input type="number" name="cost" value="${myOrder.cost}" placeholder="Cost"/> -->
-                    <p>${myOrder.cost}</p>
-                    <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
-                    <a href="#!" id="btn-edit-my-order" class="btn-edit"><i class="material-icons">mode_edit</i></a>
-                    <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
-                    <label class="secondary-content" for="chk-${user.id}"></label>
-                </li>
-
-                <c:forEach var="order" items="#{orders}">
-                    <li class="collection-item avatar">
-                        <i class="material-icons circle">perm_identity</i>
-                        <span class="title">${order.idFoodMeeting} ${order.idUser}</span>
-                        <p>${order.cost}<br>
-                            Details
-                        </p>
-
-                        <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
-                        <label class="secondary-content" for="chk-${user.id}"></label>                        
-                    </li>
-                </c:forEach>
-            </ul>
+    <jsp:body>
+        <div class="row">
         </div>
-    </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="collection">
+                    <li class="collection-item avatar">
+                        <div id="my-order-container">
+                            <i class="material-icons circle">perm_identity</i>
+                            <input type="hidden" id="id-food-meeting" value="${idFoodMeeting}"/>
+                            <div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
+                                <input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}"/>
+                            </div>
+                            <input type="number" id="my-order-cost-input" value="${myOrder.cost}" placeholder="Cost" style="display: none;"/>
+
+                            <span id="my-order-details" class="title">${myOrder.details}</span>
+                            <p id="my-order-cost">${myOrder.cost}</p>
+                            <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
+                            <a href="#!" id="btn-edit-my-order" class="btn-edit"><i class="material-icons">mode_edit</i></a>
+                            <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
+                            <label class="secondary-content" for="chk-${user.id}"></label>
+                        </div>
+                    </li>
+
+                    <c:forEach var="order" items="#{orders}">
+                        <li class="collection-item avatar">
+                            <i class="material-icons circle">perm_identity</i>
+                            <span class="title">${order.idFoodMeeting} ${order.idUser}</span>
+                            <p>${order.cost}<br>
+                                Details
+                            </p>
+
+                            <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
+                            <label class="secondary-content" for="chk-${user.id}"></label>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </div>
+    </jsp:body>
 </t:template>

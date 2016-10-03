@@ -20,18 +20,20 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class OrderCommand implements CommandUnit {
 
     private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost FROM orders";
-    private static final String ORDERS_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s;";
+    private static final String ORDERS_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user!=%d;";
     private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user=%d;";
 
     @Override
     public Out execute(In parameters) throws Exception {
         String idFoodMeeting = parameters.getParameter("id_food_meeting");
+        int idUser = parameters.getUser().getId();
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
 
-        List<Order> orders = getOrders(connection, idFoodMeeting);
-        Order myOrder = getMyOrder(connection, idFoodMeeting, parameters.getUser().getId());
+        List<Order> orders = getOrders(connection, idFoodMeeting, idUser);
+        Order myOrder = getMyOrder(connection, idFoodMeeting, idUser);
 
+        out.addResult("idFoodMeeting", idFoodMeeting);
         out.addResult("orders", orders);
         out.addResult("myOrder", myOrder);
         out.addResult("myUser", parameters.getUser());
@@ -40,9 +42,9 @@ public class OrderCommand implements CommandUnit {
         return out;
     }
 
-    private List<Order> getOrders(Connection connection, String idFoodMeeting) throws SQLException {
+    private List<Order> getOrders(Connection connection, String idFoodMeeting, int idUser) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        PreparedStatement preparedStatement = connection.prepareStatement(String.format(ORDERS_QUERY, idFoodMeeting));
+        PreparedStatement preparedStatement = connection.prepareStatement(String.format(ORDERS_QUERY, idFoodMeeting, idUser));
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
