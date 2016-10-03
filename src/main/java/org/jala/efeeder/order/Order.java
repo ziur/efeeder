@@ -1,6 +1,7 @@
 package org.jala.efeeder.order;
 
 import lombok.Data;
+import org.jala.efeeder.user.User;
 
 /**
  *
@@ -11,6 +12,7 @@ public class Order {
 
     private int idFoodMeeting;
     private int idUser;
+    private User user;
     private String details;
     private Double cost;
 

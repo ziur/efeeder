@@ -11,6 +11,7 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.user.User;
 
 /**
  *
@@ -20,6 +21,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class OrderCommand implements CommandUnit {
 
     private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost FROM orders";
+    private static final String USERS_QUERY = "SELECT id, name, last_name, email FROM user WHERE id=%d";
     private static final String ORDERS_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user!=%d;";
     private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user=%d;";
 
@@ -48,7 +50,17 @@ public class OrderCommand implements CommandUnit {
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            Order order = new Order(resultSet.getInt(1), resultSet.getInt(2), resultSet.getString(3), resultSet.getDouble(4));
+            int userId = resultSet.getInt(2);
+            PreparedStatement preparedUserStatement = connection.prepareStatement(String.format(USERS_QUERY, userId));    
+            ResultSet userResultSet = preparedUserStatement.executeQuery();
+            User user = null;
+            while (userResultSet.next()) {
+                user = new User(userResultSet.getInt(1), userResultSet.getString(4), userResultSet.getString(2), userResultSet.getString(2));
+            }
+            Order order = new Order(resultSet.getInt(1), userId, resultSet.getString(3), resultSet.getDouble(4));
+            if(user != null) {
+                order.setUser(user);               
+            }
             orders.add(order);
         }
 

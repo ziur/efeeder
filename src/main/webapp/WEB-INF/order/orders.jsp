@@ -45,10 +45,10 @@
                             <span class="title">${order.details}</span>
                             <br/>
                             <p>${order.cost}</p>
-                            <p>${order.idUser}</p>
+                            <p>${order.user.name} ${order.user.last_name} - ${order.user.email}</p>
 
-                            <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
-                            <label class="secondary-content" for="chk-${user.id}"></label>
+                            <input class="secondary-content" type="checkbox" id="chk-${order.user.id}" />
+                            <label class="secondary-content" for="chk-${order.user.id}"></label>
                         </li>
                     </c:forEach>
                 </ul>
