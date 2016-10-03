@@ -361,7 +361,7 @@ function _start()
 			_processUserPlaceJson(request.responseText);
 		}
 	};
-	request.open('GET', '/action/getUserAndPLaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
+	request.open('GET', '/action/getUserAndPlaceByFoodMeeting?id_food_meeting=' + g_idFoodMeeting.toString());
 	request.send('');
 
 	mainSideNav.addEventListener("mousedown",
