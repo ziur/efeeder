@@ -30,6 +30,7 @@
                             <input type="number" id="my-order-cost-input" value="${myOrder.cost}" placeholder="Cost" style="display: none;"/>
 
                             <span id="my-order-details" class="title">${myOrder.details}</span>
+                            <br/>
                             <p id="my-order-cost">${myOrder.cost}</p>
                             <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
                             <a href="#!" id="btn-edit-my-order" class="btn-edit"><i class="material-icons">mode_edit</i></a>
@@ -41,10 +42,10 @@
                     <c:forEach var="order" items="#{orders}">
                         <li class="collection-item avatar">
                             <i class="material-icons circle">perm_identity</i>
-                            <span class="title">${order.idFoodMeeting} ${order.idUser}</span>
-                            <p>${order.cost}<br>
-                                Details
-                            </p>
+                            <span class="title">${order.details}</span>
+                            <br/>
+                            <p>${order.cost}</p>
+                            <p>${order.idUser}</p>
 
                             <input class="secondary-content" type="checkbox" id="chk-${user.id}" />
                             <label class="secondary-content" for="chk-${user.id}"></label>
