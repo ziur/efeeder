@@ -12,6 +12,7 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tomcat.version>7.0.72</tomcat.version>
     </properties>
 
     <dependencies>
@@ -54,23 +55,17 @@
             <artifactId>liquibase-core</artifactId>
             <version>3.5.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>
             <version>3.5.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>7.0.70</version>
             <scope>test</scope>
         </dependency>
 
@@ -99,8 +94,51 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-ruiz-ac-dev</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/ruiz-ac/dev</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-ruiz-ac-dev</id>
+            <name>bintray-plugins</name>
+            <url>http://dl.bintray.com/ruiz-ac/dev</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <goals>
+                            <goal>exec-war-only</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <enableNaming>true</enableNaming>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <server>TomcatServer</server>
+                    <path>/</path>
+                    <contextFile>${project.basedir}/src/main/webapp/META-INF/context.xml</contextFile>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
@@ -140,42 +178,29 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
+                <version>2.4</version>
                 <executions>
                     <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${endorsed.dir}</outputDirectory>
-                            <silent>true</silent>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax</groupId>
-                                    <artifactId>javaee-endorsed-api</artifactId>
-                                    <version>6.0</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.5.1</version>
                 <configuration>
-                  <changeLogFile>
-                    ${basedir}/src/main/resources/db/db-incremental.xml
-                  </changeLogFile>
-                  <driver>com.mysql.cj.jdbc.Driver</driver>
-                  <url>jdbc:mysql://localhost:3306/efeeder?nullNamePatternMatchesAll=true</url>
-                  <username>root</username>
-                  <password>root</password>
+                    <changeLogFile>
+                        ${basedir}/src/main/resources/db/db-incremental.xml
+                    </changeLogFile>
+                    <driver>com.mysql.cj.jdbc.Driver</driver>
+                    <url>jdbc:mysql://localhost:3306/efeeder?nullNamePatternMatchesAll=true</url>
+                    <username>root</username>
+                    <password>root</password>
                 </configuration>
-              </plugin>
+            </plugin>
         </plugins>
     </build>
 
