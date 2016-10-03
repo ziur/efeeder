@@ -24,29 +24,29 @@ import org.joda.time.format.DateTimeFormatter;
 @Command
 public class EditFoodMeetingCommand implements CommandUnit {
 
-    private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=? WHERE id= ?;";
+	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=? WHERE id= ?;";
 
-    @Override
-    public Out execute(In parameters) throws Exception {
-        Out out = new DefaultOut();
+	@Override
+	public Out execute(In parameters) throws Exception {
+		Out out = new DefaultOut();
 
-        PreparedStatement stm = parameters.getConnection()
-                .prepareStatement(UPDATE_FOOD_MEETING_SQL);
-        
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
-        DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
-        Timestamp eventDate = new Timestamp(dateTime.getMillis());        
+		PreparedStatement stm = parameters.getConnection()
+				.prepareStatement(UPDATE_FOOD_MEETING_SQL);
 
-        try {
-            stm.setString(1, parameters.getParameter("meeting_name"));
-            stm.setString(2, parameters.getParameter("image_link"));
-            stm.setString(3, parameters.getParameter("status"));
-            stm.setTimestamp(4, eventDate);
-            stm.setInt(5, Integer.valueOf(parameters.getParameter("id_food_meeting")));
-            stm.executeUpdate();
-        } catch (Exception e) {
-        }
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
+		DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
+		Timestamp eventDate = new Timestamp(dateTime.getMillis());		
 
-        return out.redirect("action/FoodMeeting");
-    }
+		try {
+			stm.setString(1, parameters.getParameter("meeting_name"));
+			stm.setString(2, parameters.getParameter("image_link"));
+			stm.setString(3, parameters.getParameter("status"));
+			stm.setTimestamp(4, eventDate);
+			stm.setInt(5, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+			stm.executeUpdate();
+		} catch (Exception e) {
+		}
+
+		return out.redirect("action/FoodMeeting");
+	}
 }
