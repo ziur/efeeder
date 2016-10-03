@@ -14,6 +14,15 @@ BkTransform.prototype.resize = function(width, height, ratio)
 	this.invScale = 1 / this.scale;
 }
 
+BkTransform.prototype.screenToAbsoluteDelta = function (dx, dy)
+{
+	let scale = this.invScale;
+	return {
+		dx : dx * scale,
+		dy : dy * scale
+		};
+}
+
 let BkCoord = function(x, y, w, h, z = 0, type = 0)
 {
 	// x,y denotes the center of the object
@@ -396,13 +405,6 @@ BkObject.prototype.draw = function()
 {
 }
 
-let BkArea = function(coord, ratio = 1, padding = 0.04)
-{
-	this.coord = coord;
-	this.ratio = ratio;
-	this.padding = padding;
-}
-
 function BkObjectIsSelected(o)
 {
 	return (o.flags & 0x80000000) !== 0;
@@ -413,14 +415,18 @@ function BkObjectSetSelected(o)
 	o.flags |= 0x80000000;
 }
 
+let BkArea = function(coord, ratio = 1, padding = 0.04)
+{
+	this.coord = coord;
+	this.ratio = ratio;
+	this.padding = padding;
+}
+
 let BkSystem = function(canvasName, ratio = null)
 {
 	this.item = [];
 	this.area = [];
 	this.__running = false;
-	this.selectedIndex = -1;
-	this.selectedDx = 0;
-	this.selectedDy = 0;
 	this.transform = new BkTransform(1, 1, 1);
 	this.canvas = document.getElementById(canvasName);
 	this.ctx = this.canvas.getContext('2d');
@@ -589,8 +595,6 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 		return a.coord.x < b.coord.x;
 	});
 	
-	let selItem = this.selectedIndex < 0 ? null : this.item[this.selectedIndex];
-
 	let coord = area.coord.toScreenCoord(this.__coord);
 	let minorDim = coord.w < coord.h ? coord.w: coord.h;
 	let padding = area.padding * minorDim;
@@ -818,7 +822,6 @@ BkSystem.prototype.add = function(o)
 BkSystem.prototype.remove = function(o)
 { 
 	let i = this.item.indexOf(o);
-	if (i === this.selectedIndex) this.selectedIndex = -1;
 	if (i !== -1) this.item.splice(i, 1);
 }
 
@@ -838,74 +841,104 @@ BkSystem.prototype.removeAllAreas = function()
 	this.area = [];
 }
 
-BkSystem.prototype.isSelected = function(o)
+BkSystem.prototype.moveToTail = function(o)
 {
-	let index = this.item.indexOf(o);
-	if (index === -1) return false;
-	return this.selectedIndex === index;
+	if (o === null) return;
+
+	let i = this.item.indexOf(o);
+	if (i < 0) return;
+
+	this.item.splice(i, 1);
+	this.item.push(o);
 }
 
-BkSystem.prototype.unselect = function()
+/*
+BkSystem.prototype.bringToFront = function(o)
 {
-	this.selectedIndex = -1;
+}
+*/
+
+BkSystem.prototype.undock = function(o)
+{
+	if (o == null) return false;
+	
+	let coord = o.coord;
+	if (coord.type === 0) return false;
+	
+	o.coord = coord.toAbsolute(this.transform);
+	this.redistribute();
+	return true;
+}
+
+BkSystem.prototype.dockToArea = function(o, x, y)
+{
+	if (o == null) return false;
+	
+	let coord = o.coord;
+	if (coord.type !== 0) return false;
+	
+	let p = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	
+	let count = this.area.length;
+	for (let i = count - 1; i >= 0; --i)
+	{
+		let c = this.area[i].coord;
+		if (c.type !== 0)
+		{
+			c = c.toAbsolute(this.transform);
+		}
+		
+		if ((p.x >= (c.x - c.w * 0.5)) && (p.x < (c.x + c.w * 0.5)) &&
+			(p.y >= (c.y - c.h * 0.5)) && (p.y < (c.y + c.h * 0.5)))
+		{
+			//this.area[i];
+			
+			coord.z = i;
+			coord.type = 8;
+			
+			this.redistribute();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 BkSystem.prototype.select = function(x, y)
 { 
-	let sdx = 0;
-	let sdy = 0;
-	let selectedIndex = -1;
 	let count = this.item.length;
-	if (count <= 0) return;
+	if (count <= 0) return null;
 	
-	let coord = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	let p = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
 	for (let i = count - 1; i >= 0; --i)
 	{
-		let p = this.item[i].coord;
-		if (p.type !== 0)
+		let c = this.item[i].coord;
+		if (c.type !== 0)
 		{
-			p = p.toAbsolute(this.transform);
+			c = c.toAbsolute(this.transform);
 		}
-			
-		if ((coord.x >= (p.x - p.w * 0.5)) && (coord.x < (p.x + p.w * 0.5)) &&
-			(coord.y >= (p.y - p.h * 0.5)) && (coord.y < (p.y + p.h * 0.5)))
+		
+		if ((p.x >= (c.x - c.w * 0.5)) && (p.x < (c.x + c.w * 0.5)) &&
+			(p.y >= (c.y - c.h * 0.5)) && (p.y < (c.y + c.h * 0.5)))
 		{
-			sdx = p.x - coord.x;
-			sdy = p.y - coord.y;
-			selectedIndex = i;
-			break;
+			return this.item[i];
 		}
 	}
-	
-	/*
-	if ((selectedIndex >= 0) && (selectedIndex !== (this.item.length - 1)))
-	{
-		let selectedItem = this.item[selectedIndex];
-		this.item.splice(selectedIndex, 1);
-		this.item.push(selectedItem);
-		selectedIndex = this.item.length - 1;
-	}*/
-	
-	this.selectedIndex = selectedIndex;
-	this.selectedDx = sdx;
-	this.selectedDy = sdy;
+
+	return null;
 }
 
-BkSystem.prototype.moveSelected = function(x, y)
+BkSystem.prototype.move = function(o, dx, dy)
 { 
-	if (this.selectedIndex < 0) return;
+	if (o === null) return false;
 	
-	let selectedItem = this.item[this.selectedIndex];
-	let coord = selectedItem.coord;
-	if (coord.type !== 0)
-	{
-		coord = coord.toAbsolute(this.transform);
-		selectedItem.coord = coord;
-		this.redistribute();
-	}
-	let nCoord = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
-	coord.x = nCoord.x + this.selectedDx;
-	coord.y = nCoord.y + this.selectedDy;
+	let coord = o.coord;
+	if (coord.type !== 0) return false;
+	
+	let d = this.transform.screenToAbsoluteDelta(dx, dy);
+	coord.x += d.dx;
+	coord.y += d.dy;
+	return true;
 }
 
 BkSystem.prototype.writeToScreenXY = function(text, x, y)
@@ -1300,6 +1333,105 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	_bkDrawGlassScrew(ctx, c.x + c.w * 0.5, c.y + c.h * 0.5, lineWidth);
 }
 
+function __bkSplitText(text)
+{
+	let result = [];
+	let endLine = true;
+	let count = text.length;
+	let i = 0;
+	let start;
+	while (i < count)
+	{
+		start = i;
+		while (text[i] === ' ')
+		{
+			++i;
+			if (i >= count)
+			{
+				return result;
+			}
+		}
+		
+		if (endLine)
+		{
+			endLine = false;
+		}
+		else if (start < i)
+		{
+			// Avoid consuming space after end line
+			++start;
+		}
+		
+		while ((text[i] !== ' ') && (text[i] !== '\n')) 
+		{
+			++i;
+			if (i >= count)
+			{
+				result.push(text.substring(start, i));
+				return result;
+			}
+		}
+		
+		if (text[i] === '\n')
+		{
+			endLine = true;
+			++i;
+		}
+		else
+		{
+			// detect case: '   \n'
+			let j = i + 1;
+			while ((j < count) && (text[j] === ' '))
+			{
+				++j;
+			}
+			
+			if (text[j] === '\n')
+			{
+				result.push(text.substring(start, i) + '\n');
+				i = j + 1;
+				continue;
+			}
+		}
+		
+		result.push(text.substring(start, i));
+	}
+	return result;
+}
+
+function __bkCountRightSpaces(text)
+{
+	let i = text.length - 1;
+	while (i >= 0)
+	{
+		let c = text[i];
+		if ((c !== ' ') && (c !== '\n') && (c !== '\r') && (c !== '\t'))
+		{
+			break;
+		}
+		--i;
+	}
+	return text.length - (i + 1);
+}
+
+function __bkSetFlagsFixWords(flags, words)
+{
+	let count = words.length;
+	for (let i = 0; i < count; ++i)
+	{
+		let spaceCount = __bkCountRightSpaces(words[i]);
+		if (spaceCount > 0)
+		{
+			flags[i] = 1;
+			words[i] = words[i].slice(0, -spaceCount);
+		}
+		else
+		{
+			flags[i] = 0;
+		}
+	}
+}
+
 let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 	alignment = 4, leadingFactor = 1.2)
 {
@@ -1313,17 +1445,20 @@ let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 	this.leadingFactor = leadingFactor;
 	this.padding = 0;
 	
-	this.words = text.split(' ');
-	this.text = this.words.join(' ');
-	
+	this.words = __bkSplitText(text);
 	let count = this.words.length;
+	this.__flagsBuffer = new ArrayBuffer(count);
+	this.__flags = new Uint8Array(this.__flagsBuffer);
+	__bkSetFlagsFixWords(this.__flags, this.words);
+	
+	this.text = this.words.join(' ');
 	this.__endPositionBuffer = new ArrayBuffer(count * 4);
 	this.__endPosition = new Int32Array(this.__endPositionBuffer);
-	this.__textWidthBuffer = new ArrayBuffer(count * 4);
-	this.__textWidth = new Int32Array(this.__textWidthBuffer);
+	this.__textWidthBuffer = new ArrayBuffer(count * 2);
+	this.__textWidth = new Int16Array(this.__textWidthBuffer);
 	this.__spaceWidth = 0;
 	this.__linesIndexesBuffer = new ArrayBuffer(count * 4);
-	this.__linesIndexes = new Int32Array(this.__linesIndexesBuffer);
+	this.__linesIndexes = new Int16Array(this.__linesIndexesBuffer);
 	this.__linesIndexesUsed = 0;
 
 	let index = 0;
@@ -1342,7 +1477,7 @@ BkTextArea.prototype.resize = function()
 
 BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
 {
-	let posCount = this.__endPosition.length;
+	let posCount = this.words.length;
 	if (posCount <= 0)
 	{
 		this.__linesIndexesUsed = 0;
@@ -1369,6 +1504,14 @@ BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
 		do
 		{
 			prevlineWidth = lineWidth;
+			if (usedWords !== 0)
+			{
+				if (this.__flags[baseIndex + usedWords - 1])
+				{
+					break;
+				}
+			}
+			
 			if (baseIndex + usedWords >= posCount)
 			{
 				done = true;
@@ -1377,28 +1520,23 @@ BkTextArea.prototype.defineLines = function(ctx, maxWidth, height)
 			
 			if (usedWords !== 0) lineWidth += spaceWidth;
 			lineWidth += this.__textWidth[baseIndex + usedWords];
-
 			++usedWords;
 		}
 		while (lineWidth < maxWidth);
 		
-		if (usedWords > 1)
+		if ((usedWords > 1) && !done)
 		{
-			if (!done)
+			if (lineWidth >= maxWidth)
 			{
+				lineWidth = prevlineWidth;
 				--usedWords;
 			}
-		}
-		else
-		{
-			// Only one word that doesn't even fit
-			prevlineWidth = lineWidth;
 		}
 		
 		this.__linesIndexes[linesCount++] = baseIndex + usedWords - 1;
 		
 		baseIndex += usedWords;
-		let padding = maxWidth - prevlineWidth;
+		let padding = maxWidth - lineWidth;
 		if (padding < minPadding)
 		{
 			minPadding = padding;
@@ -1427,56 +1565,52 @@ BkTextArea.prototype._getLineWidth = function(index)
 BkTextArea.prototype.adjustLines = function(ctx, width, height)
 {
 	this.fontRelHeight = this.baseFontRelHeight;
-	for (let i = 0; i < 3; ++i)
+	for (let i = 4;; --i)
 	{
-		//console.log("Retry: " + i);
 		let newfactor, factor = 1;
 		let oldFontHeight = (this.fontRelHeight * height);
-		// Shrink if one word line does not fit
-		let padding = this.defineLines(ctx, width, height);
-				
-		this.padding = padding;
-		if (padding < 0)
-		{
-			newfactor = 1 / (1 - padding);
-			if (newfactor < factor) factor = newfactor;
-		}
+		this.padding = this.defineLines(ctx, width, height);
+
+		if (i == 0) break;
 		
 		// Shrink if height does not fit
-		padding = 1 - this.fontRelHeight * 
+		let padding = 1 - this.fontRelHeight * 
 			(this.leadingFactor * (this.__linesIndexesUsed - 1) + 1);
 		if (padding < 0)
 		{
+			factor = 1 / (1 - padding);
+			if (i > 1)
+			{
+				factor = Math.sqrt(factor);
+			}
+		}
+		
+		// Shrink if one word line does not fit
+		padding = this.padding;
+		if (padding < 0)
+		{
 			newfactor = 1 / (1 - padding);
 			if (newfactor < factor) factor = newfactor;
 		}
 		
+
 		
-		if (factor < 1)
+		// Fits, no more processing necessary
+		if (factor >= 1) break;
+		
+		this.fontRelHeight *= factor;
+		// Make sure the updated height changes 
+		if ((oldFontHeight - (this.fontRelHeight * height)) < 1)
 		{
-			if (i < 2)
+			if (oldFontHeight <= 1)
 			{
-				factor = Math.sqrt(factor);
+				this.fontRelHeight = 0;
 			}
-			
-			this.fontRelHeight *= factor;
-			// Make sure the updated height changes 
-			if ((oldFontHeight - (this.fontRelHeight * height)) < 1)
+			else
 			{
-				if (oldFontHeight <= 1)
-				{
-					this.fontRelHeight = 0;
-				}
-				else
-				{
-					this.fontRelHeight = (oldFontHeight - 1) / height;
-				}
+				this.fontRelHeight = (oldFontHeight - 1) / height;
 			}
-			
-			continue;
 		}
-		
-		break;
 	}
 	
 	// Fix ugly two lines 
