@@ -1,9 +1,5 @@
 $(document).ready(function () {
 
-	$('.collapsible').collapsible({
-		accordion : false
-	});
-
 	$('.datepicker').pickadate({
 		selectMonths: true,
 		selectYears: 15
@@ -22,14 +18,9 @@ $(document).ready(function () {
 		$(this).data("meetingId");
 	});
 
-	var foodMeetings = $('.food-meetings');
-
-	foodMeetings.imagesLoaded()
+	$('.food-meetings').imagesLoaded()
 		.done(function(){
-			foodMeetings.masonry({
-				itemSelector: '.grid-item',
-				columnWidth: 50
-			});
+			reorganizeCards();
 		});
 
 	$(".quick-view-date").each(function(){
@@ -82,7 +73,7 @@ $(document).ready(function () {
 			time = $form.find( "input[name='time']" ).val(),
 			url = $form.attr( "action" );
 
-			var imageLink = $("#ImageLinkId").val();
+			var imageLink = $("#ImageCard").attr("src");
 
 			// Send the data using post
 			var posting = $.post( url, { meeting_name: meeting_name, image_link: imageLink,  eventdate:moment(date+" "+time,"DD MMMM, YYYY hh:mm").format("DD/MM/YYYY HH:mm:ss")} );
@@ -94,24 +85,60 @@ $(document).ready(function () {
 		}
 	});
 
-	$("#ImageLinkId").change(function (event) {
-
-		var imageLink = $("#ImageLinkId").val();
-
-		$("#ImageCard").attr("src",imageLink);
-	});
-
 	$("#AddNewMeeting").click(function (event) {
 		
 		$("#NewMeetingCard").show();
-		foodMeetings.masonry({
-			itemSelector: '.grid-item',
-			columnWidth: 50
-		});
+		reorganizeCards();
 	});
 
 	$("#cancelCreateMeeting").click(function (event) {
 		location.reload(); 
 	});
+	
+	var onModalHide = function() {
+		var imageLink = $("#imageLink").val();
+		$("#ImageCard").attr("src", imageLink);
+		reorganizeCards();
+		
+	};
+	
+	$("#ImageCard").click(function () {
+		
 
+		$('#modal1').openModal({
+			complete : onModalHide
+		});
+
+		$('#modal1').load('searchImage',function(data){
+			$("#imageLink").change(function (event) {
+				var imageLink = $("#imageLink").val();
+				$("#imageCard").attr("src",imageLink);
+			});
+			
+			$(".image-link").click(function () {
+				
+				$("#imageCard").attr("src", $(this).data("imageLink"));
+				$("#imageLink").val($(this).data("imageLink"));
+				
+			});
+
+			var imagesLinks = $('.image-links');
+
+			imagesLinks.imagesLoaded()
+				.done(function(){
+					imagesLinks.masonry({
+						itemSelector: '.grid-item',
+						columnWidth: 50
+					});
+				});
+		});
+	});
+	
+	function reorganizeCards() {
+		
+		$('.food-meetings').masonry({
+			itemSelector: '.grid-item',
+			columnWidth: 50
+		});
+	}
 });

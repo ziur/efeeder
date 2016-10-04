@@ -12,54 +12,51 @@
 			<div class="row">
 				<button  id="AddNewMeeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
 			</div>
-			<div class="food-meetings">
+
+			<div id="modal1" class="modal modal-fixed-footer" >
+			</div>
 			
-					<div id="NewMeetingCard" class="meeting grid-item" style="width:500px;display: none;">
-						<div class="card">
-							<div class="card-image waves-effect waves-block waves-light">
-								<img id="ImageCard" class="new-meeting-img" src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
-							</div>
-							<div class="card-content">
-								<form id="addMeeting" role="form" action="/action/createFoodMeeting">
-									<span class="card-title activator grey-text text-darken-4">
-										<i class="material-icons right">more_vert</i>
-									</span>
-									<div class="row">
-										<div class="input-field col s12">
-											<input class="validate" id="meeting_name" type="text" name="meeting_name" autocomplete="off" />
-											<label for="meeting_name">Meeting Name</label>
-										</div>
-										<div class="input-field col s8">
-											<input id="date" type="text" name="date" class="datepicker validate">
-											<label for="date">Date</label>
-										</div>
-										<div class="input-field col s4">
-											<input id="time" type="text" name="time" class="validate">
-											<label for="time">Time</label>
-										</div>
-										<div class="row right col"><br><br>
-					                        <button id="cancelCreateMeeting" class="waves-effect waves-light btn" type="button">Cancel</button>
-					                        <button type="submit" id="createMeeting" class="waves-effect waves-light btn">Create</button>
-					                    </div>
+			<div class="food-meetings">
+				<div id="NewMeetingCard" class="meeting grid-item" style="width:500px;display: none;">
+					<div class="card">
+						<div class="card-image waves-effect waves-block waves-light">
+							<img id="ImageCard" class="new-meeting-img" data-target="modal1"
+							 	src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+						</div>
+						<div class="card-content">
+							<form id="addMeeting" role="form" action="/action/createFoodMeeting">
+								<span class="card-title activator grey-text text-darken-4">
+									<i class="material-icons right">more_vert</i>
+								</span>
+								<div class="row">
+									<div class="input-field col s12">
+										<input class="validate" id="meeting_name" type="text" name="meeting_name" autocomplete="off" />
+										<label for="meeting_name">Meeting Name</label>
 									</div>
-								</form>
-							</div>
-							<div class="card-reveal">
-								<form id="addMeetingForm2" role="form">
-									<span class="card-title activator grey-text text-darken-4">
-										<i class="material-icons right">close</i>
-									</span>
-									<div class="row">
-										<div class="input-field col s12">
-											<input id="ImageLinkId" name="image_link" id="image_link" value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg" type="text" class="validate">
-											<label for="image_link">Image Link</label>
-										</div>
+									<div class="input-field col s8">
+										<input id="date" type="text" name="date" class="datepicker validate">
+										<label for="date">Date</label>
 									</div>
-								</form>
-							</div>
+									<div class="input-field col s4">
+										<input id="time" type="text" name="time" class="validate">
+										<label for="time">Time</label>
+									</div>
+									<div class="row right col"><br><br>
+										<button id="cancelCreateMeeting" class="waves-effect waves-light btn" type="button">Cancel</button>
+										<button type="submit" id="createMeeting" class="waves-effect waves-light btn">Create</button>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="card-reveal">
+							<form id="addMeetingForm2" role="form">
+								<span class="card-title activator grey-text text-darken-4">
+									<i class="material-icons right">close</i>
+								</span>
+							</form>
 						</div>
 					</div>
-			
+				</div>
 				<c:forEach var="foodMeeting" items="#{foodMeetings}">
 					<div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
 						<div class="card">
