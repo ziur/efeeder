@@ -22,7 +22,7 @@
 		<div class="col m12 l4" style="width: 200px">
 			<div class="card">
 				<div class="card-image">
-					<img id="imageCard"
+					<img id="image-card-id"
 						src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
 						class="materialboxed">
 				</div>
@@ -30,7 +30,7 @@
 		</div>
 		<div class="col m12 l8">
 			<div class="input-field col s12">
-				<input name="image_link" id="imageLink"
+				<input name="image_link" id="image-link-id"
 					value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
 					type="text" class="validate"> <label for="image_link">ImageLink</label>
 			</div>

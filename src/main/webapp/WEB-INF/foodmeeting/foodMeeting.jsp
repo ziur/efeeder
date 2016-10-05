@@ -5,6 +5,7 @@
 <t:template>
 	<jsp:attribute name="javascript">
 		<script src="/assets/js/foodMeetings.js"></script>
+		<script src="/assets/js/searchImage.js"></script>
 	</jsp:attribute>
 
 	<jsp:body>
@@ -17,14 +18,14 @@
 			</div>
 			
 			<div class="food-meetings">
-				<div id="NewMeetingCard" class="meeting grid-item" style="width:500px;display: none;">
+				<div id="new-meeting-card-id" class="meeting grid-item" style="width:500px;display: none;">
 					<div class="card">
 						<div class="card-image waves-effect waves-block waves-light">
-							<img id="ImageCard" class="new-meeting-img" data-target="modal1"
+							<img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
 							 	src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
 						</div>
 						<div class="card-content">
-							<form id="addMeeting" role="form" action="/action/createFoodMeeting">
+							<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
 								<span class="card-title activator grey-text text-darken-4">
 									<i class="material-icons right">more_vert</i>
 								</span>
@@ -49,7 +50,7 @@
 							</form>
 						</div>
 						<div class="card-reveal">
-							<form id="addMeetingForm2" role="form">
+							<form id="add-meeting-form-2-id" role="form">
 								<span class="card-title activator grey-text text-darken-4">
 									<i class="material-icons right">close</i>
 								</span>
