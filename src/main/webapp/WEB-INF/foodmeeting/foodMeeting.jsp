@@ -5,22 +5,27 @@
 <t:template>
     <jsp:attribute name="javascript">
         <script src="/assets/js/foodMeetings.js"></script>
+        <script src="/assets/js/searchImage.js"></script>
     </jsp:attribute>
 
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <button  id="add-new-meeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
+                <button  id="AddNewMeeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
             </div>
-            <div class="food-meetings">
 
-                <div id="new-meeting-card" class="meeting grid-item" style="width:500px;display: none;">
+            <div id="search-image-modal-id" class="modal modal-fixed-footer" >
+            </div>
+
+            <div class="food-meetings">
+                <div id="new-meeting-card-id" class="grid-item" style="width:500px;display: none;">
                     <div class="card">
                         <div class="card-image waves-effect waves-block waves-light">
-                            <img id="image-card" class="new-meeting-img" src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+                            <img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
+                                 src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
                         </div>
                         <div class="card-content">
-                            <form id="add-meeting" role="form" action="/action/createFoodMeeting">
+                            <form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
                                 <span class="card-title activator grey-text text-darken-4">
                                     <i class="material-icons right">more_vert</i>
                                 </span>
@@ -38,30 +43,23 @@
                                         <label for="time">Time</label>
                                     </div>
                                     <div class="row right col"><br><br>
-                                        <button id="cancel_create_meeting" class="waves-effect waves-light btn" type="button">Cancel</button>
+                                        <button id="cancelCreateMeeting" class="waves-effect waves-light btn" type="button">Cancel</button>
                                         <button type="submit" id="createMeeting" class="waves-effect waves-light btn">Create</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="card-reveal">
-                            <form id="addMeetingForm2" role="form">
+                            <form id="add-meeting-form-2-id" role="form">
                                 <span class="card-title activator grey-text text-darken-4">
                                     <i class="material-icons right">close</i>
                                 </span>
-                                <div class="row">
-                                    <div class="input-field col s12">
-                                        <input id="ImageLinkId" name="image_link" id="image_link" value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg" type="text" class="validate">
-                                        <label for="image_link">Image Link</label>
-                                    </div>
-                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
-
                 <c:forEach var="foodMeeting" items="#{foodMeetings}">
-                    <div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
+                    <div class="grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
                         <div class="card">
                             <div class="card-image waves-effect waves-block waves-light">
                                 <img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">
@@ -72,7 +70,7 @@
                                     <i class="material-icons right">more_vert</i>
                                 </span>
                                 <span ${foodMeeting.status == 'Finish' ? "class='new badge blue'" : "class='new badge'"} style="bottom: 25px; right: 25px;" data-badge-caption=${foodMeeting.status}></span>
-                                <p class="quick-view-date grey-text lighten-1"></p>     
+                                <p class="quick-view-date grey-text lighten-1"></p>
                             </div>
 
                             <div class="card-reveal">

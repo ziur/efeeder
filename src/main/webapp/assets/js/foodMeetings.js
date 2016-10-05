@@ -1,9 +1,4 @@
 $(document).ready(function() {
-
-    $('.collapsible').collapsible({
-        accordion: false
-    });
-
     $('.datepicker').pickadate({
         selectMonths: true,
         selectYears: 15
@@ -35,25 +30,20 @@ $(document).ready(function() {
                 $(this).data("meeting-id");
     });
 
-    var foodMeetings = $('.food-meetings');
-
-    foodMeetings.imagesLoaded()
+    $('.food-meetings').imagesLoaded()
             .done(function() {
-                foodMeetings.masonry({
-                    itemSelector: '.grid-item',
-                    columnWidth: 50
-                });
+                reorganizeCards();
             });
 
     $(".quick-view-date").each(function() {
-        $(this).text(moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").calendar());
+        $(this).text(moment($(this).closest(".grid-item").data("date"), "YYYY-MM-DD hh:mm:ss.s").calendar());
     });
 
     $(".detailed-view-date").each(function() {
-        $(this).text("Eat time : " + moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").format('MMMM Do YYYY, h:mm a'));
+        $(this).text("Eat time : " + moment($(this).closest(".grid-item").data("date"), "YYYY-MM-DD hh:mm:ss.s").format('MMMM Do YYYY, h:mm a'));
     });
 
-    $("#add-meeting").validate({
+    $("#add-meeting-form-id").validate({
         errorPlacement: function(error, element) {
             var placement = $(element).data('error');
             if (placement) {
@@ -80,11 +70,11 @@ $(document).ready(function() {
         }
     });
 
-    $("#add-meeting").submit(function(event) {
+    $("#add-meeting-form-id").submit(function(event) {
 
         event.preventDefault();
 
-        if ($("#add-meeting").valid())
+        if ($("#add-meeting-form-id").valid())
         {
 
             var $form = $(this),
@@ -93,7 +83,7 @@ $(document).ready(function() {
                     time = $form.find("input[name='time']").val(),
                     url = $form.attr("action");
 
-            var imageLink = $("#ImageLinkId").val();
+            var imageLink = $("#new-image-card-id").attr("src");
 
             // Send the data using post
             var posting = $.post(url, {meeting_name: meeting_name, image_link: imageLink, eventdate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").format("DD/MM/YYYY HH:mm:ss")});
@@ -105,24 +95,35 @@ $(document).ready(function() {
         }
     });
 
-    $("#ImageLinkId").change(function(event) {
-
-        var imageLink = $("#ImageLinkId").val();
-
-        $("#image-card").attr("src", imageLink);
+    $("#AddNewMeeting").click(function(event) {
+        $("#new-meeting-card-id").show();
+        reorganizeCards();
     });
 
-    $("#add-new-meeting").click(function(event) {
-
-        $("#new-meeting-card").show();
-        foodMeetings.masonry({
-            itemSelector: '.grid-item',
-            columnWidth: 50
-        });
-    });
-
-    $("#cancel_create_meeting").click(function(event) {
+    $("#cancelCreateMeeting").click(function(event) {
         location.reload();
     });
 
+    var onModalHide = function() {
+        var imageLink = $("#image-link-id").val();
+        $("#new-image-card-id").attr("src", imageLink);
+        reorganizeCards();
+    };
+
+    $("#new-image-card-id").click(function() {
+        $('#search-image-modal-id').openModal({
+            complete: onModalHide
+        });
+
+        $('#search-image-modal-id').load('searchImage', function(data) {
+            initSearchImages();
+        });
+    });
 });
+
+function reorganizeCards() {
+    $('.food-meetings').masonry({
+        itemSelector: '.grid-item',
+        columnWidth: 50
+    });
+}
