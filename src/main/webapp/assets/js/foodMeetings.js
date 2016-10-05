@@ -11,11 +11,24 @@ $(document).ready(function () {
 		vibrate: true
 	});
 
-	$(".meeting-img").click(function () {
-		var page = $(this).data("meetingStatus") === "Voting" ? "suggestions" : "suggestions";
-		window.location.href = '/action/'+page+'?id_food_meeting=' +
-		$(this).data("meetingId");
-	});
+	$(".meeting-img").click(function() {
+            var page = "suggestions";
+            var meetingStatus = $(this).data("meetingStatus");
+
+            switch (meetingStatus) {
+                case 'Voting':
+                    page = "suggestions";
+                    break;
+                case 'Order':
+                    page = "order";
+                    break;
+                case 'Finish':
+                    page = "finish";
+                    break;
+            }
+            window.location.href = '/action/' + page + '?id_food_meeting=' +
+                    $(this).data("meeting-id");
+        });
 
 	$('.food-meetings').imagesLoaded()
 		.done(function(){

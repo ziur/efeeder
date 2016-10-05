@@ -69,6 +69,7 @@
 									${foodMeeting.name}
 									<i class="material-icons right">more_vert</i>
 								</span>
+                                                                <span ${foodMeeting.status == 'Finish' ? "class='new badge blue'" : "class='new badge'"} style="bottom: 25px; right: 25px;" data-badge-caption=${foodMeeting.status}></span>        
 								<p class="quick-view-date grey-text lighten-1"></p>
 							</div>
 
