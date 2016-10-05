@@ -104,7 +104,7 @@ $(document).ready(function () {
 		});
 
 		$('#search-image-modal-id').load('searchImage', function(data) {
-			initSearchImages();
+			ModalSearchImage.init($("#image-card-id"), $("#image-link-id"), $('.image-link'), $('.image-links'), $("#image-card-id"));
 		});
 	});
 });
