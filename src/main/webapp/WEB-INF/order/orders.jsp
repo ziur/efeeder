@@ -17,7 +17,9 @@
             <input  type="submit" value="Upload">
             </div>
         </form>
-        <img class=" circle responsive-img" src="../assets/img/googlebot-1327931529.jpg">
+        <div class="col s1">
+            <img class=" circle responsive-img" src="../assets/img/devil-300x300.jpg">
+        </div>
     </div>
 
     <div class="row">

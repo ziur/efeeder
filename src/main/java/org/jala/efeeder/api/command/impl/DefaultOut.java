@@ -19,6 +19,7 @@ import lombok.Setter;
  * Created by alejandro on 07-09-16.
  */
 public class DefaultOut implements Out {
+
     private static final String HEADER_RESPONSE = "__HEADER_RESPONSE__";
     public static final String CONTENT_TYPE = "contentType";
     private static final String BODY_RESPONSE = "__BODY_RESPONSE__";
@@ -27,7 +28,9 @@ public class DefaultOut implements Out {
     private ResponseAction responseAction;
     private Map<String, Object> context;
     private ExitStatus exitStatus;
-    @Setter @Getter private User user;
+    @Setter
+    @Getter
+    private User user;
 
     public DefaultOut() {
         Map<String, String> header = new HashMap<>();
@@ -69,7 +72,6 @@ public class DefaultOut implements Out {
         return messages.get(type);
     }
 
-
     @Override
     public Set<Map.Entry<String, Object>> getResults() {
         return context.entrySet();
@@ -97,20 +99,24 @@ public class DefaultOut implements Out {
     }
 
     @Override
+    public void setBody(byte[] body) {
+        context.put(BODY_RESPONSE, body);
+    }
+
+    @Override
     public void addHeader(String name, String value) {
         getHeaders().put(name, value);
     }
 
     @Override
-    public String getBody() {
-        return (String) context.get(BODY_RESPONSE);
+    public Object getBody() {
+        return context.get(BODY_RESPONSE);
     }
 
     @Override
     public Map<String, String> getHeaders() {
         return (Map<String, String>) context.get(HEADER_RESPONSE);
     }
-
 
     public Out forward(String page) {
         responseAction.setUrl(page);
@@ -119,10 +125,10 @@ public class DefaultOut implements Out {
 
     @Override
     public String toString() {
-        return "DefaultOut{" +
-                "messages=" + messages +
-                ", responseAction=" + responseAction +
-                ", context=" + context +
-                '}';
+        return "DefaultOut{"
+                + "messages=" + messages
+                + ", responseAction=" + responseAction
+                + ", context=" + context
+                + '}';
     }
 }

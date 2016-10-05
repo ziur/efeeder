@@ -51,13 +51,6 @@ public class CommandServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-        if (isMultipart) {
-            //TODO mover toda esta parte
-            ImageResourceManager sourceImageM = new ImageResourceManager(getServletContext());
-            sourceImageM.saveImage(request);
-        }
-
         HttpSession session = request.getSession(true);
 
         if (request.getRequestURI().equals("/action/logout")) {
@@ -71,9 +64,16 @@ public class CommandServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
         } else {
+            boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+            In parameters;
+            if (isMultipart) {
+                ImageResourceManager sourceImageM = new ImageResourceManager(getServletContext());
+                parameters = sourceImageM.saveImage(request);
+            } else {
+                parameters = InBuilder.createIn(request);
+            }
             DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
-            In parameters = InBuilder.createIn(request);
             parameters.setUser(User.class.cast(session.getAttribute("user")));
             Out out = executor.executeCommand(parameters, getCommand(request));
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
@@ -115,7 +115,15 @@ public class CommandServlet extends HttpServlet {
                     response.addHeader(header.getKey(), header.getValue());
                 }
                 response.setContentType(contentType);
-                response.getWriter().write(out.getBody());
+                response.getWriter().write((String) out.getBody());
+                break;
+            case MESSAGE_BYTES:
+                String contentType1 = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+                for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+                    response.addHeader(header.getKey(), header.getValue());
+                }
+                response.setContentType(contentType1);
+                response.getOutputStream().write((byte[]) out.getBody());
         }
 
     }

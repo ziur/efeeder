@@ -8,7 +8,6 @@ package org.jala.efeeder.api.command;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -16,8 +15,6 @@ import java.util.stream.Collectors;
  */
 public class SettingsManager {
 
-    //settindsManager
-    //resourceManager
     public static final String SETTINGS_FACTORY_KEY = "SETTINGS_FACTORY_KEY";
 
     private Map<String, Object> dataList = new HashMap<>();
@@ -39,7 +36,6 @@ public class SettingsManager {
     public void addAll(Set<Map.Entry<Object, Object>> entrySet) {
 //        dataList = entrySet.stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         for (Map.Entry<Object, Object> entry : entrySet) {
-            System.out.println("==>> entidad objeto ::" + entry.getKey() + " " + entry.getValue());
             dataList.put(("" + entry.getKey()).toLowerCase(), entry.getValue());
         }
     }

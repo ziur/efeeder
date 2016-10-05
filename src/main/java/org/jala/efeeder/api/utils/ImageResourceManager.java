@@ -7,13 +7,18 @@ package org.jala.efeeder.api.utils;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.SettingsManager;
+import org.jala.efeeder.api.command.impl.DefaultIn;
 
 /**
  *
@@ -29,7 +34,8 @@ public class ImageResourceManager {
         this.context = context;
     }
 
-    public void saveImage(HttpServletRequest request) {
+    public In saveImage(HttpServletRequest request) {
+        DefaultIn in = new DefaultIn();
         DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setRepository(diretorio);
 
@@ -39,26 +45,26 @@ public class ImageResourceManager {
             List<FileItem> items = upload.parseRequest(request);
             for (FileItem item : items) {
                 if (!item.isFormField()) {
-                    processUploadedFile(item);
+                    String path = processUploadedFile(item);
+                    in.addParameter(item.getFieldName(), Arrays.asList(path));
                 } else {
                     String nomeDoCampo = item.getFieldName();
                     String valorDoCampo = item.getString();
                     System.out.println(nomeDoCampo + ": " + valorDoCampo);
+                    in.addParameter(nomeDoCampo, Arrays.asList(valorDoCampo));
                 }
             }
 
         } catch (Exception e) {
             System.out.println("ERROR:" + e.getMessage());
-            return;
+            Logger.getLogger(ImageResourceManager.class.getName()).log(Level.SEVERE, null, e);
         }
+        return in;
     }
 
-    private void processUploadedFile(FileItem item) throws Exception {
+    private String processUploadedFile(FileItem item) throws Exception {
         String webAppPath;
-//        webAppPath = context.getRealPath("/");
         webAppPath = getPathImgagesContainer();
-
-        System.out.println("The path obtains is of server is : " + webAppPath);
 
         diretorio = new File(Paths.get(webAppPath, "assets", "img").toString());
         if (!diretorio.exists()) {
@@ -66,8 +72,8 @@ public class ImageResourceManager {
         }
         String fileName = item.getName();
         File uploadedFile = new File(diretorio, fileName);
-        System.out.println("The path obtains of file to write is : " + uploadedFile.getPath());
         item.write(uploadedFile);
+        return uploadedFile.getPath();
     }
 
     private String getPathImgagesContainer() {

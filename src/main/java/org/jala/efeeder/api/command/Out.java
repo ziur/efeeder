@@ -25,8 +25,11 @@ public interface Out {
     User getUser();
     void setUser(User user);
     
-    String getBody();
+    Object getBody();
     void setBody(String body);
+    
+    void setBody(byte[] body);
+    
     Map<String, String> getHeaders();
     void addHeader(String name, String value);
 }
