@@ -23,11 +23,11 @@ $(document).ready(function () {
 		});
 
 	$(".quick-view-date").each(function(){
-		$(this).text(moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").calendar());
+		$(this).text(moment($(this).closest(".grid-item").data("date"), "YYYY-MM-DD hh:mm:ss.s").calendar());
 	});
 
 	$(".detailed-view-date").each(function(){  
-		$(this).text("Eat time : " + moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").format('MMMM Do YYYY, h:mm a'));
+		$(this).text("Eat time : " + moment($(this).closest(".grid-item").data("date"), "YYYY-MM-DD hh:mm:ss.s").format('MMMM Do YYYY, h:mm a'));
 	});
 
 	$("#add-meeting-form-id").validate({
