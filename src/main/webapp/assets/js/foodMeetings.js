@@ -32,7 +32,7 @@ $(document).ready(function() {
                 break;
         }
         window.location.href = '/action/' + page + '?id_food_meeting=' +
-                $(this).data("meetingId");
+                $(this).data("meeting-id");
     });
 
     var foodMeetings = $('.food-meetings');
@@ -53,7 +53,7 @@ $(document).ready(function() {
         $(this).text("Eat time : " + moment($(this).closest(".meeting").data("date"), "YYYY-MM-DD hh:mm:ss.s").format('MMMM Do YYYY, h:mm a'));
     });
 
-    $("#addMeeting").validate({
+    $("#add-meeting").validate({
         errorPlacement: function(error, element) {
             var placement = $(element).data('error');
             if (placement) {
@@ -80,11 +80,11 @@ $(document).ready(function() {
         }
     });
 
-    $("#addMeeting").submit(function(event) {
+    $("#add-meeting").submit(function(event) {
 
         event.preventDefault();
 
-        if ($("#addMeeting").valid())
+        if ($("#add-meeting").valid())
         {
 
             var $form = $(this),
@@ -109,19 +109,19 @@ $(document).ready(function() {
 
         var imageLink = $("#ImageLinkId").val();
 
-        $("#ImageCard").attr("src", imageLink);
+        $("#image-card").attr("src", imageLink);
     });
 
-    $("#AddNewMeeting").click(function(event) {
+    $("#add-new-meeting").click(function(event) {
 
-        $("#NewMeetingCard").show();
+        $("#new-meeting-card").show();
         foodMeetings.masonry({
             itemSelector: '.grid-item',
             columnWidth: 50
         });
     });
 
-    $("#cancelCreateMeeting").click(function(event) {
+    $("#cancel_create_meeting").click(function(event) {
         location.reload();
     });
 

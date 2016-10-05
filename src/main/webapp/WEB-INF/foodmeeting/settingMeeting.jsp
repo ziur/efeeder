@@ -35,7 +35,7 @@
         <div class="meetings-container">
             <div class="row">
                 <form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12">
-                    <input id="meetingId" name="id_food_meeting" type="hidden" value=${foodMeeting.id}>
+                    <input id="meeting-id" name="id-food-meeting" type="hidden" value=${foodMeeting.id}>
                     <div class="row">
                         <div class="col m12 l4">
                             <div class="card">

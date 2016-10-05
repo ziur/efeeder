@@ -42,7 +42,7 @@ public class EditFoodMeetingCommand implements CommandUnit {
             stm.setString(2, parameters.getParameter("image_link"));
             stm.setString(3, parameters.getParameter("status"));
             stm.setTimestamp(4, eventDate);
-            stm.setInt(5, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+            stm.setInt(5, Integer.valueOf(parameters.getParameter("id-food-meeting")));
             stm.executeUpdate();
         } catch (Exception e) {
         }

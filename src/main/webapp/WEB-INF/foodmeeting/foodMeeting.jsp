@@ -10,17 +10,17 @@
     <jsp:body>
         <div class="meetings-container">
             <div class="row">
-                <button  id="AddNewMeeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
+                <button  id="add-new-meeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
             </div>
             <div class="food-meetings">
 
-                <div id="NewMeetingCard" class="meeting grid-item" style="width:500px;display: none;">
+                <div id="new-meeting-card" class="meeting grid-item" style="width:500px;display: none;">
                     <div class="card">
                         <div class="card-image waves-effect waves-block waves-light">
-                            <img id="ImageCard" class="new-meeting-img" src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+                            <img id="image-card" class="new-meeting-img" src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
                         </div>
                         <div class="card-content">
-                            <form id="addMeeting" role="form" action="/action/createFoodMeeting">
+                            <form id="add-meeting" role="form" action="/action/createFoodMeeting">
                                 <span class="card-title activator grey-text text-darken-4">
                                     <i class="material-icons right">more_vert</i>
                                 </span>
@@ -38,7 +38,7 @@
                                         <label for="time">Time</label>
                                     </div>
                                     <div class="row right col"><br><br>
-                                        <button id="cancelCreateMeeting" class="waves-effect waves-light btn" type="button">Cancel</button>
+                                        <button id="cancel_create_meeting" class="waves-effect waves-light btn" type="button">Cancel</button>
                                         <button type="submit" id="createMeeting" class="waves-effect waves-light btn">Create</button>
                                     </div>
                                 </div>
