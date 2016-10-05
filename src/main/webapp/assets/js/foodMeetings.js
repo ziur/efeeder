@@ -27,9 +27,6 @@ $(document).ready(function() {
             case 'Order':
                 page = "order";
                 break;
-            case 'Raffle':
-                page = "raffle";
-                break;
             case 'Finish':
                 page = "finish";
                 break;

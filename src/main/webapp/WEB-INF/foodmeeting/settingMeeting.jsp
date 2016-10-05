@@ -57,7 +57,6 @@
                                 <select name="status" id="status">
                                     <option value="Voting" ${foodMeeting.status == 'Voting' ? 'selected' : ''} >Voting</option>
                                     <option value="Order" ${foodMeeting.status == 'Order' ? 'selected' : ''} >Order</option>
-                                    <option value="Raffle" ${foodMeeting.status == 'Raffle' ? 'selected' : ''} >Raffle</option>
                                     <option value="Finish" ${foodMeeting.status == 'Finish' ? 'selected' : ''} >Finish</option>
                                 </select>
                                 <label>Status</label>
