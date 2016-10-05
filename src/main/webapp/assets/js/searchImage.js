@@ -5,10 +5,8 @@ function initSearchImages() {
 	});
 
 	$(".image-link").click(function() {
-
 		$("#image-card-id").attr("src", $(this).data("imageLink"));
 		$("#image-link-id").val($(this).data("imageLink"));
-
 	});
 
 	var imagesLinks = $('.image-links');
