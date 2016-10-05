@@ -99,11 +99,11 @@ $(document).ready(function () {
 	};
 
 	$("#new-image-card-id").click(function () {
-		$('#modal1').openModal({
+		$('#search-image-modal-id').openModal({
 			complete : onModalHide
 		});
 
-		$('#modal1').load('searchImage', function(data) {
+		$('#search-image-modal-id').load('searchImage', function(data) {
 			initSearchImages();
 		});
 	});

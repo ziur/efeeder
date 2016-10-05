@@ -14,7 +14,7 @@
 				<button  id="AddNewMeeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
 			</div>
 
-			<div id="modal1" class="modal modal-fixed-footer" >
+			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
 			</div>
 			
 			<div class="food-meetings">
