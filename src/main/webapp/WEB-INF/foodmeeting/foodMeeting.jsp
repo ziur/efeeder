@@ -18,7 +18,7 @@
 			</div>
 			
 			<div class="food-meetings">
-				<div id="new-meeting-card-id" class="meeting grid-item" style="width:500px;display: none;">
+				<div id="new-meeting-card-id" class="grid-item" style="width:500px;display: none;">
 					<div class="card">
 						<div class="card-image waves-effect waves-block waves-light">
 							<img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
@@ -59,7 +59,7 @@
 					</div>
 				</div>
 				<c:forEach var="foodMeeting" items="#{foodMeetings}">
-					<div class="meeting grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
+					<div class="grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
 						<div class="card">
 							<div class="card-image waves-effect waves-block waves-light">
 								<img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">

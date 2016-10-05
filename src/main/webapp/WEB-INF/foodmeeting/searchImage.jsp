@@ -1,11 +1,10 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <div class="modal-content" style="height:65%">
 	<div class="image-links">
 		<c:forEach var="image" items="#{images}">
-			<div class="meeting grid-item"
+			<div class="grid-item"
 				style="width:200px">
 				<div class="card">
 					<div class="card-image waves-effect waves-block waves-light">
