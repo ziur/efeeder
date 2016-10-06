@@ -21,7 +21,7 @@
         },
         {
           "name": "room",
-          "type": "int"
+          "type": "string"
         },
         {
           "name": "command",
@@ -71,7 +71,39 @@
                           "type": {"type": "array", "items": "string"}
                         }
                       ]
-                    }
+                    },
+					{
+					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+					  "type": "record",
+					  "name": "CreateFoodMeetingEvent",
+					  "alias": "CreateFoodMeetingEvent",
+					  "fields": [
+						{
+							"name": "id",
+							"type": "int"
+						},
+						{
+							"name": "name",
+							"type": "string"
+						},
+						{
+							"name": "eventDate",
+							"type": "long"
+						},
+						{
+							"name": "status",
+							"type": "string"
+						},
+						{
+							"name": "imageLink",
+							"type": "string"
+						},
+						{
+							"name": "width",
+							"type": "int"
+						}
+					  ]
+					}
                   ]
                 }
               ]

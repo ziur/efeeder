@@ -32,12 +32,12 @@ public class WheeldecideCommand implements CommandUnit{
 
     @Override
     public Out execute(In context) throws Exception {    
-        int roomId = context.getMessageContext().getRoom();
+        String roomId = context.getMessageContext().getRoom().toString();
         int choseIndex = 0;
         PreparedStatement pStatement = context.getConnection()
                 .prepareStatement(SELECT_USERS_BY_MEETING_SQL);
 
-        pStatement.setInt(1, roomId);
+        pStatement.setInt(1, Integer.parseInt(roomId));
 
         ResultSet resultSet = pStatement.executeQuery();
 
@@ -75,8 +75,9 @@ public class WheeldecideCommand implements CommandUnit{
     private static int insertNewBuyer(In context, int choseUserId) throws Exception{
         PreparedStatement stm = context.getConnection()
                                         .prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
-
-        stm.setInt(1, context.getMessageContext().getRoom());
+		
+		String roomId = context.getMessageContext().getRoom().toString();
+        stm.setInt(1, Integer.parseInt(roomId));
         stm.setInt(2, choseUserId);
         return stm.executeUpdate();
     }
