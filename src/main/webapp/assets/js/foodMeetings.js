@@ -117,7 +117,8 @@ $(document).ready(function () {
 		});
 
 		$('#search-image-modal-id').load('searchImage', function(data) {
-			initSearchImages();
+			var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"), $('.image-link'), $('.image-links'), $("#image-card-id"));
+			modal.init();
 		});
 	});
 });

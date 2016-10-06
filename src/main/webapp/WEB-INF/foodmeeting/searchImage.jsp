@@ -29,9 +29,9 @@
 		</div>
 		<div class="col m12 l8">
 			<div class="input-field col s12">
-				<input name="image_link" id="image-link-id"
+				<input name="image-link" id="image-link-id"
 					value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
-					type="text" class="validate"> <label for="image_link">ImageLink</label>
+					type="text" class="validate" autofocus="autofocus"> <label for="image-link">ImageLink</label>
 			</div>
 		</div>
 	</div>
