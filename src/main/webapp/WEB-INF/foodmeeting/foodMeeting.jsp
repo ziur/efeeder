@@ -65,11 +65,11 @@
 								<img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">
 							</div>
 							<div class="card-content">
-								<span class="card-title activator grey-text text-darken-4">
-									${foodMeeting.name}
-									<i class="material-icons right">more_vert</i>
+								<span class="card-title grey-text text-darken-4">
+									<div class="meeting-name-width">${foodMeeting.name}</div>
+									<i class="card-title activator material-icons right relative">more_vert</i>
 								</span>
-                                                                <span ${foodMeeting.status == 'Finish' ? "class='new badge blue'" : "class='new badge'"} style="bottom: 25px; right: 25px;" data-badge-caption=${foodMeeting.status}></span>        
+                                <span ${foodMeeting.status == 'Finish' ? "class='new badge blue position'" : "class='new badge position'"} data-badge-caption=${foodMeeting.status}></span>        
 								<p class="quick-view-date grey-text lighten-1"></p>
 							</div>
 
@@ -77,7 +77,7 @@
 								<span class="card-title grey-text text-darken-4">${foodMeeting.name}<i class="material-icons right">close</i></span>
 								<p class="detailed-view-date grey-text lighten-1"></p>
 								
-								<div class="fixed-action-btn" style="bottom: 25px; right: 25px;">
+								<div class="fixed-action-btn position">
 									<a href="/action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
 										<i class="material-icons">settings</i>
 									</a>
