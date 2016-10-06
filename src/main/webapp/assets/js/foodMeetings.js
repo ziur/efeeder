@@ -1,6 +1,6 @@
 $(function () {        		
 	var defaultImage = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
-	var creatMeetingRoomId = "createMeetingRoomId";
+	var createMeetingRoomId = "createMeetingRoomId";
 	
 	var foodMeetings = $('.food-meetings');
 	foodMeetings.isotope({
@@ -18,13 +18,12 @@ $(function () {
 	var foodMeetingTmpl;
 	$.get('/assets/templates/foodMeeting.html', function(template) {
 		foodMeetingTmpl = template;        
-	});    	    
-    
-	$.get('/action/getAllMeetings', function(meetings){
-		_.each(meetings, function(meeting){
-			addMeeting(meeting);
-		})
-	});
+		$.get('/action/getAllMeetings', function(meetings){
+			_.each(meetings, function(meeting){
+				addMeeting(meeting);
+			})
+		});
+	});    	        	
 	
 	$('.datepicker').pickadate({
 		selectMonths: true,
@@ -37,25 +36,6 @@ $(function () {
 		autoclose: true,
 		vibrate: true
 	});
-
-	$(".meeting-img").click(function() {
-            var page = "suggestions";
-            var meetingStatus = $(this).data("meetingStatus");
-
-            switch (meetingStatus) {
-                case 'Voting':
-                    page = "suggestions";
-                    break;
-                case 'Order':
-                    page = "order";
-                    break;
-                case 'Finish':
-                    page = "finish";
-                    break;
-            }
-            window.location.href = '/action/' + page + '?id_food_meeting=' +
-                    $(this).data("meeting-id");
-        });
 
 	$("#add-meeting-form-id").validate({
 		errorPlacement: function(error, element) {
@@ -169,9 +149,9 @@ $(function () {
 		});
 	});
 	
-	communicationService.connect('ws://' + location.host + '/ws', creatMeetingRoomId);
+	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 	
-	function addMeeting(meeting) {        
+	function addMeeting(meeting) {        console.log(foodMeetingTmpl);
         var $foodMeetingTmpl = $.templates(foodMeetingTmpl); 
         var data = { 
 			"id": meeting.id, 
@@ -182,7 +162,8 @@ $(function () {
 			"quickViewDate": moment(meeting.eventDate).calendar(),
 			"detailedViewDate": moment(meeting.eventDate).format('MMMM Do YYYY, h:mm a'),
 			"width": meeting.width,
-			"statusColor": meeting.status === 'Finish' ? 'new badge blue' : 'new badge'
+			"statusColor": meeting.status === 'Finish' ? 'new badge blue' : 'new badge',
+			"imgRedirectTo": getImagRedirectTo(meeting.id, meeting.status)
 		};
 		
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
@@ -193,9 +174,27 @@ $(function () {
 			});       
     }
 	
+	function getImagRedirectTo(id, status) {
+		var page = "suggestions";
+
+		switch (status) {
+			case 'Voting':
+				page = "suggestions";
+				break;
+			case 'Order':
+				page = "order";
+				break;
+			case 'Finish':
+				page = "finish";
+				break;
+		}
+		
+		return '/action/' + page + '?id_food_meeting=' + id;
+	}
+
 	function resetNewMeetingForm () {
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
 		$("#new-meeting-card-id").hide();
-	}
+	}	
 });

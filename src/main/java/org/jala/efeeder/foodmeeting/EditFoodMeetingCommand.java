@@ -47,6 +47,6 @@ public class EditFoodMeetingCommand implements CommandUnit {
         } catch (Exception e) {
         }
 
-        return out.redirect("action/FoodMeeting");
+        return out.redirect("/action/FoodMeeting");
     }
 }

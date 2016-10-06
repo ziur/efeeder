@@ -26,35 +26,35 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
     private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
             + "values(?, ?, ?, ?, ?)";
-	private static final String creatMeetingRoomId = "creatMeetingRoomId";
+	private static final String createMeetingRoomId = "createMeetingRoomId";
 
     @Override
     public Out execute(In context) throws Exception {
-        Out out = new DefaultOut();
-        
-        String roomId = context.getMessageContext().getRoom().toString();
-        PreparedStatement stm = context.getConnection()
-                                        .prepareStatement(INSERT_FOOD_MEETING_SQL, RETURN_GENERATED_KEYS);
-        
-        List<MessageEvent> messages = context.getMessageContext().getEvents();        
-        CreateFoodMeetingEvent createMeetingEvent = (CreateFoodMeetingEvent)messages.get(0).getEvent();
-        
+		Out out = new DefaultOut();
+
+		String roomId = context.getMessageContext().getRoom().toString();
+		PreparedStatement stm = context.getConnection()
+										.prepareStatement(INSERT_FOOD_MEETING_SQL, RETURN_GENERATED_KEYS);
+
+		List<MessageEvent> messages = context.getMessageContext().getEvents();        
+		CreateFoodMeetingEvent createMeetingEvent = (CreateFoodMeetingEvent)messages.get(0).getEvent();
+
 		Timestamp eventDate = new Timestamp(Long.parseLong(createMeetingEvent.getEventDate().toString()));		
-        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+		Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        stm.setString(1, createMeetingEvent.getName().toString());
-        stm.setString(2, createMeetingEvent.getImageLink().toString());
-        stm.setString(3, FoodMeeting.DEFAULT_FOOD_MEETING_STATUS);
-        stm.setTimestamp(4, eventDate);
-        stm.setTimestamp(5, createdAt);
+		stm.setString(1, createMeetingEvent.getName().toString());
+		stm.setString(2, createMeetingEvent.getImageLink().toString());
+		stm.setString(3, FoodMeeting.DEFAULT_FOOD_MEETING_STATUS);
+		stm.setTimestamp(4, eventDate);
+		stm.setTimestamp(5, createdAt);
 
-        stm.executeUpdate();
+		stm.executeUpdate();
 
-        ResultSet generatedKeysResultSet = stm.getGeneratedKeys();
-        generatedKeysResultSet.next();
-        int meetingId = generatedKeysResultSet.getInt(1);
-        stm.close();
-        		
+		ResultSet generatedKeysResultSet = stm.getGeneratedKeys();
+		generatedKeysResultSet.next();
+		int meetingId = generatedKeysResultSet.getInt(1);
+		stm.close();
+
 		FoodMeeting foodMeeting = new FoodMeeting(meetingId, createMeetingEvent.getName().toString(), createMeetingEvent.getImageLink().toString(), eventDate);
 		List<MessageEvent> events = new ArrayList<>();
 
@@ -72,7 +72,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 			.build()
 		);
 		MessageContext messageContext = MessageContext.newBuilder()
-												.setRoom(creatMeetingRoomId)
+												.setRoom(createMeetingRoomId)
 												.setUser(0)
 												.setEvents(events)
 												.build();
