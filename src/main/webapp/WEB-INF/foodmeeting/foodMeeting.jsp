@@ -73,8 +73,6 @@
 				</div>
 				<h5 class="lighten-1 grey-text">We are loading your meetings right now!</h5>				
 			</div>
-		</div>
-		
-		
+		</div>			
 	</jsp:body>
 </t:template>

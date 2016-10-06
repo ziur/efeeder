@@ -86,26 +86,26 @@ $(function () {
 
 			var imageLink = $("#new-image-card-id").attr("src");
             
-            communicationService.sendMessage(
-            {
-                user:1, 
-                room: creatMeetingRoomId, 
-                command: "CreateFoodMeeting", 
-                events:[
-                    {
-                        event:{
-                            CreateFoodMeetingEvent: {
-                                id:0,
-                                name: meeting_name,                                
+			communicationService.sendMessage(
+			{
+				user:1, 
+				room: creatMeetingRoomId, 
+				command: "CreateFoodMeeting", 
+				events:[
+					{
+						event:{
+							CreateFoodMeetingEvent: {
+								id:0,
+								name: meeting_name,                                
 								eventDate: moment(date+" "+time,"DD MMMM, YYYY hh:mm").valueOf(),
-                                status: "",
-                                imageLink: imageLink,
+								status: "",
+								imageLink: imageLink,
 								width:0
-                            }
-                        }                            
-                    }
-                ]
-            });
+							}
+						}                            
+					}
+				]
+			});
 		}
 	});
 
