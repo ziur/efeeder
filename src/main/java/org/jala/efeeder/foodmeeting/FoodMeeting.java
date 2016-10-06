@@ -18,22 +18,29 @@ public class FoodMeeting {
     private String status;
     private Timestamp eventDate;
     private Timestamp createdAt;
+	
+	public static final String DEFAULT_FOOD_MEETING_STATUS = FoodMeetingStatus.Voting.name();
 
     public FoodMeeting() {
     }
 
     public FoodMeeting(int id, String name,String imageLink, String status, Timestamp eventDate, Timestamp createdAt) {
-        this(id, name, imageLink, eventDate, createdAt);
-        this.status = status;
-    }
-    
-    public FoodMeeting(int id, String name,String imageLink, Timestamp eventDate, Timestamp createdAt) {
-        this.id = id;
+		this.id = id;
         this.name = name;
         this.createdAt = createdAt;
         this.eventDate = eventDate;
         this.imageLink = imageLink;
+        this.status = status;
     }
+    
+	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate) {
+		this.id = id;
+        this.name = name;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.eventDate = eventDate;
+        this.imageLink = imageLink;
+		this.status = DEFAULT_FOOD_MEETING_STATUS;
+	}
 
     public int getWidth()
     {
