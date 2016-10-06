@@ -29,7 +29,7 @@
                                             <!--Choose File-->
                                             <i class="large material-icons">mode_edit</i>
                                         </label>
-                                        <input type="file" name="image2" id="image-upload" style="display:none;"/>
+                                        <input type="file" name="image" id="image-upload" style="display:none;"/>
                                     </div>
                                 </div>
                                 <div class="row">

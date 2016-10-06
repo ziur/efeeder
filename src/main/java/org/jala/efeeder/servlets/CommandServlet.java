@@ -1,6 +1,8 @@
 package org.jala.efeeder.servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +22,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.api.command.SettingsManager;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.ImageResourceManager;
@@ -75,6 +78,7 @@ public class CommandServlet extends HttpServlet {
             DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
             parameters.setUser(User.class.cast(session.getAttribute("user")));
+            parameters.addParameter("image_path", Arrays.asList(getImagePath()));
             Out out = executor.executeCommand(parameters, getCommand(request));
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
                     && !request.getRequestURI().equals("/action/CreateUser")) {
@@ -122,8 +126,11 @@ public class CommandServlet extends HttpServlet {
                 for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
                     response.addHeader(header.getKey(), header.getValue());
                 }
+                byte[] bytes = (byte[]) out.getBody();
                 response.setContentType(contentType1);
-                response.getOutputStream().write((byte[]) out.getBody());
+                response.setContentLength(bytes.length);
+                System.out.println("clarito response :" + bytes);
+                response.getOutputStream().write(bytes);
         }
 
     }
@@ -138,5 +145,12 @@ public class CommandServlet extends HttpServlet {
         }
         String command = matcher.group(1);
         return commandFactory.getInstance(command);
+    }
+
+    private String getImagePath() {
+        SettingsManager settings
+                = (SettingsManager) getServletContext().getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
+
+        return "" + settings.getData("imgage_folder_path");
     }
 }

@@ -73,7 +73,7 @@ public class ImageResourceManager {
         String fileName = item.getName();
         File uploadedFile = new File(diretorio, fileName);
         item.write(uploadedFile);
-        return uploadedFile.getPath();
+        return fileName;
     }
 
     private String getPathImgagesContainer() {

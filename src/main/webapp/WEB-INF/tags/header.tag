@@ -5,6 +5,7 @@
     <nav class="light-blue lighten-1" role="navigation">
         <div class="nav-wrapper container"><a id="logo-container" href="/" class="brand-logo">Efeeder</a>
             <ul class="right hide-on-med-and-down">
+                <li><image id="image-seccion-id" class="circle responsive-img" src="action/image"/></li>
                 <li><a href="/action/logout">Logout</a></li>
             </ul>
 

@@ -18,7 +18,16 @@ public class User {
     private String email;
     private String name;
     private String last_name;
+    private String image;
 
+    public User(int id, String email, String name, String last_name, String image) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.last_name = last_name;
+        this.image = image;
+    }
+    
     public User(int id, String email, String name, String last_name) {
         this.id = id;
         this.email = email;

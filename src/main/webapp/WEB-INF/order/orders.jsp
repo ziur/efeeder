@@ -12,13 +12,13 @@
     <div class="row">
         <form class="col s12" action="order" method="post" enctype="multipart/form-data">
             <div class="row">
-            <input  type="text" name="texto">
-            <input  type="file" name="arquivo">
-            <input  type="submit" value="Upload">
+                <input  type="text" name="texto">
+                <input  type="file" name="arquivo">
+                <input  type="submit" value="Upload">
             </div>
         </form>
         <div class="col s1">
-            <img class=" circle responsive-img" src="../assets/img/devil-300x300.jpg">
+            <img id="ItemPreview" class=" circle responsive-img" src="action/image">
         </div>
     </div>
 
@@ -61,3 +61,7 @@
         </div>
     </div>
 </t:template>
+<script>
+    
+
+</script>

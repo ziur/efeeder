@@ -129,6 +129,7 @@
             <column name="email"     type="VARCHAR(120)">
                 <constraints nullable="false"/>
             </column>
+            <column name="image_path" type="VARCHAR(120)"/>
         </createTable>
         <createIndex catalogName="efeeder"
                 indexName="user_id_uindex"
@@ -152,6 +153,7 @@
                 <column name="username"  value="Test"/>
                 <column name="password"  value="Test"/>
                 <column name="email"     value="test@test.com"/>
+                <column name="image_path"     value="/home/alexander_castro/Pictures/assets/img/devil-300x300.jpg"/>
         </insert>
     </changeSet>
 

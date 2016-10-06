@@ -22,14 +22,14 @@ public class LoginCommand implements CommandUnit {
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "Select id, email, name, last_name from user where username=? and password=?");
+                "Select id, email, name, last_name, image_path from user where username=? and password=?");
         preparedStatement.setString(1, parameters.getParameter("username"));
         preparedStatement.setString(2, parameters.getParameter("password"));
         ResultSet resultSet = preparedStatement.executeQuery();
         User user = null;
 
         while (resultSet.next()) {
-            user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4));
+            user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4), resultSet.getString(5));
         }
 
         if (user!=null)
