@@ -38,11 +38,24 @@ $(function () {
 		vibrate: true
 	});
 
-	$(".meeting-img").click(function () {
-		var page = $(this).data("meetingStatus") === "Voting" ? "suggestions" : "suggestions";
-		window.location.href = '/action/'+page+'?id_food_meeting=' +
-		$(this).data("meetingId");
-	});
+	$(".meeting-img").click(function() {
+            var page = "suggestions";
+            var meetingStatus = $(this).data("meetingStatus");
+
+            switch (meetingStatus) {
+                case 'Voting':
+                    page = "suggestions";
+                    break;
+                case 'Order':
+                    page = "order";
+                    break;
+                case 'Finish':
+                    page = "finish";
+                    break;
+            }
+            window.location.href = '/action/' + page + '?id_food_meeting=' +
+                    $(this).data("meeting-id");
+        });
 
 	$("#add-meeting-form-id").validate({
 		errorPlacement: function(error, element) {
@@ -131,7 +144,8 @@ $(function () {
 		});
 
 		$('#search-image-modal-id').load('searchImage', function(data) {
-			initSearchImages();
+			var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"), $('.image-link'), $('.image-links'), $("#image-card-id"));
+			modal.init();
 		});
 	});
 	
@@ -167,7 +181,8 @@ $(function () {
 			"date": meeting.eventDate, 
 			"quickViewDate": moment(meeting.eventDate).calendar(),
 			"detailedViewDate": moment(meeting.eventDate).format('MMMM Do YYYY, h:mm a'),
-			"width": meeting.width
+			"width": meeting.width,
+			"statusColor": meeting.status === 'Finish' ? 'new badge blue' : 'new badge'
 		};
 		
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));

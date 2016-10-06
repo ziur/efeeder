@@ -3,6 +3,7 @@ package org.jala.efeeder.order;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
@@ -19,47 +20,67 @@ import org.jala.efeeder.user.User;
 @Command
 public class OrderCommand implements CommandUnit {
 
+    private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost FROM orders";
+    private static final String USERS_QUERY = "SELECT id, name, last_name, email FROM user WHERE id=%d";
+    private static final String ORDERS_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user!=%d;";
+    private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=%s AND id_user=%d;";
+
     @Override
     public Out execute(In parameters) throws Exception {
-
-        List<Order> orders = new ArrayList<>();
-
+        String idFoodMeeting = parameters.getParameter("id_food_meeting");
+        int idUser = parameters.getUser().getId();
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(
-                "Select o.id_food_meeting, o.order_name, o.cost, u.id, u.email, u.name, u.last_name " +
-                "from orders o, user u where o.id_food_meeting = ? and o.id_user = u.id");
-        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
+
+        List<Order> orders = getOrders(connection, idFoodMeeting, idUser);
+        Order myOrder = getMyOrder(connection, idFoodMeeting, idUser);
+
+        out.addResult("idFoodMeeting", idFoodMeeting);
+        out.addResult("orders", orders);
+        out.addResult("myOrder", myOrder);
+        out.addResult("myUser", parameters.getUser());
+        out.forward("order/orders.jsp");
+
+        return out;
+    }
+
+    private List<Order> getOrders(Connection connection, String idFoodMeeting, int idUser) throws SQLException {
+        List<Order> orders = new ArrayList<>();
+        PreparedStatement preparedStatement = connection.prepareStatement(String.format(ORDERS_QUERY, idFoodMeeting, idUser));
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            orders.add(new Order(resultSet.getInt(1), new User(resultSet.getInt(4), resultSet.getString(5),
-                    resultSet.getString(6), resultSet.getString(7)), resultSet.getString(2), resultSet.getDouble(3)));
+            int userId = resultSet.getInt(2);
+            PreparedStatement preparedUserStatement = connection.prepareStatement(String.format(USERS_QUERY, userId));    
+            ResultSet userResultSet = preparedUserStatement.executeQuery();
+            User user = null;
+            while (userResultSet.next()) {
+                user = new User(userResultSet.getInt(1), userResultSet.getString(4), userResultSet.getString(2), userResultSet.getString(2));
+            }
+            Order order = new Order(resultSet.getInt(1), userId, resultSet.getString(3), resultSet.getDouble(4));
+            if(user != null) {
+                order.setUser(user);               
+            }
+            orders.add(order);
         }
 
-        List<User> users = new ArrayList<>();
-        preparedStatement = connection.prepareStatement("Select id, email, name, last_name from user");
-        resultSet = preparedStatement.executeQuery();
+        return orders;
+    }
+
+    private Order getMyOrder(Connection connection, String idFoodMeeting, int idUser) throws SQLException {
+        Order myOrder = null;
+        PreparedStatement preparedStatement = connection.prepareStatement(String.format(MY_ORDER_QUERY, idFoodMeeting, idUser));
+        ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
-            users.add(new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), resultSet.getString(4)));
+            myOrder = new Order(resultSet.getInt(1), resultSet.getInt(2), resultSet.getString(3), resultSet.getDouble(4));
+            break;
         }
 
-        String meetingName = "";
-        preparedStatement = connection.prepareStatement("Select name from food_meeting where id = ?");
-        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
-        resultSet = preparedStatement.executeQuery();
-
-        while (resultSet.next()) {
-            meetingName = resultSet.getString(1);
+        if (myOrder == null) {
+            myOrder = new Order(Integer.parseInt(idFoodMeeting), idUser, null, 0.0);
         }
 
-        out.addResult("meetingName", meetingName);
-        out.addResult("orders", orders);
-        out.addResult("id_food_meeting", Integer.valueOf(parameters.getParameter("id_food_meeting")));
-        out.addResult("users", users);
-        out.forward("order/order.jsp");
-
-        return out;
+        return myOrder;
     }
 }
