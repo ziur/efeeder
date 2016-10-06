@@ -9,69 +9,69 @@
     }
 
     var MESSAGE_CONTEXT_SCHEMA =
-    {
-      "namespace": "org.jala.efeeder.servlets.websocket.avro",
-      "type": "record",
-      "name": "MessageContext",
-      "alias": "MessageContext",
-      "fields": [
-        {
-          "name": "user",
-          "type": "int"
-        },
-        {
-          "name": "room",
-          "type": "string"
-        },
-        {
-          "name": "command",
-          "type": ["string", "null"], "default": ""
-        },
-        {
-          "name": "events",
-          "type": {
-            "type": "array",
-            "items": {
-              "namespace": "org.jala.efeeder.servlets.websocket.avro",
-              "type": "record",
-              "name": "MessageEvent",
-              "alias": "MessageEvent",
-              "fields": [
-                {
-                  "name": "event",
-                  "type": [
-                    {
-                      "namespace": "org.jala.efeeder.servlets.websocket.avro",
-                      "type": "record",
-                      "name": "WelcomeEvent",
-                      "alias": "WelcomeEvent",
-                      "fields": [
-                      ]
-                    },
-                    {
-                      "namespace": "org.jala.efeeder.servlets.websocket.avro",
-                      "type": "record",
-                      "name": "CloseVotingEvent",
-                      "alias": "CloseVotingEvent",
-                      "fields": [
-                      ]
-                    },
-                    {
-                      "namespace": "org.jala.efeeder.servlets.websocket.avro",
-                      "type": "record",
-                      "name": "RaffleEvent",
-                      "alias": "RaffleEvent",
-                      "fields": [
-                        {
-                          "name": "chosen",
-                          "type": "int"
-                        },
-                        {
-                          "name": "items",
-                          "type": {"type": "array", "items": "string"}
-                        }
-                      ]
-                    },
+	{
+		"namespace": "org.jala.efeeder.servlets.websocket.avro",
+		"type": "record",
+		"name": "MessageContext",
+		"alias": "MessageContext",
+		"fields": [
+		{
+		  "name": "user",
+		  "type": "int"
+		},
+		{
+		  "name": "room",
+		  "type": "string"
+		},
+		{
+		  "name": "command",
+		  "type": ["string", "null"], "default": ""
+		},
+		{
+		  "name": "events",
+		  "type": {
+			"type": "array",
+			"items": {
+			  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+			  "type": "record",
+			  "name": "MessageEvent",
+			  "alias": "MessageEvent",
+			  "fields": [
+				{
+				  "name": "event",
+				  "type": [
+					{
+					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+					  "type": "record",
+					  "name": "WelcomeEvent",
+					  "alias": "WelcomeEvent",
+					  "fields": [
+					  ]
+					},
+					{
+					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+					  "type": "record",
+					  "name": "CloseVotingEvent",
+					  "alias": "CloseVotingEvent",
+					  "fields": [
+					  ]
+					},
+					{
+					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+					  "type": "record",
+					  "name": "RaffleEvent",
+					  "alias": "RaffleEvent",
+					  "fields": [
+						{
+						  "name": "chosen",
+						  "type": "int"
+						},
+						{
+						  "name": "items",
+						  "type": {"type": "array", "items": "string"}
+						}
+					  ]
+					},
 					{
 					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
 					  "type": "record",
@@ -104,14 +104,14 @@
 						}
 					  ]
 					}
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      ]
-    };
+				  ]
+				}
+			  ]
+			}
+		  }
+		}
+		]
+	};
 
     var MessageContextType = avro.parse(MESSAGE_CONTEXT_SCHEMA);
 

@@ -24,7 +24,7 @@ import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 @Command
 public class CreateFoodMeetingCommand implements CommandUnit {
 
-    private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
+	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, created_at) "
             + "values(?, ?, ?, ?, ?)";
 	private static final String createMeetingRoomId = "createMeetingRoomId";
 
