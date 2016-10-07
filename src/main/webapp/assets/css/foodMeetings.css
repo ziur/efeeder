@@ -3,19 +3,8 @@
     margin-bottom: 200px;
 }
 
-.relative {
-	bottom: 50px;
-	right: 0px;
-	position: relative;
-}
-
-.meeting-name-width {
-	width: 93%
-}
-
-.position {
-	bottom: 25px;
-	right: 25px;
+.pointer {
+	cursor: pointer;
 }
 
 .grid-item { 

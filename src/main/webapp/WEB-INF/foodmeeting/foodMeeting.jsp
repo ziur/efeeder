@@ -16,13 +16,13 @@
 
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
 			</div>
-			
+
 			<div class="food-meetings">
 				<div id="new-meeting-card-id" class="grid-item" style="width:500px;display: none;">
 					<div class="card">
 						<div class="card-image waves-effect waves-block waves-light">
 							<img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
-							 	src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+								 src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
 						</div>
 						<div class="card-content">
 							<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
@@ -64,20 +64,24 @@
 							<div class="card-image waves-effect waves-block waves-light">
 								<img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">
 							</div>
-							<div class="card-content">
-								<span class="card-title grey-text text-darken-4">
-									<div class="meeting-name-width">${foodMeeting.name}</div>
-									<i class="card-title activator material-icons right relative">more_vert</i>
-								</span>
-                                <span ${foodMeeting.status == 'Finish' ? "class='new badge blue position'" : "class='new badge position'"} data-badge-caption=${foodMeeting.status}></span>        
-								<p class="quick-view-date grey-text lighten-1"></p>
+							<div class=" card-content card-title grey-text text-darken-4 row">     
+								<div class="col s8">
+									<p class="truncate">${foodMeeting.name}</p>
+								</div>
+								<div class="col s4">
+									<i class="material-icons right activator pointer">more_vert</i>          
+								</div>
+								<div class="col s8">
+									<h6 class="quick-view-date grey-text lighten-1 truncate"></h6>
+								</div>
+								<div class="col s4">
+									<span ${foodMeeting.status == 'Finish' ? "class='new badge blue'" : "class='new badge'"} data-badge-caption=${foodMeeting.status}></span>                          
+								</div>                                 
 							</div>
-
 							<div class="card-reveal">
-								<span class="card-title grey-text text-darken-4">${foodMeeting.name}<i class="material-icons right">close</i></span>
+								<span class="card-title grey-text text-darken-4 truncate">${foodMeeting.name}<i class="material-icons right">close</i></span>
 								<p class="detailed-view-date grey-text lighten-1"></p>
-								
-								<div class="fixed-action-btn position">
+								<div class="fixed-action-btn">
 									<a href="/action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
 										<i class="material-icons">settings</i>
 									</a>
