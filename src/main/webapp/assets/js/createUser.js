@@ -23,21 +23,16 @@ var CreateUser = function(form,  cancelButton) {
 		event.preventDefault();
 
 		if(selft.form.valid()) {
-
-			var secretString = $('#hidden-field').val();
-
 			var name = selft.form.find( "input[name='name']" ).val();
 			var lastName = selft.form.find( "input[name='last_name']" ).val();
 			var email = selft.form.find( "input[name='email']" ).val();
 			var username = selft.form.find( "input[name='username']" ).val();
 			var password = selft.form.find( "input[name='password']" ).val();
 
-			var encrypted = hex_md5(password+secretString);
-
 			var url = selft.form.attr( "action" );
 
 			// Send the data using post
-			var posting = $.post( url, { name: name, last_name: lastName, email: email, username: username, password: encrypted} );
+			var posting = $.post( url, { name: name, last_name: lastName, email: email, username: username, password: password} );
 
 			// Put the results in a div
 			posting.done(function( data ) {

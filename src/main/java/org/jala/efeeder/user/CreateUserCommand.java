@@ -11,7 +11,9 @@ import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
-import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.api.command.OutBuilder;
+import org.jala.efeeder.api.utils.JsonConverter;
+import org.jala.efeeder.util.Encrypt;
 
 /**
  *
@@ -19,21 +21,21 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  */
 @Command
 public class CreateUserCommand implements CommandUnit{
-    @Override
-    public Out execute(In parameters) throws Exception {
-        Out out = new DefaultOut();
+	
+	private static final String CREATE_USER_SQL = "insert into user(name, last_name, email, username, password)" + " values(?, ?, ?, ?, ?)";
+	
+	@Override
+	public Out execute(In parameters) throws Exception {
 
-        PreparedStatement stm = parameters.getConnection()
-                .prepareStatement(
-                        "insert into user(name, last_name, email, username, password)" + " values(?, ?, ?, ?, ?)");
-        
-        stm.setString(1, parameters.getParameter("name"));
-        stm.setString(2, parameters.getParameter("last_name"));
-        stm.setString(3, parameters.getParameter("email"));
-        stm.setString(4, parameters.getParameter("username"));
-        stm.setString(5, parameters.getParameter("password"));
-        stm.executeUpdate();
+		PreparedStatement stm = parameters.getConnection().prepareStatement(CREATE_USER_SQL);
 
-        return out.redirect("login");
-    }
+		stm.setString(1, parameters.getParameter("name"));
+		stm.setString(2, parameters.getParameter("last_name"));
+		stm.setString(3, parameters.getParameter("email"));
+		stm.setString(4, parameters.getParameter("username"));
+		stm.setString(5, Encrypt.getPasswordEncrypt(parameters.getParameter("password")));
+		stm.executeUpdate();
+
+		return OutBuilder.response("application/json", JsonConverter.objectToJSON(""));
+	}
 }
