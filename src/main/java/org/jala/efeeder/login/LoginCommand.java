@@ -37,7 +37,7 @@ public class LoginCommand implements CommandUnit {
 		ResultSet resultSet = preparedStatement.executeQuery();
 		User user = null;
 
-		while (resultSet.next()) {
+		if (resultSet.next()) {
 			user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
 					resultSet.getString(4));
 		}

@@ -21,9 +21,9 @@ import org.jala.efeeder.util.Encrypt;
  */
 @Command
 public class CreateUserCommand implements CommandUnit{
-	
+
 	private static final String CREATE_USER_SQL = "insert into user(name, last_name, email, username, password)" + " values(?, ?, ?, ?, ?)";
-	
+
 	@Override
 	public Out execute(In parameters) throws Exception {
 
