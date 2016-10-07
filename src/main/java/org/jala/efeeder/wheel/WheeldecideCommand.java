@@ -57,17 +57,17 @@ public class WheeldecideCommand implements CommandUnit{
 		events.add(MessageEvent.newBuilder()
 				.setEvent(
 						RaffleEvent.newBuilder()
-								  .setChosen(choseIndex)
-								  .setItems(users.stream().map(user -> user.getName()).collect(Collectors.toList()))
-								  .build()
+									.setChosen(choseIndex)
+									.setItems(users.stream().map(user -> user.getName()).collect(Collectors.toList()))
+									.build()
 				)
 				.build()
 		);
 		MessageContext messageContext = MessageContext.newBuilder()
-												.setRoom(roomId)
-												.setUser(0)
-												.setEvents(events)
-												.build();
+											.setRoom(roomId)
+											.setUser(0)
+											.setEvents(events)
+											.build();
 
 		return OutBuilder.response(messageContext);
 	}

@@ -72,10 +72,10 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 			.build()
 		);
 		MessageContext messageContext = MessageContext.newBuilder()
-												.setRoom(createMeetingRoomId)
-												.setUser(0)
-												.setEvents(events)
-												.build();
+											.setRoom(createMeetingRoomId)
+											.setUser(0)
+											.setEvents(events)
+											.build();
 
 		return OutBuilder.response(messageContext);
 	}
