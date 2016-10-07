@@ -16,13 +16,13 @@
 
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
 			</div>
-			
+
 			<div class="food-meetings">
 				<div id="new-meeting-card-id" class="grid-item" style="width:500px;display: none;">
 					<div class="card">
 						<div class="card-image waves-effect waves-block waves-light">
 							<img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
-							 	src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+								 src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
 						</div>
 						<div class="card-content">
 							<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
