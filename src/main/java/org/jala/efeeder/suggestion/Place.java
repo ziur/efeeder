@@ -31,4 +31,13 @@ public class Place {
         this.image_link = image_link;
         this.votes = votes;
     }
+    
+    public Place(int id, String name, String description, String phone, String direction, String image_link) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.phone = phone;
+        this.direction = direction;
+        this.image_link = image_link;
+    }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-dropAll</actionName>
+            <displayName>dropAll</displayName>
+            <goals>
+                <goal>liquibase:dropAll</goal>
+            </goals>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-update</actionName>
+            <displayName>update</displayName>
+            <goals>
+                <goal>liquibase:update</goal>
+            </goals>
+        </action>
+    </actions>

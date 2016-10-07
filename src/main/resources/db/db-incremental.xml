@@ -13,10 +13,11 @@
             <column name="name" type="VARCHAR(200)"/>
             <column name="description" type="VARCHAR(200)"/>
             <column name="phone" type="VARCHAR(50)"/>
-            <column name="direction" type="VARCHAR(120)">
+            <column name="direction" type="VARCHAR(120)"/>
+            <column name="image_link" type="VARCHAR(200)"/>      
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="image_link" type="VARCHAR(200)"/>
         </createTable>
     </changeSet>
 
