@@ -42,18 +42,27 @@ public class FoodMeeting {
 		this.status = DEFAULT_FOOD_MEETING_STATUS;
 	}
 
-	public int getWidth()
-	{
-		int width = 500;
-
+	public int getWidth() {        
 		LocalDate today = new LocalDate();
 		LocalDate endEventDate = new LocalDate(eventDate);
+		int days = Days.daysBetween(today, endEventDate).getDays();        
 
-		int days = Days.daysBetween(today, endEventDate).getDays();
+		return calculateWidth(days);
+	}
 
-		width = (50 * days) < 300 ?
-				width - (50 * days) :
-				200;
+	private int calculateWidth(int days) {
+		int maxWidth = 500;
+		int minWidth = 200;
+		int maxNumberOfDays = 6;
+		int widthToSubstractPerDay = (maxWidth - minWidth) / maxNumberOfDays;
+		int width;
+
+		if(days >= maxNumberOfDays) {
+			width = minWidth;
+		}
+		else {
+			width = maxWidth - widthToSubstractPerDay * days;
+		}				
 
 		return width;
 	}
