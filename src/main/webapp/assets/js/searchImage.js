@@ -1,4 +1,4 @@
-var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent, imageCard){
+var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent, imageCard) {
 	this.cardImage = cardImage;
 	this.fieldImage = fieldImage;
 	this.imageList = imageList;
@@ -7,18 +7,24 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 
 	var self = this;
 
-	var addEventChange = function(){
+	var addEventChange = function() {
 		self.fieldImage.change(function(event) {
 			ModalSearchImage.setCardMainImage($(this).val());
 		});
 	};
 
-	 var addEventClick= function() {
-		 self.imageList.click(function() {
+	var onModalHide = function() {
+		var imageLink = $("#image-link-id").val();
+		$("#new-image-card-id").attr("src", imageLink);
+	};
+
+	var addEventClick = function() {
+		self.imageList.click(function() {
 			setCardMainImage($(this).data("imageLink"));
 			setFieldMainImage($(this).data("imageLink"));
-			ModalSearchImage.fieldImage.focus();
+			$('#search-image-modal-id').closeModal({dismissible: true, complete: onModalHide});
 		});
+
 	};
 
 	var setCardMainImage = function(value) {
@@ -32,18 +38,20 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 	var organizeImages = function() {
 		self.imageComponent.imagesLoaded().done(function() {
 			self.imageComponent.masonry({
-				itemSelector : '.grid-item',
-				columnWidth : 50
+				itemSelector: '.grid-item',
+				columnWidth: 50
 			});
 		});
 	};
 
 	return {
-		init: function(){
+		init: function() {
 			organizeImages();
 			addEventClick();
 			addEventChange();
 			self.fieldImage.focus();
 		}
 	};
+
+
 };
