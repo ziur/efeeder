@@ -57,40 +57,22 @@
 							</form>
 						</div>
 					</div>
-				</div>
-				<c:forEach var="foodMeeting" items="#{foodMeetings}">
-					<div class="grid-item" style="width:${foodMeeting.getWidth()}px" data-date="${foodMeeting.eventDate}">
-						<div class="card">
-							<div class="card-image waves-effect waves-block waves-light">
-								<img  class="meeting-img" data-meeting-id="${foodMeeting.id}" data-meeting-status="${foodMeeting.status}" src="${foodMeeting.imageLink}">
-							</div>
-							<div class=" card-content card-title grey-text text-darken-4 row">     
-								<div class="col s8">
-									<p class="truncate">${foodMeeting.name}</p>
-								</div>
-								<div class="col s4">
-									<i class="material-icons right activator pointer">more_vert</i>          
-								</div>
-								<div class="col s8">
-									<h6 class="quick-view-date grey-text lighten-1 truncate"></h6>
-								</div>
-								<div class="col s4">
-									<span ${foodMeeting.status == 'Finish' ? "class='new badge blue'" : "class='new badge'"} data-badge-caption=${foodMeeting.status}></span>                          
-								</div>                                 
-							</div>
-							<div class="card-reveal">
-								<span class="card-title grey-text text-darken-4 truncate">${foodMeeting.name}<i class="material-icons right">close</i></span>
-								<p class="detailed-view-date grey-text lighten-1"></p>
-								<div class="fixed-action-btn">
-									<a href="/action/SettingMeeting?id_food_meeting=${foodMeeting.id}" class="btn-floating btn-small waves-effect waves-light tooltipped" data-position="top" data-delay="50" data-tooltip="Settings">
-										<i class="material-icons">settings</i>
-									</a>
-								</div>
-							</div>
-						</div>
+				</div>				
+			</div>	
+			<div id="preloader" class="col s12 center-align">
+				<div class="valign preloader-wrapper big active">
+					<div class="valign spinner-layer spinner-blue-only">
+					  <div class="circle-clipper left">
+						<div class="circle"></div>
+					  </div><div class="gap-patch">
+						<div class="circle"></div>
+					  </div><div class="circle-clipper right">
+						<div class="circle"></div>
+					  </div>
 					</div>
-				</c:forEach>
+				</div>
+				<h5 class="lighten-1 grey-text">We are loading your meetings right now!</h5>				
 			</div>
-		</div>
+		</div>			
 	</jsp:body>
 </t:template>
