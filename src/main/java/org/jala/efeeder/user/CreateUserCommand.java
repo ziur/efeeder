@@ -23,6 +23,7 @@ import org.jala.efeeder.util.Encrypt;
 public class CreateUserCommand implements CommandUnit{
 
 	private static final String CREATE_USER_SQL = "insert into user(name, last_name, email, username, password)" + " values(?, ?, ?, ?, ?)";
+	private static final String JSON_RESPONSE = "";
 
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -36,6 +37,6 @@ public class CreateUserCommand implements CommandUnit{
 		stm.setString(5, Encrypt.getPasswordEncrypt(parameters.getParameter("password")));
 		stm.executeUpdate();
 
-		return OutBuilder.response("application/json", JsonConverter.objectToJSON(""));
+		return OutBuilder.response("application/json", JsonConverter.objectToJSON(JSON_RESPONSE));
 	}
 }
