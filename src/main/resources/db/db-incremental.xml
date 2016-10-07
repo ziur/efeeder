@@ -156,7 +156,7 @@
                 <column name="name"      value="Test"/>
                 <column name="last_name" value="Test"/>
                 <column name="username"  value="Test"/>
-                <column name="password"  value="Test"/>
+                <column name="password"  value="8aabafb18fea7a5741d31ad2642c8d96"/>
                 <column name="email"     value="test@test.com"/>
         </insert>
     </changeSet>
@@ -167,7 +167,7 @@
                 <column name="name"      value="Alejandro"/>
                 <column name="last_name" value="Ruiz"/>
                 <column name="username"  value="ARuiz"/>
-                <column name="password"  value="ARuiz"/>
+                <column name="password"  value="94c64af83147b4dea14ddcfba6d82774"/>
                 <column name="email"     value="alejandro.ruiz@jalasoft.com"/>
         </insert>
     </changeSet>
@@ -178,7 +178,7 @@
                 <column name="name"      value="Amir"/>
                 <column name="last_name" value="Aranibar"/>
                 <column name="username"  value="AAranibar"/>
-                <column name="password"  value="AAranibar"/>
+                <column name="password"  value="10b56e214d9559e96e6254a2adcb4d7c"/>
                 <column name="email"     value="amir.aranibar@jalasoft.com"/>
         </insert>
     </changeSet>
@@ -189,7 +189,7 @@
                 <column name="name"      value="Ricardo"/>
                 <column name="last_name" value="Ramirez"/>
                 <column name="username"  value="RRamirez"/>
-                <column name="password"  value="RRamirez"/>
+                <column name="password"  value="d7fc3126e476987ad139f56e212e6e2e"/>
                 <column name="email"     value="ricardo.ramirez@jalasoft.com"/>
         </insert>
     </changeSet>
