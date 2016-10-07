@@ -50,8 +50,6 @@ public class WheeldecideCommand implements CommandUnit{
 		Collections.shuffle(users);
 		choseIndex = getRandomIndexPerson(users.size());
 
-		//insertNewBuyer(context, users.get(choseIndex).getId());
-
 		List<MessageEvent> events = new ArrayList<>();
 
 		events.add(MessageEvent.newBuilder()
