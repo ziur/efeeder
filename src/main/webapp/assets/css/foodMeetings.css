@@ -3,6 +3,10 @@
     margin-bottom: 200px;
 }
 
+.pointer {
+	cursor: pointer;
+}
+
 .grid-item { 
     padding: 10px;
 }
