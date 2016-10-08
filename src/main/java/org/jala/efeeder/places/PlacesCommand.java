@@ -37,7 +37,7 @@ public class PlacesCommand implements CommandUnit{
                     resultSet.getString("image_link")));
         } 
         out.addResult("places", places);
-        return out.forward("place/places.jsp");
+        return out.forward("suggestion/suggestions.jsp");
     }
 }
 

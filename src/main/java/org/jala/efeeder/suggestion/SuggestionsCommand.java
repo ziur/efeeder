@@ -5,12 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.user.User;
+
 
 /**
  *
@@ -18,52 +19,28 @@ import org.jala.efeeder.user.User;
  */
 @Command
 public class SuggestionsCommand implements CommandUnit {
-
+    private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 5";
+       
     @Override
     public Out execute(In parameters) throws Exception {
-        Connection connection = parameters.getConnection();
-        String id = parameters.getParameter("id_food_meeting");
-        
-        /*
-        if (parameters.getParameter("save") != null) {
-            String suggestion = parameters.getParameter("suggestion");
-            String user = parameters.getParameter("user");
-            
-            //update votes
-            String changeVote = "update suggestions set vote = vote + 1 WHERE id = ?";
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(changeVote);
-                preparedStatement.setInt(1, Integer.parseInt(suggestion));
-                preparedStatement.executeUpdate();
-            } catch (Exception e) {
-                
-            }
-        }
-        
-        Out out = new DefaultOut();
-        PreparedStatement preparedStatement = connection.prepareStatement("Select * from places");
-//        preparedStatement.setInt(1, Integer.valueOf(parameters.getParameter("id_food_meeting")));
-//        preparedStatemenaddForeignKeyConstraintt.setInt(1, 1);
+       
+        PreparedStatement preparedStatement = parameters.getConnection().prepareStatement(TOP_FIVE_PLACES_QUERY);
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Place> suggestions = new ArrayList<>();
+        List<Place> places = new ArrayList<>();
         while (resultSet.next()) {
-            suggestions.add(new Place(resultSet.getInt("id"), "china", resultSet.getString("description"), resultSet.getString("phone"), resultSet.getString("description")));
-        }
+            places.add(new Place(resultSet.getInt("id"), 
+                    resultSet.getString("name"), 
+                    resultSet.getString("description"), 
+                    resultSet.getString("phone"),
+                    resultSet.getString("direction"),
+                    resultSet.getString("image_link")));
+        } 
         
-        // get users
-        ResultSet resultSetUsers = preparedStatement.executeQuery("select id, name, last_name  from user");
-        List<User> users = new ArrayList<>();
-        while (resultSetUsers.next()) {
-            users.add(new User(resultSetUsers.getInt(1), null, resultSetUsers.getString(2), resultSetUsers.getString(3)));
-        }
-        
-        out.addResult("suggestions", suggestions);
-        out.addResult("users", users);
-        
-
-*/
         
         Out out = new DefaultOut();
+        out.addResult("places", places);
+        
+        String id = parameters.getParameter("id_food_meeting");
         out.addResult("id", id);
         return out.forward("suggestion/suggestions.jsp");
     }
