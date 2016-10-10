@@ -52,6 +52,4 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 			self.fieldImage.focus();
 		}
 	};
-
-
 };
