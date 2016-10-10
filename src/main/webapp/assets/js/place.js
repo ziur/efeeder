@@ -1,6 +1,5 @@
 $(document).ready( function () {
     $("#search").keyup(function (event) {
-        debugger;
        var term = $(this).val();
        $.post("/action/searchplace",
        {
@@ -31,7 +30,6 @@ $(document).ready( function () {
             url: "/action/createplace",
             data: formData    
         }).done( function (place) {
-            debugger;
            $("#custom-card-level").css("display", "none", "transform", "translateY(0px)");
            $("#collid").first().remove();
            var newPlace = ''+
