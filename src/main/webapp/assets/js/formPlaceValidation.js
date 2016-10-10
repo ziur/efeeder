@@ -2,7 +2,6 @@
 $(document).ready(function () {
     $("#place-form").validate({
         errorPlacement: function (error, element) {
-            debugger;
              var placement = $(element).data('error');
              if (placement) {
                   $(placement).append(error);
