@@ -32,7 +32,7 @@ public class ImageCommand implements CommandUnit {
         String path;
             String type = parameters.getParameter("type");
         if (imageName.equals("empty")) {
-            path = parameters.getContext().getResource("/").getPath() + getEmptyImagePath(type);
+            path = parameters.getContext().getRealPath("/") + getEmptyImagePath(type);
         } else {
             path = parameters.getParameter("image_path") + "/" + imageName;
         }

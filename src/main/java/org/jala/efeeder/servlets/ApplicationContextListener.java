@@ -21,7 +21,7 @@ import org.jala.efeeder.api.command.SettingsManager;
  */
 public class ApplicationContextListener implements ServletContextListener {
 
-    private static String SETTINGS_PROPERTIES_PATH = "/WEB-INF/classes/settings.properties";
+    private static String SETTINGS_PROPERTIES_PATH = "settings.properties";
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -45,32 +45,24 @@ public class ApplicationContextListener implements ServletContextListener {
 
     private SettingsManager readProperties(ServletContext servlet) {
         Properties prop = new Properties();
-        InputStream input = null;
-        String pathOfProperties = "";
         SettingsManager settingsFactory = new SettingsManager();
 
         try {
-
-            pathOfProperties = servlet.getResource(SETTINGS_PROPERTIES_PATH).getPath();
-            input = new FileInputStream(new File(pathOfProperties));
-
+            String settingPath = System.getProperty("app.settings");
+            InputStream input;
+            if (settingPath == null || !settingPath.isEmpty()) {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                input = classLoader.getResourceAsStream(SETTINGS_PROPERTIES_PATH);
+            } else {
+                input = new FileInputStream(settingPath);
+            }
             prop.load(input);
-
             settingsFactory.addAll(prop.entrySet());
 
         } catch (IOException ex) {
             Logger.getLogger(ApplicationContextListener.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
-
         return settingsFactory;
     }
 }
