@@ -128,7 +128,6 @@ public class CommandServlet extends HttpServlet {
                 byte[] bytes = (byte[]) out.getBody();
                 response.setContentType(contentType1);
                 response.setContentLength(bytes.length);
-                System.out.println("clarito response :" + bytes);
                 response.getOutputStream().write(bytes);
         }
 
@@ -150,6 +149,6 @@ public class CommandServlet extends HttpServlet {
         SettingsManager settings
                 = (SettingsManager) getServletContext().getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
-        return "" + settings.getData("imgage_folder_path");
+        return "" + settings.getData("image_folder_path");
     }
 }

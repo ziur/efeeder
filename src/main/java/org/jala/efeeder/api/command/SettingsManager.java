@@ -34,7 +34,6 @@ public class SettingsManager {
     }
 
     public void addAll(Set<Map.Entry<Object, Object>> entrySet) {
-//        dataList = entrySet.stream().collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         for (Map.Entry<Object, Object> entry : entrySet) {
             dataList.put(("" + entry.getKey()).toLowerCase(), entry.getValue());
         }

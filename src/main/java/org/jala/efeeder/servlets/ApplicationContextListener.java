@@ -59,7 +59,6 @@ public class ApplicationContextListener implements ServletContextListener {
             settingsFactory.addAll(prop.entrySet());
 
         } catch (IOException ex) {
-            ex.printStackTrace();
             Logger.getLogger(ApplicationContextListener.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         } finally {
