@@ -1,10 +1,12 @@
 $(function () {
 
 	var createMeetingRoomId = "createMeetingRoomId";
+	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
+	var $newMeeting = $("#new-meeting");
 
 	var foodMeetings = $('.food-meetings');
 
-	var foodMeetingsList = new FoodMeetingsList(foodMeetings);
+	var foodMeetingsList = new FoodMeetingsList(foodMeetings, $newMeetingPlaceholder);
 	foodMeetingsList.init();
 
 	var communicationService = new CommunicationService();
@@ -25,7 +27,7 @@ $(function () {
 				newFoodMeeting.reset();
 
 				var $toastContent = $('<span><a href="#'+eventMessage.id+'" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
-				Materialize.toast($toastContent, 2000);
+				Materialize.toast($toastContent, 5000);
 				break;
 			}
 		});
@@ -33,13 +35,17 @@ $(function () {
 
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 
-	var newFoodMeeting = new NewFoodMeeting(foodMeetings, createMeetingRoomId, communicationService);
+	var newFoodMeeting = new NewFoodMeeting(foodMeetings, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 
 	newFoodMeeting.init();
 });
 
-var FoodMeetingsList = function(foodMeetings){
+
+
+var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
+	this.newMeetingPlaceholder = newMeetingPlaceholder;
 	this.foodMeetings = foodMeetings;
+
 	self = this;
 
 	var foodMeetingTmpl;
@@ -54,7 +60,6 @@ var FoodMeetingsList = function(foodMeetings){
 	});
 
 	var insertMeeting = function(meeting) {
-		console.log(foodMeetingTmpl);
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 
 		var data = { 
@@ -105,6 +110,8 @@ var FoodMeetingsList = function(foodMeetings){
 			},
 			sortBy : 'date',
 		});
+
+		self.foodMeetings.isotope('insert', self.newMeetingPlaceholder);
 	};
 
 	return {
@@ -116,16 +123,17 @@ var FoodMeetingsList = function(foodMeetings){
 	};
 };
 
-var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationService){
+var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting){
 	this.foodMeetings = foodMeetings;
 	this.createMeetingRoomId = createMeetingRoomId;
 	this.communicationService = communicationService;
+	this.newMeetingPlaceholder = newMeetingPlaceholder;
+	this.newMeeting = newMeeting;
 
 	var dateField = $('#new-date-field-id');
 	var timeField = $('#new-time-field-id');
 	var addMeetingForm = $("#add-meeting-form-id");
 	var addMeetingImage = $("#new-image-card-id");
-	var addMeetingBtn = $("#add-new-meeting-btn-id");
 	var cancelMeetingBtn = $("#cancelCreateMeeting");
 
 	var defaultImage = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
@@ -166,7 +174,7 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 				date: {
 					required: true,
 					date: true
-				  }
+				}
 			},
 
 			messages: {
@@ -180,7 +188,7 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 	var addClickEvents = function() {
 		addMeetingForm.submit(function (event) {
 			event.preventDefault();
-	
+
 			if(addMeetingForm.valid())
 			{
 				var $form = $( this ),
@@ -214,14 +222,8 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 			}
 		});
 
-		addMeetingBtn.click(function (event) {
-			$("#new-meeting-card-id").show();
-			self.foodMeetings.isotope('layout');
-		});
-
 		cancelMeetingBtn.click(function (event) {
 			resetNewMeetingForm();
-			self.foodMeetings.isotope('layout');
 		});
 
 		addMeetingImage.click(function () {
@@ -236,12 +238,19 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 			});
 		});
 		
+		$("#new-meeting-hello-meessage").click(function(){
+			self.foodMeetings.isotope('remove', self.newMeetingPlaceholder);
+			self.foodMeetings.isotope('insert', self.newMeeting);  
+		});
+		
 	};
 
 	var resetNewMeetingForm = function () {
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
-		$("#new-meeting-card-id").hide();
+
+		self.foodMeetings.isotope('remove', self.newMeeting);
+		self.foodMeetings.isotope('insert', self.newMeetingPlaceholder); 
 	};
 
 	var onModalHide = function() {
@@ -260,4 +269,3 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		reset: resetNewMeetingForm,
 	};
 };
-
