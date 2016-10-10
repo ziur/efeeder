@@ -2,6 +2,9 @@ $(function () {
 	var defaultImage = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
 	var createMeetingRoomId = "createMeetingRoomId";
 	
+	var $newMeeting = $("#new-meeting");
+	var $newMeetingPlaceholder = $("#new-meeting-placeholder");			
+	
 	var foodMeetings = $('.food-meetings');
 	foodMeetings.isotope({
 		itemSelector: '.grid-item',
@@ -14,7 +17,9 @@ $(function () {
 		},
 		sortBy : 'date',
 	});		
-
+	
+	foodMeetings.isotope('insert', $newMeetingPlaceholder);  
+	
 	var foodMeetingTmpl;
 	$.get('/assets/templates/foodMeeting.html', function(template) {
 		foodMeetingTmpl = template;        
@@ -37,6 +42,11 @@ $(function () {
 		vibrate: true
 	});
 
+	$("#new-meeting-hello-meessage").click(function(){
+		foodMeetings.isotope( 'remove', $("#new-meeting-placeholder"))
+		foodMeetings.isotope('insert', $newMeeting);  
+	});
+	
 	$("#add-meeting-form-id").validate({
 		errorPlacement: function(error, element) {
 			var placement = $(element).data('error');
@@ -82,7 +92,7 @@ $(function () {
 			communicationService.sendMessage(
 			{
 				user:1, 
-				room: creatMeetingRoomId, 
+				room: createMeetingRoomId, 
 				command: "CreateFoodMeeting", 
 				events:[
 					{
@@ -99,17 +109,13 @@ $(function () {
 					}
 				]
 			});
+			
+			resetNewMeetingForm();						
 		}
 	});
 
-	$("#AddNewMeeting").click(function (event) {
-		$("#new-meeting-card-id").show();		
-		foodMeetings.isotope('layout');
-	});
-
 	$("#cancelCreateMeeting").click(function (event) {		 				
-		resetNewMeetingForm();
-		foodMeetings.isotope('layout');
+		resetNewMeetingForm();		
 	});
 	
 	var onModalHide = function() {
@@ -139,8 +145,7 @@ $(function () {
 				console.log('WebSockets connected by FoodMeetings.');
 				break;   
 			case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
-				addMeeting(eventMessage);
-				resetNewMeetingForm();				
+				addMeeting(eventMessage);								
 				
 				var $toastContent = $('<span><a href="#'+eventMessage.id+'" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
 				Materialize.toast($toastContent, 2000)             
@@ -151,7 +156,7 @@ $(function () {
 	
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 	
-	function addMeeting(meeting) {        console.log(foodMeetingTmpl);
+	function addMeeting(meeting) {        
         var $foodMeetingTmpl = $.templates(foodMeetingTmpl); 
         var data = { 
 			"id": meeting.id, 
@@ -195,6 +200,8 @@ $(function () {
 	function resetNewMeetingForm () {
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
-		$("#new-meeting-card-id").hide();
+		
+		foodMeetings.isotope('remove', $("#new-meeting"));  
+		foodMeetings.isotope('insert', $newMeetingPlaceholder); 
 	}	
 });
