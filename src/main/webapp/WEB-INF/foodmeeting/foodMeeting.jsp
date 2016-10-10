@@ -3,11 +3,10 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
-	<jsp:attribute name="javascript">
-		<script src="/assets/js/foodMeetings.js"></script>
-		<script src="/assets/js/searchImage.js"></script>
-	</jsp:attribute>
-
+    <jsp:attribute name="javascript">
+        <script src="/assets/js/foodMeetings.js"></script>
+        <script src="/assets/js/searchImage.js"></script>
+    </jsp:attribute>
 	<jsp:body>
 		<div class="meetings-container">
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >

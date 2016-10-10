@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.ServletContext;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,10 @@ public class DefaultIn implements In {
 	@Setter
 	@Getter
 	private MessageContext messageContext;
+	@Setter
+	@Getter
+	private ServletContext context;
+        
 
 	public DefaultIn() {
 		parameters = new HashMap<>();

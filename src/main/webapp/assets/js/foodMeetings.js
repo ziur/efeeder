@@ -40,8 +40,6 @@ $(function () {
 	newFoodMeeting.init();
 });
 
-
-
 var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
 	this.foodMeetings = foodMeetings;
