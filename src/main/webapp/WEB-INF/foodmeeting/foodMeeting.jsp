@@ -11,7 +11,7 @@
 	<jsp:body>
 		<div class="meetings-container">
 			<div class="row">
-				<button  id="AddNewMeeting" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
+				<button  id="add-new-meeting-btn-id" class="btn-floating btn-small waves-effect waves-light"><i class="material-icons" >add</i></button>
 			</div>
 
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
@@ -35,11 +35,11 @@
 										<label for="meeting_name">Meeting Name</label>
 									</div>
 									<div class="input-field col s8">
-										<input id="date" type="text" name="date" class="datepicker validate">
+										<input id="new-date-field-id" type="text" name="date" class="datepicker validate">
 										<label for="date">Date</label>
 									</div>
 									<div class="input-field col s4">
-										<input id="time" type="text" name="time" class="validate">
+										<input id="new-time-field-id" type="text" name="time" class="validate">
 										<label for="time">Time</label>
 									</div>
 									<div class="row right col"><br><br>
