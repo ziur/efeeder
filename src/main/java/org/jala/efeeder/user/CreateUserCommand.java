@@ -25,13 +25,14 @@ public class CreateUserCommand implements CommandUnit{
 
         PreparedStatement stm = parameters.getConnection()
                 .prepareStatement(
-                        "insert into user(name, last_name, email, username, password)" + " values(?, ?, ?, ?, ?)");
+                        "insert into user(name, last_name, email, username, password, image_path)" + " values(?, ?, ?, ?, ?, ?)");
         
         stm.setString(1, parameters.getParameter("name"));
         stm.setString(2, parameters.getParameter("last_name"));
         stm.setString(3, parameters.getParameter("email"));
         stm.setString(4, parameters.getParameter("username"));
         stm.setString(5, parameters.getParameter("password"));
+        stm.setString(6, parameters.getParameter("image"));
         stm.executeUpdate();
 
         return out.redirect("login");

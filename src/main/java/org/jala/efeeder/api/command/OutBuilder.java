@@ -23,6 +23,14 @@ public class OutBuilder {
         out.getResponseAction().setResponseType(ResponseAction.ResponseType.MESSAGE);
         return out;
     }
+    
+    public static Out response(String contentType, byte[] message) {
+        DefaultOut out = new DefaultOut();
+        out.addHeader(DefaultOut.CONTENT_TYPE, contentType);
+        out.setBody(message);
+        out.getResponseAction().setResponseType(ResponseAction.ResponseType.MESSAGE_BYTES);
+        return out;
+    }
 
     public static Out response(MessageContext messageContext) {
         DefaultOut out = new DefaultOut();
