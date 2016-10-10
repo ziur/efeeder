@@ -79,33 +79,33 @@ $(function() {
 		if ($("#add-meeting-form-id").valid())
 		{
 			var $form = $(this),
-					meeting_name = $form.find("input[name='meeting_name']").val(),
-					date = $form.find("input[name='date']").val(),
-					time = $form.find("input[name='time']").val(),
-					url = $form.attr("action");
+				meeting_name = $form.find("input[name='meeting_name']").val(),
+				date = $form.find("input[name='date']").val(),
+				time = $form.find("input[name='time']").val(),
+				url = $form.attr("action");
 
 			var imageLink = $("#new-image-card-id").attr("src");
 
 			communicationService.sendMessage(
-					{
-						user: 1,
-						room: createMeetingRoomId,
-						command: "CreateFoodMeeting",
-						events: [
-							{
-								event: {
-									CreateFoodMeetingEvent: {
-										id: 0,
-										name: meeting_name,
-										eventDate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").valueOf(),
-										status: "",
-										imageLink: imageLink,
-										width: 0
-									}
+				{
+					user: 1,
+					room: createMeetingRoomId,
+					command: "CreateFoodMeeting",
+					events: [
+						{
+							event: {
+								CreateFoodMeetingEvent: {
+									id: 0,
+									name: meeting_name,
+									eventDate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").valueOf(),
+									status: "",
+									imageLink: imageLink,
+									width: 0
 								}
 							}
-						]
-					});
+						}
+					]
+				});
 			resetNewMeetingForm();
 		}
 	});
@@ -161,10 +161,10 @@ $(function() {
 
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
 		$newFoodMeeting.imagesLoaded()
-				.always(function() {
-					foodMeetings.isotope('insert', $newFoodMeeting);
-					$("#preloader").hide();
-				});
+			.always(function() {
+				foodMeetings.isotope('insert', $newFoodMeeting);
+				$("#preloader").hide();
+			});
 	}
 
 	function getImagRedirectTo(id, status) {
