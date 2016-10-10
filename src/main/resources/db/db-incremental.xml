@@ -13,9 +13,11 @@
             <column name="name" type="VARCHAR(200)"/>
             <column name="description" type="VARCHAR(200)"/>
             <column name="phone" type="VARCHAR(50)"/>
-            <column name="direction" type="VARCHAR(120)"/>
-            <column name="image_link" type="VARCHAR(200)"/>      
-            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
+            <column name="direction" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_link" type="VARCHAR(200)"/>
+	    <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -136,6 +138,7 @@
             <column name="email"     type="VARCHAR(120)">
                 <constraints nullable="false"/>
             </column>
+            <column name="image_path" type="VARCHAR(120)"/>
         </createTable>
         <createIndex catalogName="efeeder"
                 indexName="user_id_uindex"
@@ -159,6 +162,7 @@
                 <column name="username"  value="Test"/>
                 <column name="password"  value="Test"/>
                 <column name="email"     value="test@test.com"/>
+                <column name="image_path"     value="empty"/>
         </insert>
     </changeSet>
 
@@ -170,6 +174,7 @@
                 <column name="username"  value="ARuiz"/>
                 <column name="password"  value="ARuiz"/>
                 <column name="email"     value="alejandro.ruiz@jalasoft.com"/>
+                <column name="image_path"     value="empty"/>
         </insert>
     </changeSet>
 
@@ -181,6 +186,7 @@
                 <column name="username"  value="AAranibar"/>
                 <column name="password"  value="AAranibar"/>
                 <column name="email"     value="amir.aranibar@jalasoft.com"/>
+                <column name="image_path"     value="empty"/>
         </insert>
     </changeSet>
 
@@ -192,6 +198,7 @@
                 <column name="username"  value="RRamirez"/>
                 <column name="password"  value="RRamirez"/>
                 <column name="email"     value="ricardo.ramirez@jalasoft.com"/>
+                <column name="image_path"     value="empty"/>
         </insert>
     </changeSet>
 
@@ -299,5 +306,5 @@
             referencedColumnNames="id"
             referencedTableName="places"/>
     </changeSet>
-
+>>>>>>> master
 </databaseChangeLog>

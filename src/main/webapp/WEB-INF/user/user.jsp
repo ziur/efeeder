@@ -13,16 +13,22 @@
     <jsp:attribute name="javascript">
         <script src="/assets/js/createUser.js"></script>
     </jsp:attribute>
-    
+
     <jsp:body>
         <div class="row" style="margin-top: 10%;">
             <div class="row">
                 <div class="col offset-m3 s12 m6">
                     <div class="card">
                         <div class="card-content">
-                            <form id="CreateUserForm" role="form" action="CreateUser">
+                            <form id="CreateUserForm" role="form" action="CreateUser" method="post" enctype="multipart/form-data">
                                 <div class="row center-align">
-                                    <i class="large teal-text material-icons prefix">account_circle</i>
+                                    <div id="image-preview" class="circle responsive-img" name="image1">
+                                        <label for="image-upload" id="image-label" class="center" name="image3">
+                                            <!--Choose File-->
+                                            <i class="large material-icons">mode_edit</i>
+                                        </label>
+                                        <input type="file" name="image" id="image-upload" style="display:none;"/>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <h6 class='center thin grey-text'>Please write in the following fields</h6>
@@ -64,6 +70,16 @@
                     </div>
                 </div>
             </div>
-          </div>
+        </div>
     </jsp:body>
 </t:template>
+<script>
+    $(document).ready(function () {
+        $.uploadPreview({
+            input_field: "#image-upload",
+            preview_box: "#image-preview",
+            label_field: "#image-label"
+        });
+    });
+
+</script>

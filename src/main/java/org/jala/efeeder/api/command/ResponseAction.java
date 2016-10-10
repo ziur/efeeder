@@ -5,7 +5,7 @@ package org.jala.efeeder.api.command;
  */
 public class ResponseAction {
     public enum ResponseType {
-        FORWARD, REDIRECT, MESSAGE
+        FORWARD, REDIRECT, MESSAGE, MESSAGE_BYTES
     }
     private ResponseType responseType;
     private String url;
