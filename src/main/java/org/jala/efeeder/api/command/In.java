@@ -2,6 +2,7 @@ package org.jala.efeeder.api.command;
 
 import java.sql.Connection;
 import java.util.List;
+import javax.servlet.ServletContext;
 
 import org.jala.efeeder.user.User;
 
@@ -17,4 +18,6 @@ public interface In {
     Connection getConnection();
     User getUser();
     void setUser(User user);
+    ServletContext getContext();
+    void setContext(ServletContext context);
 }

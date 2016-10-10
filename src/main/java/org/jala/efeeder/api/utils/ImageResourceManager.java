@@ -27,6 +27,9 @@ import org.jala.efeeder.api.command.impl.DefaultIn;
 public class ImageResourceManager {
 
     private static String DATA_KEY = "imgage_folder_path";
+    private static String EMPTY = "empty";
+    private static String ASSETS_FILE = "assets";
+    private static String IMG_FILE = "img";
     private File diretorio;
     private final ServletContext context;
 
@@ -45,33 +48,34 @@ public class ImageResourceManager {
             List<FileItem> items = upload.parseRequest(request);
             for (FileItem item : items) {
                 if (!item.isFormField()) {
-                    String path = processUploadedFile(item);
+                    String path = processUploadedFile(item, request.getSession().getId());
                     in.addParameter(item.getFieldName(), Arrays.asList(path));
                 } else {
-                    String nomeDoCampo = item.getFieldName();
-                    String valorDoCampo = item.getString();
-                    System.out.println(nomeDoCampo + ": " + valorDoCampo);
-                    in.addParameter(nomeDoCampo, Arrays.asList(valorDoCampo));
+                    String nameItem = item.getFieldName();
+                    String valueItem = item.getString();
+                    in.addParameter(nameItem, Arrays.asList(valueItem));
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("ERROR:" + e.getMessage());
             Logger.getLogger(ImageResourceManager.class.getName()).log(Level.SEVERE, null, e);
         }
         return in;
     }
 
-    private String processUploadedFile(FileItem item) throws Exception {
+    private String processUploadedFile(FileItem item, String token) throws Exception {
         String webAppPath;
         webAppPath = getPathImgagesContainer();
 
-        diretorio = new File(Paths.get(webAppPath, "assets", "img").toString());
+        diretorio = new File(Paths.get(webAppPath, ASSETS_FILE, IMG_FILE).toString());
         if (!diretorio.exists()) {
             diretorio.mkdirs();
         }
         String fileName = item.getName();
-        File uploadedFile = new File(diretorio, fileName);
+        if (fileName.isEmpty()) {
+            return EMPTY;
+        }
+        File uploadedFile = new File(diretorio, token + fileName);
         item.write(uploadedFile);
         return fileName;
     }

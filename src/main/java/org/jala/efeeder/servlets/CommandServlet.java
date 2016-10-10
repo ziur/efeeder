@@ -55,7 +55,7 @@ public class CommandServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(true);
-
+        
         if (request.getRequestURI().equals("/action/logout")) {
             session.invalidate();
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
@@ -78,6 +78,7 @@ public class CommandServlet extends HttpServlet {
             DatabaseManager databaseManager = new DatabaseManager();
             CommandExecutor executor = new CommandExecutor(databaseManager);
             parameters.setUser(User.class.cast(session.getAttribute("user")));
+            parameters.setContext(getServletContext());
             parameters.addParameter("image_path", Arrays.asList(getImagePath()));
             Out out = executor.executeCommand(parameters, getCommand(request));
             if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")

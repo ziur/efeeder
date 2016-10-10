@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.ServletContext;
 
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.user.User;
@@ -16,6 +17,7 @@ import lombok.Setter;
  */
 public class DefaultIn implements In {
     private Connection connection;
+    private ServletContext context;
     private final Map<String, List<String>> parameters;
     @Setter @Getter private User user;
 
@@ -49,5 +51,15 @@ public class DefaultIn implements In {
     @Override
     public Connection getConnection() {
         return connection;
+    }
+
+    @Override
+    public ServletContext getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(ServletContext context) {
+        this.context = context;
     }
 }

@@ -23,8 +23,6 @@
                             <form id="CreateUserForm" role="form" action="CreateUser" method="post" enctype="multipart/form-data">
                                 <div class="row center-align">
                                     <div id="image-preview" class="circle responsive-img" name="image1">
-                                        <!--<i class="large teal-text material-icons prefix">account_circle</i>-->
-                                        <!--<img id="image_id" type="file" class="circle responsive-img col s4" src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">-->
                                         <label for="image-upload" id="image-label" class="center" name="image3">
                                             <!--Choose File-->
                                             <i class="large material-icons">mode_edit</i>
@@ -77,13 +75,11 @@
 </t:template>
 <script>
     $(document).ready(function () {
-        var oo = $.uploadPreview({
+        $.uploadPreview({
             input_field: "#image-upload",
             preview_box: "#image-preview",
             label_field: "#image-label"
         });
-
-        console.log("looo oo : " + oo)
     });
 
 </script>

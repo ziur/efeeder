@@ -18,7 +18,7 @@
             </div>
         </form>
         <div class="col s1">
-            <img id="ItemPreview" class=" circle responsive-img" src="action/image">
+            <img id="ItemPreview" class=" circle responsive-img" src="action/image?name1=value1&name2=value2">
         </div>
     </div>
 
@@ -62,6 +62,6 @@
     </div>
 </t:template>
 <script>
-    
+
 
 </script>
