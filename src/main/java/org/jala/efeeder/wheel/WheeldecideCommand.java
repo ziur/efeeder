@@ -9,12 +9,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import org.jala.efeeder.api.command.Command;
-import org.jala.efeeder.api.command.CommandUnit;
-import org.jala.efeeder.api.command.In;
-import org.jala.efeeder.api.command.Out;
+import java.util.stream.Collectors;
+
+import org.jala.efeeder.api.command.*;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
+import org.jala.efeeder.servlets.websocket.avro.RaffleEvent;
 import org.jala.efeeder.user.User;
 
 
@@ -24,106 +27,61 @@ import org.jala.efeeder.user.User;
 @Command
 public class WheeldecideCommand implements CommandUnit{
 
-    @Override
-    public Out execute(In context) throws Exception {    
-        int choseIndex = 0;
-        PreparedStatement pStatement = context.getConnection()
-                .prepareStatement("select id,name from user,orders where id_food_meeting=? and id=id_user");
-        
-        String message = "";
-        
-        String parameter = context.getParameter("id_food_meeting2");
-        
-        message = "Parameter is: " + parameter;
-        
-        try
-        {
-            pStatement.setInt(1, Integer.valueOf(parameter));
-        }
-        catch (NumberFormatException e)
-        {
-            message = "Not a number: " + parameter;
-        }
-        
-        ResultSet resultSet;
-        
-        try
-        {
-            resultSet = pStatement.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            resultSet = null;
-            message += ", query failed!";
-        }
-                
-        int count = 0;
-        List<User> users = new ArrayList<>();
-        StringBuilder jsonData = new StringBuilder(0xFF);
-        jsonData.append("'{\"items\":[");
-        while (resultSet.next()) {
-            if (count > 0) jsonData.append(",");
-            int idUser = resultSet.getInt(1);
-            String nameUser = resultSet.getString(2);
-            jsonData.append(escapeJsonString(nameUser));
-            users.add(new User(idUser, nameUser));
-            ++count;
-        }
-        choseIndex = getRandomIndexPerson(count);
-	jsonData.append("],\"chosen\":");
-        jsonData.append(choseIndex);
-        jsonData.append("}'");
-        
-        insertNewBuyer(context, users.get(choseIndex).getId());
-	
-	Out out = new DefaultOut();
-        out.addResult("jsonData", jsonData.toString());
-        out.forward("wheeldecide/wheel.jsp");
-        return out;
-    }
-    
-    private static int insertNewBuyer(In context, int choseUserId) throws Exception{
-        PreparedStatement stm = context.getConnection()
-                                        .prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
+	public static final String SELECT_USERS_BY_MEETING_SQL =
+			"select id,name from user u, orders o where o.id_food_meeting = ? and u.id = o.id_user";
 
-        stm.setInt(1, Integer.valueOf(context.getParameter("id_food_meeting2")));
-        stm.setInt(2, choseUserId);
-        return stm.executeUpdate();
-    }
-    
-    
-    private static int getRandomIndexPerson(int numberOfPersons){
-        return (int)Math.floor(Math.random() * numberOfPersons);
-    }
-    
-    private static String escapeJsonString(String string) {
-        if (null == string || 0 == string.length()) {
-            return "\"\"";
-        }
+	@Override
+	public Out execute(In context) throws Exception {    
+		String roomId = context.getMessageContext().getRoom().toString();
+		int choseIndex = 0;
+		PreparedStatement pStatement = context.getConnection()
+				.prepareStatement(SELECT_USERS_BY_MEETING_SQL);
 
-        final int len = string.length();
-        StringBuilder sb = new StringBuilder(len + 8);
-        sb.append('"');
+		pStatement.setInt(1, Integer.parseInt(roomId));
 
-        final String escapeInput = "\\\"/\b\t\n\f\r";
-        final String escapeOutput = "\\\"/btnfr";
-        for (int i = 0; i < len; ++i) {
-            final char c = string.charAt(i);
-            final int index = escapeInput.indexOf(c);
-            if (index != -1)
-            {
-                sb.append('\\');
-                sb.append(escapeOutput.charAt(index));
-            }
-            else if (c < ' ') {
-                sb.append(String.format("\\u%04x", c));
-            } else {
-                sb.append(c);
-            }
-        }
-        sb.append('"');
-        return sb.toString();
-    }
+		ResultSet resultSet = pStatement.executeQuery();
 
-    
+		List<User> users = new ArrayList<>();
+		while (resultSet.next()) {
+			int idUser = resultSet.getInt(1);
+			String nameUser = resultSet.getString(2);
+			users.add(new User(idUser, nameUser));
+		}
+		Collections.shuffle(users);
+		choseIndex = getRandomIndexPerson(users.size());
+
+		List<MessageEvent> events = new ArrayList<>();
+
+		events.add(MessageEvent.newBuilder()
+				.setEvent(
+						RaffleEvent.newBuilder()
+									.setChosen(choseIndex)
+									.setItems(users.stream().map(user -> user.getName()).collect(Collectors.toList()))
+									.build()
+				)
+				.build()
+		);
+		MessageContext messageContext = MessageContext.newBuilder()
+											.setRoom(roomId)
+											.setUser(0)
+											.setEvents(events)
+											.build();
+
+		return OutBuilder.response(messageContext);
+	}
+
+	private static int insertNewBuyer(In context, int choseUserId) throws Exception{
+		PreparedStatement stm = context.getConnection()
+										.prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
+
+		String roomId = context.getMessageContext().getRoom().toString();
+		stm.setInt(1, Integer.parseInt(roomId));
+		stm.setInt(2, choseUserId);
+		return stm.executeUpdate();
+	}
+
+
+	private static int getRandomIndexPerson(int numberOfPersons){
+		return (int)Math.floor(Math.random() * numberOfPersons);
+	}
 }

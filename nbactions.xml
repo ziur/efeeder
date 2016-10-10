@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-WsSchema</actionName>
+            <displayName>WsSchema</displayName>
+            <goals>
+                <goal>avro:schema</goal>
+            </goals>
+        </action>
+    </actions>

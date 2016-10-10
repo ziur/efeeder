@@ -36,6 +36,7 @@
             </column>
             <column name="name"             type="VARCHAR(200)"/>
             <column name="image_link"       type="VARCHAR(500)"/>
+            <column name="status"           type="VARCHAR(50)"/>
             <column name="event_date"       type="DATETIME"/>
             <column name="created_at"       type="DATETIME"/>
         </createTable>
@@ -57,6 +58,7 @@
                 tableName="food_meeting">
             <column name="name"             value="Coffee time"/>
             <column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
+            <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="now()"/>
             <column name="created_at"       value="now()"/>
         </insert>
@@ -67,6 +69,7 @@
                 tableName="food_meeting">
             <column name="name"             value="Dia del programador"/>
             <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+            <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
             <column name="created_at"       value="now()"/>
         </insert>
@@ -77,6 +80,7 @@
                 tableName="food_meeting">
             <column name="name"             value="Release celebration"/>
             <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+            <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
             <column name="created_at"       value="now()"/>
         </insert>
@@ -98,6 +102,7 @@
                 tableName="food_meeting">
             <column name="name"             value="Lunes de escabeche"/>
             <column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
+            <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
             <column name="created_at"       value="now()"/>
         </insert>
@@ -108,6 +113,7 @@
                 tableName="food_meeting">
             <column name="name"             value="fideosuchu"/>
             <column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
+            <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
             <column name="created_at"       value="now()"/>
         </insert>
@@ -269,10 +275,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="id_user" type="INT(11)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="id_place"  type="INT(11)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="id_food_meeting"
@@ -297,5 +303,4 @@
             referencedColumnNames="id"
             referencedTableName="places"/>
     </changeSet>
-
 </databaseChangeLog>

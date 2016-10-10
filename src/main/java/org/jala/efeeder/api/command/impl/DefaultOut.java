@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jala.efeeder.api.command.ExitStatus;
-import org.jala.efeeder.api.command.MessageType;
-import org.jala.efeeder.api.command.Out;
-import org.jala.efeeder.api.command.ResponseAction;
+import org.jala.efeeder.api.command.*;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.user.User;
 
 import lombok.Getter;
@@ -28,9 +26,8 @@ public class DefaultOut implements Out {
     private ResponseAction responseAction;
     private Map<String, Object> context;
     private ExitStatus exitStatus;
-    @Setter
-    @Getter
-    private User user;
+    @Setter @Getter private User user;
+    @Setter @Getter private MessageContext messageContext;
 
     public DefaultOut() {
         Map<String, String> header = new HashMap<>();

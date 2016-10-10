@@ -7,9 +7,9 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -22,24 +22,26 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  */
 @Command
 public class SettingMeetingCommand implements CommandUnit {
+
+    private static final String SELECT_FOOD_MEETING_SQL = "Select name, image_link, status, event_date, created_at from food_meeting where id = ?";
+
     @Override
     public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
         Connection connection = parameters.getConnection();
-      
+
         FoodMeeting foodMeeting = new FoodMeeting();
         String id = parameters.getParameter("id_food_meeting");
-        PreparedStatement preparedStatement = connection.prepareStatement("Select name, image_link, event_date, created_at from food_meeting where id = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
         preparedStatement.setInt(1, Integer.valueOf(id));
         ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
             foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
-                    resultSet.getTimestamp(3), resultSet.getTimestamp(4)));
+                    resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5)));
         }
 
         out.addResult("foodMeeting", foodMeeting);
-        
         out.forward("foodmeeting/settingMeeting.jsp");
 
         return out;

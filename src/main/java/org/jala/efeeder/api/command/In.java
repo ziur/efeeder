@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import javax.servlet.ServletContext;
 
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.user.User;
 
 /**
@@ -20,4 +21,6 @@ public interface In {
     void setUser(User user);
     ServletContext getContext();
     void setContext(ServletContext context);
+    MessageContext getMessageContext();
+    void setMessageContext(MessageContext messageContext);
 }

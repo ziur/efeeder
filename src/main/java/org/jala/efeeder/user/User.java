@@ -6,7 +6,6 @@
 package org.jala.efeeder.user;
 
 import lombok.Data;
-import lombok.ToString;
 
 /**
  *
@@ -14,7 +13,7 @@ import lombok.ToString;
  */
 @Data
 public class User {
-    private int    id;
+    private int id;
     private String email;
     private String name;
     private String last_name;
@@ -29,10 +28,8 @@ public class User {
     }
     
     public User(int id, String email, String name, String last_name) {
+        this(email, name, last_name);
         this.id = id;
-        this.email = email;
-        this.name = name;
-        this.last_name = last_name;
     }
 
     public User(String email, String name, String last_name) {
@@ -48,6 +45,6 @@ public class User {
 
     public String toString()
     {
-    	return this.name + " " + this.last_name;
+        return this.name + " " + this.last_name;
     }
 }

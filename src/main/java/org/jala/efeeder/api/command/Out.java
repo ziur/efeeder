@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.user.User;
 
 /**
@@ -32,4 +33,6 @@ public interface Out {
     
     Map<String, String> getHeaders();
     void addHeader(String name, String value);
+    MessageContext getMessageContext();
+    void setMessageContext(MessageContext messageContext);
 }

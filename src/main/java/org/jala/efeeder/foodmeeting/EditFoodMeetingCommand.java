@@ -6,11 +6,8 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.sql.Date;
 import java.sql.Timestamp;
+
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -27,26 +24,29 @@ import org.joda.time.format.DateTimeFormatter;
 @Command
 public class EditFoodMeetingCommand implements CommandUnit {
 
-    @Override
-    public Out execute(In parameters) throws Exception {
-        Out out = new DefaultOut();
+	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=? WHERE id= ?;";
 
-        PreparedStatement stm = parameters.getConnection()
-                .prepareStatement("UPDATE food_meeting SET name= ?, image_link= ?, event_date=? WHERE id= ?;");
-        
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
-        DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
-        Timestamp eventDate = new Timestamp(dateTime.getMillis());        
-        
-        try {
-            stm.setString(1, parameters.getParameter("meeting_name"));
-            stm.setString(2, parameters.getParameter("image_link"));
-            stm.setTimestamp(3, eventDate);
-            stm.setInt(4, Integer.valueOf(parameters.getParameter("id_food_meeting")));
-            stm.executeUpdate();
-        } catch (Exception e) {
-        }
+	@Override
+	public Out execute(In parameters) throws Exception {
+		Out out = new DefaultOut();
 
-        return out.redirect("action/FoodMeeting");
-    }
+		PreparedStatement stm = parameters.getConnection()
+				.prepareStatement(UPDATE_FOOD_MEETING_SQL);
+
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
+		DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
+		Timestamp eventDate = new Timestamp(dateTime.getMillis());
+
+		try {
+			stm.setString(1, parameters.getParameter("meeting_name"));
+			stm.setString(2, parameters.getParameter("image_link"));
+			stm.setString(3, parameters.getParameter("status"));
+			stm.setTimestamp(4, eventDate);
+			stm.setInt(5, Integer.valueOf(parameters.getParameter("id-food-meeting")));
+			stm.executeUpdate();
+		} catch (Exception e) {
+		}
+
+		return out.redirect("/action/FoodMeeting");
+	}
 }

@@ -19,6 +19,7 @@
     <link href="/assets/css/select2.min.css" rel="stylesheet">
     <link href="/assets/css/app.css" rel="stylesheet">
     <link href="/assets/css/foodMeetings.css" rel="stylesheet">
+    <link href="/assets/css/order.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/materialize.css">
     <link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
     <link rel="stylesheet" href="/assets/css/imageUpload.css">
@@ -35,8 +36,6 @@
     
     <!--<t:footer/>-->
     
-
-
     <script src="/assets/js/lib/jquery.js"></script>
     <script src="/assets/js/lib/bootstrap.js"></script>
     <script src="/assets/js/lib/datatables.min.js"></script>
@@ -44,12 +43,14 @@
     <script src="/assets/js/lib/select2.js"></script>
     <script src="/assets/js/lib/jsrender.js"></script>
     <script src="/assets/js/lib/masonry.min.js"></script>
+    <script src="/assets/js/lib/isotope.pkgd.min.js"></script>
     <script src="/assets/js/lib/imagesLoaded.min.js"></script>
     <script src="/assets/js/lib/moment.min.js"></script>
     <script src="/assets/js/lib/materialize.js"></script>
     <script src="/assets/js/lib/materialize.clockpicker.js"></script>
     <script src="/assets/js/lib/jquery.validate.js"></script>
     <script src="/assets/js/lib/jquery.uploadPreview.min.js"></script>
+    <script src="/assets/js/communication-service.js"></script>
     
     <jsp:invoke fragment="javascript"/>
 

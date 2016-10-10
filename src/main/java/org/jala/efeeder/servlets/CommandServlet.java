@@ -2,7 +2,6 @@ package org.jala.efeeder.servlets;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +26,6 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.ImageResourceManager;
 import org.jala.efeeder.servlets.support.InBuilder;
-
 import org.jala.efeeder.user.User;
 
 /**
