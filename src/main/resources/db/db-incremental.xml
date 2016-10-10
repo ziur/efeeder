@@ -17,6 +17,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="image_link" type="VARCHAR(200)"/>
+	    <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -303,4 +306,5 @@
             referencedColumnNames="id"
             referencedTableName="places"/>
     </changeSet>
+>>>>>>> master
 </databaseChangeLog>

@@ -573,10 +573,6 @@ function _start()
 		}
 	});
 
-	$("#mainSideNav").on("mousedown", function() {
-		_hideSideBar();
-	});
-
 	bkSystem.onmousedown = _onMouseDown;
 	bkSystem.onmousemove = _onMouseMove;
 	bkSystem.onmouseout = _onMouseOut;
