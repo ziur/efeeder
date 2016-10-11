@@ -24,7 +24,6 @@
 								<div class="row center-align">
 									<div id="image-preview" class="circle responsive-img">
 										<label for="image-upload" id="image-label" class="center">
-											<!--Choose File-->
 											<i class="large material-icons">mode_edit</i>
 										</label>
 										<input type="file" name="image" id="image-upload" style="display:none;"/>
