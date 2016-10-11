@@ -130,7 +130,7 @@
             <column name="name"      type="VARCHAR(200)"/>
             <column name="last_name" type="VARCHAR(200)"/>
             <column name="username"  type="VARCHAR(200)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="password"  type="VARCHAR(200)">
                 <constraints nullable="false"/>
@@ -157,48 +157,48 @@
     <changeSet author="roger" id="insert.user.test">
         <insert catalogName="efeeder"
                 tableName="user">
-                <column name="name"      value="Test"/>
-                <column name="last_name" value="Test"/>
-                <column name="username"  value="Test"/>
-                <column name="password"  value="Test"/>
-                <column name="email"     value="test@test.com"/>
-                <column name="image_path"     value="empty"/>
+                <column name="name"       value="Test"/>
+                <column name="last_name"  value="Test"/>
+                <column name="username"   value="Test"/>
+                <column name="password"   value="0cbc6611f5540bd0809a388dc95a615b"/>
+                <column name="email"      value="test@test.com"/>
+                <column name="image_path" value="empty"/>
         </insert>
     </changeSet>
 
     <changeSet author="roger" id="insert.user.alejandro">
         <insert catalogName="efeeder"
                 tableName="user">
-                <column name="name"      value="Alejandro"/>
-                <column name="last_name" value="Ruiz"/>
-                <column name="username"  value="ARuiz"/>
-                <column name="password"  value="ARuiz"/>
-                <column name="email"     value="alejandro.ruiz@jalasoft.com"/>
-                <column name="image_path"     value="empty"/>
+                <column name="name"       value="Alejandro"/>
+                <column name="last_name"  value="Ruiz"/>
+                <column name="username"   value="ARuiz"/>
+                <column name="password"   value="eb047191cc210ca039bedc203d75f849"/>
+                <column name="email"      value="alejandro.ruiz@jalasoft.com"/>
+                <column name="image_path" value="empty"/>
         </insert>
     </changeSet>
 
     <changeSet author="roger" id="insert.user.amir">
         <insert catalogName="efeeder"
                 tableName="user">
-                <column name="name"      value="Amir"/>
-                <column name="last_name" value="Aranibar"/>
-                <column name="username"  value="AAranibar"/>
-                <column name="password"  value="AAranibar"/>
-                <column name="email"     value="amir.aranibar@jalasoft.com"/>
-                <column name="image_path"     value="empty"/>
+                <column name="name"       value="Amir"/>
+                <column name="last_name"  value="Aranibar"/>
+                <column name="username"   value="AAranibar"/>
+                <column name="password"   value="87d61b7bb95c4d9fd3bbf6dd393f39e2"/>
+                <column name="email"      value="amir.aranibar@jalasoft.com"/>
+                <column name="image_path" value="empty"/>
         </insert>
     </changeSet>
 
     <changeSet author="roger" id="insert.user.ricardo">
         <insert catalogName="efeeder"
                 tableName="user">
-                <column name="name"      value="Ricardo"/>
-                <column name="last_name" value="Ramirez"/>
-                <column name="username"  value="RRamirez"/>
-                <column name="password"  value="RRamirez"/>
-                <column name="email"     value="ricardo.ramirez@jalasoft.com"/>
-                <column name="image_path"     value="empty"/>
+                <column name="name"       value="Ricardo"/>
+                <column name="last_name"  value="Ramirez"/>
+                <column name="username"   value="RRamirez"/>
+                <column name="password"   value="74e51c42cf9fb9d73f1bec7bde6be0c4"/>
+                <column name="email"      value="ricardo.ramirez@jalasoft.com"/>
+                <column name="image_path" value="empty"/>
         </insert>
     </changeSet>
 
