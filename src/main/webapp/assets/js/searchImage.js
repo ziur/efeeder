@@ -22,7 +22,7 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 		self.imageList.click(function() {
 			setCardMainImage($(this).data("imageLink"));
 			setFieldMainImage($(this).data("imageLink"));
-			$('#search-image-modal-id').closeModal({dismissible: true, complete: onModalHide});
+			//$('#search-image-modal-id').closeModal({dismissible: true, complete: onModalHide});
 		});
 
 	};
@@ -36,6 +36,7 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 	};
 
 	var organizeImages = function() {
+		alert("organizo images");
 		self.imageComponent.imagesLoaded().done(function() {
 			self.imageComponent.masonry({
 				itemSelector: '.grid-item',
@@ -46,7 +47,7 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 
 	return {
 		init: function() {
-			organizeImages();
+			//organizeImages();
 			addEventClick();
 			addEventChange();
 			self.fieldImage.focus();

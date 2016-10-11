@@ -35,4 +35,7 @@
 			</div>
 		</div>
 	</div>
+	
+		<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+	
 </div>

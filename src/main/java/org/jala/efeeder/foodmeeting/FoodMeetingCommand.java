@@ -21,6 +21,7 @@ public class FoodMeetingCommand implements CommandUnit {
     private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, status, event_date, created_at " 
             + "from food_meeting where event_date >= ? order by event_date";
 
+	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
     @Override
     public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
@@ -35,6 +36,16 @@ public class FoodMeetingCommand implements CommandUnit {
                     resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6)));
         }
         out.addResult("foodMeetings", foodMeetings);
+		//
+		PreparedStatement stm1 = parameters.getConnection().prepareStatement(SELECT_IMAGE_FOOD_MEETING_SQL);
+		ResultSet resultSet1 = stm1.executeQuery();
+
+		List<String> images = new ArrayList<>();
+		while (resultSet1.next()) {
+			images.add(resultSet1.getString(1));
+		}
+		out.addResult("images", images);
+		//
         return out.forward("foodmeeting/foodMeeting.jsp");
     }
 }

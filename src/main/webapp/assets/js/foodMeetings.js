@@ -8,6 +8,10 @@ $(function () {
 
 	var foodMeetingsList = new FoodMeetingsList(foodMeetings, $newMeetingPlaceholder);
 	foodMeetingsList.init();
+	
+	var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"),
+					$('.image-link'), $('.image-links'), $("#image-card-id"));
+				modal.init();
 
 	var communicationService = new CommunicationService();
 
@@ -225,15 +229,9 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		});
 
 		addMeetingImage.click(function () {
-			$('#search-image-modal-id').openModal({
-				complete : onModalHide
-			});
-		
-			$('#search-image-modal-id').load('searchImage', function(data) {
-				var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"),
-					$('.image-link'), $('.image-links'), $("#image-card-id"));
-				modal.init();
-			});
+			//$('#search-image-modal-id').load('searchImage', function() {
+				organizeModalImages();
+			//});
 		});
 		
 		$("#new-meeting-hello-meessage").click(function(){
@@ -257,6 +255,15 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		foodMeetings.isotope('layout');
 	};
 
+	var organizeModalImages = function() {
+		$('.image-links').imagesLoaded().done(function() {
+			$('.image-links').masonry({
+				itemSelector: '.grid-item',
+				columnWidth: 50
+			});
+		});
+	};
+	
 	return {
 		init: function() {
 			addFieldEvent()
