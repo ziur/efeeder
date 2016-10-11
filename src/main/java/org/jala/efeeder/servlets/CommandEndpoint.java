@@ -66,7 +66,7 @@ public class CommandEndpoint {
         List<MessageEvent> events = new ArrayList<>();
         events.add(MessageEvent.newBuilder().setEvent(new WelcomeEvent()).build());
         MessageContext messageContext = MessageContext.newBuilder()
-                                                .setRoom(Integer.parseInt(roomId))
+                                                .setRoom(roomId)
                                                 .setUser(0)
                                                 .setEvents(events)
                                                 .build();

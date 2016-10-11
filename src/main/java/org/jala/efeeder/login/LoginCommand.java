@@ -18,7 +18,7 @@ import org.jala.efeeder.util.Encrypt;
 @Command
 public class LoginCommand implements CommandUnit {
 	
-	private static final String LOGIN_SQL = "Select id, email, name, last_name from user where username=? and password=?";
+	private static final String LOGIN_SQL = "Select id, email, name, last_name, image_path  from user where username=? and password=?";
 	
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -39,7 +39,7 @@ public class LoginCommand implements CommandUnit {
 
 		if (resultSet.next()) {
 			user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-					resultSet.getString(4));
+					resultSet.getString(4), resultSet.getString(5));
 		}
 
 		if (user != null) {

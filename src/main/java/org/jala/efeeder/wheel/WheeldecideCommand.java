@@ -27,62 +27,61 @@ import org.jala.efeeder.user.User;
 @Command
 public class WheeldecideCommand implements CommandUnit{
 
-    public static final String SELECT_USERS_BY_MEETING_SQL =
-            "select id,name from user u, orders o where o.id_food_meeting = ? and u.id = o.id_user";
+	public static final String SELECT_USERS_BY_MEETING_SQL =
+			"select id,name from user u, orders o where o.id_food_meeting = ? and u.id = o.id_user";
 
-    @Override
-    public Out execute(In context) throws Exception {    
-        int roomId = context.getMessageContext().getRoom();
-        int choseIndex = 0;
-        PreparedStatement pStatement = context.getConnection()
-                .prepareStatement(SELECT_USERS_BY_MEETING_SQL);
+	@Override
+	public Out execute(In context) throws Exception {    
+		String roomId = context.getMessageContext().getRoom().toString();
+		int choseIndex = 0;
+		PreparedStatement pStatement = context.getConnection()
+				.prepareStatement(SELECT_USERS_BY_MEETING_SQL);
 
-        pStatement.setInt(1, roomId);
+		pStatement.setInt(1, Integer.parseInt(roomId));
 
-        ResultSet resultSet = pStatement.executeQuery();
+		ResultSet resultSet = pStatement.executeQuery();
 
-        List<User> users = new ArrayList<>();
-        while (resultSet.next()) {
-            int idUser = resultSet.getInt(1);
-            String nameUser = resultSet.getString(2);
-            users.add(new User(idUser, nameUser));
-        }
-        Collections.shuffle(users);
-        choseIndex = getRandomIndexPerson(users.size());
+		List<User> users = new ArrayList<>();
+		while (resultSet.next()) {
+			int idUser = resultSet.getInt(1);
+			String nameUser = resultSet.getString(2);
+			users.add(new User(idUser, nameUser));
+		}
+		Collections.shuffle(users);
+		choseIndex = getRandomIndexPerson(users.size());
 
-        //insertNewBuyer(context, users.get(choseIndex).getId());
+		List<MessageEvent> events = new ArrayList<>();
 
-        List<MessageEvent> events = new ArrayList<>();
+		events.add(MessageEvent.newBuilder()
+				.setEvent(
+						RaffleEvent.newBuilder()
+									.setChosen(choseIndex)
+									.setItems(users.stream().map(user -> user.getName()).collect(Collectors.toList()))
+									.build()
+				)
+				.build()
+		);
+		MessageContext messageContext = MessageContext.newBuilder()
+											.setRoom(roomId)
+											.setUser(0)
+											.setEvents(events)
+											.build();
 
-        events.add(MessageEvent.newBuilder()
-                .setEvent(
-                        RaffleEvent.newBuilder()
-                                  .setChosen(choseIndex)
-                                  .setItems(users.stream().map(user -> user.getName()).collect(Collectors.toList()))
-                                  .build()
-                )
-                .build()
-        );
-        MessageContext messageContext = MessageContext.newBuilder()
-                                                .setRoom(roomId)
-                                                .setUser(0)
-                                                .setEvents(events)
-                                                .build();
+		return OutBuilder.response(messageContext);
+	}
 
-        return OutBuilder.response(messageContext);
-    }
-    
-    private static int insertNewBuyer(In context, int choseUserId) throws Exception{
-        PreparedStatement stm = context.getConnection()
-                                        .prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
+	private static int insertNewBuyer(In context, int choseUserId) throws Exception{
+		PreparedStatement stm = context.getConnection()
+										.prepareStatement("insert into buyer(id_food_meeting, id_user) values(?, ?)");
 
-        stm.setInt(1, context.getMessageContext().getRoom());
-        stm.setInt(2, choseUserId);
-        return stm.executeUpdate();
-    }
-    
-    
-    private static int getRandomIndexPerson(int numberOfPersons){
-        return (int)Math.floor(Math.random() * numberOfPersons);
-    }
+		String roomId = context.getMessageContext().getRoom().toString();
+		stm.setInt(1, Integer.parseInt(roomId));
+		stm.setInt(2, choseUserId);
+		return stm.executeUpdate();
+	}
+
+
+	private static int getRandomIndexPerson(int numberOfPersons){
+		return (int)Math.floor(Math.random() * numberOfPersons);
+	}
 }

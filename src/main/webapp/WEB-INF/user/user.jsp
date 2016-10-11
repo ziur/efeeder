@@ -11,7 +11,6 @@
 
 <t:template>
 	<jsp:attribute name="javascript">
-		<script src="/assets/js/lib/hex_md5.js"></script>
 		<script src="/assets/js/createUser.js"></script>
 	</jsp:attribute>
 	
@@ -21,12 +20,12 @@
 				<div class="col offset-m3 s12 m6">
 					<div class="card">
 						<div class="card-content">
-							<form id="create-user-form" role="form" action="CreateUser">
+							<form id="create-user-form" role="form" action="CreateUser" method="post" enctype="multipart/form-data">
 								<div class="row center-align">
 									<i class="large teal-text material-icons prefix">account_circle</i>
 								</div>
-								<div class="row">
-									<h6 class='center thin grey-text'>Please write in the following fields</h6>
+								<div class="row center-align">
+									<h6 id="message-user" class='center lighten-1 grey-text'>Please write in the following fields</h6>
 								</div>
 								<div class="row">
 									<div class="input-field col s6">

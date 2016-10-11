@@ -1,13 +1,21 @@
 $(document).ready(function () {
+	$.uploadPreview({
+		input_field: "#image-upload",
+		preview_box: "#image-preview",
+		label_field: "#image-label"
+	});
+
 	var createUser = new  CreateUser($("#create-user-form"), $("#cancel-button"));
 
 	createUser.init();
 });
 
 var CreateUser = function(form,  cancelButton) {
-	this.form = form;
+	this.form = form;	
 	this.cancelButton = cancelButton;
 	var selft = this;
+	
+	var messageUser = $("#message-user");
 
 	var addEventClick= function () {
 		selft.cancelButton.click(function () {
@@ -37,8 +45,16 @@ var CreateUser = function(form,  cancelButton) {
 			// Put the results in a div
 			posting.done(function( data ) {
 				location.href = "/action/login"; 
+			}).fail(function( data ) {
+				errorMessage(data.responseJSON.message); 
 			});
 		}
+	};
+	
+	var errorMessage = function(message) {
+		messageUser.removeClass('grey-text');
+		messageUser.addClass("red-text");
+		messageUser.text(message);
 	};
 
 	var addValidateRules = function() {

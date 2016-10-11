@@ -27,10 +27,9 @@ public class GetSuggestionsCommand implements CommandUnit {
     private static final String SELECT_USERS_BY_MEETING_SQL =
             "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
     private static final String SELECT_PLACES_BY_MEETING_SQL =
-            "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(*) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
+            "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
     
-    @Override
-    public Out execute(In parameters) throws Exception {
+	static public String getAllSuggestionsAsString(In parameters) throws Exception {
         Connection connection = parameters.getConnection();
         int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
         
@@ -62,7 +61,12 @@ public class GetSuggestionsCommand implements CommandUnit {
         }
 
         Suggestion suggestion = new Suggestion(usersAndPlaces, places, parameters.getUser().getId());
-        return OutBuilder.response("application/json", JsonConverter.objectToJSON(suggestion));
+        return JsonConverter.objectToJSON(suggestion);
+	}
+	
+    @Override
+    public Out execute(In parameters) throws Exception {
+        return OutBuilder.response("application/json", getAllSuggestionsAsString(parameters));
     }
     
 }
