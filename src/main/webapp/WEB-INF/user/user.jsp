@@ -22,7 +22,13 @@
 						<div class="card-content">
 							<form id="create-user-form" role="form" action="CreateUser" method="post" enctype="multipart/form-data">
 								<div class="row center-align">
-									<i class="large teal-text material-icons prefix">account_circle</i>
+									<div id="image-preview" class="circle responsive-img">
+										<label for="image-upload" id="image-label" class="center">
+											<!--Choose File-->
+											<i class="large material-icons">mode_edit</i>
+										</label>
+										<input type="file" name="image" id="image-upload" style="display:none;"/>
+									</div>
 								</div>
 								<div class="row center-align">
 									<h6 id="message-user" class='center lighten-1 grey-text'>Please write in the following fields</h6>
