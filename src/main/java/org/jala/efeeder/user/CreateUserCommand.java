@@ -39,7 +39,7 @@ public class CreateUserCommand implements CommandUnit{
 		stm.setString(2, parameters.getParameter("last_name"));
 		stm.setString(3, parameters.getParameter("email"));
 		stm.setString(4, parameters.getParameter("username"));
-		stm.setString(5, Encrypt.getPasswordEncrypt(parameters.getParameter("password")));
+		stm.setString(5, Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
 		stm.setString(6, parameters.getParameter("image"));
 		try {
 			stm.executeUpdate();

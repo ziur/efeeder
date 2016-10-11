@@ -33,7 +33,7 @@ public class LoginCommand implements CommandUnit {
 		Connection connection = parameters.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_SQL);
 		preparedStatement.setString(1, parameters.getParameter("username"));
-		preparedStatement.setString(2, Encrypt.getPasswordEncrypt(parameters.getParameter("password")));
+		preparedStatement.setString(2, Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
 		ResultSet resultSet = preparedStatement.executeQuery();
 		User user = null;
 

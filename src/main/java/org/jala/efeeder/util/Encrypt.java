@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 
 public class Encrypt {
 
-	public static String getPasswordEncrypt(String password) throws Exception {
+	public static String getPasswordEncrypter(String password) throws Exception {
 		StringBuffer sb = new StringBuffer();
 
 		MessageDigest messageDigest = MessageDigest.getInstance("MD5");
