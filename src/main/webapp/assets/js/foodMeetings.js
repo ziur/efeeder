@@ -145,11 +145,16 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 	var addFieldEvent = function(){
 		dateField.pickadate({
 			selectMonths: true,
-			selectYears: 15
+			selectYears: 15,
+			closeOnSelect: true,
+			onSet: function(arg) {
+				if ('select' in arg) {
+					this.close();
+				}
+			}
 		});
 
 		timeField.pickatime({
-			autoclose: false,
 			twelvehour: false,
 			autoclose: true,
 			vibrate: true

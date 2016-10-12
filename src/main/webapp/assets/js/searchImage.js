@@ -9,7 +9,7 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 
 	var addEventChange = function() {
 		self.fieldImage.change(function(event) {
-			ModalSearchImage.setCardMainImage($(this).val());
+			setCardMainImage($(this).val());
 		});
 	};
 

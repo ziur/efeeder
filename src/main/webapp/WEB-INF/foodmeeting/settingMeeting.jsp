@@ -13,11 +13,18 @@
             $(function() {
                 $('.datepicker').pickadate({
                     selectMonths: true,
-                    selectYears: 15
+                    selectYears: 15,
+					closeOnSelect: true,
+					onSet: function( arg ){
+						if ( 'select' in arg ){
+							this.close();
+						}
+					}
                 });
                 $('#timepicker').pickatime({
-                    autoclose: false,
-                    twelvehour: false
+                    autoclose: true,
+                    twelvehour: false,
+					vibrate: true
                 });
                 //Format date
                 var time = moment($("#date").val()).format("HH:mm");
