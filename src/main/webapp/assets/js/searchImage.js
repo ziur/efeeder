@@ -22,7 +22,7 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 		self.imageList.click(function() {
 			setCardMainImage($(this).data("imageLink"));
 			setFieldMainImage($(this).data("imageLink"));
-			//$('#search-image-modal-id').closeModal({dismissible: true, complete: onModalHide});
+			$('#search-image-modal-id').closeModal({dismissible: true, complete: onModalHide});
 		});
 
 	};
@@ -35,22 +35,20 @@ var ModalSearchImage = function(cardImage, fieldImage, imageList, imageComponent
 		self.fieldImage.val(value);
 	};
 
-	var organizeImages = function() {
-		alert("organizo images");
-		self.imageComponent.imagesLoaded().done(function() {
-			self.imageComponent.masonry({
-				itemSelector: '.grid-item',
-				columnWidth: 50
-			});
-		});
-	};
-
 	return {
 		init: function() {
-			//organizeImages();
 			addEventClick();
 			addEventChange();
 			self.fieldImage.focus();
 		}
 	};
 };
+
+$("#image-link-id").change(function() {
+	$("#image-card-id").attr("src", $("#image-link-id").val());
+});
+
+$("#accept_button").click(function() {
+	var imageLink = $("#image-link-id").val();
+	$("#new-image-card-id").attr("src", imageLink);
+});

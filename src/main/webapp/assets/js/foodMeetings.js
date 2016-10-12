@@ -40,8 +40,8 @@ $(function () {
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 
 	var newFoodMeeting = new NewFoodMeeting(foodMeetings, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
-
 	newFoodMeeting.init();
+	
 });
 
 var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
@@ -229,9 +229,7 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		});
 
 		addMeetingImage.click(function () {
-			//$('#search-image-modal-id').load('searchImage', function() {
-				organizeModalImages();
-			//});
+			organizeModalImages();
 		});
 		
 		$("#new-meeting-hello-meessage").click(function(){
@@ -264,13 +262,18 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		});
 	};
 	
+	var initImageModal = function() {
+	$('.modal-trigger').leanModal();
+}
 	return {
 		init: function() {
 			addFieldEvent()
 			addNewMeetingValidate();
 			addClickEvents();
+			initImageModal();
 		},
 
 		reset: resetNewMeetingForm,
 	};
 };
+

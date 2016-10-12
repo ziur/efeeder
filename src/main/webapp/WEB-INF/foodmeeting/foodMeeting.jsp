@@ -7,12 +7,6 @@
         <script src="/assets/js/foodMeetings.js"></script>
         <script src="/assets/js/searchImage.js"></script>
 		
-		<script>
-            $(function() {
-                $('.modal-trigger').leanModal();
-            });
-
-        </script>
     </jsp:attribute>
 	<jsp:body>
 		<div class="meetings-container">

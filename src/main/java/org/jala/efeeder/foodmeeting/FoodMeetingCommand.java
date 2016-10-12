@@ -1,7 +1,9 @@
 package org.jala.efeeder.foodmeeting;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,20 @@ public class FoodMeetingCommand implements CommandUnit {
             + "from food_meeting where event_date >= ? order by event_date";
 
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
+	
     @Override
     public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
+		Connection connection = parameters.getConnection();
+        
+        out.addResult("foodMeetings", getFoodMeetings(connection));
+		out.addResult("images", getImageFoodMeeting(connection));
 
-        PreparedStatement stm = parameters.getConnection().prepareStatement(SELECT_FOOD_MEETING_SQL);
+        return out.forward("foodmeeting/foodMeeting.jsp");
+    }
+	
+	private List<FoodMeeting> getFoodMeetings(Connection connection) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
         stm.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
         ResultSet resultSet = stm.executeQuery();
 
@@ -35,17 +46,17 @@ public class FoodMeetingCommand implements CommandUnit {
             foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
                     resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6)));
         }
-        out.addResult("foodMeetings", foodMeetings);
-		//
-		PreparedStatement stm1 = parameters.getConnection().prepareStatement(SELECT_IMAGE_FOOD_MEETING_SQL);
-		ResultSet resultSet1 = stm1.executeQuery();
+		return foodMeetings;
+	}
+	
+	private List<String> getImageFoodMeeting(Connection connection) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(SELECT_IMAGE_FOOD_MEETING_SQL);
+		ResultSet resultSet = stm.executeQuery();
 
 		List<String> images = new ArrayList<>();
-		while (resultSet1.next()) {
-			images.add(resultSet1.getString(1));
+		while (resultSet.next()) {
+			images.add(resultSet.getString(1));
 		}
-		out.addResult("images", images);
-		//
-        return out.forward("foodmeeting/foodMeeting.jsp");
-    }
+		return images;
+	}
 }

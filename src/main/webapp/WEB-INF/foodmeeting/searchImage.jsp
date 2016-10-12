@@ -5,11 +5,11 @@
 	<div class="image-links">
 		<c:forEach var="image" items="#{images}">
 			<div class="grid-item"
-				style="width:200px">
+				 style="width:200px">
 				<div class="card">
 					<div class="card-image waves-effect waves-block waves-light">
 						<img class="image-link" data-image-link="${image}"
-							src="${image}">
+							 src="${image}">
 					</div>
 				</div>
 			</div>
@@ -22,20 +22,20 @@
 			<div class="card">
 				<div class="card-image">
 					<img id="image-card-id"
-						src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
-						class="materialboxed">
+						 src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
+						 class="materialboxed">
 				</div>
 			</div>
 		</div>
 		<div class="col m12 l8">
 			<div class="input-field col s12">
 				<input name="image-link" id="image-link-id"
-					value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
-					type="text" class="validate" autofocus="autofocus"> <label for="image-link">ImageLink</label>
+					   value="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg"
+					   type="text" class="validate" autofocus="autofocus"> <label for="image-link">Image Link</label>
 			</div>
 		</div>
-	</div>
-	
-		<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-	
+		<div class="input-field col m12 l8" >
+			<a href="#!" class="modal-action modal-close waves-effect waves-green waves-effect waves-light btn" id="accept_button">Accept</a>
+		</div>
+	</div>		
 </div>
