@@ -22,7 +22,6 @@ public class CommandExecutor {
             parameters.setConnection(connection);
             Out result = command.execute(parameters);
             connection.commit();
-            result.setExitStatus(ExitStatus.SUCCESS);
             return result;
         }catch(Throwable throwable) {
 
