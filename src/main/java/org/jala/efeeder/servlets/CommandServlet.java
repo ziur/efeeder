@@ -39,8 +39,8 @@ public class CommandServlet extends HttpServlet {
     private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -54,14 +54,13 @@ public class CommandServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(true);
-        
+
         if (request.getRequestURI().equals("/action/logout")) {
             session.invalidate();
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
         } else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-                && !request.getRequestURI().equals("/action/CreateUser")
-                && session.getAttribute("user") == null) {
+                && !request.getRequestURI().equals("/action/CreateUser") && session.getAttribute("user") == null) {
 
             request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
@@ -118,6 +117,9 @@ public class CommandServlet extends HttpServlet {
                 for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
                     response.addHeader(header.getKey(), header.getValue());
                 }
+                if (ExitStatus.FAIL == out.getExitStatus()) {
+                    response.setStatus(400);
+                }
                 response.setContentType(contentType);
                 response.getWriter().write((String) out.getBody());
                 break;
@@ -135,8 +137,8 @@ public class CommandServlet extends HttpServlet {
     }
 
     private CommandUnit getCommand(HttpServletRequest req) {
-        CommandFactory commandFactory
-                = (CommandFactory) getServletContext().getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
+        CommandFactory commandFactory = (CommandFactory) getServletContext()
+                .getAttribute(CommandFactory.COMMAND_FACTORY_KEY);
         Matcher matcher = COMMAND_PATTERN.matcher(req.getRequestURI());
 
         if (!matcher.matches()) {
@@ -147,8 +149,8 @@ public class CommandServlet extends HttpServlet {
     }
 
     private String getImagePath() {
-        SettingsManager settings
-                = (SettingsManager) getServletContext().getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
+        SettingsManager settings = (SettingsManager) getServletContext()
+                .getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
         String startPath = "" + settings.getData("image_folder_path");
         return Paths.get(startPath, ImageResourceManager.ASSETS_FILE, ImageResourceManager.IMG_FILE).toString();
