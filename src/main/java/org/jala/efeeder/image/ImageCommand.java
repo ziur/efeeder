@@ -9,7 +9,9 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
+import org.apache.commons.io.FilenameUtils;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -36,18 +38,23 @@ public class ImageCommand implements CommandUnit {
         } else {
             path = parameters.getParameter("image_path") + "/" + imageName;
         }
-
-        File fnew = new File(path);
+        
+        return readImageAndConvertToBytes(path, "jpg", "image/jpeg");
+    }
+    
+    private Out readImageAndConvertToBytes(String path, String formatName, String contentTypeName) throws IOException{
+        File imagenFile = new File(path);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
-        BufferedImage img = ImageIO.read(fnew);
-        ImageIO.write(img, "jpg", baos);
+        BufferedImage img = ImageIO.read(imagenFile);
+        
+        ImageIO.write(img, formatName, baos);
         baos.flush();
 
         String base64String = Base64.encode(baos.toByteArray());
         baos.close();
 
         byte[] bytearray = Base64.decode(base64String);
-        return OutBuilder.response("image/jpeg", bytearray);
+        return OutBuilder.response(contentTypeName, bytearray);
     }
 
     private String getEmptyImagePath(String type) {

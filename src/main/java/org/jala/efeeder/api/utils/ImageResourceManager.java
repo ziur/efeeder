@@ -26,10 +26,10 @@ import org.jala.efeeder.api.command.impl.DefaultIn;
  */
 public class ImageResourceManager {
 
-    private static String DATA_KEY = "imgage_folder_path";
+    private static String DATA_KEY = "image_folder_path";
     private static String EMPTY = "empty";
-    private static String ASSETS_FILE = "assets";
-    private static String IMG_FILE = "img";
+    public static String ASSETS_FILE = "assets";
+    public static String IMG_FILE = "img";
     private File diretorio;
     private final ServletContext context;
 
@@ -65,7 +65,7 @@ public class ImageResourceManager {
 
     private String processUploadedFile(FileItem item, String token) throws Exception {
         String webAppPath;
-        webAppPath = getPathImgagesContainer();
+        webAppPath = getPathImagesContainer();
 
         diretorio = new File(Paths.get(webAppPath, ASSETS_FILE, IMG_FILE).toString());
         if (!diretorio.exists()) {
@@ -75,12 +75,13 @@ public class ImageResourceManager {
         if (fileName.isEmpty()) {
             return EMPTY;
         }
-        File uploadedFile = new File(diretorio, token + fileName);
+        fileName = token + fileName;
+        File uploadedFile = new File(diretorio, fileName);
         item.write(uploadedFile);
         return fileName;
     }
 
-    private String getPathImgagesContainer() {
+    private String getPathImagesContainer() {
         SettingsManager settings
                 = (SettingsManager) context.getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 

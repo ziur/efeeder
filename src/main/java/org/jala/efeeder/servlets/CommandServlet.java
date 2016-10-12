@@ -1,6 +1,7 @@
 package org.jala.efeeder.servlets;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -102,35 +103,35 @@ public class CommandServlet extends HttpServlet {
 		ResponseAction action = out.getResponseAction();
 
 		switch (action.getResponseType()) {
-		case REDIRECT:
-			response.sendRedirect(action.getUrl());
-			break;
-		case FORWARD:
-			for (Map.Entry<String, Object> result : out.getResults()) {
-				request.setAttribute(result.getKey(), result.getValue());
-			}
-			request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
-			break;
-		case MESSAGE:
-			String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-			for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
-				response.addHeader(header.getKey(), header.getValue());
-			}
-			if (ExitStatus.FAIL == out.getExitStatus()) {
-				response.setStatus(400);
-			}
-			response.setContentType(contentType);
-			response.getWriter().write((String) out.getBody());
-			break;
-		case MESSAGE_BYTES:
-			String contentType1 = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-			for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
-				response.addHeader(header.getKey(), header.getValue());
-			}
-			byte[] bytes = (byte[]) out.getBody();
-			response.setContentType(contentType1);
-			response.setContentLength(bytes.length);
-			response.getOutputStream().write(bytes);
+			case REDIRECT:
+				response.sendRedirect(action.getUrl());
+				break;
+			case FORWARD:
+				for (Map.Entry<String, Object> result : out.getResults()) {
+					request.setAttribute(result.getKey(), result.getValue());
+				}
+				request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
+				break;
+			case MESSAGE:
+				String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+				for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+					response.addHeader(header.getKey(), header.getValue());
+				}
+				if (ExitStatus.FAIL == out.getExitStatus()) {
+					response.setStatus(400);
+				}
+				response.setContentType(contentType);
+				response.getWriter().write((String) out.getBody());
+				break;
+			case MESSAGE_BYTES:
+				String contentType1 = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+				for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+					response.addHeader(header.getKey(), header.getValue());
+				}
+				byte[] bytes = (byte[]) out.getBody();
+				response.setContentType(contentType1);
+				response.setContentLength(bytes.length);
+				response.getOutputStream().write(bytes);
 		}
 	}
 
@@ -150,6 +151,7 @@ public class CommandServlet extends HttpServlet {
 		SettingsManager settings = (SettingsManager) getServletContext()
 				.getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
-		return "" + settings.getData("image_folder_path");
+		String startPath = "" + settings.getData("image_folder_path");
+		return Paths.get(startPath, ImageResourceManager.ASSETS_FILE, ImageResourceManager.IMG_FILE).toString();
 	}
 }

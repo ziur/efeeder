@@ -4,7 +4,6 @@
 
 <t:template>
 	<jsp:attribute name="javascript">
-		<script src="/assets/js/lib/hex_md5.js"></script>
 		<script src="/assets/js/login.js"></script>
 	</jsp:attribute>
 	<jsp:body>
