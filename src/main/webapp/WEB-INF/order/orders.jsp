@@ -36,8 +36,9 @@
                             <p id="my-order-cost">${myOrder.cost}</p>
                             <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
                             <c:if test="${foodMeeting.status == 'Order'}">
-                            	<a href="#!" id="btn-edit-my-order" class="btn-edit secondary-content"><i
-									class="material-icons">mode_edit</i></a>
+                            	<a href="#!" id="btn-edit-my-order" class="btn-edit secondary-content">
+                            		<i class="material-icons">mode_edit</i>
+                            	</a>
                             </c:if>
                             <c:if test="${foodMeeting.status == 'Payment'}">
                             	<input class="secondary-content" type="checkbox" id="chk-${user.id}" />
@@ -50,14 +51,12 @@
                         <li class="collection-item avatar">
                             <i class="material-icons circle">perm_identity</i>
                             <span class="title">${order.details}</span>
-                            <br />
+                            <br/>
                             <p>${order.cost}</p>
                             <p>${order.user.name} ${order.user.last_name} - ${order.user.email}</p>
 							<c:if test="${foodMeeting.status == 'Payment'}">
-                            	<input class="secondary-content"
-									type="checkbox" id="chk-${order.user.id}" />
-                            	<label class="secondary-content"
-									for="chk-${order.user.id}"></label>
+                            	<input class="secondary-content" type="checkbox" id="chk-${order.user.id}" />
+                            	<label class="secondary-content" for="chk-${order.user.id}"></label>
                             </c:if>
                         </li>
                     </c:forEach>
