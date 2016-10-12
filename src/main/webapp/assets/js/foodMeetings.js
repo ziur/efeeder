@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
 
 	var createMeetingRoomId = "createMeetingRoomId";
 	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
@@ -8,32 +8,32 @@ $(function () {
 
 	var foodMeetingsList = new FoodMeetingsList(foodMeetingsContainer, $newMeetingPlaceholder);
 	foodMeetingsList.init();
-	
+
 	var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"),
-					$('.image-link'), $('.image-links'), $("#image-card-id"));
-				modal.init();
+		$('.image-link'), $('.image-links'), $("#image-card-id"));
+	modal.init();
 
 	var communicationService = new CommunicationService();
 
-	communicationService.onMessage(function (event) {
+	communicationService.onMessage(function(event) {
 		$.each(event.events, function(index, item) {
 			var eventType = Object.getOwnPropertyNames(item.event)[0];
 
 			var eventMessage = item.event[eventType];
 
 			switch (eventType) {
-			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
-				console.log('WebSockets connected by FoodMeetings.');
-				break;
+				case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
+					console.log('WebSockets connected by FoodMeetings.');
+					break;
 
-			case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":				
-				
-				foodMeetingsList.addMeeting(eventMessage);
-				newFoodMeeting.reset();
+				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
 
-				var $toastContent = $('<span><a href="#'+eventMessage.id+'" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
-				Materialize.toast($toastContent, 5000);
-				break;
+					foodMeetingsList.addMeeting(eventMessage);
+					newFoodMeeting.reset();
+
+					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
+					Materialize.toast($toastContent, 5000);
+					break;
 			}
 		});
 	});
@@ -41,10 +41,9 @@ $(function () {
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 	newFoodMeeting.init();
-	
 });
 
-var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
+var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
 	this.foodMeetingsContainer = foodMeetingsContainer;
 	this.meetings = [];
@@ -54,30 +53,30 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 	var foodMeetingTmpl;
 
 	$.get('/assets/templates/foodMeeting.html', function(template) {
-		foodMeetingTmpl = template;        
-		$.get('/action/getAllMeetings', function(meetings){
+		foodMeetingTmpl = template;
+		$.get('/action/getAllMeetings', function(meetings) {
 			self.meetings = meetings;
-			_.each(meetings, function(meeting){
+			_.each(meetings, function(meeting) {
 				insertMeeting(meeting);
 			})
 		});
 	});
 
 	var insertMeeting = function(newMeeting) {
-		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);		
+		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
 
-		var isNewMeetingFirst = _.every(self.meetings, function(meeting){
+		var isNewMeetingFirst = _.every(self.meetings, function(meeting) {
 			return newMeeting.eventDate <= meeting.eventDate;
 		});
 
-		var data = { 
-			"id": newMeeting.id, 
-			"name" : newMeeting.name, 
-			"imageLink": newMeeting.imageLink, 
-			"status": newMeeting.status, 
-			"date": newMeeting.eventDate, 
+		var data = {
+			"id": newMeeting.id,
+			"name": newMeeting.name,
+			"imageLink": newMeeting.imageLink,
+			"status": newMeeting.status,
+			"date": newMeeting.eventDate,
 			"quickViewDate": moment(newMeeting.eventDate).calendar(),
 			"detailedViewDate": moment(newMeeting.eventDate).format('MMMM Do YYYY, h:mm a'),
 			"width": newMeeting.width,
@@ -86,17 +85,17 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status)
 		};
-		
+
 		self.meetings.push(newMeeting);
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
-		$newFoodMeeting.imagesLoaded().always(function(){			
-			if(isNewMeetingFirst) {
+		$newFoodMeeting.imagesLoaded().always(function() {
+			if (isNewMeetingFirst) {
 				$(".is-first").addClass('s6 l3');
 				$(".is-first").find('img').css('height', imageHeight + 'px');
-				$(".is-first").removeClass('is-first s12 l9');				
-			}			
-			foodMeetingsContainer.isotope('insert', $newFoodMeeting);			
-			$("#preloader").hide();	
+				$(".is-first").removeClass('is-first s12 l9');
+			}
+			foodMeetingsContainer.isotope('insert', $newFoodMeeting);
+			$("#preloader").hide();
 		});
 	}
 
@@ -125,7 +124,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 					return $(itemElem).data("date");
 				}
 			},
-			sortBy : 'date',
+			sortBy: 'date',
 		});
 
 		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder);
@@ -135,12 +134,11 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 		init: function() {
 			addEvent();
 		},
-
 		addMeeting: insertMeeting
 	};
 };
 
-var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting){
+var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting) {
 	this.foodMeetingsContainer = foodMeetingsContainer;
 	this.createMeetingRoomId = createMeetingRoomId;
 	this.communicationService = communicationService;
@@ -157,7 +155,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 	self = this;
 
-	var addFieldEvent = function(){
+	var addFieldEvent = function() {
 		dateField.pickadate({
 			selectMonths: true,
 			selectYears: 15,
@@ -188,9 +186,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 					error.insertAfter(element);
 				}
 			},
-
 			errorElement: "div",
-			rules : {
+			rules: {
 				meeting_name: "required",
 				time: "required",
 				date: {
@@ -198,7 +195,6 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 					date: true
 				}
 			},
-
 			messages: {
 				meeting_name: "Please enter your meeting name",
 				date: "Please enter a date",
@@ -208,63 +204,63 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 	};
 
 	var addClickEvents = function() {
-		addMeetingForm.submit(function (event) {
+		addMeetingForm.submit(function(event) {
 			event.preventDefault();
 
-			if(addMeetingForm.valid())
+			if (addMeetingForm.valid())
 			{
-				var $form = $( this ),
-				meeting_name = $form.find( "input[name='meeting_name']" ).val(),
-				date = $form.find( "input[name='date']" ).val(),
-				time = $form.find( "input[name='time']" ).val(),
-				url = $form.attr( "action" );
+				var $form = $(this),
+					meeting_name = $form.find("input[name='meeting_name']").val(),
+					date = $form.find("input[name='date']").val(),
+					time = $form.find("input[name='time']").val(),
+					url = $form.attr("action");
 
 				var imageLink = $("#new-image-card-id").attr("src");
 
 				self.communicationService.sendMessage(
-				{
-					user:1, 
-					room: self.createMeetingRoomId, 
-					command: "CreateFoodMeeting", 
-					events:[
-						{
-							event:{
-								CreateFoodMeetingEvent: {
-									id:0,
-									name: meeting_name,
-									eventDate: moment(date+" "+time,"DD MMMM, YYYY hh:mm").valueOf(),
-									status: "",
-									imageLink: imageLink,
-									width:0
+					{
+						user: 1,
+						room: self.createMeetingRoomId,
+						command: "CreateFoodMeeting",
+						events: [
+							{
+								event: {
+									CreateFoodMeetingEvent: {
+										id: 0,
+										name: meeting_name,
+										eventDate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").valueOf(),
+										status: "",
+										imageLink: imageLink,
+										width: 0
+									}
 								}
 							}
-						}
-					]
-				});
+						]
+					});
 			}
 		});
 
-		cancelMeetingBtn.click(function (event) {
+		cancelMeetingBtn.click(function(event) {
 			resetNewMeetingForm();
 		});
 
-		addMeetingImage.click(function () {
+		addMeetingImage.click(function() {
 			organizeModalImages();
 		});
-		
-		$("#new-meeting-hello-meessage").click(function(){
+
+		$("#new-meeting-hello-meessage").click(function() {
 			self.foodMeetingsContainer.isotope('remove', self.newMeetingPlaceholder);
-			self.foodMeetingsContainer.isotope('insert', self.newMeeting);  
+			self.foodMeetingsContainer.isotope('insert', self.newMeeting);
 		});
-		
+
 	};
 
-	var resetNewMeetingForm = function () {
+	var resetNewMeetingForm = function() {
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
 
 		self.foodMeetingsContainer.isotope('remove', self.newMeeting);
-		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder); 
+		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder);
 	};
 
 	var onModalHide = function() {
@@ -281,10 +277,10 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 			});
 		});
 	};
-	
+
 	var initImageModal = function() {
-	$('.modal-trigger').leanModal();
-}
+		$('.modal-trigger').leanModal();
+	}
 	return {
 		init: function() {
 			addFieldEvent()
@@ -292,7 +288,6 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 			addClickEvents();
 			initImageModal();
 		},
-
 		reset: resetNewMeetingForm,
 	};
 };
