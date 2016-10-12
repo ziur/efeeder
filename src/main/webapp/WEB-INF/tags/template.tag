@@ -44,6 +44,7 @@
     <script src="/assets/js/lib/jsrender.js"></script>
     <script src="/assets/js/lib/masonry.min.js"></script>
     <script src="/assets/js/lib/isotope.pkgd.min.js"></script>
+	<script src="/assets/js/lib/packery-mode.pkgd.min.js"></script>
     <script src="/assets/js/lib/imagesLoaded.min.js"></script>
     <script src="/assets/js/lib/moment.min.js"></script>
     <script src="/assets/js/lib/materialize.js"></script>
