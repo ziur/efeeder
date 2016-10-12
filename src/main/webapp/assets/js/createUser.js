@@ -24,24 +24,24 @@ var CreateUser = function(form,  cancelButton, createButton) {
 		});
                 
                 selft.createButton.click(function (event) {
-			createUser2(event);
+			createUser(event);
 		});
                 
 	};
         
-        var createUser2 = function(event) {
+        var createUser = function(event) {
 		event.preventDefault();
 
 		if(selft.form.valid()) {
                         var formData = selft.form.serialize();
                     
-			var url1 = selft.form.attr( "action" );
+			var commandUrl = selft.form.attr( "action" );
 		
-                         var vcfData = new FormData(selft.form[0]); 
+                         var createUserData = new FormData(selft.form[0]); 
                           $.ajax({
-                                url : url1,
+                                url : commandUrl,
                                 type : "post",
-                                data : vcfData,
+                                data : createUserData,
                                 processData: false,
                                 contentType: false,
                                 cache : false,

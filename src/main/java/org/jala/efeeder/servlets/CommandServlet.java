@@ -133,7 +133,6 @@ public class CommandServlet extends HttpServlet {
 				response.setContentLength(bytes.length);
 				response.getOutputStream().write(bytes);
 		}
-
 	}
 
 	private CommandUnit getCommand(HttpServletRequest req) {
