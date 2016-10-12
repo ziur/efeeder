@@ -5,14 +5,15 @@ $(document).ready(function () {
 		label_field: "#image-label"
 	});
 
-	var createUser = new  CreateUser($("#create-user-form"), $("#cancel-button"));
-
+	var createUser = new  CreateUser($("#create-user-form"), $("#cancel-button"), $('#create-button'));       
+        
 	createUser.init();
 });
 
-var CreateUser = function(form,  cancelButton) {
+var CreateUser = function(form,  cancelButton, createButton) {
 	this.form = form;	
 	this.cancelButton = cancelButton;
+        this.createButton = createButton;
 	var selft = this;
 	
 	var messageUser = $("#message-user");
@@ -20,34 +21,38 @@ var CreateUser = function(form,  cancelButton) {
 	var addEventClick= function () {
 		selft.cancelButton.click(function () {
 			location.href = "/action/login";
-		})
-		
-		selft.form.submit(function (event) {
-			createUser(event);
-		})
+		});
+                
+                selft.createButton.click(function (event) {
+			createUser2(event);
+		});
+                
 	};
-	
-	var createUser = function(event) {
+        
+        var createUser2 = function(event) {
 		event.preventDefault();
 
 		if(selft.form.valid()) {
-			var name = selft.form.find( "input[name='name']" ).val();
-			var lastName = selft.form.find( "input[name='last_name']" ).val();
-			var email = selft.form.find( "input[name='email']" ).val();
-			var username = selft.form.find( "input[name='username']" ).val();
-			var password = selft.form.find( "input[name='password']" ).val();
-
-			var url = selft.form.attr( "action" );
-
-			// Send the data using post
-			var posting = $.post( url, { name: name, last_name: lastName, email: email, username: username, password: password} );
-
-			// Put the results in a div
-			posting.done(function( data ) {
-				location.href = "/action/login"; 
-			}).fail(function( data ) {
-				errorMessage(data.responseJSON.message); 
-			});
+                        var formData = selft.form.serialize();
+                        console.log(formData);
+                    
+			var url1 = selft.form.attr( "action" );
+		
+                         var vcfData = new FormData(selft.form[0]); 
+                          $.ajax({
+                                url : url1,
+                                type : "post",
+                                data : vcfData,
+                                processData: false,
+                                contentType: false,
+                                cache : false,
+                                success : function(data) {
+                                    location.href = "/action/login"; 
+                                },
+                                error: function(data){
+                                    errorMessage(data.responseJSON.message); 
+                                }
+                            });   
 		}
 	};
 	
