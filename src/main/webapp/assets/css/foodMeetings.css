@@ -1,5 +1,5 @@
 .meetings-container {
-    margin-top: 90px;
+    margin-top: 20px;
     margin-bottom: 200px;
 }
 
@@ -18,4 +18,16 @@
 
 .grid-item .card:hover {
     box-shadow: 0 0 10px #515151;
+}
+
+.new-meeting-img {
+	margin-top: 5%;
+}
+
+img.perfect-fit {
+	object-fit: cover;
+}
+
+.margin-bottom-0 {	
+	margin-bottom: 0 !important;
 }

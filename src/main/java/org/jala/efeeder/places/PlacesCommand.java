@@ -1,4 +1,5 @@
-package org.jala.efeeder.suggestion;
+
+package org.jala.efeeder.places;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,17 +10,18 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-
+import org.jala.efeeder.suggestion.Place;
 /**
  *
- * @author Amir
+ * @author ricardo_ramirez
  */
 @Command
-public class SuggestionsCommand implements CommandUnit {
+public class PlacesCommand implements CommandUnit {
 	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 5";
 
 	@Override
 	public Out execute(In parameters) throws Exception {
+		Out out = new DefaultOut();
 		PreparedStatement preparedStatement = parameters.getConnection().prepareStatement(TOP_FIVE_PLACES_QUERY);
 		ResultSet resultSet = preparedStatement.executeQuery();
 		List<Place> places = new ArrayList<>();
@@ -31,10 +33,7 @@ public class SuggestionsCommand implements CommandUnit {
 					resultSet.getString("direction"),
 					resultSet.getString("image_link")));
 		} 
-		Out out = new DefaultOut();
 		out.addResult("places", places);
-		String id = parameters.getParameter("id_food_meeting");
-		out.addResult("id", id);
 		return out.forward("suggestion/suggestions.jsp");
 	}
 }
