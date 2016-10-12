@@ -70,7 +70,8 @@ var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
 			"detailedViewDate": moment(meeting.eventDate).format('MMMM Do YYYY, h:mm a'),
 			"width": meeting.width,
 			"statusColor": meeting.status === 'Finish' ? 'new badge blue' : 'new badge',
-			"imgRedirectTo": getImagRedirectTo(meeting.id, meeting.status)
+			"imgRedirectTo": getImagRedirectTo(meeting.id, meeting.status),
+			"userOwner": meeting.userOwner.name + ' ' +meeting.userOwner.lastName,
 		};
 
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
