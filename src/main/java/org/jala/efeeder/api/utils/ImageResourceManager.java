@@ -66,7 +66,6 @@ public class ImageResourceManager {
     private String processUploadedFile(FileItem item, String token) throws Exception {
         String webAppPath;
         webAppPath = getPathImagesContainer();
-        System.out.println("el token es :" + token);
 
         diretorio = new File(Paths.get(webAppPath, ASSETS_FILE, IMG_FILE).toString());
         if (!diretorio.exists()) {
@@ -78,7 +77,6 @@ public class ImageResourceManager {
         }
         fileName = token + fileName;
         File uploadedFile = new File(diretorio, fileName);
-        System.out.println("el path donde guardara es :" + uploadedFile.getPath());
         item.write(uploadedFile);
         return fileName;
     }

@@ -52,8 +52,6 @@ public class ImageCommand implements CommandUnit {
 
         String base64String = Base64.encode(baos.toByteArray());
         baos.close();
-        System.err.println("La extencion es :" + FilenameUtils.getExtension(path));
-        System.err.println("El path es :" + path);
 
         byte[] bytearray = Base64.decode(base64String);
         return OutBuilder.response(contentTypeName, bytearray);

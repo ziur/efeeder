@@ -68,7 +68,6 @@ public class CommandServlet extends HttpServlet {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             In parameters;
             if (isMultipart) {
-                System.out.println("in under the is multipartttttttttt");
                 ImageResourceManager sourceImageM = new ImageResourceManager(getServletContext());
                 parameters = sourceImageM.saveImage(request);
             } else {

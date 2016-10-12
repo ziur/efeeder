@@ -34,7 +34,6 @@ var CreateUser = function(form,  cancelButton, createButton) {
 
 		if(selft.form.valid()) {
                         var formData = selft.form.serialize();
-                        console.log(formData);
                     
 			var url1 = selft.form.attr( "action" );
 		
