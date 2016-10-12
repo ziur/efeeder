@@ -6,10 +6,12 @@
     <jsp:attribute name="javascript">
         <script src="/assets/js/foodMeetings.js"></script>
         <script src="/assets/js/searchImage.js"></script>
+		
     </jsp:attribute>
 	<jsp:body>
 		<div class="meetings-container">
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
+				<%@include file='searchImage.jsp'%>
 			</div>
 			<div class="food-meetings row">					
 			</div>	
@@ -39,8 +41,10 @@
 			<div id="new-meeting" class='grid-item col s12' data-date="0">
 				<div class="card row col s12">
 					<div class="new-meeting-img col s3 card-image waves-effect waves-block waves-light">
-						<img id="new-image-card-id" class="new-meeting-img"
+						<a class="waves-effect waves-light modal-trigger" href="#search-image-modal-id">
+						<img id="new-image-card-id" class="new-meeting-img" data-target="search-image-modal-id"
 							src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+						</a>
 					</div>
 					<div class="col s9 card-content">
 						<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
