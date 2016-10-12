@@ -16,6 +16,9 @@ import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
+import org.jala.efeeder.servlets.websocket.avro.UserOwner;
+import org.jala.efeeder.user.User;
+import org.jala.efeeder.user.UserUtilDataBase;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -32,17 +35,19 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 		PreparedStatement stm = context.getConnection()
 										.prepareStatement(INSERT_FOOD_MEETING_SQL, RETURN_GENERATED_KEYS);
 
-		List<MessageEvent> messages = context.getMessageContext().getEvents();        
+		List<MessageEvent> messages = context.getMessageContext().getEvents();
+		int userId = context.getMessageContext().getUser().intValue();
+
 		CreateFoodMeetingEvent createMeetingEvent = (CreateFoodMeetingEvent)messages.get(0).getEvent();
 
-		Timestamp eventDate = new Timestamp(Long.parseLong(createMeetingEvent.getEventDate().toString()));		
+		Timestamp eventDate = new Timestamp(Long.parseLong(createMeetingEvent.getEventDate().toString()));
 		Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
 		stm.setString(1, createMeetingEvent.getName().toString());
 		stm.setString(2, createMeetingEvent.getImageLink().toString());
 		stm.setString(3, FoodMeeting.DEFAULT_FOOD_MEETING_STATUS);
 		stm.setTimestamp(4, eventDate);
-		stm.setInt(5, context.getUser().getId());
+		stm.setInt(5, userId);
 		stm.setTimestamp(6, createdAt);
 
 		stm.executeUpdate();
@@ -51,12 +56,16 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 		generatedKeysResultSet.next();
 		int meetingId = generatedKeysResultSet.getInt(1);
 		stm.close();
+		
+		User user = UserUtilDataBase.getUser(context.getConnection(), userId);
 
 		FoodMeeting foodMeeting = new FoodMeeting(meetingId, createMeetingEvent.getName().toString(),
-			createMeetingEvent.getImageLink().toString(), eventDate, context.getUser()
+			createMeetingEvent.getImageLink().toString(), eventDate, user
 			);
 
 		List<MessageEvent> events = new ArrayList<>();
+
+		UserOwner userOwner = new UserOwner(user.getName(), user.getLastName());
 
 		events.add(MessageEvent.newBuilder()
 			.setEvent(
@@ -67,11 +76,12 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 				.setStatus(foodMeeting.getStatus())
 				.setEventDate(foodMeeting.getEventDate().getTime())
 				.setWidth(foodMeeting.getWidth())
+				.setUserOwner(userOwner)
 				.build()
 			)
 			.build()
 		);
-		MessageContext messageContext = MessageContext.newBuilder()				
+		MessageContext messageContext = MessageContext.newBuilder()
 											.setRoom(createMeetingRoomId)
 											.setUser(0)
 											.setEvents(events)

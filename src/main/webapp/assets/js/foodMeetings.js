@@ -84,7 +84,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
 			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
-			"userOwner": newMeeting.userOwner.name + ' ' + newMeeting.userOwner.lastName,
+			"userOwner": newMeeting.userOwner.name + ' ' +newMeeting.userOwner.lastName,
 		};
 
 		self.meetings.push(newMeeting);
@@ -203,6 +203,21 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 			}
 		});
 	};
+	
+	var getCookie = function (cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length,c.length);
+	        }
+	    }
+	    return "";
+	}
 
 	var addClickEvents = function() {
 		addMeetingForm.submit(function(event) {
@@ -220,7 +235,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 				self.communicationService.sendMessage(
 					{
-						user: 1,
+						user: parseInt(getCookie("userId")),
 						room: self.createMeetingRoomId,
 						command: "CreateFoodMeeting",
 						events: [
@@ -232,7 +247,11 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 										eventDate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").valueOf(),
 										status: "",
 										imageLink: imageLink,
-										width: 0
+										width: 0,
+										userOwner: {
+											name: "XXXXXXX",
+											lastName: "XXXXXXX"
+										}
 									}
 								}
 							}

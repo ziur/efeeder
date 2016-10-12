@@ -13,7 +13,7 @@
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
 				<%@include file='searchImage.jsp'%>
 			</div>
-			<div class="food-meetings row">					
+			<div class="food-meetings row">
 			</div>	
 			<div id="preloader" class="col s12 center-align">
 				<div class="valign preloader-wrapper big active">
