@@ -4,9 +4,9 @@ $(function () {
 	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
 	var $newMeeting = $("#new-meeting");
 
-	var foodMeetings = $('.food-meetings');
+	var foodMeetingsContainer = $('.food-meetings');
 
-	var foodMeetingsList = new FoodMeetingsList(foodMeetings, $newMeetingPlaceholder);
+	var foodMeetingsList = new FoodMeetingsList(foodMeetingsContainer, $newMeetingPlaceholder);
 	foodMeetingsList.init();
 
 	var communicationService = new CommunicationService();
@@ -22,7 +22,8 @@ $(function () {
 				console.log('WebSockets connected by FoodMeetings.');
 				break;
 
-			case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
+			case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":				
+				
 				foodMeetingsList.addMeeting(eventMessage);
 				newFoodMeeting.reset();
 
@@ -35,47 +36,64 @@ $(function () {
 
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 
-	var newFoodMeeting = new NewFoodMeeting(foodMeetings, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
+	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 
 	newFoodMeeting.init();
 });
 
-var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
+var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
-	this.foodMeetings = foodMeetings;
+	this.foodMeetingsContainer = foodMeetingsContainer;
+	this.meetings = [];
 
-	self = this;
+	var self = this;
 
 	var foodMeetingTmpl;
 
 	$.get('/assets/templates/foodMeeting.html', function(template) {
 		foodMeetingTmpl = template;        
 		$.get('/action/getAllMeetings', function(meetings){
+			self.meetings = meetings;
 			_.each(meetings, function(meeting){
 				insertMeeting(meeting);
 			})
 		});
 	});
 
-	var insertMeeting = function(meeting) {
-		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
+	var insertMeeting = function(newMeeting) {
+		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);		
+		var imageHeight = 188;
+		var firstImageHeight = 500;
+
+		var isNewMeetingFirst = _.every(self.meetings, function(meeting){
+			return newMeeting.eventDate <= meeting.eventDate;
+		});
 
 		var data = { 
-			"id": meeting.id, 
-			"name" : meeting.name, 
-			"imageLink": meeting.imageLink, 
-			"status": meeting.status, 
-			"date": meeting.eventDate, 
-			"quickViewDate": moment(meeting.eventDate).calendar(),
-			"detailedViewDate": moment(meeting.eventDate).format('MMMM Do YYYY, h:mm a'),
-			"width": meeting.width,
-			"statusColor": meeting.status === 'Finish' ? 'new badge blue' : 'new badge',
-			"imgRedirectTo": getImagRedirectTo(meeting.id, meeting.status)
+			"id": newMeeting.id, 
+			"name" : newMeeting.name, 
+			"imageLink": newMeeting.imageLink, 
+			"status": newMeeting.status, 
+			"date": newMeeting.eventDate, 
+			"quickViewDate": moment(newMeeting.eventDate).calendar(),
+			"detailedViewDate": moment(newMeeting.eventDate).format('MMMM Do YYYY, h:mm a'),
+			"width": newMeeting.width,
+			"styles": isNewMeetingFirst ? "is-first col s12 l9" : "col s6 l3",
+			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
+			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
+			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status)
 		};
-
+		
+		self.meetings.push(newMeeting);
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
-		$newFoodMeeting.imagesLoaded().always(function(){
-			foodMeetings.isotope('insert', $newFoodMeeting);
+		$newFoodMeeting.imagesLoaded().always(function(){			
+			if(isNewMeetingFirst) {
+				$(".is-first").addClass('s6 l3');
+				$(".is-first").find('img').css('height', firstImageHeight + 'px');
+				$(".is-first").removeClass('is-first s12 l9');				
+			}
+			
+			foodMeetingsContainer.isotope('insert', $newFoodMeeting);			
 			$("#preloader").hide();	
 		});
 	}
@@ -97,19 +115,18 @@ var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
 	}
 
 	var addEvent = function() {
-		self.foodMeetings.isotope({
+		self.foodMeetingsContainer.isotope({
 			itemSelector: '.grid-item',
-			layoutMode: 'fitRows',
-			sortAscending: true,
+			layoutMode: 'packery',
 			getSortData: {
 				date: function(itemElem) {
 					return $(itemElem).data("date");
 				}
 			},
 			sortBy : 'date',
-		});
+		});		
 
-		self.foodMeetings.isotope('insert', self.newMeetingPlaceholder);
+		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder);
 	};
 
 	return {
@@ -121,8 +138,8 @@ var FoodMeetingsList = function(foodMeetings, newMeetingPlaceholder){
 	};
 };
 
-var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting){
-	this.foodMeetings = foodMeetings;
+var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting){
+	this.foodMeetingsContainer = foodMeetingsContainer;
 	this.createMeetingRoomId = createMeetingRoomId;
 	this.communicationService = communicationService;
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
@@ -237,8 +254,8 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		});
 		
 		$("#new-meeting-hello-meessage").click(function(){
-			self.foodMeetings.isotope('remove', self.newMeetingPlaceholder);
-			self.foodMeetings.isotope('insert', self.newMeeting);  
+			self.foodMeetingsContainer.isotope('remove', self.newMeetingPlaceholder);
+			self.foodMeetingsContainer.isotope('insert', self.newMeeting);  
 		});
 		
 	};
@@ -247,14 +264,14 @@ var NewFoodMeeting = function(foodMeetings, createMeetingRoomId, communicationSe
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
 
-		self.foodMeetings.isotope('remove', self.newMeeting);
-		self.foodMeetings.isotope('insert', self.newMeetingPlaceholder); 
+		self.foodMeetingsContainer.isotope('remove', self.newMeeting);
+		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder); 
 	};
 
 	var onModalHide = function() {
 		var imageLink = $("#image-link-id").val();
 		$("#new-image-card-id").attr("src", imageLink);
-		foodMeetings.isotope('layout');
+		foodMeetingsContainer.isotope('layout');
 	};
 
 	return {
