@@ -1,6 +1,7 @@
 package org.jala.efeeder.servlets;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -149,6 +150,7 @@ public class CommandServlet extends HttpServlet {
         SettingsManager settings
                 = (SettingsManager) getServletContext().getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
-        return "" + settings.getData("image_folder_path");
+        String startPath = "" + settings.getData("image_folder_path");
+        return Paths.get(startPath, ImageResourceManager.ASSETS_FILE, ImageResourceManager.IMG_FILE).toString();
     }
 }
