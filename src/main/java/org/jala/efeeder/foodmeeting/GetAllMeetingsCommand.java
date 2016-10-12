@@ -33,7 +33,7 @@ public class GetAllMeetingsCommand implements CommandUnit {
 
 		List<FoodMeeting> foodMeetings = new ArrayList<>();
 		while (resultSet.next()) {
-			User userOwner = UserUtilDataBase.getUser(parameters, resultSet.getInt(7));
+			User userOwner = UserUtilDataBase.getUser(parameters.getConnection(), resultSet.getInt(7));
 
 			foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
 					resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6), userOwner ));

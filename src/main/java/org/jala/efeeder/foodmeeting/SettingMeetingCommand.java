@@ -40,7 +40,7 @@ public class SettingMeetingCommand implements CommandUnit {
 
 		if (resultSet.next()) {
 
-			User userOwner = UserUtilDataBase.getUser(parameters, resultSet.getInt(6));
+			User userOwner = UserUtilDataBase.getUser(parameters.getConnection(), resultSet.getInt(6));
 
 			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
 					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userOwner));
