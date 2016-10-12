@@ -39,15 +39,15 @@
 				</div>
 			</div>
 			<div id="new-meeting" class='grid-item col s12' data-date="0">
-				<div class="card row col s12">
-					<div class="new-meeting-img col s3 card-image waves-effect waves-block waves-light">
-						<a class="waves-effect waves-light modal-trigger" href="#search-image-modal-id">
-						<img id="new-image-card-id" class="new-meeting-img" data-target="search-image-modal-id"
-							src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
-						</a>
-					</div>
-					<div class="col s9 card-content">
-						<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
+				<div class="card col s12 sticky-action">
+					<form id="add-meeting-form-id" role="form" action="/action/createFoodMeeting">
+						<div class="new-meeting-img col s3 card-image waves-effect waves-block waves-light">
+							<a class="waves-effect waves-light modal-trigger" href="#search-image-modal-id">
+							<img id="new-image-card-id" class="new-meeting-img" data-target="search-image-modal-id"
+								src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
+							</a>
+						</div>
+						<div class="col s9 card-content">
 							<span class="card-title activator grey-text text-darken-4">
 								<i class="material-icons right">more_vert</i>
 							</span>
@@ -64,13 +64,18 @@
 									<input id="new-time-field-id" type="text" name="time" class="validate">
 									<label for="time">Time</label>
 								</div>
-								<div class="row right col"><br><br>
-									<button id="cancelCreateMeeting" class="waves-effect waves-light btn" type="button">Cancel</button>
-									<button type="submit" id="createMeeting" class="waves-effect waves-light btn">Create</button>
-								</div>
 							</div>
-						</form>
-					</div>
+						</div>
+						<div class="col s12 card-action">
+							</br>
+							<div class="offset-m6 col s6 m3 ">
+								<button id="cancelCreateMeeting" class="waves-effect waves-light btn right" type="button">Cancel</button>
+							</div>
+							<div class="col s6 m3 ">
+								<button type="submit" id="createMeeting" class="waves-effect waves-light btn right">Create</button>
+							</div>																		
+						</div>	
+					</form>
 					<div class="card-reveal">
 						<form id="add-meeting-form-2-id" role="form">
 							<span class="card-title activator grey-text text-darken-4">
