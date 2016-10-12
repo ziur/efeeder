@@ -28,18 +28,18 @@
 				<h5 class="lighten-1 grey-text">We are loading your meetings right now!</h5>
 			</div>
 		</div>
-		<div class="hide">			
+		<div class="hide">
 			<div id="new-meeting-placeholder" class="grid-item row col s12" data-date="0">
 				<div id="new-meeting-hello-meessage" class="card col s12 m6 offset-m3 pointer center">
 					<div class="card-content">
 						<span class="grey-text pointer">You look hungry!... let's create a meeting!</span>
 					</div>
 				</div>
-			</div>			
+			</div>
 			<div id="new-meeting" class='grid-item col s12' data-date="0">
 				<div class="card row col s12">
 					<div class="new-meeting-img col s3 card-image waves-effect waves-block waves-light">
-						<img id="new-image-card-id" class="new-meeting-img" data-target="modal1"
+						<img id="new-image-card-id" class="new-meeting-img"
 							src="http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg">
 					</div>
 					<div class="col s9 card-content">

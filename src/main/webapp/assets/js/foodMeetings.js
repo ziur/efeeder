@@ -89,10 +89,9 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 		$newFoodMeeting.imagesLoaded().always(function(){			
 			if(isNewMeetingFirst) {
 				$(".is-first").addClass('s6 l3');
-				$(".is-first").find('img').css('height', firstImageHeight + 'px');
+				$(".is-first").find('img').css('height', imageHeight + 'px');
 				$(".is-first").removeClass('is-first s12 l9');				
-			}
-			
+			}			
 			foodMeetingsContainer.isotope('insert', $newFoodMeeting);			
 			$("#preloader").hide();	
 		});
@@ -124,7 +123,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder){
 				}
 			},
 			sortBy : 'date',
-		});		
+		});
 
 		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder);
 	};
