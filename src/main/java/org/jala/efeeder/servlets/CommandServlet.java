@@ -89,7 +89,7 @@ public class CommandServlet extends HttpServlet {
 
 			if (out.getUser() != null && session.getAttribute("user") == null) {
 				session.setAttribute("user", out.getUser());
-				Cookie cookie = new Cookie("userId", out.getUser().getId()+"");
+				Cookie cookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
 				response.addCookie(cookie);
 			}
 

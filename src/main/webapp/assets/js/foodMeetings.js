@@ -257,8 +257,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 										imageLink: imageLink,
 										width: 0,
 										userOwner: {
-											name: "XXXXXXX",
-											lastName: "XXXXXXX"
+											name: "",
+											lastName: ""
 										}
 									}
 								}
