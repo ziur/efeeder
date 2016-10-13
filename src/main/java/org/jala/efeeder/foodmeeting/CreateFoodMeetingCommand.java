@@ -18,7 +18,7 @@ import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import org.jala.efeeder.servlets.websocket.avro.UserOwner;
 import org.jala.efeeder.user.User;
-import org.jala.efeeder.user.UserUtilDataBase;
+import org.jala.efeeder.user.UserManager;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -56,8 +56,10 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 		generatedKeysResultSet.next();
 		int meetingId = generatedKeysResultSet.getInt(1);
 		stm.close();
-		
-		User user = UserUtilDataBase.getUser(context.getConnection(), userId);
+
+		UserManager userManager = new UserManager(context.getConnection());
+
+		User user = userManager.getUserById(userId);
 
 		FoodMeeting foodMeeting = new FoodMeeting(meetingId, createMeetingEvent.getName().toString(),
 			createMeetingEvent.getImageLink().toString(), eventDate, user

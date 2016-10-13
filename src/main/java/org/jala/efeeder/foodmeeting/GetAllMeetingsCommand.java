@@ -12,8 +12,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
-import org.jala.efeeder.user.User;
-import org.jala.efeeder.user.UserUtilDataBase;
+import org.jala.efeeder.user.UserManager;
 
 /**
  *
@@ -31,12 +30,13 @@ public class GetAllMeetingsCommand implements CommandUnit {
 		stm.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 		ResultSet resultSet = stm.executeQuery();
 
+		UserManager userManager = new UserManager(parameters.getConnection());
+
 		List<FoodMeeting> foodMeetings = new ArrayList<>();
 		while (resultSet.next()) {
-			User userOwner = UserUtilDataBase.getUser(parameters.getConnection(), resultSet.getInt(7));
 
 			foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-					resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6), userOwner ));
+					resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6), userManager.getUserById(resultSet.getInt(7))));
 		}
 
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(foodMeetings));

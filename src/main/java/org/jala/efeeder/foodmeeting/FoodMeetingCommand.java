@@ -13,8 +13,7 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.user.User;
-import org.jala.efeeder.user.UserUtilDataBase;
+import org.jala.efeeder.user.UserManager;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -43,11 +42,12 @@ public class FoodMeetingCommand implements CommandUnit {
 		stm.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 		ResultSet resultSet = stm.executeQuery();
 		List<FoodMeeting> foodMeetings = new ArrayList<>();
-		while (resultSet.next()) {
-			User userOwner = UserUtilDataBase.getUser(connection, resultSet.getInt(7));
 
+		UserManager userManager = new UserManager(connection);
+
+		while (resultSet.next()) {
 			foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-					resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6), userOwner));
+					resultSet.getString(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6), userManager.getUserById(resultSet.getInt(7))));
 		}
 		return foodMeetings;
 	}

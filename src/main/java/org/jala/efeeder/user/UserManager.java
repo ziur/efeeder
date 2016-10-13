@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public class UserManager {
 
-	private static final String USERS_BY_ID_QUERY = "SELECT id, name, last_name, email FROM user WHERE id IN (";
+	private static final String USERS_BY_ID_QUERY = "SELECT id, email, name, last_name, image_path FROM user WHERE id IN (";
 
 	private final Connection connection;
 
@@ -33,12 +33,32 @@ public class UserManager {
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
-				User user = new User(resultSet.getInt(1), resultSet.getString(4), resultSet.getString(2),
-						resultSet.getString(3));
+
+				int id = resultSet.getInt(1);
+				String email = resultSet.getString(2);
+				String name = resultSet.getString(3);
+				String last_name = resultSet.getString(4);
+				String image = resultSet.getString(5);
+
+				User user = new User(id, email, name, last_name, image);
 				users.add(user);
 			}
 		}
 
 		return users;
+	}
+
+	public User getUserById(int id) throws SQLException {
+
+		User user = null;
+		List<Integer> listId = new ArrayList<>();
+		listId.add(id);
+		List<User> users = getUsersById(listId);
+		if (users.isEmpty() == false)
+		{
+			user = users.get(0);
+		}
+
+		return user;
 	}
 }

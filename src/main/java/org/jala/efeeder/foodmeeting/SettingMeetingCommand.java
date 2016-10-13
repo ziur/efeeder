@@ -15,8 +15,7 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-import org.jala.efeeder.user.User;
-import org.jala.efeeder.user.UserUtilDataBase;
+import org.jala.efeeder.user.UserManager;
 
 /**
  *
@@ -38,12 +37,11 @@ public class SettingMeetingCommand implements CommandUnit {
 		preparedStatement.setInt(1, Integer.valueOf(id));
 		ResultSet resultSet = preparedStatement.executeQuery();
 
+		UserManager userManager = new UserManager(parameters.getConnection());
+
 		if (resultSet.next()) {
-
-			User userOwner = UserUtilDataBase.getUser(parameters.getConnection(), resultSet.getInt(6));
-
 			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
-					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userOwner));
+					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userManager.getUserById(resultSet.getInt(6))));
 		}
 
 		out.addResult("foodMeeting", foodMeeting);
