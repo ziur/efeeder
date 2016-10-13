@@ -34,7 +34,7 @@
                             <span id="my-order-details" class="title">${myOrder.details}</span>
                             <br />
                             <p id="my-order-cost">${myOrder.cost}</p>
-                            <p>${myUser.name} ${myUser.last_name} - ${myUser.email}</p>
+                            <p>${myUser.name} ${myUser.lastName} - ${myUser.email}</p>
                             <c:if test="${foodMeeting.status == 'Order'}">
                             	<a href="#!" id="btn-edit-my-order" class="btn-edit secondary-content">
                             		<i class="material-icons">mode_edit</i>
@@ -53,7 +53,7 @@
                             <span class="title">${order.details}</span>
                             <br/>
                             <p>${order.cost}</p>
-                            <p>${order.user.name} ${order.user.last_name} - ${order.user.email}</p>
+                            <p>${order.user.name} ${order.user.lastName} - ${order.user.email}</p>
 							<c:if test="${foodMeeting.status == 'Payment'}">
                             	<input class="secondary-content" type="checkbox" id="chk-${order.user.id}" />
                             	<label class="secondary-content" for="chk-${order.user.id}"></label>
