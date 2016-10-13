@@ -28,7 +28,7 @@ $(function() {
 
 				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
 
-					foodMeetingsList.addMeeting(eventMessage);
+					foodMeetingsList.addMeeting(eventMessage, true);
 					newFoodMeeting.reset();
 
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
@@ -57,15 +57,23 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		$.get('/action/getAllMeetings', function(meetings) {
 			self.meetings = meetings;
 			_.each(meetings, function(meeting) {
-				insertMeeting(meeting);
+				insertMeeting(meeting, false);
 			})
 		});
 	});
 
-	var insertMeeting = function(newMeeting) {
+	var insertMeeting = function(newMeeting, isWebSoccket) {
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
+		var userOwner;
+
+		if (isWebSoccket) {
+			userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"];
+		}
+		else {
+			userOwner = newMeeting.userOwner;
+		}
 
 		var isNewMeetingFirst = _.every(self.meetings, function(meeting) {
 			return newMeeting.eventDate <= meeting.eventDate;
@@ -84,7 +92,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
 			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
-			"userOwner": newMeeting.userOwner.name + ' ' +newMeeting.userOwner.lastName,
+			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
 
 		self.meetings.push(newMeeting);
