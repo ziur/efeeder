@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,6 +58,8 @@ public class CommandServlet extends HttpServlet {
 
 		if (request.getRequestURI().equals("/action/logout")) {
 			session.invalidate();
+			Cookie cookie = new Cookie("userId", "");
+			response.addCookie(cookie);
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
@@ -86,6 +89,8 @@ public class CommandServlet extends HttpServlet {
 
 			if (out.getUser() != null && session.getAttribute("user") == null) {
 				session.setAttribute("user", out.getUser());
+				Cookie cookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
+				response.addCookie(cookie);
 			}
 
 			if (out.getExitStatus() == ExitStatus.ERROR) {

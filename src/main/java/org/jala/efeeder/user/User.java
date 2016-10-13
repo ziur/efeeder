@@ -6,45 +6,47 @@
 package org.jala.efeeder.user;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author rodrigo_ruiz
  */
 @Data
+@EqualsAndHashCode(exclude={"email", "name", "lastName", "image"})
 public class User {
-    private int id;
-    private String email;
-    private String name;
-    private String last_name;
-    private String image;
+	private int id;
+	private String email;
+	private String name;
+	private String lastName;
+	private String image;
 
-    public User(int id, String email, String name, String last_name, String image) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-        this.last_name = last_name;
-        this.image = image;
-    }
-    
-    public User(int id, String email, String name, String last_name) {
-        this(email, name, last_name);
-        this.id = id;
-    }
+	public User(int id, String email, String name, String lastName, String image) {
+		this.id = id;
+		this.email = email;
+		this.name = name;
+		this.lastName = lastName;
+		this.image = image;
+	}
+	
+	public User(int id, String email, String name, String lastName) {
+		this(email, name, lastName);
+		this.id = id;
+	}
 
-    public User(String email, String name, String last_name) {
-        this.email = email;
-        this.name = name;
-        this.last_name = last_name;
-    }
+	public User(String email, String name, String lastName) {
+		this.email = email;
+		this.name = name;
+		this.lastName = lastName;
+	}
 
-    public User(int idUser, String nameUser) {
-        this.id = idUser;
-        this.name = nameUser;
-    }
+	public User(int idUser, String nameUser) {
+		this.id = idUser;
+		this.name = nameUser;
+	}
 
-    public String toString()
-    {
-        return this.name + " " + this.last_name;
-    }
+	public String toString()
+	{
+		return this.name + " " + this.lastName;
+	}
 }
