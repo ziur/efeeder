@@ -23,7 +23,7 @@
 									<img  width="350px" src="${foodMeeting.imageLink}" class="materialboxed" data-caption="${foodMeeting.name}" >
 									<ul class="collection">
 										<li class="collection-item avatar">
-											<img src="${foodMeeting.userOwner.image}" alt="" class="circle">
+											<img src="action/image?file_name=${foodMeeting.userOwner.getImage()}&type=user" alt="" class="circle">
 											<span class="title">Owner:</span>
 											<p> ${foodMeeting.userOwner}
 											</p>
