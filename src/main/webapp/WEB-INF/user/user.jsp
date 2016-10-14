@@ -24,7 +24,7 @@
 								<div class="row center-align">
 									<div id="image-preview" class="circle responsive-img">
 										<label for="image-upload" id="image-label" class="center">
-											<image class="large material-icons circle responsive-img" src="image?file_name=${user.getImage()}&type=user"/>
+											<image class="circle responsive-img" src="image?file_name=${user.getImage()}&type=user"/>
 										</label>
 										<input type="file" name="image" id="image-upload" style="display:none;"/>
 									</div>

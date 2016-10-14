@@ -22,7 +22,7 @@ var User = function() {
 
 	var addEventClick= function () {
 		cancelButton.click(function () {
-			location.href = "/action/login";
+			location.href = "/action/foodmeeting";
 		});
 		
 		if(isNewUser) {
