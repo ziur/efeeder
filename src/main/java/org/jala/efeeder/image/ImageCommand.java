@@ -45,7 +45,6 @@ public class ImageCommand implements CommandUnit {
 			case "png":
 				return readImageAndConvertToBytes(path, "png", "image/png");
 			default:
-				System.err.println("entro al jpg");
 				return readImageAndConvertToBytes(path, "jpg", "image/jpeg");
 		}
     }
