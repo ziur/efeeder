@@ -55,7 +55,6 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	$.get('/assets/templates/foodMeeting.html', function(template) {
 		foodMeetingTmpl = template;
 		$.get('/action/getAllMeetings', function(meetings) {
-			self.meetings = meetings;
 			_.each(meetings, function(meeting) {
 				insertMeeting(meeting, false);
 			})
@@ -75,9 +74,8 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			userOwner = newMeeting.userOwner;
 		}
 
-		var isNewMeetingFirst = _.every(self.meetings, function(meeting) {
-			return newMeeting.eventDate <= meeting.eventDate;
-		});
+		self.meetings.push(newMeeting);
+		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
 
 		var data = {
 			"id": newMeeting.id,
@@ -95,7 +93,6 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
 
-		self.meetings.push(newMeeting);
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
 		$newFoodMeeting.imagesLoaded().always(function() {
 			if (isNewMeetingFirst) {
