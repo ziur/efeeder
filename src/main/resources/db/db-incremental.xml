@@ -5,6 +5,86 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+	<changeSet author="rodrigo" id="user.table">
+		<createTable catalogName="efeeder" tableName="user">
+			<column name="id"   type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name"	  type="VARCHAR(200)"/>
+			<column name="last_name" type="VARCHAR(200)"/>
+			<column name="username"  type="VARCHAR(200)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="password"  type="VARCHAR(200)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="email"	 type="VARCHAR(120)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="image_path" type="VARCHAR(120)"/>
+		</createTable>
+		<createIndex catalogName="efeeder"
+				indexName="user_id_uindex"
+				tableName="user"
+				unique="true">
+			<column name="id"/>
+		</createIndex>
+		<createIndex catalogName="efeeder"
+				indexName="user_email_uindex"
+				tableName="user"
+				unique="true">
+			<column name="email"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet author="roger" id="insert.user.test">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Test"/>
+				<column name="last_name"  value="Test"/>
+				<column name="username"   value="Test"/>
+				<column name="password"   value="0cbc6611f5540bd0809a388dc95a615b"/>
+				<column name="email"	  value="test@test.com"/>
+				<column name="image_path" value="empty"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="roger" id="insert.user.alejandro">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Alejandro"/>
+				<column name="last_name"  value="Ruiz"/>
+				<column name="username"   value="ARuiz"/>
+				<column name="password"   value="eb047191cc210ca039bedc203d75f849"/>
+				<column name="email"	  value="alejandro.ruiz@jalasoft.com"/>
+				<column name="image_path" value="empty"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="roger" id="insert.user.amir">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Amir"/>
+				<column name="last_name"  value="Aranibar"/>
+				<column name="username"   value="AAranibar"/>
+				<column name="password"   value="87d61b7bb95c4d9fd3bbf6dd393f39e2"/>
+				<column name="email"	  value="amir.aranibar@jalasoft.com"/>
+				<column name="image_path" value="empty"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="roger" id="insert.user.ricardo">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Ricardo"/>
+				<column name="last_name"  value="Ramirez"/>
+				<column name="username"   value="RRamirez"/>
+				<column name="password"   value="74e51c42cf9fb9d73f1bec7bde6be0c4"/>
+				<column name="email"	  value="ricardo.ramirez@jalasoft.com"/>
+				<column name="image_path" value="empty"/>
+		</insert>
+	</changeSet>
+
     <changeSet author="alexander" id="places.table">
         <createTable catalogName="efeeder" tableName="places">
             <column name="id"   type="INT(11)" autoIncrement="true">
@@ -41,8 +121,18 @@
             <column name="image_link"       type="VARCHAR(500)"/>
             <column name="status"           type="VARCHAR(50)"/>
             <column name="event_date"       type="DATETIME"/>
+            <column name="id_user" type="INT(11)">
+                <constraints nullable="true"/>
+            </column>
             <column name="created_at"       type="DATETIME"/>
         </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_user"
+                baseTableName="food_meeting"
+                constraintName="food_meeting_id_user_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="user"/>
     </changeSet>
 
     <changeSet author="alexander" id="insert.place.rellenos">
@@ -63,6 +153,7 @@
             <column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="now()"/>
+            <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
@@ -74,6 +165,7 @@
             <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+            <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
@@ -85,6 +177,7 @@
             <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+            <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
@@ -107,6 +200,7 @@
             <column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+            <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
         </insert>
     </changeSet>
@@ -118,87 +212,8 @@
             <column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+            <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="rodrigo" id="user.table">
-        <createTable catalogName="efeeder" tableName="user">
-            <column name="id"   type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="name"      type="VARCHAR(200)"/>
-            <column name="last_name" type="VARCHAR(200)"/>
-            <column name="username"  type="VARCHAR(200)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="password"  type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="email"     type="VARCHAR(120)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="image_path" type="VARCHAR(120)"/>
-        </createTable>
-        <createIndex catalogName="efeeder"
-                indexName="user_id_uindex"
-                tableName="user"
-                unique="true">
-            <column name="id"/>
-        </createIndex>
-        <createIndex catalogName="efeeder"
-                indexName="user_email_uindex"
-                tableName="user"
-                unique="true">
-            <column name="email"/>
-        </createIndex>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.user.test">
-        <insert catalogName="efeeder"
-                tableName="user">
-                <column name="name"       value="Test"/>
-                <column name="last_name"  value="Test"/>
-                <column name="username"   value="Test"/>
-                <column name="password"   value="0cbc6611f5540bd0809a388dc95a615b"/>
-                <column name="email"      value="test@test.com"/>
-                <column name="image_path" value="empty"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.user.alejandro">
-        <insert catalogName="efeeder"
-                tableName="user">
-                <column name="name"       value="Alejandro"/>
-                <column name="last_name"  value="Ruiz"/>
-                <column name="username"   value="ARuiz"/>
-                <column name="password"   value="eb047191cc210ca039bedc203d75f849"/>
-                <column name="email"      value="alejandro.ruiz@jalasoft.com"/>
-                <column name="image_path" value="empty"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.user.amir">
-        <insert catalogName="efeeder"
-                tableName="user">
-                <column name="name"       value="Amir"/>
-                <column name="last_name"  value="Aranibar"/>
-                <column name="username"   value="AAranibar"/>
-                <column name="password"   value="87d61b7bb95c4d9fd3bbf6dd393f39e2"/>
-                <column name="email"      value="amir.aranibar@jalasoft.com"/>
-                <column name="image_path" value="empty"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="roger" id="insert.user.ricardo">
-        <insert catalogName="efeeder"
-                tableName="user">
-                <column name="name"       value="Ricardo"/>
-                <column name="last_name"  value="Ramirez"/>
-                <column name="username"   value="RRamirez"/>
-                <column name="password"   value="74e51c42cf9fb9d73f1bec7bde6be0c4"/>
-                <column name="email"      value="ricardo.ramirez@jalasoft.com"/>
-                <column name="image_path" value="empty"/>
         </insert>
     </changeSet>
 

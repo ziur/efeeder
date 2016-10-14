@@ -28,7 +28,7 @@ $(function() {
 
 				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
 
-					foodMeetingsList.addMeeting(eventMessage);
+					foodMeetingsList.addMeeting(eventMessage, true);
 					newFoodMeeting.reset();
 
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
@@ -57,15 +57,23 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		$.get('/action/getAllMeetings', function(meetings) {
 			self.meetings = meetings;
 			_.each(meetings, function(meeting) {
-				insertMeeting(meeting);
+				insertMeeting(meeting, false);
 			})
 		});
 	});
 
-	var insertMeeting = function(newMeeting) {
+	var insertMeeting = function(newMeeting, isWebSoccket) {
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
+		var userOwner;
+
+		if (isWebSoccket) {
+			userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"];
+		}
+		else {
+			userOwner = newMeeting.userOwner;
+		}
 
 		var isNewMeetingFirst = _.every(self.meetings, function(meeting) {
 			return newMeeting.eventDate <= meeting.eventDate;
@@ -83,7 +91,8 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"styles": isNewMeetingFirst ? "is-first col s12 l9" : "col s6 l3",
 			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
 			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
-			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status)
+			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
+			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
 
 		self.meetings.push(newMeeting);
@@ -152,6 +161,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 	var cancelMeetingBtn = $("#cancelCreateMeeting");
 
 	var defaultImage = "http://mainefoodstrategy.org/wp-content/uploads/2015/04/HealthyFood_Icon.jpg";
+	var defaultDate = moment(new Date()).format("D MMMM, YYYY");
+	var defaultTime = moment(new Date().getTime() + (3 * 60 * 60 * 1000)).format("HH:mm");
 
 	self = this;
 
@@ -160,6 +171,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 			selectMonths: true,
 			selectYears: 15,
 			closeOnSelect: true,
+			formatSubmit: 'd mmmm,yyyy',
+			clear: '',
 			onSet: function(arg) {
 				if ('select' in arg) {
 					this.close();
@@ -174,34 +187,49 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 		});
 	};
 
+	var initDateTime = function() {
+		$('#new-date-field-id').val(defaultDate);
+		$('#new-time-field-id').val(defaultTime);
+
+	};
 	var addNewMeetingValidate = function() {
-		addMeetingForm.validate({
+		$.validator.setDefaults({
+			errorClass: 'invalid',
+			validClass: "valid",
 			errorPlacement: function(error, element) {
-				var placement = $(element).data('error');
-				if (placement) {
-					$(placement).append(error)
-				} else {
-					$(error).addClass("red-text");
-					$(element).addClass("invalid ");
-					error.insertAfter(element);
-				}
+				$(element)
+					.closest("form")
+					.find("label[for='" + element.attr("id") + "']")
+					.attr('data-error', error.text());
 			},
-			errorElement: "div",
-			rules: {
-				meeting_name: "required",
-				time: "required",
-				date: {
-					required: true,
-					date: true
-				}
-			},
-			messages: {
-				meeting_name: "Please enter your meeting name",
-				date: "Please enter a date",
-				time: "Please enter a time",
+			submitHandler: function(form) {
+				console.log('form ok');
 			}
 		});
+
+		addMeetingForm.validate({
+			rules: {
+				meeting_name: "required"
+			}
+		});
+
+
 	};
+
+	var getCookie = function(cname) {
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
 
 	var addClickEvents = function() {
 		addMeetingForm.submit(function(event) {
@@ -219,7 +247,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 				self.communicationService.sendMessage(
 					{
-						user: 1,
+						user: parseInt(getCookie("userId")),
 						room: self.createMeetingRoomId,
 						command: "CreateFoodMeeting",
 						events: [
@@ -231,7 +259,11 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 										eventDate: moment(date + " " + time, "DD MMMM, YYYY hh:mm").valueOf(),
 										status: "",
 										imageLink: imageLink,
-										width: 0
+										width: 0,
+										userOwner: {
+											name: "",
+											lastName: ""
+										}
 									}
 								}
 							}
@@ -258,6 +290,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 	var resetNewMeetingForm = function() {
 		$("#add-meeting-form-id").trigger("reset");
 		$("#new-image-card-id").attr("src", defaultImage);
+		initDateTime();
 
 		self.foodMeetingsContainer.isotope('remove', self.newMeeting);
 		self.foodMeetingsContainer.isotope('insert', self.newMeetingPlaceholder);
@@ -280,15 +313,16 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 	var initImageModal = function() {
 		$('.modal-trigger').leanModal();
-	}
+	};
 	return {
 		init: function() {
-			addFieldEvent()
+			addFieldEvent();
 			addNewMeetingValidate();
 			addClickEvents();
 			initImageModal();
+			initDateTime();
 		},
-		reset: resetNewMeetingForm,
+		reset: resetNewMeetingForm
 	};
 };
 

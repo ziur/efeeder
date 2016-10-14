@@ -13,7 +13,7 @@
 			<div id="search-image-modal-id" class="modal modal-fixed-footer" >
 				<%@include file='searchImage.jsp'%>
 			</div>
-			<div class="food-meetings row">					
+			<div class="food-meetings row">
 			</div>	
 			<div id="preloader" class="col s12 center-align">
 				<div class="valign preloader-wrapper big active">
@@ -57,7 +57,7 @@
 									<label for="meeting_name">Meeting Name</label>
 								</div>
 								<div class="input-field col s8">
-									<input id="new-date-field-id" type="text" name="date" class="datepicker validate">
+									<input id="new-date-field-id" type="text" name="date" class="datepicker" required>
 									<label for="date">Date</label>
 								</div>
 								<div class="input-field col s4">

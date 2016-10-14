@@ -13,6 +13,9 @@ and open the template in the editor.
     width: 200px;
 }
 #image-seccion-id {
-    width: 100%;
+    width: 60px;
     height: 60px;
+}
+#image_container_id {
+    text-align: right;
 }

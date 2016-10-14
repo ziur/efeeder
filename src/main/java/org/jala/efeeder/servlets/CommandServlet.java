@@ -1,12 +1,14 @@
 package org.jala.efeeder.servlets;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +58,8 @@ public class CommandServlet extends HttpServlet {
 
 		if (request.getRequestURI().equals("/action/logout")) {
 			session.invalidate();
+			Cookie cookie = new Cookie("userId", "");
+			response.addCookie(cookie);
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
@@ -85,6 +89,8 @@ public class CommandServlet extends HttpServlet {
 
 			if (out.getUser() != null && session.getAttribute("user") == null) {
 				session.setAttribute("user", out.getUser());
+				Cookie cookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
+				response.addCookie(cookie);
 			}
 
 			if (out.getExitStatus() == ExitStatus.ERROR) {
@@ -102,35 +108,35 @@ public class CommandServlet extends HttpServlet {
 		ResponseAction action = out.getResponseAction();
 
 		switch (action.getResponseType()) {
-		case REDIRECT:
-			response.sendRedirect(action.getUrl());
-			break;
-		case FORWARD:
-			for (Map.Entry<String, Object> result : out.getResults()) {
-				request.setAttribute(result.getKey(), result.getValue());
-			}
-			request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
-			break;
-		case MESSAGE:
-			String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-			for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
-				response.addHeader(header.getKey(), header.getValue());
-			}
-			if (ExitStatus.FAIL == out.getExitStatus()) {
-				response.setStatus(400);
-			}
-			response.setContentType(contentType);
-			response.getWriter().write((String) out.getBody());
-			break;
-		case MESSAGE_BYTES:
-			String contentType1 = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
-			for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
-				response.addHeader(header.getKey(), header.getValue());
-			}
-			byte[] bytes = (byte[]) out.getBody();
-			response.setContentType(contentType1);
-			response.setContentLength(bytes.length);
-			response.getOutputStream().write(bytes);
+			case REDIRECT:
+				response.sendRedirect(action.getUrl());
+				break;
+			case FORWARD:
+				for (Map.Entry<String, Object> result : out.getResults()) {
+					request.setAttribute(result.getKey(), result.getValue());
+				}
+				request.getRequestDispatcher(action.getFordwarUrl()).forward(request, response);
+				break;
+			case MESSAGE:
+				String contentType = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+				for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+					response.addHeader(header.getKey(), header.getValue());
+				}
+				if (ExitStatus.FAIL == out.getExitStatus()) {
+					response.setStatus(400);
+				}
+				response.setContentType(contentType);
+				response.getWriter().write((String) out.getBody());
+				break;
+			case MESSAGE_BYTES:
+				String contentType1 = out.getHeaders().remove(DefaultOut.CONTENT_TYPE);
+				for (Map.Entry<String, String> header : out.getHeaders().entrySet()) {
+					response.addHeader(header.getKey(), header.getValue());
+				}
+				byte[] bytes = (byte[]) out.getBody();
+				response.setContentType(contentType1);
+				response.setContentLength(bytes.length);
+				response.getOutputStream().write(bytes);
 		}
 	}
 
@@ -150,6 +156,7 @@ public class CommandServlet extends HttpServlet {
 		SettingsManager settings = (SettingsManager) getServletContext()
 				.getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
-		return "" + settings.getData("image_folder_path");
+		String startPath = "" + settings.getData("image_folder_path");
+		return Paths.get(startPath, ImageResourceManager.ASSETS_FILE, ImageResourceManager.IMG_FILE).toString();
 	}
 }
