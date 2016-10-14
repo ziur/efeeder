@@ -41,8 +41,7 @@ public class CreateUserCommand implements CommandUnit{
 		try {
 			UserManager userManager = new UserManager(parameters.getConnection());
 
-			if (isNew)
-			{
+			if (isNew){
 				userManager.insertUser(user);
 			}
 			else{

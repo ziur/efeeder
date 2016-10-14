@@ -15,7 +15,7 @@
 	</jsp:attribute>
 	
 	<jsp:body>
-		<div class="row" style="margin-top: 10%;">
+		<div class="row">
 			<div class="row">
 				<div class="col offset-m3 s12 m6">
 					<div class="card">
@@ -65,11 +65,9 @@
 										<c:choose>
 											<c:when test="${newUser}">
 												<button id="create-button" class="btn btn-primary" type="submit">Add User</button>
-												<br />
 											</c:when>	
 											<c:otherwise>
 												<button id="update-button" class="btn btn-primary" type="submit">Update User</button>
-												<br />
 											</c:otherwise>
 										</c:choose>
 									</div>

@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FilenameUtils;
@@ -62,8 +61,7 @@ public class ImageCommand implements CommandUnit {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
 		BufferedImage img = null;
 
-		try{
-			
+		try {
 			img = ImageIO.read(imagenFile);
 		}
 		catch (IIOException e) {
