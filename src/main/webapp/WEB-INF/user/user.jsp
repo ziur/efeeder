@@ -11,7 +11,7 @@
 
 <t:template>
 	<jsp:attribute name="javascript">
-		<script src="/assets/js/createUser.js"></script>
+		<script src="/assets/js/user.js"></script>
 	</jsp:attribute>
 	
 	<jsp:body>
@@ -24,7 +24,7 @@
 								<div class="row center-align">
 									<div id="image-preview" class="circle responsive-img">
 										<label for="image-upload" id="image-label" class="center">
-											<i class="large material-icons">mode_edit</i>
+											<image class="large material-icons circle responsive-img" src="image?file_name=${user.getImage()}&type=user"/>
 										</label>
 										<input type="file" name="image" id="image-upload" style="display:none;"/>
 									</div>
@@ -34,23 +34,23 @@
 								</div>
 								<div class="row">
 									<div class="input-field col s6">
-										<input class="validate" id="name" type="text" name="name"  autocomplete="off"/>
+										<input class="validate" id="name" type="text" name="name"  autocomplete="off" value="${user.name}"/>
 										<label for="name"  >Name.</label>
 									</div>
 									<div class="input-field col s6">
-										<input class="validate" id="last_name" type="text" name="last_name"  autocomplete="off"/>
+										<input class="validate" id="last_name" type="text" name="last_name"  autocomplete="off" value="${user.lastName}"/>
 										<label for="last_name">Last Name.</label>
 									</div>
 									<div class="input-field col s12">
-										<input class="validate" id="email" type="email" name="email"  autocomplete="off"/>
+										<input class="validate" id="email" type="email" name="email"  autocomplete="off" value="${user.email}"/>
 										<label for="email">Email.</label>
 									</div>
 									<div class="input-field col s12">
-										<input class="validate" id="username" type="text" name="username"  autocomplete="off"/>
+										<input class="validate" id="username" type="text" name="username"  autocomplete="off" value="${user.userName}"/>
 										<label for="username">User name.</label>
 									</div>
 									<div class="input-field col s12">
-										<input class="validate" id="password" type="password" name="password" />
+										<input class="validate" id="password" type="password" name="password"/>
 										<label for="pasword">Password.</label>
 									</div>
 									<div class="input-field col s12">
@@ -60,9 +60,18 @@
 								</div>
 								<div class="row">
 									<div class="right">
-										<input type="hidden" id="hidden-field" name="inputName" value="hdnSalt">
+										<input type="hidden" id="new-user-hiden" name="inputName" value="${newUser}">
 										<button id="cancel-button" class="btn btn-primary" type="button">Cancel</button>
-										<button id="create-button" class="btn btn-primary" type="submit">Add User</button>
+										<c:choose>
+											<c:when test="${newUser}">
+												<button id="create-button" class="btn btn-primary" type="submit">Add User</button>
+												<br />
+											</c:when>	
+											<c:otherwise>
+												<button id="update-button" class="btn btn-primary" type="submit">Update User</button>
+												<br />
+											</c:otherwise>
+										</c:choose>
 									</div>
 								</div>
 							</form>

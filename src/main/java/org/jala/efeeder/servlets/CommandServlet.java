@@ -63,7 +63,8 @@ public class CommandServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-				&& !request.getRequestURI().equals("/action/CreateUser") && session.getAttribute("user") == null) {
+				&& !request.getRequestURI().equals("/action/image") && !request.getRequestURI().equals("/action/CreateUser")
+				&& session.getAttribute("user") == null) {
 
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
@@ -77,17 +78,21 @@ public class CommandServlet extends HttpServlet {
 				parameters = InBuilder.createIn(request);
 			}
 			DatabaseManager databaseManager = new DatabaseManager();
+
 			CommandExecutor executor = new CommandExecutor(databaseManager);
+
 			parameters.setUser(User.class.cast(session.getAttribute("user")));
 			parameters.setContext(getServletContext());
 			parameters.addParameter("image_path", Arrays.asList(getImagePath()));
+
 			Out out = executor.executeCommand(parameters, getCommand(request));
+
 			if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
 					&& !request.getRequestURI().equals("/action/CreateUser")) {
 				out.addResult("showNavBar", true);
 			}
 
-			if (out.getUser() != null && session.getAttribute("user") == null) {
+			if (out.getUser() != null) {
 				session.setAttribute("user", out.getUser());
 				Cookie cookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
 				response.addCookie(cookie);

@@ -16,13 +16,13 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  * @author rodrigo_ruiz
  */
 @Command
-public class UserCommand implements CommandUnit{
+public class UpdateUserCommand implements CommandUnit{
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 
-		out.addResult("user", new User(0, "", "", "", "empty", "", ""));
-		out.addResult("newUser", true);
+		out.addResult("user", parameters.getUser());
+		out.addResult("new", false);
 
 		return out.forward("user/user.jsp");
 	}

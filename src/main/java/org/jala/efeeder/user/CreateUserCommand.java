@@ -5,8 +5,6 @@
  */
 package org.jala.efeeder.user;
 
-import java.sql.PreparedStatement;
-
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.ExitStatus;
@@ -24,8 +22,6 @@ import org.jala.efeeder.util.JsonMessage;
 @Command
 public class CreateUserCommand implements CommandUnit{
 
-	private static final String CREATE_USER_SQL = "insert into user(name, last_name, email, username, password, image_path)" + " values(?, ?, ?, ?, ?, ?)";
-
 	@SuppressWarnings("finally")
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -33,16 +29,30 @@ public class CreateUserCommand implements CommandUnit{
 		String result = "";
 		JsonMessage jsonMessage = new JsonMessage("The user was created correctly");
 
-		PreparedStatement stm = parameters.getConnection().prepareStatement(CREATE_USER_SQL);
+		boolean isNew = Boolean.valueOf(parameters.getParameter("isNew"));
 
-		stm.setString(1, parameters.getParameter("name"));
-		stm.setString(2, parameters.getParameter("last_name"));
-		stm.setString(3, parameters.getParameter("email"));
-		stm.setString(4, parameters.getParameter("username"));
-		stm.setString(5, Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
-		stm.setString(6, parameters.getParameter("image"));
+		User user = new User(isNew? -1 : parameters.getUser().getId(),
+				parameters.getParameter("email"),
+				parameters.getParameter("name"),
+				parameters.getParameter("last_name"),
+				parameters.getParameter("image"),
+				parameters.getParameter("username"),
+				Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
 		try {
-			stm.executeUpdate();
+			UserManager userManager = new UserManager(parameters.getConnection());
+
+			if (isNew)
+			{
+				userManager.insertUser(user);
+			}
+			else{
+				if("empty".equals(parameters.getParameter("image"))) {
+					user.setImage(parameters.getUser().getImage());
+				}
+
+				userManager.updateUser(user);
+			}
+
 			result = JsonConverter.objectToJSON(jsonMessage);
 		}
 		catch (Exception e) {
