@@ -57,7 +57,7 @@
 									<label for="meeting_name">Meeting Name</label>
 								</div>
 								<div class="input-field col s8">
-									<input id="new-date-field-id" type="text" name="date" class="datepicker validate">
+									<input id="new-date-field-id" type="text" name="date" class="datepicker" required>
 									<label for="date">Date</label>
 								</div>
 								<div class="input-field col s4">
