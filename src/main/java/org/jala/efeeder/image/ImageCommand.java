@@ -38,8 +38,15 @@ public class ImageCommand implements CommandUnit {
         } else {
             path = parameters.getParameter("image_path") + "/" + imageName;
         }
-        
-        return readImageAndConvertToBytes(path, "jpg", "image/jpeg");
+        String extension = FilenameUtils.getExtension(path);
+		switch(extension){
+			case "gif":
+				return readImageAndConvertToBytes(path, "gif", "image/gif");
+			case "png":
+				return readImageAndConvertToBytes(path, "png", "image/png");
+			default:
+				return readImageAndConvertToBytes(path, "jpg", "image/jpeg");
+		}
     }
     
     private Out readImageAndConvertToBytes(String path, String formatName, String contentTypeName) throws IOException{
