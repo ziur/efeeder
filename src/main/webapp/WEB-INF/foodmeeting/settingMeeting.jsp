@@ -22,7 +22,8 @@
 			</div>
 			<br/><br/><br/>
 			<div class="row">
-				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12">
+				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12"
+					  data-event-date="${foodMeeting.eventDate}" data-created-date="${foodMeeting.createdAt}">
 					<input id="meeting-id" name="id-food-meeting" type="hidden" value="${foodMeeting.id}">
 					<div class="row">
 						<div class="col m12 l4">

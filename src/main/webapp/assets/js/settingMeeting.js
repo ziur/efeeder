@@ -71,10 +71,9 @@ $(".noUi-connect").each(function(index){
 var formatter = function(value) {
 		return moment(value).calendar();
 	};
-		 
-});
+		
 
-var get25Range = function(createdDate, eventDay) {	
+function get25Range(createdDate, eventDay) {	
 	
 	var millisecondsOfDay = 60*60*1000;			
 	
