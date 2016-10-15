@@ -64,6 +64,30 @@
 				{
 				  "namespace": "org.jala.efeeder.servlets.websocket.avro",
 				  "type": "record",
+				  "name": "CreateSuggestionEvent",
+				  "alias": "CreateSuggestionEvent",
+				  "fields": [
+					{
+						"name": "id_food_meeting",
+						"type": "int"
+					},
+					{
+						"name": "id_place",
+						"type": "string"
+					},
+					{
+						"name": "userList",
+						"type": "string"
+					},
+					{
+						"name": "placeList",
+						"type": "string"
+					}
+				  ]
+				},
+				{
+				  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+				  "type": "record",
 				  "name": "CreateFoodMeetingEvent",
 				  "alias": "CreateFoodMeetingEvent",
 				  "fields": [

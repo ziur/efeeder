@@ -9,7 +9,6 @@ import org.jala.efeeder.servlets.support.InBuilder;
 import org.jala.efeeder.servlets.websocket.FoodMeetingRoom;
 import org.jala.efeeder.servlets.websocket.FoodMeetingRoomManager;
 import org.jala.efeeder.servlets.websocket.GetHttpSessionConfigurator;
-import org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import org.jala.efeeder.servlets.websocket.avro.WelcomeEvent;
@@ -19,10 +18,10 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
+import org.jala.efeeder.user.User;
 
 
 /**
@@ -31,30 +30,36 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws", configurator = GetHttpSessionConfigurator.class)
 public class CommandEndpoint {
-    private final static Logger log = Logger.getLogger(CommandEndpoint.class.toString());
-    private static final Object roomLock = new Object();
+    private final static Logger LOG = Logger.getLogger(CommandEndpoint.class.toString());
+    private static final Object ROOM_LOCK = new Object();
     private static volatile FoodMeetingRoomManager roomManager = null;
     private CommandFactory commandFactory;
     private FoodMeetingRoom.FellowDinner fellowDinner;
 
 
     public static FoodMeetingRoomManager getRoomManager() {
-        if (roomManager == null) {
-            synchronized (roomLock) {
-                if (roomManager == null) {
-                    roomManager = new FoodMeetingRoomManager();
-                }
-            }
-        }
-        return roomManager;
+		FoodMeetingRoomManager result = roomManager;
+        if (result == null) {
+			synchronized (ROOM_LOCK) {
+				result = roomManager;
+				if (result == null) {
+					roomManager = result = new FoodMeetingRoomManager();
+				}
+			}
+		}
+        return result;
     }
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws IOException {
         String roomId = session.getRequestParameterMap().get("roomId").get(0);
+		
+        HttpSession httpSession = (HttpSession)config.getUserProperties().get(HttpSession.class.getName());
+		session.getUserProperties().put("user", httpSession.getAttribute("user"));
+
         commandFactory = (CommandFactory) config.getUserProperties().get(CommandFactory.class.getName());
 
-        log.log(Level.INFO, "Start connection" + session.getId());
+        LOG.log(Level.INFO, "Start connection" + session.getId());
         fellowDinner = new FoodMeetingRoom.FellowDinner();
         fellowDinner.setSession(session);
         FoodMeetingRoom room = getRoomManager().getRoom(roomId);
@@ -75,7 +80,7 @@ public class CommandEndpoint {
 
     @OnClose
     public void onClose(Session session) {
-        log.log(Level.INFO, "Stop connection" + session.getId());
+        LOG.log(Level.INFO, "Stop connection" + session.getId());
     }
 
     @OnMessage
@@ -85,13 +90,14 @@ public class CommandEndpoint {
         DatabaseManager databaseManager = new DatabaseManager();
         CommandExecutor executor = new CommandExecutor(databaseManager);
         In in = InBuilder.createIn(message);
+		in.setUser((User)session.getUserProperties().get("user"));
+		
         Out out = executor.executeCommand(in, commandFactory.getInstance(in.getMessageContext().getCommand().toString()));
         fellowDinner.getRoom().sendMessage(out.getMessageContext());
     }
 
     @OnError
     public void onError(Throwable t) {
-        t.printStackTrace();
-
+        t.printStackTrace(System.out);
     }
 }

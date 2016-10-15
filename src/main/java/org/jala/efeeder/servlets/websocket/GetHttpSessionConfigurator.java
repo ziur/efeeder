@@ -20,5 +20,6 @@ public class GetHttpSessionConfigurator extends ServerEndpointConfig.Configurato
 
         config.getUserProperties().put(CommandFactory.class.getName(),
                 commandFactory);
+		config.getUserProperties().put(HttpSession.class.getName(), httpSession);
     }
 }

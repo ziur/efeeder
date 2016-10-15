@@ -75,6 +75,30 @@
 					{
 					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
 					  "type": "record",
+					  "name": "CreateSuggestionEvent",
+					  "alias": "CreateSuggestionEvent",
+					  "fields": [
+						{
+							"name": "id_food_meeting",
+							"type": "int"
+						},
+						{
+							"name": "id_place",
+							"type": "string"
+						},
+						{
+							"name": "userList",
+							"type": "string"
+						},
+						{
+							"name": "placeList",
+							"type": "string"
+						}
+					  ]
+					},
+					{
+					  "namespace": "org.jala.efeeder.servlets.websocket.avro",
+					  "type": "record",
 					  "name": "CreateFoodMeetingEvent",
 					  "alias": "CreateFoodMeetingEvent",
 					  "fields": [
@@ -149,8 +173,8 @@
     this.onMessageFn = fn;
   };
 
-    CommunicationService.prototype.connect = function (host, foodMeeting, onOpen) {
-        var hostUrl = host + "?roomId=" + foodMeeting;
+    CommunicationService.prototype.connect = function (host, roomId, onOpen) {
+        var hostUrl = host + "?roomId=" + roomId;
         this.socket = new WebSocket(hostUrl);
         var socket = this.socket;
         var self = this;
