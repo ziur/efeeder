@@ -6,21 +6,35 @@ $(function() {
 	console.log($("#edit-meeting").data("eventDate"));
 	console.log($("#edit-meeting").data("createdDate"));
 	
-	var eventDay= moment($("#edit-meeting").data("eventDate"), "YYYY-MM-DD HH:mm:ss");
-	console.log(eventDay);
+	var eventDate= moment($("#edit-meeting").data("eventDate"), "YYYY-MM-DD HH:mm:ss");
+	console.log(eventDate);
 
-	console.log(eventDay);	
+	console.log(eventDate);	
 	var createdDate = moment($("#edit-meeting").data("createdDate"), "YYYY-MM-DD HH:mm:ss");
 	//var step = (eventDay.valueOf() - now.valueOf())/4;
-	var step = 60*60*1000;
-	var firstHandlerPosition = eventDay.valueOf() - 5*step;
-	var secondHandlerPosition = eventDay.valueOf() - 3*step;
-	var thirdHandlerPosition = eventDay.valueOf() - step;
+	
+	
+	
+	var step = eventDate.diff(createdDate,"hours") < 6 ? eventDate.diff(createdDate)*75/(100*6) : 60*60*1000;
+	console.log(step);
+	var firstHandlerPosition = eventDate.valueOf() - 5*step;
+	var secondHandlerPosition = eventDate.valueOf() - 3*step;
+	var thirdHandlerPosition = eventDate.valueOf() - step;
 	
 
-	var handlesSlider = document.getElementById('noUiSlider');
+	var meetingStatesSlider = document.getElementById('noUiSlider');
 
-noUiSlider.create(handlesSlider, {
+var calendarSettings = {
+    sameDay: '[Today] HH:mm',
+    nextDay: '[Tomorrow] HH:mm',
+    nextWeek: 'dddd HH:mm',
+    lastDay: '[Yesterday] HH:mm',
+    lastWeek: '[Last] dddd HH:mm',
+    sameElse: 'MM/DD/YYYY  HH:mm'
+}
+
+
+noUiSlider.create(meetingStatesSlider, {
 	start: [  firstHandlerPosition, secondHandlerPosition , thirdHandlerPosition],
 	connect: [true, true, true, false],
 	tooltips: [
@@ -43,9 +57,9 @@ noUiSlider.create(handlesSlider, {
 	],
 	range: {
 		'min': [  createdDate.valueOf() ],
-		'25%': [ get25Range(createdDate, eventDay), 15*60*1000 ],
+		'25%': [ get25Range(createdDate, eventDate), 15*60*1000 ],
 		//'95%': [ get99Range(eventDay)],
-		'max': [ eventDay.valueOf() ]
+		'max': [ eventDate.valueOf() ]
 	},
 	pips: {
 		mode: 'range',
@@ -55,37 +69,81 @@ noUiSlider.create(handlesSlider, {
 				return moment(value).calendar(null, calendarSettings);
 			}
 		}
+	},
+});
+
+meetingStatesSlider.noUiSlider.on('update', function( values, handle ) {
+	var now = moment().valueOf();
+	var orderVotingHandle = 0;
+	var orderPaymentHandle = 1;
+	var paymentEmptyHandle = 2;
+	
+	var newStatus = $("#status").text();
+	/*switch (handle){
+		case orderVotingHandle:
+			newStatus = now <= values[orderVotingHandle] ? "Voting" : "Order";
+			break;
+		case orderPaymentHandle:
+			newStatus = now <= values[orderPaymentHandle] && values[orderVotingHandle] < now ? "Order" : "Payment";
+			break;
+		case paymentEmptyHandle:
+			newStatus = now <= values[paymentEmptyHandle] && values[orderPaymentHandle] < now ? "Payment" : "Waiting to Eat!";
+			break;
+			
+	}*/
+	
+	if(now <= values[orderVotingHandle]) {
+		newStatus = "Voting";
+	} else if(now <= values[orderPaymentHandle]) {
+		newStatus = "Order";	
+	} else if(now <= values[paymentEmptyHandle]) {
+		newStatus = "Payment";	
+	} else
+	{
+		newStatus = "Waiting to Eat!";
 	}
+	
+	$("#status").text(newStatus);	
 });
 
 var sliderSections= [
-	{color: "#87bee6", text: "Voting"},
-	{color: "#74d41f", text: ".... Orders"},
-	{color: "#e07b5c", text: ".... Payment"}
+	{color: "#b3e5fc ", text: "Voting"},
+	{color: "#29b6f6", text: "Orders"},
+	{color: "#0277bd", text: "Payment"}
 ]
 $(".noUi-connect").each(function(index){
 	$(this).css('background', sliderSections[index].color);
-	$(this).text(sliderSections[index].text);
-	$(this).css('color', "white");
+	
+	var tooltip = $("<div class='noUi-tooltip'>" +			
+			sliderSections[index].text +
+		"</div>"
+	)
+	.css('background', "#c8d8d6")
+	//.css('background', sliderSections[index].color)
+	.css('bottom', '-900%')
+	.css('padding', '1px');
+	
+	$(this).append(tooltip);
+	$(this).css('color', '#9e9e9e');
 });
 var formatter = function(value) {
 		return moment(value).calendar();
 	};
 		
 
-function get25Range(createdDate, eventDay) {	
+function get25Range(createdDate, eventDate) {	
 	
 	var millisecondsOfDay = 60*60*1000;			
 	
-	var hoursBetween = eventDay.diff(createdDate, 'hours');
+	var hoursBetween = eventDate.diff(createdDate, 'hours');
 	
 	if(hoursBetween <= 6) {
-		var defaultValue = createdDate.valueOf() + (eventDay.valueOf() - createdDate.valueOf())*25/100
+		var defaultValue = createdDate.valueOf() + (eventDate.valueOf() - createdDate.valueOf())*25/100
 		return defaultValue - getMillisToRoundToQuarter(moment(defaultValue));
 	}
 	
-	//return now.valueOf() + (eventDay.valueOf()-now.valueOf())/2;
-	return eventDay.valueOf() - 6*millisecondsOfDay - getMillisToRoundToQuarter(eventDay);
+	//return now.valueOf() + (eventDate.valueOf()-now.valueOf())/2;
+	return eventDate.valueOf() - 6*millisecondsOfDay - getMillisToRoundToQuarter(eventDate);
 }
 
 function getMillisToRoundToQuarter(date) {
@@ -106,14 +164,7 @@ function getMillisToRoundToQuarter(date) {
 }
 
 
-var calendarSettings = {
-    sameDay: '[Today] HH:mm',
-    nextDay: '[Tomorrow] HH:mm',
-    nextWeek: 'dddd HH:mm',
-    lastDay: '[Yesterday] HH:mm',
-    lastWeek: '[Last] dddd HH:mm',
-    sameElse: 'MM/DD/YYYY  HH:mm'
-}
+
 });
 
 var SettingMeeting = function() {

@@ -19,13 +19,16 @@
 		<link href="/assets/css/app.css" rel="stylesheet">
 		<link href="/assets/css/foodMeetings.css" rel="stylesheet">
 		<link href="/assets/css/order.css" rel="stylesheet">
+		
 		<link rel="stylesheet" href="/assets/css/materialize.css">
 		<link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
 		<link rel="stylesheet" href="/assets/css/place.css">
 		<link rel="stylesheet" href="/assets/css/imageUpload.css">
 		<link rel="stylesheet" href="/assets/css/nouislider.min.css">
+		<!--<link rel="stylesheet" href="/assets/css/materializeNoUiSlider.css">-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.css" rel="stylesheet">
+		<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.css" rel="stylesheet">-->
+		<link href="/assets/css/settingMeeting.css" rel="stylesheet">
 	</head>
 
 	<body>
@@ -53,6 +56,7 @@
 		<script src="/assets/js/lib/materialize.clockpicker.js"></script>
 		<script src="/assets/js/lib/jquery.validate.js"></script>
 		<script src="/assets/js/lib/jquery.uploadPreview.min.js"></script>
+		<!--<script src="/assets/js/lib/materializeNoUiSlider.js"></script>-->
 		<script src="/assets/js/lib/nouislider.min.js"></script>
 		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.js"></script>-->
 		<script src="/assets/js/lib/wNumb.js"></script>

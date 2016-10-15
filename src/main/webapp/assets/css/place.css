@@ -22,10 +22,10 @@
     box-shadow: none;
 }
 
-.collection:hover {
+.collection.asfsd:hover {
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
-.collection > .collection-item {
+.collection > .collection-item .err{
     background-color: rgb(255, 255, 255);
     -webkit-box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
     box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
