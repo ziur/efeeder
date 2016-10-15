@@ -62,3 +62,36 @@ $(document).ready(function () {
         });
     }
 });
+
+$(function() {
+	var communicationService = new CommunicationService();
+	communicationService.onMessage(function(message) {
+		$.each(message.events, function(index, item) {
+			var eventType = Object.getOwnPropertyNames(item.event)[0];
+
+			var eventMessage = item.event[eventType];
+
+			switch (eventType) {
+				case "org.jala.efeeder.servlets.websocket.avro.CreateOrderEvent":
+					console.log('WebSockets order created successfully.');
+					break;
+			}
+		});
+	});
+
+	communicationService.connect('ws://' + location.host + '/ws', $('#id-food-meeting').val());
+});
+
+var Order = function(communicationService) {
+	this.communicationService = communicationService;
+
+	var self = this;
+
+	return {
+		init: function() {
+		},
+		reset: function() {
+
+		}
+	};
+}

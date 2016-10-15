@@ -148,6 +148,30 @@
 							]
 						}
 					  ]
+					},
+					{
+						"namespace": "org.jala.efeeder.servlets.websocket.avro",
+						"type": "record",
+						"name": "CreateOrderEvent",
+						"alias": "CreateOrderEvent",
+						"fields": [
+							{
+								"name": "id_food_meeting",
+								"type": "int"
+							},
+							{
+								"name": "id_user",
+								"type": "int"
+							},
+							{
+								"name": "order_name",
+								"type": "string"
+							},
+							{
+								"name": "cost",
+								"type": "double"
+							}
+						]
 					}
 				  ]
 				}
