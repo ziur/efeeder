@@ -5,7 +5,11 @@
 <t:template>
     <jsp:attribute name="javascript">
 	<script src="/assets/js/lib/bubble.js"></script> 
-	<script> var g_idFoodMeeting = '${id}'; </script>
+	<script>
+		var g_foodMeetingId = ${foodMeetingId};
+		// Deprecated:
+		var g_idFoodMeeting = g_foodMeetingId.toString();
+	</script>
 	<script src="/assets/js/place.js"></script>
 	<script id="placeTmpl" type="text/x-jsrender">
 	    <ul id="collid" class="collection">
@@ -83,31 +87,3 @@
     
 <script src="/assets/js/lib/bk.js"></script>
 <script src="/assets/js/voting.js"></script>
-<script>
-    $(function () {
-	var communicationService = new CommunicationService();
-
-	communicationService.onMessage(function (event) {
-
-	    $.each(event.events, function(index, item) {
-		var eventType = Object.getOwnPropertyNames(item.event)[0];
-		var eventMessage = item.event[eventType];
-		switch (eventType) {
-		    case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
-			document.getElementById('debugDiv').innerHTML = 'WebSockets connected';
-			break;
-		    case "org.jala.efeeder.servlets.websocket.avro.RaffleEvent":
-			document.getElementById('debugDiv').innerHTML = 'Starting raffle';
-			_startBubble(eventMessage);
-			break;
-		}
-	    });
-	});
-	var foodMeeting = ${id};
-	communicationService.connect('ws://' + location.host + '/ws', foodMeeting);
-	$("#raffle").click(function () {
-	    communicationService.sendMessage({user:1, room: ${id}, command:"Wheeldecide", events:[]});
-	    _hideSideBar();
-	});
-    });
-</script>

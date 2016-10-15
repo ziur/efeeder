@@ -34,7 +34,8 @@ public class SuggestionsCommand implements CommandUnit {
 		Out out = new DefaultOut();
 		out.addResult("places", places);
 		String id = parameters.getParameter("id_food_meeting");
-		out.addResult("id", id);
+		out.addResult("foodMeetingId", id);
+		
 		return out.forward("suggestion/suggestions.jsp");
 	}
 }
