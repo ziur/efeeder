@@ -12,7 +12,7 @@ import java.sql.*;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class AddOrderCommand implements CommandUnit {
+public class CreateOrderCommand implements CommandUnit {
 
 	@Override
 	public Out execute(In parameters) throws Exception {

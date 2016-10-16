@@ -1,0 +1,19 @@
+{
+	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+	"type": "record",
+	"name": "UserOwner",
+	"fields": [
+		{
+			"name": "name",
+			"type": "string"
+		},
+		{
+			"name": "lastName",
+			"type": "string"
+		},
+		{
+			"name": "email",
+			"type": "string"
+		}
+	]
+}

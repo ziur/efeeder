@@ -244,7 +244,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 										width: 0,
 										userOwner: {
 											name: "",
-											lastName: ""
+											lastName: "",
+											email: ""
 										}
 									}
 								}

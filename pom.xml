@@ -213,6 +213,7 @@
 					<driver>com.mysql.cj.jdbc.Driver</driver>
 					<url>jdbc:mysql://localhost:3306/efeeder?nullNamePatternMatchesAll=true</url>
 					<username>root</username>
+					<password>root</password>
 				</configuration>
 			</plugin>
 		</plugins>
