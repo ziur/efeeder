@@ -24,7 +24,6 @@
                 <table class="responsive-table">
                     <thead>
                         <tr>
-                            <!--<th data-field="image"/>-->
                             <th data-field="id">Name</th>
                             <th data-field="name">Order</th>
                             <th data-field="price">Cost</th>
@@ -34,7 +33,6 @@
                     <tbody>
                         <c:forEach var="order" items="#{orders}">
                             <tr>
-                                <!--<tb><img src="action/image?file_name=empty&type=user" class="circle responsive-img"></tb>-->
                                 <td>${order.user.name}</td>
                                 <td>${order.details}</td>
                                 <td>${order.cost}</td>
