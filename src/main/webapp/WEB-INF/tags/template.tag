@@ -18,13 +18,12 @@
 		<link href="/assets/css/select2.min.css" rel="stylesheet">
 		<link href="/assets/css/app.css" rel="stylesheet">
 		<link href="/assets/css/foodMeetings.css" rel="stylesheet">
-		<link href="/assets/css/order.css" rel="stylesheet">
-		
+		<link href="/assets/css/order.css" rel="stylesheet">		
 		<link rel="stylesheet" href="/assets/css/materialize.css">
 		<link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
 		<link rel="stylesheet" href="/assets/css/place.css">
 		<link rel="stylesheet" href="/assets/css/imageUpload.css">
-		<link rel="stylesheet" href="/assets/css/nouislider.min.css">
+		<link rel="stylesheet" href="/assets/css/nouislider.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	</head>
 
