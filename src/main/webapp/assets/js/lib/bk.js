@@ -1,6 +1,6 @@
 'use strict';
 
-let BkTransform = function(width, height, ratio)
+let BkTransform = function(width, height, ratio = 1)
 {
 	this.resize(width, height, ratio);
 }
@@ -29,10 +29,12 @@ BkTransform.prototype.equalCoords = function(a, b)
 	let sa = a.toScreen(this);
 	let sb = b.toScreen(this);
 	return Math.abs(sa.x - sb.x) < 1 && 
-		Math.abs(sa.y - sb.y) < 1;
+		Math.abs(sa.y - sb.y) < 1 &&
+		Math.abs(sa.w - sb.w) < 1 &&
+		Math.abs(sa.h - sb.h) < 1;
 }
 
-let BkCoord = function(x, y, w, h, z = 0, type = 0)
+let BkCoord = function(x = 0, y = 0, w = 0, h = 0, z = 0, type = 0)
 {
 	// x,y denotes the center of the object
 	// w,h are the dimensions of the object
@@ -184,12 +186,16 @@ BkCoord.prototype.toAbsolute = function(transform)
 			h * sh,
 			this.z);
 	}
+	else if (this.type === 0)
+	{
+		return this.clone();
+	}
 	return null;
 }
 
 BkCoord.prototype.toScreenCoord = function(coord)
 {
-	let nCoord = this.toScreen(new BkTransform(coord.w, coord.h, 1));
+	let nCoord = this.toScreen(new BkTransform(coord.w, coord.h));
 	nCoord.x += coord.x - coord.w * 0.5;
 	nCoord.y += coord.y - coord.h * 0.5;
 	return nCoord;
@@ -251,7 +257,7 @@ BkCoord.prototype.clone = function(scale)
 }
 
 const BK_INV_255 = 1 / 255;
-function BkColorToStr(colorNumber)
+function bkColorToStr(colorNumber)
 {
 	return 'rgba(' + 
 		((colorNumber >> 16) & 0xFF).toString() + ',' +
@@ -260,7 +266,7 @@ function BkColorToStr(colorNumber)
 		(((colorNumber >> 24) & 0xFF) * BK_INV_255).toString() + ')';
 }
 
-function BkShadowColor(color)
+function bkShadowColor(color)
 {
 	let alpha = ((color >> 24) & 0xFF) * BK_INV_255;
 	let shadowAlpha = (1 - alpha)
@@ -275,40 +281,40 @@ function BkShadowColor(color)
 	return b + (g << 8) + (r << 16) | (shadowAlpha << 24);
 }
 
-function BkColorMix(colorA, colorB)
+function bkColorMix(colorA, colorB)
 {
 	return ((((colorA >> 1) & 0x7F807F80) + ((colorB >> 1) & 0x7F807F80)) & 0xFF00FF00) |
 		((((colorA & 0xFF00FF) + (colorB & 0xFF00FF)) >> 1) & 0x00FF00FF);
 }
 
-function BkColorMixRetainAlpha(colorA, colorB)
+function bkColorMixRetainAlpha(colorA, colorB)
 {
 	return ((((colorA & 0xFF00) + (colorB & 0xFF00)) >> 1 ) & 0xFF00) |
 		((((colorA & 0xFF00FF) + (colorB & 0xFF00FF)) >> 1) & 0x00FF00FF) |
 		(colorA & 0xFF000000);
 }
 
-function BkColorMix31(colorA, colorB)
+function bkColorMix31(colorA, colorB)
 {
 	return (((((colorA >> 2) & 0x3FC03FC0) * 3) + ((colorB >> 2) & 0x3FC03FC0)) & 0xFF00FF00) |
 		(((((colorA & 0xFF00FF) * 3) + (colorB & 0xFF00FF)) >> 2) & 0x00FF00FF);
 }
 
-function BkColorMix31RetainAlpha(colorA, colorB)
+function bkColorMix31RetainAlpha(colorA, colorB)
 {
 	return ((((colorA & 0xFF00) * 3 + (colorB & 0xFF00)) >> 2 ) & 0xFF00) |
 		(((((colorA & 0xFF00FF) * 3) + (colorB & 0xFF00FF)) >> 2) & 0x00FF00FF) |
 		(colorA & 0xFF000000);
 }
 
-function BkColorMix13RetainAlpha(colorA, colorB)
+function bkColorMix13RetainAlpha(colorA, colorB)
 {
 	return ((((colorA & 0xFF00) + (colorB & 0xFF00) * 3) >> 2 ) & 0xFF00) |
 		(((((colorA & 0xFF00FF)) + (colorB & 0xFF00FF) * 3) >> 2) & 0x00FF00FF) |
 		(colorA & 0xFF000000);
 }
 
-function BkColorSaturate(color)
+function bkColorSaturate(color)
 {
 	let r = (color >> 16) & 0xFF;
 	let g = (color >> 8) & 0xFF;
@@ -325,19 +331,19 @@ function BkColorSaturate(color)
 	return b + (g << 8) + (r << 16) | (color & 0xff000000);
 }
 
-function BkColorDarken(color)
+function bkColorDarken(color)
 {
-	return BkColorMix31RetainAlpha(color, BkColorMix(BkColorSaturate(color), 0));
+	return bkColorMix31RetainAlpha(color, bkColorMix(bkColorSaturate(color), 0));
 }
 	
-function BkColorLighten(color)
+function bkColorLighten(color)
 {
 	let r = (color >> 16) & 0xFF;
 	let g = (color >> 8) & 0xFF;
 	let b = color & 0xFF;
 	let m = Math.max(r, g, b);
 	if (m === 0) return (color | 0x808080);
-	if (m === 255) return BkColorMixRetainAlpha(color, 0xFFFFFF);
+	if (m === 255) return bkColorMixRetainAlpha(color, 0xFFFFFF);
 	
 	let factor = 255 / m;
 	r = Math.floor(r * factor);
@@ -362,12 +368,12 @@ BkObject.prototype.draw = function()
 {
 }
 
-function BkObjectIsSelected(o)
+function bkObjectIsSelected(o)
 {
 	return (o.flags & 0x80000000) !== 0;
 }
 
-function BkObjectSetSelected(o, state = true)
+function bkObjectSetSelected(o, state = true)
 {
 	if (state) o.flags |= 0x80000000; else o.flags &= 0x7FFFFFFF;
 }
@@ -377,7 +383,11 @@ let BkArea = function(coord, ratio = 1, type = 0, padding = 0.04)
 	this.coord = coord;
 	this.ratio = ratio;
 	this.padding = padding;
-	this.type = type;
+	// Type 0: Cover all the area, follow the ratio when possible.
+	// Type 1: Follow the ratio but cover at least 25% of the area.
+	// Type 2: Mandatory ratio, align to top left.
+	// Type 3: Mandatory ratio, align to bottom right.
+	this.__type = type;
 }
 
 let BkSystem = function(canvasName, ratio = null)
@@ -385,7 +395,7 @@ let BkSystem = function(canvasName, ratio = null)
 	this.item = [];
 	this.area = [];
 	this.__running = false;
-	this.transform = new BkTransform(1, 1, 1);
+	this.transform = new BkTransform(1, 1);
 	this.canvas = document.getElementById(canvasName);
 	this.ctx = this.canvas.getContext('2d');
 	this.ratio = (ratio !== null) ? ratio : (window.screen.width / window.screen.height);
@@ -405,6 +415,7 @@ let BkSystem = function(canvasName, ratio = null)
 	};
 	
 	this.bgImg = null;
+	this.bgImgAlpha = null;
 	this.resize();
 };
 
@@ -430,21 +441,39 @@ BkSystem.prototype.resize = function()
 	this.draw();
 }
 
+function bkOnImageLoad()
+{
+	this.bkSystem.redraw = true;
+	this.isReady = true;
+}
+
 BkSystem.prototype.createImage = function(src)
 {
 	if ((src === null) || (0 === src.length)) return null;
 	let img = new Image();
 	img.src = src;
-	img.addEventListener("load", this.onImageLoad.bind(this), false);
+	img.bkSystem = this;
+	img.isReady = false;
+	img.addEventListener("load", bkOnImageLoad.bind(img), false);
 	return img;
 }
 
-BkSystem.prototype.setBackgroundImage = function(src)
+BkSystem.prototype.setImage = function(object, src, propertyName = 'img')
 {
-	this.bgImg = this.createImage(src);
+	// If property is undefined, null or src doesn't math with the new src
+	if ((object[propertyName] == null) || (object[propertyName].src !== src))
+	{
+		object[propertyName] = this.createImage(src);
+	}
 }
 
-function _getDivisorsCloseToRatio(n, ratio) 
+BkSystem.prototype.setBackgroundImage = function(src, alpha = null)
+{
+	this.bgImg = this.createImage(src);
+	this.bgImgAlpha = alpha;
+}
+
+function _bkGetDivisorsForRatio(n, ratio) 
 {
 	if (n <= 1) return {w:1, h:1};
 		
@@ -550,51 +579,86 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			});
 	}
 	
-	let coord = area.coord.toScreenCoord(this.__screenCoord);
-	let minorDim = coord.w < coord.h ? coord.w: coord.h;
-	let padding = area.padding * minorDim;
-	let padH = padding / coord.h;
-	let padW = padding / coord.w;
-	
-	let dim = _getDivisorsCloseToRatio(count, coord.w / (coord.h * area.ratio));
-	if (area.type === 1)
+	// We are interested in width and height proportional to screen
+	let coord = area.coord.toScreen(this.transform);
+	let sw = coord.w;
+	let sh = coord.h;
+	// We need coordinates in the [0..1[ range
+	coord = area.coord;
+	let padding = area.padding * (sw < sh ? sw : sh);
+	let padH = padding / sh;
+	let padW = padding / sw;
+	let cellH, cellW;
+	let dim;
+	if (area.__type <= 1)
 	{
-		let cellRatio = (coord.w * dim.h) / (coord.h * dim.w);
-		if ((dim.w === 1) && (cellRatio < area.ratio))
+		dim = _bkGetDivisorsForRatio(count, sw / (sh * area.ratio));
+		if (area.__type === 1)
 		{
-			while ((coord.w * (dim.h + 1)) / (coord.h * dim.w) < area.ratio)
+			let cellRatio = (sw * dim.h) / (sh * dim.w);
+			if ((dim.w === 1) && (cellRatio < area.ratio))
 			{
-				++dim.h;
+				let n = Math.floor(area.ratio * sh / sw);
+				if (n > dim.h)
+				{
+					if (n - dim.h > 3) n = dim.h + 3;
+					dim.h = n;
+				}
+			}
+			
+			if ((dim.h === 1) && (cellRatio > area.ratio))
+			{
+				let n = Math.floor(sw / (area.ratio * sh))
+				if (n > dim.w)
+				{
+					if (n - dim.w > 3) n = dim.w + 3;
+					dim.w = n;
+				}
 			}
 		}
 		
-		if ((dim.h === 1) && (cellRatio > area.ratio))
+		/* Equation for pad calculation: 
+			1 = (w + p) * n + p
+			1 - p = (w + p) * n
+			(1 - p) / n = w + p
+			((1 - p) / n) - p = w
+		*/
+
+		cellH = ((1 - padH) / dim.h) - padH;
+		cellW = ((1 - padW) / dim.w) - padW;
+	}
+	else if ((area.__type >= 2) && (area.__type <= 3))
+	{
+		let distributionRatio = sw / (sh * area.ratio);
+		let hCount = distributionRatio >= 1 ? 1 : Math.floor(1 / distributionRatio);
+		let wCount = distributionRatio <= 1 ? 1 : Math.floor(distributionRatio);
+		let x = Math.ceil(Math.sqrt(count / (hCount * wCount)));
+		dim = {w: wCount * x, h: hCount * x};
+		
+		if (distributionRatio >= 1)
 		{
-			while ((coord.w * dim.h) / (coord.h * (dim.w + 1)) > area.ratio)
-			{
-				++dim.w;
-			}
+			cellH = ((1 - padH) / dim.h) - padH;
+			cellW = cellH / distributionRatio;
+		}
+		else
+		{
+			cellW = ((1 - padW) / dim.w) - padW;
+			cellH = cellW * distributionRatio;
+		}
+		
+		if (area.__type == 3)
+		{
+			
 		}
 	}
 	
-	coord = area.coord;
-	
-	let cellH = ((1 - padH) / dim.h) - padH;
-	
-	/* Equation for pad calculation: 
-		1 = (w + p) * n + p
-		1 - p = (w + p) * n
-		(1 - p) / n = w + p
-		((1 - p) / n) - p = w
-	*/
-	
+	let rowCols, x, y, w, h, o, oIsSelected, selectedFactorW, selectedFactorH;
 	let index = 0;
-	let cellW = ((1 - padW) / dim.w) - padW;
 	for (let j = 0; j < dim.h; ++j)
 	{
-		let rowCols = dim.w;
+		rowCols = dim.w;
 		
-		if (area.type === 0)
+		if (area.__type === 0)
 		{
 			if ((j === 0) && ((dim.h * dim.w) > count))
 			{
@@ -606,23 +670,24 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 		for (let i = 0; i < rowCols; ++i)
 		{
 			if (index >= count) break;
-			let o = objects[index];
-			let oIsSelected = BkObjectIsSelected(o);
+			o = objects[index];
+			oIsSelected = bkObjectIsSelected(o);
 			
-			let selectedFactorW = oIsSelected ? (cellW + padW) / cellW : 1;
-			let selectedFactorH = oIsSelected ? (cellH + padH) / cellH : 1;
+			selectedFactorW = oIsSelected ? (cellW + padW) / cellW : 1;
+			selectedFactorH = oIsSelected ? (cellH + padH) / cellH : 1;
 			
-			let x = ((cellW + padW) * i + padW + cellW * 0.5) * coord.w + coord.x;
-			let y = ((cellH + padH) * j + padH + cellH * 0.5) * coord.h + coord.y;
-			let w = cellW * selectedFactorW * coord.w;
-			let h = cellH * selectedFactorH * coord.h;
+			x = ((cellW + padW) * i + padW + cellW * 0.5) * coord.w + coord.x;
+			y = ((cellH + padH) * j + padH + cellH * 0.5) * coord.h + coord.y;
+			w = cellW * selectedFactorW * coord.w;
+			h = cellH * selectedFactorH * coord.h;
 			
-			if (updateSizes && (area.type === 0) && (o.coord.type === 8))
+			if (updateSizes && (o.coord.type >= 8))
 			{
 				o.nextCoord = new BkCoord(x, y, w, h, 0, 8);
 			}
 			else
 			{
+				delete o.nextCoord;
 				o.coord.x = x;
 				o.coord.y = y;
 				o.coord.w = w;
@@ -644,11 +709,11 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 	}
 }
 
-let BkSystemInstancesList = [];
+let __bkSystems = [];
 
-function BkMainUpdateFrame()
+function bkMainUpdateFrame()
 {
-	for (let i of BkSystemInstancesList)
+	for (let i of __bkSystems)
 	{
 		if (i.redraw)
 		{
@@ -656,9 +721,9 @@ function BkMainUpdateFrame()
 		}
 	}
 
-	if (BkSystemInstancesList.length <= 0) return;
+	if (__bkSystems.length <= 0) return;
 	
-	window.requestAnimationFrame(BkMainUpdateFrame);
+	window.requestAnimationFrame(bkMainUpdateFrame);
 }
 
 BkSystem.prototype.doOnClick = function(e)
@@ -770,7 +835,7 @@ BkSystem.prototype.run = function()
 	if (this.__running === true) return;
 	this.__running = true;
 	
-	let first = BkSystemInstancesList.length === 0;
+	let first = __bkSystems.length === 0;
 	
 	window.addEventListener("resize", this.resize.bind(this), false);
 	
@@ -785,9 +850,9 @@ BkSystem.prototype.run = function()
 	this.canvas.onclick = this.doOnClick.bind(this);
 	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
 
-	BkSystemInstancesList.push(this);
+	__bkSystems.push(this);
 	
-	if (first) BkMainUpdateFrame();
+	if (first) bkMainUpdateFrame();
 }
 
 BkSystem.prototype.stop = function()
@@ -803,8 +868,8 @@ BkSystem.prototype.stop = function()
 	this.canvas.mousemove = null;
 	this.canvas.mousedown = null;
 	
-	let i = BkSystemInstancesList.indexOf(this);
-	if (i !== -1) BkSystemInstancesList.splice(i, 1);
+	let i = __bkSystems.indexOf(this);
+	if (i !== -1) __bkSystems.splice(i, 1);
 }
 
 BkSystem.prototype.draw = function()
@@ -813,7 +878,9 @@ BkSystem.prototype.draw = function()
 	this.ctx.clearRect(0, 0, this.width, this.height);
 	if (this.bgImg !== null)
 	{
+		if (this.bgImgAlpha !== null) this.ctx.globalAlpha = this.bgImgAlpha;
 		this.bgImg.drawFit(this.ctx, this.__screenCoord);
+		if (this.bgImgAlpha !== null) this.ctx.globalAlpha = 1;
 	}
 	
 	let count = this.item.length;
@@ -822,14 +889,14 @@ BkSystem.prototype.draw = function()
 	for (let i = 0; i < count; ++i)
 	{
 		let o = this.item[i];
-		if (o.nextCoord !== undefined)
+		if (o.coord.type >= 8 && o.nextCoord !== undefined)
 		{
 			let nextCoord = o.nextCoord;
 			let coord = o.coord;
 			
 			if ((coord.type !== nextCoord.type) || this.transform.equalCoords(coord, nextCoord))
 			{
-				coord = nextCoord;
+				o.coord = nextCoord;
 				delete o.nextCoord;
 			}
 			else
@@ -844,18 +911,6 @@ BkSystem.prototype.draw = function()
 		}
 		o.draw();
 	}
-}
-
-BkSystem.prototype.onImageLoad = function()
-{
-	this.redraw = true;
-}
-
-BkSystem.prototype.create = function(coord)
-{ 
-	let o = new BkObject(coord)
-	this.item.push(o);
-	return o;
 }
 
 BkSystem.prototype.add = function(o)
@@ -917,7 +972,7 @@ BkSystem.prototype.dockToArea = function(o, x, y)
 {
 	if (o === null) return false;
 
-	let p = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	let p = new BkCoord(x, y).fromScreen(this.transform);
 
 	let count = this.area.length;
 	for (let i = count - 1; i >= 0; --i)
@@ -945,7 +1000,7 @@ BkSystem.prototype.select = function(x, y)
 	let count = this.item.length;
 	if (count <= 0) return null;
 	
-	let p = new BkCoord(x, y, 0, 0).fromScreen(this.transform);
+	let p = new BkCoord(x, y).fromScreen(this.transform);
 	for (let i = count - 1; i >= 0; --i)
 	{
 		let c = this.item[i].coord;
@@ -1077,10 +1132,10 @@ function bkDrawRoundRectangle(ctx, coord, relRadius)
 function bkDrawGlassButton(ctx, coord, color, drawFlat = false, relRadius = 0.125)
 {
 	let coordInner = coord.anisotropicGrow(0.96);
-	let lighterColor = BkColorLighten(color);
-	let darkColorStr = BkColorToStr(BkColorDarken(color));
-	let colorStr = BkColorToStr(color);
-	let lighterColorStr = BkColorToStr(lighterColor);
+	let lighterColor = bkColorLighten(color);
+	let darkColorStr = bkColorToStr(bkColorDarken(color));
+	let colorStr = bkColorToStr(color);
+	let lighterColorStr = bkColorToStr(lighterColor);
 	
 	ctx.lineWidth = (coord.w - coordInner.w);
 	
@@ -1090,7 +1145,7 @@ function bkDrawGlassButton(ctx, coord, color, drawFlat = false, relRadius = 0.12
 	
 	if (drawFlat)
 	{
-		let lightColorStr = BkColorToStr(BkColorMix31(color, lighterColor));
+		let lightColorStr = bkColorToStr(bkColorMix31(color, lighterColor));
 		let r = (coord.w < coord.h) ? coord.h : coord.w;
 		grad = ctx.createRadialGradient(x, y, 0, x, y, r);
 		grad.addColorStop(0, lighterColorStr);
@@ -1103,7 +1158,7 @@ function bkDrawGlassButton(ctx, coord, color, drawFlat = false, relRadius = 0.12
 	}
 	else
 	{
-		let lightColorStr = BkColorToStr(BkColorMix(lighterColor, color));
+		let lightColorStr = bkColorToStr(bkColorMix(lighterColor, color));
 		grad = ctx.createLinearGradient(x, y - coord.h, x, y);
 		grad.addColorStop(0, lighterColorStr);
 		grad.addColorStop(0.1, colorStr);
@@ -1153,11 +1208,36 @@ function _bkDrawGlassScrew(ctx, x, y, r)
 	ctx.translate(-x, -y);
 }
 
+function bkDrawShadowCircle(ctx, coord, blur, col)
+{
+	let fadeCol = col & 0xFFFFFF;
+	let fade13Col = bkColorMix31(col, fadeCol);
+	let fade31Col = bkColorMix31(fadeCol, col);
+	
+	let colStr = bkColorToStr(col);
+	let fade13Str = bkColorToStr(fade13Col);
+	let fade31Str = bkColorToStr(fade31Col);
+	let fadeStr = bkColorToStr(fadeCol);
+
+	let x = coord.x;
+	let y = coord.y;
+	let r = (coord.w < coord.h ? coord.w : coord.h) * 0.5;
+	let grad = ctx.createRadialGradient(
+		x, y, r * (1 - blur), x, y, r);
+	grad.addColorStop(0, colStr);
+	grad.addColorStop(0.2, fade13Str);
+	grad.addColorStop(0.6, fade31Str);
+	grad.addColorStop(1, fadeStr);
+	ctx.fillStyle = grad;
+	ctx.beginPath();
+	ctx.arc(x, y, r, 0, 2 * Math.PI);
+	ctx.fill();
+}
+
 function bkDrawShadowRect(ctx, coord, blur, col)
 {
-	let shadowCol = BkShadowColor(col);
-	let colStr = BkColorToStr(shadowCol);
-	let fade = BkColorToStr(shadowCol & 0xFFFFFF);
+	let colStr = bkColorToStr(col);
+	let fade = bkColorToStr(col & 0xFFFFFF);
 	let x0 = Math.floor(coord.x - coord.w * 0.5);
 	let y0 = Math.floor(coord.y - coord.h * 0.5);
 	let w = Math.floor(coord.w);
@@ -1165,7 +1245,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	let x1 = x0 + w;
 	let y1 = y0 + h;
 	
-	blur = Math.floor(blur);
+	blur = Math.floor(blur * (w < h ? w : h));
 	let blur2 = blur * 2;
 	
 	ctx.fillStyle = colStr;
@@ -1258,22 +1338,22 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = false)
 {
 	let innerCoord = coord.anisotropicGrow(0.98);
-	let lineWidth = coord.w - innerCoord.w;
+	let lineWidth = (coord.w < coord.h) ? (coord.w - innerCoord.w) : (coord.h - innerCoord.h);
 	
-	let darkerCol = BkColorDarken(col);
-	let darkCol = BkColorMix(darkerCol, col);
-	let color = BkColorToStr(col);
-	let lightCol = BkColorLighten(col);
-	let lighterColor = BkColorToStr(lightCol);
-	let darkColor = BkColorToStr(darkCol);
-	let darkerColor = BkColorToStr(darkerCol);
+	let darkerCol = bkColorDarken(col);
+	let darkCol = bkColorMix(darkerCol, col);
+	let color = bkColorToStr(col);
+	let lightCol = bkColorLighten(col);
+	let lighterColor = bkColorToStr(lightCol);
+	let darkColor = bkColorToStr(darkCol);
+	let darkerColor = bkColorToStr(darkerCol);
 	
 	if (drawShadow)
 	{
 		let sCoord = coord.clone();
 		sCoord.x += lineWidth * 2;
 		sCoord.y += lineWidth * 2;
-		bkDrawShadowRect(ctx, sCoord, lineWidth * 2, col);
+		bkDrawShadowRect(ctx, sCoord, 0.03, bkShadowColor(col));
 	}
 	
 	let x = coord.x;
@@ -1312,7 +1392,7 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	let grad;
 	if (!plainColor)
 	{
-		lightColor = BkColorToStr(BkColorMix31(col, lightCol));
+		lightColor = bkColorToStr(bkColorMix31(col, lightCol));
 		grad=ctx.createRadialGradient(x - w,y - h * 0.3,0,x - w,y - h * 0.3,w * 2);
 		grad.addColorStop(0,color);
 		grad.addColorStop(0.45,lightColor);
@@ -1364,7 +1444,7 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	_bkDrawGlassScrew(ctx, c.x + c.w * 0.5, c.y + c.h * 0.5, lineWidth);
 }
 
-function __bkSplitText(text)
+function _bkSplitText(text)
 {
 	let result = [];
 	let endLine = true;
@@ -1430,7 +1510,7 @@ function __bkSplitText(text)
 	return result;
 }
 
-function __bkCountRightSpaces(text)
+function _bkCountRightSpaces(text)
 {
 	let i = text.length - 1;
 	while (i >= 0)
@@ -1445,12 +1525,12 @@ function __bkCountRightSpaces(text)
 	return text.length - (i + 1);
 }
 
-function __bkSetFlagsFixWords(flags, words)
+function _bkSetFlagsFixWords(flags, words)
 {
 	let count = words.length;
 	for (let i = 0; i < count; ++i)
 	{
-		let spaceCount = __bkCountRightSpaces(words[i]);
+		let spaceCount = _bkCountRightSpaces(words[i]);
 		if (spaceCount > 0)
 		{
 			flags[i] = 1;
@@ -1469,11 +1549,16 @@ let BkText = function(coord, text, fontName, alignment = 4)
 {
 	this.fontName = fontName;
 	this.alignment = alignment;
-	this.relHeight = 1;
+	this.fontHeight = null;
 	this.__oldText = null;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
 	this.text = text;
+}
+
+BkText.prototype.resize = function()
+{
+	this.fontHeight = null;
 }
 
 BkText.prototype.draw = function(ctx, screenCoord, border = null)
@@ -1481,31 +1566,29 @@ BkText.prototype.draw = function(ctx, screenCoord, border = null)
 	if (this.text.length <= 0) return;
 	
 	let coord = this.coord.toScreenCoord(screenCoord);
-	let done = this.__oldText === this.text;
+	let done = (this.__oldText === this.text) && (this.fontHeight !== null);
 	if (!done)
 	{
-		this.relHeight = 1;
+		this.fontHeight = coord.h;
 		this.__oldText = this.text;
 	}
 
-	let fontH;
 	for(;;)
 	{
-		fontH = Math.floor(coord.h * this.relHeight);
-		if (fontH < 1) return;
+		if (this.fontHeight < 1) return;
 		
-		ctx.font = fontH.toString() + 'px ' + this.fontName;
+		ctx.font = this.fontHeight.toString() + 'px ' + this.fontName;
 		
 		if (done) break;
 		
 		let tw = ctx.measureText(this.text).width;
 		if (coord.w >= tw) break;
 		
-		this.relHeight = coord.w / tw;
+		this.fontHeight *= coord.w / tw;
 		done = true;
 	}
 
-	__BkDrawTextLines(ctx, [this.text], coord, fontH, this.alignment, border);
+	_bkDrawTextLines(ctx, [this.text], coord, this.fontHeight, this.alignment, border);
 }
 
 // Several text lines auto distributed and resized to fit inside coord.
@@ -1515,21 +1598,21 @@ let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 {
 	this.lines = [];
 	this.fontName = fontName;
-	this.baseFontRelHeight = fontRelHeight;
+	this.fontRelHeight = fontRelHeight;
 	this.alignment = alignment;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
 	this.leadingFactor = leadingFactor;
 	this.padding = 0;
-	this.fontRelHeight = null;
+	this._fontHeight = null;
 	this._requiresResize = true;
 	
-	this.words = __bkSplitText(text);
+	this.words = _bkSplitText(text);
 	{
 		let count = this.words.length;
 		this.__flagsBuffer = new ArrayBuffer(count);
 		this.__flags = new Uint8Array(this.__flagsBuffer);
-		__bkSetFlagsFixWords(this.__flags, this.words);
+		_bkSetFlagsFixWords(this.__flags, this.words);
 		
 		this.text = this.words.join(' ');
 		this.__endPositionBuffer = new ArrayBuffer(count * 4);
@@ -1538,6 +1621,8 @@ let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
 		this.__textWidth = new Int16Array(this.__textWidthBuffer);
 		this.__spaceWidth = 0;
 		this.__measuredFontHeight = null;
+		this.__measuredW = 0.01;
+		this.__measuredH = 0.01;
 		this.__linesIndexesBuffer = new ArrayBuffer(count * 4);
 		this.__linesIndexes = new Int16Array(this.__linesIndexesBuffer);
 		this.__linesIndexesUsed = 0;
@@ -1557,20 +1642,21 @@ BkTextArea.prototype.resize = function()
 	this._requiresResize = true;
 }
 
-BkTextArea.prototype.defineLines = function(maxWidth, height)
+BkTextArea.prototype.defineLines = function(maxWidth, fontHeight)
 {
-	maxWidth *= this.__measuredFontHeight / (this.fontRelHeight * height);
+	maxWidth *= this.__measuredFontHeight / fontHeight;
 	
+	let prevlineWidth, lineWidth, usedWords;
 	let spaceWidth = this.__spaceWidth;
-	let minPadding = maxWidth;
+	let maxLineWidth = 0;
 	let baseIndex = 0;
 	let linesCount = 0;
 	let done = false;
 	let count = this.words.length;
 	while (baseIndex < count)
 	{
-		let prevlineWidth, lineWidth = 0;
-		let usedWords = 0;
+		lineWidth = 0;
+		usedWords = 0;
 		do
 		{
 			prevlineWidth = lineWidth;
@@ -1606,15 +1692,15 @@ BkTextArea.prototype.defineLines = function(maxWidth, height)
 		this.__linesIndexes[linesCount++] = baseIndex + usedWords - 1;
 		
 		baseIndex += usedWords;
-		let padding = maxWidth - lineWidth;
-		if (padding < minPadding)
+		if (maxLineWidth < lineWidth)
 		{
-			minPadding = padding;
+			maxLineWidth = lineWidth;
 		}
 	}
 	
 	this.__linesIndexesUsed = linesCount;
-	return minPadding / maxWidth;
+	this.padding = 1 - maxLineWidth / maxWidth;
+	return fontHeight * (this.leadingFactor * (this.__linesIndexesUsed - 1) + 1);
 }
 
 BkTextArea.prototype._getLineWidthRelative = function(index)
@@ -1631,7 +1717,8 @@ BkTextArea.prototype._getLineWidthRelative = function(index)
 	return lineWidth;
 }
 
-BkTextArea.prototype._getLineWidth = function(index, height = null)
+// Returns line width for font height = this.__measuredFontHeight
+BkTextArea.prototype._getLineWidth = function(index)
 {
 	let wordStart = index ? (this.__linesIndexes[index - 1] + 1) : 0;
 	let wordEnd = this.__linesIndexes[index];
@@ -1643,27 +1730,24 @@ BkTextArea.prototype._getLineWidth = function(index, height = null)
 		lineWidth += this.__textWidth[i];
 	}
 	
-	if (height !== null)
-	{
-		lineWidth *= this.fontRelHeight * height / this.__measuredFontHeight;
-	}
-	
 	return lineWidth;
 }
 
 BkTextArea.prototype.__measureText = function(ctx, fontHeight, precision)
 {
-	if (fontHeight === this.__measuredFontHeight) return;
+	if (Math.abs(fontHeight - this.__measuredFontHeight) < 0.1) return;
 	
-	ctx.font = (fontHeight).toString() + 'px ' + this.fontName;
-	let oldSampleWidth = this.__textWidth[0];
-	let sampleWidth = ctx.measureText(this.words[0]).width;
+	ctx.font = fontHeight.toString() + 'px ' + this.fontName;
 	
 	// Check if measure is necessary
+	let oldSampleWidth = this.__textWidth[0];
+	let sampleWidth = ctx.measureText(this.words[0]).width;
+
 	if ((this.__measuredFontHeight !== null) &&
-		(Math.floor(precision * oldSampleWidth / this.__measuredFontHeight) ==
+		(fontHeight > 16) && (this.__measuredFontHeight > 16) &&
+		(Math.floor(precision * oldSampleWidth / this.__measuredFontHeight) ===
 			Math.floor(precision * sampleWidth / fontHeight))) return;
-	
+
 	this.__textWidth[0] = sampleWidth;
 	
 	// Measure each word
@@ -1676,79 +1760,162 @@ BkTextArea.prototype.__measureText = function(ctx, fontHeight, precision)
 	this.__measuredFontHeight = fontHeight;
 }
 
-BkTextArea.prototype.adjustLines = function(ctx, width, height)
+BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 {
 	this._requiresResize = false;
-	this.fontRelHeight = this.baseFontRelHeight;
 	
-	if (this.words.length <= 0)
+	if ((this.words.length <= 0) || (desiredHeight < 1))
 	{
-		this.lines = [];
+		this._fontHeight = 0;
 		return;
 	}
 	
-	for (let i = 4;; --i)
+	if (this._fontHeight !== null) 
 	{
-		let fontHeight = (this.fontRelHeight * height);
-		
-		if (fontHeight < 1)
+		// Not necessary if dimensions change less than one pixel
+		if (Math.abs(this.__measuredW - desiredWidth) < 1 && 
+			Math.abs(this.__measuredH - desiredHeight) < 1)
 		{
-			this.lines = [];
-			this.fontRelHeight = 0;
 			return;
 		}
-		
-		this.__measureText(ctx, fontHeight, (8192 >> (i * 2)));
-		
-		this.padding = this.defineLines(width, height);
+	}
 
-		if (i == 0) break;
-
-		let newfactor, factor = 1;
-		// Shrink if height does not fit
-		let padding = 1 - this.fontRelHeight * 
-			(this.leadingFactor * (this.__linesIndexesUsed - 1) + 1);
-		if (padding < 0)
+	/**************************************************************************/
+	// Guessing the biggest font height without overflowing the target area
+	/**************************************************************************/
+	let h = Math.sqrt((desiredWidth * desiredHeight * 1.618) / this.text.length);
+	if (h < 1)
+	{
+		this._fontHeight = 0;
+		return;
+	}
+	let epsilon = 0.5;
+	let minh = 0;
+	let maxh = desiredHeight * this.fontRelHeight;
+	let useSqrtApproximation = true;
+	let besth = null;
+	let minimumError = desiredHeight;
+	let e, e0, h0, th, de, dh, adh, h_a, h_b;
+	
+	if (h > maxh) h = maxh;
+	this.__measureText(ctx, h, 128);
+	th = this.defineLines(desiredWidth, h);
+	
+	for (let i = 4;; --i)
+	{
+		// Verify if there is a word that couldn't fit in width
+		if (this.padding < 0)
 		{
-			factor = 1 / (1 - padding);
-			if (i > 1)
+			h /= 1 - this.padding;
+			if (h < 1) break;
+			
+			if (h > maxh) h = maxh;
+			this.__measureText(ctx, h, 1024);
+			th = this.defineLines(desiredWidth, h);
+			
+			// Check if fits
+			if (th <= desiredHeight)
 			{
-				factor = Math.sqrt(factor);
-				if (i > 2)
+				if (this.padding < 0)
 				{
-					factor = 0.1 + factor * 0.9;
+					--h;
+					this.__measureText(ctx, h, 1024);
+					th = this.defineLines(desiredWidth, h);
 				}
+				else if (h <= 16)
+				{
+					// Last calculation may shrink small fonts far than necessary
+					++h;
+					if (h > maxh) h = maxh;
+					
+					this.__measureText(ctx, h, 1024);
+					th = this.defineLines(desiredWidth, h);
+
+					if ((this.padding < 0) || (th > desiredHeight))
+					{
+						--h;
+						this.__measureText(ctx, h, 1024);
+						this.defineLines(desiredWidth, h);
+					}
+				}
+				besth = h;
+				break;
+			}
+			maxh = h - epsilon;
+		}
+
+		e0 = e;
+		e = th - desiredHeight;
+
+		if (e <= 0)
+		{
+			if (-e < minimumError)
+			{
+				// We need the negative closer to zero
+				besth = h;
+				minimumError = -e;
+				// Stop if we got lucky
+				if (e === 0) break;
 			}
 		}
+		if (i <= 0) break;
 		
-		// Shrink if one word line does not fit
-		padding = this.padding;
-		if (padding < 0)
+		if (e < 0) minh = h + epsilon;
+		if (e > 0) maxh = h - epsilon;
+		if (minh >= maxh) break;
+		
+		if (useSqrtApproximation)
 		{
-			newfactor = 1 / (1 - padding);
-			if (newfactor < factor) factor = newfactor;
+			// Second guess
+			h0 = h;
+			h *= Math.sqrt(desiredHeight / th);
+			if (h > maxh) h = maxh;
+			if (h < minh) h = minh;
+			useSqrtApproximation = false;
 		}
-		
-		// Fits, no more processing necessary
-		if (factor >= 1) break;
-		
-		this.fontRelHeight *= factor;
-		// Make sure the updated height changes 
-		if ((fontHeight - (this.fontRelHeight * height)) < 1)
+		else
 		{
-			if (fontHeight <= 1)
+			// Third and later guesses
+			dh = h - h0;
+			de = e - e0;
+
+			h0 = h;
+			if (de === 0)
 			{
-				this.fontRelHeight = 0;
+				h_a = (minh + maxh) * 0.5;
+				adh = Math.abs(dh);
+				h_b = h + (e < 0) ? adh : -adh;
+				if (h_b > maxh) h_b = maxh;
+				if (h_b < minh) h_b = minh;
+				h = (Math.abs(h_a - h) < Math.abs(h_b - h)) ? h_a : h_b;
 			}
 			else
 			{
-				this.fontRelHeight = (fontHeight - 1) / height;
+				h -= e * (dh / de);
+				if (h > maxh) h = maxh;
+				if (h < minh) h = minh;
 			}
 		}
+		
+		this.__measureText(ctx, h, 8192 >> (i * 2));
+		th = this.defineLines(desiredWidth, h);
 	}
+	if ((besth !== null) && (besth !== h))
+	{
+		h = besth;
+		this.__measureText(ctx, h, 8192);
+		this.defineLines(desiredWidth, h);
+	}
+	if (h < 1)
+	{
+		this._fontHeight = 0;
+		return;
+	}
+	this._fontHeight = h;
+	/**************************************************************************/
 	
-	// Fix ugly two lines 
-	if (this.__linesIndexesUsed == 2)
+	// Fix ugly two lines for centred and left padding alignments
+	if ((this.__linesIndexesUsed == 2) && ((this.alignment % 3) > 0) && ((this.alignment % 3) < 2))
 	{
 		while (this.__linesIndexes[0] >= 1)
 		{
@@ -1763,11 +1930,13 @@ BkTextArea.prototype.adjustLines = function(ctx, width, height)
 			}
 			break;
 		}
-		// Fix padding
-		let padding0 = width - this._getLineWidth(0, height);
-		let padding1 = width - this._getLineWidth(1, height);
-		
-		this.padding = (padding0 < padding1 ? padding0 : padding1) / width;
+		// Fix padding for left padding alignments
+		if (Math.floor(this.alignment) !== this.alignment)
+		{
+			let w0 = this._getLineWidth(0);
+			let w1 = this._getLineWidth(1);
+			this.padding = 1 - (w0 > w1 ? w0 : w1) * h / (this.__measuredFontHeight * desiredWidth);
+		}
 	}
 	
 	let endPos = this.__endPosition;
@@ -1780,6 +1949,8 @@ BkTextArea.prototype.adjustLines = function(ctx, width, height)
 			endPos[this.__linesIndexes[i]]));
 	}
 
+	this.__measuredW = desiredWidth;
+	this.__measuredH = desiredHeight
 	this.lines = lines;
 }
 
@@ -1789,85 +1960,89 @@ BkTextArea.prototype.draw = function(ctx, screenCoord, border = null)
 	
 	let coord = this.coord.toScreenCoord(screenCoord);
 	if (this._requiresResize) this.adjustLines(ctx, coord.w, coord.h);
-	let fontH = (this.fontRelHeight * coord.h);
+	let fontH = this._fontHeight;
 	
 	if (fontH < 1) return;
 	
 	ctx.font = fontH.toString() +'px ' + this.fontName;
-	__BkDrawTextLines(ctx, this.lines, coord, fontH, this.alignment, border, this.padding, this.leadingFactor);
+	_bkDrawTextLines(ctx, this.lines, coord, fontH, this.alignment, border, this.padding, this.leadingFactor);
 }
 
-function __BkDrawTextLines(ctx, lines, coord, fontH, alignment, border, padding = 0, leadingFactor = 1)
+function _bkDrawTextLines(ctx, lines, coord, fontH, alignment, border, padding = 0, leadingFactor = 1)
 {
 	let maxLines = lines.length;
 	let lineHeight = fontH * leadingFactor;
 	let x, y;
 	
-	ctx.textBaseline = 'top';
+	// Firefox and Chrome agree on alphabetic
+	ctx.textBaseline = 'alphabetic';
 	
 	switch(alignment)
 	{
 	case 4:  // Center middle
 		ctx.textAlign = 'center';
 		x = coord.x;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
+		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
 		break;
 	case 3:  // Left middle
 		ctx.textAlign = 'left';
 		x = coord.x - coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
+		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
 		break;
 	case 3.5:// Left middle with padding
 		ctx.textAlign = 'left';
 		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
+		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
 		break;
 	case 5:  // Right middle
 		ctx.textAlign = 'right';
 		x = coord.x + coord.w * 0.5;
-		y = coord.y - (lineHeight * (maxLines - 1) + fontH) * 0.5;
+		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
 		break;
 	case 0:  // Left top
 		ctx.textAlign = 'left';
 		x = coord.x - coord.w * 0.5;
-		y = coord.y - coord.h * 0.5;
+		y = coord.y + (fontH - coord.h) * 0.5;
 		break;
 	case 0.5:  // Left top with padding
 		ctx.textAlign = 'left';
 		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y - coord.h * 0.5;
+		y = coord.y + (fontH - coord.h) * 0.5;
 		break;
 	case 1:  // Center top
 		ctx.textAlign = 'center';
 		x = coord.x;
-		y = coord.y - coord.h * 0.5;
+		y = coord.y + (fontH - coord.h) * 0.5;
 		break;
 	case 2:  // Right top
 		ctx.textAlign = 'right';
 		x = coord.x + coord.w * 0.5;
-		y = coord.y - coord.h * 0.5;
+		y = coord.y + (fontH - coord.h) * 0.5;
 		break;
 	case 6:  // Left bottom
 		ctx.textAlign = 'left';
 		x = coord.x - coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
+		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
 		break;
 	case 6.5:  // Left bottom with padding
 		ctx.textAlign = 'left';
 		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
+		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
 		break;
 	case 7:  // Center bottom
 		ctx.textAlign = 'center';
 		x = coord.x;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
+		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
 		break;
 	case 8:  // Right bottom
 		ctx.textAlign = 'right';
 		x = coord.x + coord.w * 0.5;
-		y = coord.y + coord.h * 0.5 - (lineHeight * (maxLines - 1) + fontH);
+		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
 		break;
 	}
+	
+	// Adjusting to middle
+	y += fontH * 0.35;
 
 	if ((border !== null) && (fontH >= 4))
 	{

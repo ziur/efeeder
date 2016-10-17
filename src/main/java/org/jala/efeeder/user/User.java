@@ -53,6 +53,7 @@ public class User {
 		this.name = nameUser;
 	}
 
+	@Override
 	public String toString()
 	{
 		return this.name + " " + this.lastName;

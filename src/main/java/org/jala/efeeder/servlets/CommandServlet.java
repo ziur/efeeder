@@ -58,8 +58,7 @@ public class CommandServlet extends HttpServlet {
 
 		if (request.getRequestURI().equals("/action/logout")) {
 			session.invalidate();
-			Cookie cookie = new Cookie("userId", "");
-			response.addCookie(cookie);
+			response.addCookie(new Cookie("userId", ""));
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
@@ -94,8 +93,7 @@ public class CommandServlet extends HttpServlet {
 
 			if (out.getUser() != null) {
 				session.setAttribute("user", out.getUser());
-				Cookie cookie = new Cookie("userId", String.valueOf(out.getUser().getId()));
-				response.addCookie(cookie);
+				response.addCookie(new Cookie("userId", String.valueOf(out.getUser().getId())));
 			}
 
 			if (out.getExitStatus() == ExitStatus.ERROR) {
