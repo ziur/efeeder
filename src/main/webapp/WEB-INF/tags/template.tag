@@ -42,6 +42,7 @@
 		<!--<t:footer/>-->
 
 		<script src="/assets/js/lib/jquery.js"></script>
+		<script src="/assets/js/lib/js.cookie.js"></script>
 		<script src="/assets/js/lib/bootstrap.js"></script>
 		<script src="/assets/js/lib/datatables.min.js"></script>
 		<script src="/assets/js/lib/lodash.js"></script>

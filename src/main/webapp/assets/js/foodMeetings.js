@@ -55,7 +55,6 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	$.get('/assets/templates/foodMeeting.html', function(template) {
 		foodMeetingTmpl = template;
 		$.get('/action/getAllMeetings', function(meetings) {
-			self.meetings = meetings;
 			_.each(meetings, function(meeting) {
 				insertMeeting(meeting, false);
 			})
@@ -75,9 +74,8 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			userOwner = newMeeting.userOwner;
 		}
 
-		var isNewMeetingFirst = _.every(self.meetings, function(meeting) {
-			return newMeeting.eventDate <= meeting.eventDate;
-		});
+		self.meetings.push(newMeeting);
+		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
 
 		var data = {
 			"id": newMeeting.id,
@@ -95,7 +93,6 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
 
-		self.meetings.push(newMeeting);
 		var $newFoodMeeting = $($foodMeetingTmpl.render(data));
 		$newFoodMeeting.imagesLoaded().always(function() {
 			if (isNewMeetingFirst) {
@@ -216,21 +213,6 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 	};
 
-	var getCookie = function(cname) {
-		var name = cname + "=";
-		var ca = document.cookie.split(';');
-		for (var i = 0; i < ca.length; i++) {
-			var c = ca[i];
-			while (c.charAt(0) == ' ') {
-				c = c.substring(1);
-			}
-			if (c.indexOf(name) == 0) {
-				return c.substring(name.length, c.length);
-			}
-		}
-		return "";
-	}
-
 	var addClickEvents = function() {
 		addMeetingForm.submit(function(event) {
 			event.preventDefault();
@@ -247,7 +229,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 
 				self.communicationService.sendMessage(
 					{
-						user: parseInt(getCookie("userId")),
+						user: parseInt(Cookies.get("userId")),
 						room: self.createMeetingRoomId,
 						command: "CreateFoodMeeting",
 						events: [
