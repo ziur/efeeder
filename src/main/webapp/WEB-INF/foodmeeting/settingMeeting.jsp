@@ -34,8 +34,8 @@
 						</div>
 						<div class="col m12 l8">
 							<div class="input-field col s12">
-								<label for="meeting_name">Meeting Name</label>
 								<input id="meeting_name" name="meeting_name" type="text" class="validate" value="${foodMeeting.name}" >
+								<label for="meeting_name">Meeting Name</label>
 							</div>
 							<div class="input-field col s12">
 								<input name="image_link" id="image_link" value="${foodMeeting.imageLink}" type="text" class="validate" >
