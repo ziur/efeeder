@@ -24,7 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 @Command
 public class EditFoodMeetingCommand implements CommandUnit {
 
-	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=?, "
+	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
 			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
 
 	@Override
@@ -45,12 +45,11 @@ public class EditFoodMeetingCommand implements CommandUnit {
 		try {
 			stm.setString(1, parameters.getParameter("meeting_name"));
 			stm.setString(2, parameters.getParameter("image_link"));
-			stm.setString(3, parameters.getParameter("status"));
-			stm.setTimestamp(4, eventDate);
-			stm.setTimestamp(5, votingDate);
-			stm.setTimestamp(6, orderDate);
-			stm.setTimestamp(7, paymentDate);
-			stm.setInt(8, Integer.valueOf(parameters.getParameter("id-food-meeting")));
+			stm.setTimestamp(3, eventDate);
+			stm.setTimestamp(4, votingDate);
+			stm.setTimestamp(5, orderDate);
+			stm.setTimestamp(6, paymentDate);
+			stm.setInt(7, Integer.valueOf(parameters.getParameter("id-food-meeting")));
 			stm.executeUpdate();
 		} catch (Exception e) {
 		}

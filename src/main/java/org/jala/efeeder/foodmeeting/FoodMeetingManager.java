@@ -9,7 +9,7 @@ import org.jala.efeeder.user.UserManager;
 
 public class FoodMeetingManager {
 
-	private static final String SELECT_BY_ID_FOOD_MEETING = "SELECT id, name, image_link, status, event_date, created_at, "
+	private static final String SELECT_BY_ID_FOOD_MEETING = "SELECT id, name, image_link, event_date, created_at, "
 			+ "voting_time, order_time, payment_time, id_user FROM food_meeting WHERE id=?";
 
 	private final Connection connection;
@@ -28,9 +28,9 @@ public class FoodMeetingManager {
 		UserManager userManager = new UserManager(connection);
 
 		if (resultSet.next()) {
-			foodMeeting = new FoodMeeting(id, resultSet.getString(2), resultSet.getString(3), resultSet.getString(4),
-					resultSet.getTimestamp(5), resultSet.getTimestamp(6), resultSet.getTimestamp(7),
-					resultSet.getTimestamp(8), resultSet.getTimestamp(9), userManager.getUserById(resultSet.getInt(10)));
+			foodMeeting = new FoodMeeting(id, resultSet.getString(2), resultSet.getString(3),
+					resultSet.getTimestamp(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6),
+					resultSet.getTimestamp(7), resultSet.getTimestamp(8), userManager.getUserById(resultSet.getInt(9)));
 		}
 
 		return foodMeeting;

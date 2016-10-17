@@ -114,8 +114,14 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			case 'Order':
 				page = "order";
 				break;
+			case 'Payment':
+				page = "payment";
+				break;	
+			case 'Buying':
+				page = "details";
+				break;	
 			case 'Finish':
-				page = "finish";
+				page = "details";
 				break;
 		}
 		return '/action/' + page + '?id_food_meeting=' + id;

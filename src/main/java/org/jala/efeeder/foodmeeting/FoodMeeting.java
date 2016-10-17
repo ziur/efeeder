@@ -17,7 +17,6 @@ public class FoodMeeting {
 	private int id;
 	private String name;
 	private String imageLink;
-	private String status;
 	private Timestamp eventDate;
 	private Timestamp votingDate;
 	private Timestamp orderDate;
@@ -25,12 +24,10 @@ public class FoodMeeting {
 	private User userOwner;
 	private Timestamp createdAt;
 
-	public static final String DEFAULT_FOOD_MEETING_STATUS = FoodMeetingStatus.Voting.name();
-
 	public FoodMeeting() {
 	}
 
-	public FoodMeeting(int id, String name,String imageLink, String status, Timestamp eventDate, Timestamp createdAt,
+	public FoodMeeting(int id, String name,String imageLink, Timestamp eventDate, Timestamp createdAt,
 			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
 		this.id = id;
 		this.name = name;
@@ -40,12 +37,11 @@ public class FoodMeeting {
 		this.orderDate = orderDate;
 		this.paymentDate = paymentDate;
 		this.imageLink = imageLink;
-		this.status = status;
 		this.userOwner = userOwner;
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, DEFAULT_FOOD_MEETING_STATUS, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+		this(id, name, imageLink, eventDate, eventDate, eventDate, eventDate, null, userOwner);
 	}
 
 	public int getWidth() {
