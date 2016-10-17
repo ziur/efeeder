@@ -19,7 +19,9 @@ import org.jala.efeeder.api.utils.JsonConverter;
 
 /**
  *
- * @author alexander_castro
+ * @author 0x3
+ * 
+ * Supports AJAX and provides functionality for the Web Sockets version 
  */
 @Command
 public class GetSuggestionsCommand implements CommandUnit {
@@ -29,10 +31,7 @@ public class GetSuggestionsCommand implements CommandUnit {
     private static final String SELECT_PLACES_BY_MEETING_SQL =
             "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
     
-	static public String getAllSuggestionsAsString(In parameters) throws Exception {
-        Connection connection = parameters.getConnection();
-        int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
-        
+	static public String getUserSuggestionsAsString(int idFoodMeeting, Connection connection) throws Exception {
         PreparedStatement ps = connection.prepareStatement(SELECT_USERS_BY_MEETING_SQL);
         ps.setInt(1, idFoodMeeting);
         ResultSet resSet = ps.executeQuery();
@@ -45,9 +44,13 @@ public class GetSuggestionsCommand implements CommandUnit {
                     resSet.getString("user.name") + " " + resSet.getString("user.last_name") ));
         }
         
-        ps = connection.prepareStatement(SELECT_PLACES_BY_MEETING_SQL);
+		return JsonConverter.objectToJSON(usersAndPlaces);
+	}
+	
+	static public String getPlacesSuggestionsAsString(int idFoodMeeting, Connection connection) throws Exception {
+        PreparedStatement ps = connection.prepareStatement(SELECT_PLACES_BY_MEETING_SQL);
         ps.setInt(1, idFoodMeeting);
-        resSet = ps.executeQuery();
+        ResultSet resSet = ps.executeQuery();
         
         List<Place> places = new ArrayList<>();
         while(resSet.next()) {
@@ -60,13 +63,21 @@ public class GetSuggestionsCommand implements CommandUnit {
                     resSet.getInt("votes")));
         }
 
-        Suggestion suggestion = new Suggestion(usersAndPlaces, places, parameters.getUser().getId());
-        return JsonConverter.objectToJSON(suggestion);
+        return JsonConverter.objectToJSON(places);
 	}
 	
+	static public String getSuggestionsAsString(In parameters) throws Exception {
+		int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
+		Connection connection = parameters.getConnection();
+		return "{\"userList\":" +
+				getUserSuggestionsAsString(idFoodMeeting, connection) +
+				",\"placeList\":" +
+				getPlacesSuggestionsAsString(idFoodMeeting, connection) +
+				"}";
+	}
+
     @Override
     public Out execute(In parameters) throws Exception {
-        return OutBuilder.response("application/json", getAllSuggestionsAsString(parameters));
+		return OutBuilder.response("application/json", getSuggestionsAsString(parameters));
     }
-    
 }

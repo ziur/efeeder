@@ -84,6 +84,66 @@
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
+	
+	<changeSet author="0x3" id="insert.user.0">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Huey"/>
+				<column name="last_name"  value="McDuck"/>
+				<column name="username"   value="0"/>
+				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
+				<column name="email"      value="Huey.McDuck@cuacua.com"/>
+				<column name="image_path" value=""/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.user.1">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Dewey"/>
+				<column name="last_name"  value="McDuck"/>
+				<column name="username"   value="1"/>
+				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
+				<column name="email"      value="Dewey.McDuck@cuacua.com"/>
+				<column name="image_path" value=""/>
+		</insert>
+	</changeSet>
+	
+	<changeSet author="0x3" id="insert.user.2">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Louie"/>
+				<column name="last_name"  value="McDuck"/>
+				<column name="username"   value="2"/>
+				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
+				<column name="email"      value="Louie.McDuck@cuacua.com"/>
+				<column name="image_path" value=""/>
+		</insert>
+	</changeSet>
+	
+	<changeSet author="0x3" id="insert.user.3">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Donald"/>
+				<column name="last_name"  value="McDuck"/>
+				<column name="username"   value="3"/>
+				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
+				<column name="email"      value="Donald.McDuck@cuacua.com"/>
+				<column name="image_path" value=""/>
+		</insert>
+	</changeSet>
+	
+	<changeSet author="0x3" id="insert.user.4">
+		<insert catalogName="efeeder"
+				tableName="user">
+				<column name="name"       value="Scrooge"/>
+				<column name="last_name"  value="McDuck"/>
+				<column name="username"   value="4"/>
+				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
+				<column name="email"      value="Scrooge.McDuck@cuacua.com"/>
+				<column name="image_path" value=""/>
+		</insert>
+	</changeSet>
 
     <changeSet author="alexander" id="places.table">
         <createTable catalogName="efeeder" tableName="places">
@@ -125,6 +185,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="created_at"       type="DATETIME"/>
+			<column name="voting_time"       type="DATETIME"/>
+			<column name="order_time"       type="DATETIME"/>
+			<column name="payment_time"       type="DATETIME"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="id_user"
                 baseTableName="food_meeting"
@@ -135,13 +198,13 @@
                 referencedTableName="user"/>
     </changeSet>
 
-    <changeSet author="alexander" id="insert.place.rellenos">
+    <changeSet author="0x3" id="insert.place.rellenos2">
         <insert catalogName="efeeder"
                 tableName="places">
-            <column name="name" value="rellenos calama"/>
-            <column name="description" value="relleno"/>
-            <column name="phone" value="4666666"/>
-            <column name="direction" value="c/calama"/>
+            <column name="name" value="Rellenos Calama"/>
+            <column name="description" value="Relleno de papa, papa con queso y papa sin queso."/>
+            <column name="phone" value="466-6666"/>
+            <column name="direction" value="C/Calama"/>
             <column name="image_link" value="http://www.guiaji.com.bo/archivos/especialidad_74_image.jpg"/>
         </insert>
     </changeSet>
@@ -155,6 +218,9 @@
             <column name="event_date"       valueDate="now()"/>
             <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
+			<column name="voting_time"      value="now()"/>
+			<column name="order_time"       value="now()"/>
+			<column name="payment_time"     value="now()"/>
         </insert>
     </changeSet>
 
@@ -165,8 +231,11 @@
             <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-            <column name="id_user"          valueDate="1"/>
+            <column name="id_user"          value="1"/>
             <column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
@@ -177,21 +246,57 @@
             <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-            <column name="id_user"          valueDate="1"/>
+            <column name="id_user"          value="1"/>
             <column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
-    <changeSet author="roger" id="insert.place.pollo">
+    <changeSet author="0x3" id="insert.place.pollo2">
         <insert catalogName="efeeder"
                 tableName="places">
-                <column name="name" value="panchita"/>
-                <column name="description" value="pollo frito con arroz branco"/>
+                <column name="name" value="Panchita"/>
+                <column name="description" value="Pollo frito con arroz blanco y papas fritas."/>
                 <column name="phone" value="4556565"/>
-                <column name="direction" value="av/san martin"/>
+                <column name="direction" value="Av. San Martin"/>
                 <column name="image_link" value="http://3.bp.blogspot.com/-qN5kZKaQDI8/VaQXIVteKyI/AAAAAAAADK0/y14wMy_3xjk/s200/Pollos-Panchita-Review-Cochabamba-Logo.jpg"/>
         </insert>
     </changeSet>
+	
+    <changeSet author="0x3" id="insert.place.carne">
+        <insert catalogName="efeeder"
+                tableName="places">
+                <column name="name" value="El Arriero"/>
+                <column name="description" value="Carnes, ensalada y guarniciones a gusto."/>
+                <column name="phone" value="4556565"/>
+                <column name="direction" value="Calle Buenos Aires No. 379, esq. Trinidad."/>
+                <column name="image_link" value="https://nbclatino.files.wordpress.com/2013/07/churrasco-steak-2010-featured-image.jpg"/>
+        </insert>
+    </changeSet>
+	
+    <changeSet author="0x3" id="insert.place.empanadas">
+        <insert catalogName="efeeder"
+                tableName="places">
+                <column name="name" value="Wist'upiku"/>
+                <column name="description" value="Empanadas picantes o blancas con helado artesanal de leche o canela."/>
+                <column name="phone" value="+591 4 4405071"/>
+                <column name="direction" value="Av. Melchor Pérez de Olguín, esq Quilla."/>
+                <column name="image_link" value="http://www.wistupiku.com/wp-content/uploads/2015/08/Producto-1.png"/>
+        </insert>
+    </changeSet>
+	
+    <changeSet author="0x3" id="insert.place.unicode">
+        <insert catalogName="efeeder"
+                tableName="places">
+                <column name="name" value="Sopa de Ñ y 龟"/>
+                <column name="description" value="Sopa de letras unicode (Ñ, 龟), de dos y tres bytes en codificación UTF-8."/>
+                <column name="phone" value="Ñ - 龟 123-4567"/>
+                <column name="direction" value="Av. Ñ, esq. 龟."/>
+                <column name="image_link" value=""/>
+        </insert>
+    </changeSet>	
     
     <changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
         <insert catalogName="efeeder"
@@ -200,8 +305,11 @@
             <column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-            <column name="id_user"          valueDate="1"/>
+            <column name="id_user"          value="1"/>
             <column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
@@ -212,8 +320,11 @@
             <column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
             <column name="status"           value="Voting"/>
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-            <column name="id_user"          valueDate="1"/>
+            <column name="id_user"          value="1"/>
             <column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 

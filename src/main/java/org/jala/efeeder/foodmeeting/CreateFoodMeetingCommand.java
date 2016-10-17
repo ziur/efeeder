@@ -26,8 +26,8 @@ import org.jala.efeeder.user.UserManager;
 @Command
 public class CreateFoodMeetingCommand implements CommandUnit {
 
-	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, id_user, created_at) "
-            + "values(?, ?, ?, ?, ?, ?)";
+	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, id_user, created_at, voting_time, order_time, payment_time) "
+            + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String createMeetingRoomId = "createMeetingRoomId";
 
 	@Override
@@ -49,6 +49,9 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 		stm.setTimestamp(4, eventDate);
 		stm.setInt(5, userId);
 		stm.setTimestamp(6, createdAt);
+		stm.setTimestamp(7, eventDate);
+		stm.setTimestamp(8, eventDate);
+		stm.setTimestamp(9, eventDate);
 
 		stm.executeUpdate();
 
