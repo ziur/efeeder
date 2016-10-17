@@ -5,7 +5,6 @@
  */
 package org.jala.efeeder.suggestion;
 
-import java.sql.Date;
 import lombok.Data;
 
 /**
@@ -35,6 +34,13 @@ public class Place {
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.phone = phone;
+		this.direction = direction;
+		this.image_link = image_link;
+	}
+	public Place(int id, String name, String phone, String direction, String image_link) {
+		this.id = id;
+		this.name = name;
 		this.phone = phone;
 		this.direction = direction;
 		this.image_link = image_link;
