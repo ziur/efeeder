@@ -57,12 +57,12 @@ public class ImageCommand implements CommandUnit {
 	}
 	
 	private Out readImageAndConvertToBytes(String path, String formatName, String contentTypeName) throws IOException{
-		File imagenFile = new File(path);
+		File imagenFileName = new File(path);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
 		BufferedImage img = null;
 
 		try {
-			img = ImageIO.read(imagenFile);
+			img = ImageIO.read(imagenFileName);
 		}
 		catch (IIOException e) {
 			img = ImageIO.read(new File(this.defaultPath));
