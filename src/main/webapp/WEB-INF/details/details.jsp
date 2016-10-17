@@ -2,10 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-
 <t:template>
     <jsp:attribute name="javascript">
-        <!--<link href="/assets/css/printDetails.css" rel="stylesheet">-->	
         <link rel="stylesheet" type="text/css" href="/assets/css/printDetails.css" media="print">
     </jsp:attribute>
     <jsp:body>
