@@ -7,5 +7,7 @@ package org.jala.efeeder.foodmeeting;
 public enum FoodMeetingStatus {
     Voting,
     Order,
+	Payment,
+	Buying,
     Finish            
 }

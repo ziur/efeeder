@@ -56,14 +56,28 @@ var MeetingStateSllider = function() {
 	var eventDate= moment($("#edit-meeting").data("eventDate"), "YYYY-MM-DD HH:mm:ss");
 	var createdDate = moment($("#edit-meeting").data("createdDate"), "YYYY-MM-DD HH:mm:ss");
 	
-	var step = eventDate.diff(createdDate,"hours") < 6 ? eventDate.diff(createdDate)*75/(100*6) : 60*60*1000;
-	var firstHandlerPosition = eventDate.valueOf() - 5*step;
-	var secondHandlerPosition = eventDate.valueOf() - 3*step;
-	var thirdHandlerPosition = eventDate.valueOf() - step;
+	var votingDate = moment($("#edit-meeting").data("votingDate"), "YYYY-MM-DD HH:mm:ss");
+	var orderDate = moment($("#edit-meeting").data("orderDate"), "YYYY-MM-DD HH:mm:ss");
+	var paymentDate = moment($("#edit-meeting").data("paymentDate"), "YYYY-MM-DD HH:mm:ss");
 	
-	var calendarSettings = {
+	var firstHandlerPosition = votingDate.valueOf();
+	var secondHandlerPosition = orderDate.valueOf();
+	var thirdHandlerPosition = paymentDate.valueOf();
+	
+	var maxMediumDevicesWidth = 992;
+	var isSmallScreen = $(window).width() <= maxMediumDevicesWidth;
+	var calendarSettings = isSmallScreen ? 
+	{
+		sameDay: '[Tdy] HH:mm',
+		nextDay: '[Tmr] HH:mm',
+		nextWeek: 'ddd HH:mm',
+		lastDay: '[YTD] HH:mm',
+		lastWeek: '[Last] ddd HH:mm',
+		sameElse: 'MM/DD  HH:mm'
+	} :
+	{
 		sameDay: '[Today] HH:mm',
-		nextDay: '[Tomorrow] HH:mm',
+		nextDay: '[Tommorrow] HH:mm',
 		nextWeek: 'dddd HH:mm',
 		lastDay: '[Yesterday] HH:mm',
 		lastWeek: '[Last] dddd HH:mm',
@@ -72,9 +86,10 @@ var MeetingStateSllider = function() {
 	
 	var sliderSections= [
 		{color: "#b3e5fc ", text: "Voting"},
-		{color: "#29b6f6", text: "Orders"},
+		{color: "#29b6f6", text: "Order"},
 		{color: "#0277bd", text: "Payment"},
-		{text: "Waiting to eat!"}
+		{text: "Buying"},
+		{text: "Finish"}
 	]
 	
 	var init = function() {
@@ -99,7 +114,11 @@ var MeetingStateSllider = function() {
 			var orderVotingHandle = 0;
 			var orderPaymentHandle = 1;
 			var paymentEmptyHandle = 2;
-
+			
+			$("#voting-date").val(Math.round(values[orderVotingHandle]));
+			$("#order-date").val(Math.round(values[orderPaymentHandle]));
+			$("#payment-date").val(Math.round(values[paymentEmptyHandle]));
+			
 			var newStatus = $("#status").text();
 
 			if(now <= values[orderVotingHandle]) {
@@ -108,34 +127,50 @@ var MeetingStateSllider = function() {
 				newStatus = sliderSections[1].text;	
 			} else if(now <= values[paymentEmptyHandle]) {
 				newStatus = sliderSections[2].text;	
-			} else
+			} else if(now <= eventDate.valueOf())
 			{
 				newStatus = sliderSections[3].text;
+			} else {
+				newStatus = sliderSections[4].text;
 			}
 
 			$("#status").text(newStatus);	
 		});		
 		
+		addConnectorTooltips();
+		
+		modifyStyling();					
+	}		
+	
+	function addConnectorTooltips() {
 		$(".noUi-connect").each(function(index){
 			$(this).css('background', sliderSections[index].color);
 
-			var tooltip = $("<div class='noUi-tooltip'>" + sliderSections[index].text + "</div>")
+			var connectorTooltip = $("<div class='noUi-tooltip connector-tooltip'>" + sliderSections[index].text + "</div>")
 				.css('background', "#c8d8d6")
 				.css('bottom', '-800%')
 				.css('padding', '1px')
-				.css('font-size', 'small');
+				.css("font-size", "small");
 		
-			$(this).append(tooltip);
+			$(this).append(connectorTooltip );
 		});
-		
+	}
+	
+	function modifyStyling() {
 		$(".noUi-value").css("white-space", "nowrap")
-	}		
+		
+		if(isSmallScreen) {
+			$(".noUi-value").css("font-size", "small");
+			$(".noUi-tooltip").css("font-size", "small");
+			$(".noUi-tooltip.connector-tooltip").css("font-size", "x-small");
+		}
+	}
 	
 	function formatToDate(value) {
 		return moment(value).calendar(null, calendarSettings);
-	};
+	}
 	
-	function get25Range(createdDate, eventDate) {	
+	function get25Range(createdDate, eventDate) {
 		var millisecondsOfDay = 60*60*1000;			
 
 		var hoursBetween = eventDate.diff(createdDate, 'hours');

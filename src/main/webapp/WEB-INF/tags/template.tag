@@ -26,7 +26,6 @@
 		<link rel="stylesheet" href="/assets/css/imageUpload.css">
 		<link rel="stylesheet" href="/assets/css/nouislider.min.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link href="/assets/css/settingMeeting.css" rel="stylesheet">
 	</head>
 
 	<body>

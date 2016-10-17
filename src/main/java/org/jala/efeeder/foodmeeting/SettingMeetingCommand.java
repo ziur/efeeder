@@ -24,7 +24,7 @@ import org.jala.efeeder.user.UserManager;
 @Command
 public class SettingMeetingCommand implements CommandUnit {
 
-	private static final String SELECT_FOOD_MEETING_SQL = "Select name, image_link, status, event_date, created_at, id_user from food_meeting where id = ?";
+	private static final String SELECT_FOOD_MEETING_SQL = "Select name, image_link, status, event_date, created_at, voting_time, order_time, payment_time, id_user from food_meeting where id = ?";
 
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -41,7 +41,8 @@ public class SettingMeetingCommand implements CommandUnit {
 
 		if (resultSet.next()) {
 			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
-					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userManager.getUserById(resultSet.getInt(6))));
+					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), resultSet.getTimestamp(6),
+					resultSet.getTimestamp(7),resultSet.getTimestamp(8), userManager.getUserById(resultSet.getInt(9))));
 		}
 
 		out.addResult("foodMeeting", foodMeeting);

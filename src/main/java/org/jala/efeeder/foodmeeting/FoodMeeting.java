@@ -1,6 +1,7 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import org.jala.efeeder.user.User;
 import org.joda.time.Days;
@@ -18,6 +19,9 @@ public class FoodMeeting {
 	private String imageLink;
 	private String status;
 	private Timestamp eventDate;
+	private Timestamp votingDate;
+	private Timestamp orderDate;
+	private Timestamp paymentDate;
 	private User userOwner;
 	private Timestamp createdAt;
 
@@ -26,18 +30,22 @@ public class FoodMeeting {
 	public FoodMeeting() {
 	}
 
-	public FoodMeeting(int id, String name,String imageLink, String status, Timestamp eventDate, Timestamp createdAt, User userOwner) {
+	public FoodMeeting(int id, String name,String imageLink, String status, Timestamp eventDate, Timestamp createdAt,
+			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
 		this.id = id;
 		this.name = name;
 		this.createdAt = createdAt;
 		this.eventDate = eventDate;
+		this.votingDate = votingDate;
+		this.orderDate = orderDate;
+		this.paymentDate = paymentDate;
 		this.imageLink = imageLink;
 		this.status = status;
 		this.userOwner = userOwner;
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, DEFAULT_FOOD_MEETING_STATUS, eventDate, null, userOwner);
+		this(id, name, imageLink, DEFAULT_FOOD_MEETING_STATUS, eventDate, eventDate, eventDate, eventDate, null, userOwner);
 	}
 
 	public int getWidth() {
@@ -46,6 +54,26 @@ public class FoodMeeting {
 		int days = Days.daysBetween(today, endEventDate).getDays();
 
 		return calculateWidth(days);
+	}
+	
+	public String getStatus() {
+		String  status = FoodMeetingStatus.Voting.name();
+		Timestamp now = new Timestamp((new Date()).getTime());
+		
+		if(now.before(this.votingDate)) {
+			status = FoodMeetingStatus.Voting.name();
+		} else if(now.before(this.orderDate)) {
+			status = FoodMeetingStatus.Order.name();
+		} else if(now.before(this.paymentDate)) {
+			status = FoodMeetingStatus.Payment.name();
+		} else if(now.before(this.eventDate))
+		{
+			status = FoodMeetingStatus.Buying.name();
+		} else {
+			status = FoodMeetingStatus.Finish.name();
+		}
+		
+		return status;
 	}
 
 	private int calculateWidth(int days) {

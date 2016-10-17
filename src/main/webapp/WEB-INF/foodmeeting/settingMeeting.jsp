@@ -22,8 +22,12 @@
 			<br/><br/><br/>
 			<div class="row">
 				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12"
-					  data-event-date="${foodMeeting.eventDate}" data-created-date="${foodMeeting.createdAt}">
+					  data-event-date="${foodMeeting.eventDate}" data-created-date="${foodMeeting.createdAt}"
+					  data-voting-date="${foodMeeting.votingDate}" data-order-date="${foodMeeting.orderDate}" data-payment-date="${foodMeeting.paymentDate}">
 					<input id="meeting-id" name="id-food-meeting" type="hidden" value="${foodMeeting.id}">
+					<input id="voting-date" name="voting-date" type="hidden" type="date">
+					<input id="order-date" name="order-date" type="hidden" type="date">
+					<input id="payment-date" name="payment-date" type="hidden" type="date">
 					<div class="row">
 						<div class="col m12 l4">
 							<ul class="collection margin-bottom-0">
