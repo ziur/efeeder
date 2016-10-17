@@ -233,9 +233,9 @@
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
             <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
-			<column name="voting_time"      value="now()"/>
-			<column name="order_time"       value="now()"/>
-			<column name="payment_time"     value="now()"/>
+			<column name="voting_time"      value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="order_time"       value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="payment_time"     value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
@@ -248,9 +248,9 @@
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
             <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
-			<column name="voting_time"      value="now()"/>
-			<column name="order_time"       value="now()"/>
-			<column name="payment_time"     value="now()"/>
+			<column name="voting_time"      value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="order_time"       value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="payment_time"     value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
@@ -307,9 +307,9 @@
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
             <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
-			<column name="voting_time"      value="now()"/>
-			<column name="order_time"       value="now()"/>
-			<column name="payment_time"     value="now()"/>
+			<column name="voting_time"      value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="order_time"       value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="payment_time"     value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
@@ -322,9 +322,9 @@
             <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
             <column name="id_user"          valueDate="1"/>
             <column name="created_at"       value="now()"/>
-			<column name="voting_time"      value="now()"/>
-			<column name="order_time"       value="now()"/>
-			<column name="payment_time"     value="now()"/>
+			<column name="voting_time"      value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="order_time"       value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
+			<column name="payment_time"     value="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
         </insert>
     </changeSet>
 
