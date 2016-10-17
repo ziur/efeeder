@@ -64,6 +64,7 @@ var MeetingStateSllider = function() {
 	var secondHandlerPosition = orderDate.valueOf();
 	var thirdHandlerPosition = paymentDate.valueOf();
 	
+	var fifteenMinutesStep =  15*60*1000;
 	var maxMediumDevicesWidth = 992;
 	var isSmallScreen = $(window).width() <= maxMediumDevicesWidth;
 	var calendarSettings = isSmallScreen ? 
@@ -99,7 +100,7 @@ var MeetingStateSllider = function() {
 			tooltips: [	{ to: formatToDate }, { to: formatToDate }, { to: formatToDate } ],
 			range: {
 				'min': [  createdDate.valueOf() ],
-				'25%': [ get25Range(createdDate, eventDate), 15*60*1000 ],
+				'25%': [ get25Range(createdDate, eventDate), fifteenMinutesStep ],
 				'max': [ eventDate.valueOf() ]
 			},
 			pips: {
@@ -127,8 +128,7 @@ var MeetingStateSllider = function() {
 				newStatus = sliderSections[1].text;	
 			} else if(now <= values[paymentEmptyHandle]) {
 				newStatus = sliderSections[2].text;	
-			} else if(now <= eventDate.valueOf())
-			{
+			} else if(now <= eventDate.valueOf()) {
 				newStatus = sliderSections[3].text;
 			} else {
 				newStatus = sliderSections[4].text;
@@ -171,20 +171,22 @@ var MeetingStateSllider = function() {
 	}
 	
 	function get25Range(createdDate, eventDate) {
-		var millisecondsOfDay = 60*60*1000;			
+		var millisecondsOfAnHour = 60*60*1000;		
+		var result;
 
 		var hoursBetween = eventDate.diff(createdDate, 'hours');
 
 		if(hoursBetween <= 6) {
-			var defaultValue = createdDate.valueOf() + (eventDate.valueOf() - createdDate.valueOf())*25/100
-			return defaultValue - getMillisToRoundToQuarter(moment(defaultValue));
+			result = createdDate.valueOf() + (eventDate.valueOf() - createdDate.valueOf())* 25/100
+		} else {
+			result = eventDate.valueOf() - 6 * millisecondsOfAnHour;
 		}
 
-		return eventDate.valueOf() - 6*millisecondsOfDay - getMillisToRoundToQuarter(eventDate);
+		return result - getMillisToRoundToQuarter(result);
 	}
 
 	function getMillisToRoundToQuarter(date) {
-		var minutes = date.minute();
+		var minutes = moment(date).minute();
 		var minutesToRoundToQuarter = 0;
 		if(minutes < 15) {
 			minutesToRoundToQuarter = minutes
