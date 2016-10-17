@@ -31,9 +31,9 @@ public class GetSuggestionsCommand implements CommandUnit {
     private static final String SELECT_PLACES_BY_MEETING_SQL =
             "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
     
-	static public String getUserSuggestionsAsString(int idFoodMeeting, Connection connection) throws Exception {
+	static public String getUserSuggestionsAsString(int feastId, Connection connection) throws Exception {
         PreparedStatement ps = connection.prepareStatement(SELECT_USERS_BY_MEETING_SQL);
-        ps.setInt(1, idFoodMeeting);
+        ps.setInt(1, feastId);
         ResultSet resSet = ps.executeQuery();
         
         List<UserAndPlace> usersAndPlaces = new ArrayList<>();
@@ -47,9 +47,9 @@ public class GetSuggestionsCommand implements CommandUnit {
 		return JsonConverter.objectToJSON(usersAndPlaces);
 	}
 	
-	static public String getPlacesSuggestionsAsString(int idFoodMeeting, Connection connection) throws Exception {
+	static public String getPlacesSuggestionsAsString(int feastId, Connection connection) throws Exception {
         PreparedStatement ps = connection.prepareStatement(SELECT_PLACES_BY_MEETING_SQL);
-        ps.setInt(1, idFoodMeeting);
+        ps.setInt(1, feastId);
         ResultSet resSet = ps.executeQuery();
         
         List<Place> places = new ArrayList<>();
@@ -67,12 +67,12 @@ public class GetSuggestionsCommand implements CommandUnit {
 	}
 	
 	static public String getSuggestionsAsString(In parameters) throws Exception {
-		int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
+		int feastId = Integer.parseInt(parameters.getParameter("feastId"));
 		Connection connection = parameters.getConnection();
-		return "{\"userList\":" +
-				getUserSuggestionsAsString(idFoodMeeting, connection) +
-				",\"placeList\":" +
-				getPlacesSuggestionsAsString(idFoodMeeting, connection) +
+		return "{\"users\":" +
+				getUserSuggestionsAsString(feastId, connection) +
+				",\"places\":" +
+				getPlacesSuggestionsAsString(feastId, connection) +
 				"}";
 	}
 

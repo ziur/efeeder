@@ -68,19 +68,19 @@
 				  "alias": "CreateSuggestionEvent",
 				  "fields": [
 					{
-						"name": "id_food_meeting",
+						"name": "feastId",
 						"type": "int"
 					},
 					{
-						"name": "id_place",
+						"name": "placeId",
+						"type": "int"
+					},
+					{
+						"name": "users",
 						"type": "string"
 					},
 					{
-						"name": "userList",
-						"type": "string"
-					},
-					{
-						"name": "placeList",
+						"name": "places",
 						"type": "string"
 					}
 				  ]

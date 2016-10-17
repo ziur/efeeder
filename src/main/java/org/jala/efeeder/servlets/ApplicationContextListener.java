@@ -35,7 +35,15 @@ public class ApplicationContextListener implements ServletContextListener {
         }
         ServletContext servletContext = servletContextEvent.getServletContext();
         servletContext.setAttribute(CommandFactory.COMMAND_FACTORY_KEY, commandFactory);
-        servletContext.setAttribute(SettingsManager.SETTINGS_FACTORY_KEY, readProperties(servletContext));
+		try
+		{
+			servletContext.setAttribute(SettingsManager.SETTINGS_FACTORY_KEY, readProperties(servletContext));
+		}
+		catch (Exception e)
+		{
+			System.out.println("\nERROR: missing configuration file. Copy efeeder\\src\\main\\resources\\settings.properties.template to efeeder\\src\\main\\resources\\settings.properties and update as needed.");
+			throw e;
+		}
     }
 
     @Override

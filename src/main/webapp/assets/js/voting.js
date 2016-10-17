@@ -2,20 +2,18 @@
 
 const BUTTON_COLOR = 0xE0308080;
 const BUTTON_HOVER_COLOR = 0xE040A0A0;
+const VOTES_COLOR = 0xC0000101;
+const SELECTED_VOTES_COLOR = 0xD000D0D0;
 const USER_COLOR = 0xF0F0F1F1;
 const SELECTED_USER_COLOR = 0xF8FDFEFE;
-const PLACE_COLOR = 0xD0000101;
-const SELECTED_PLACE_COLOR = 0xD000A0A0;
 const GLASS_COLOR = 0x60181C20;
 const SELECTED_GLASS_COLOR = 0xD0181C20;
 const LARGE_FONT_NAME = 'Roboto';
+const LARGE_FONT_COLOR = 0xFFA0FFFF;
 const FONT_NAME = '"Times new roman"';
 
 let bkSystem;
-let g_selectedObject = null;
 let g_sideBarHidden = false;
-let g_hoverObject = null;
-let g_hoverUserPlaceId = null;
 let g_comService = null;
 let g_roomId = null;
 let g_userId = null;
@@ -26,13 +24,21 @@ let ef_myUser = null;
 let ef_addAllPlacesButton = null;
 let ef_restoreSideBarButton = null;
 let ef_showInfoButton = null;
+let ef_finishButton = null;
 let ef_usersArea = null;
 let ef_placesArea = null;
 
-
-function ef_buttonOnClick()
+function ef_buttonOnClick(mouse)
 {
-	this.isChecked = !this.isChecked;
+	if ((mouse.buttons === 1) && (!this.isDisabled))
+	{
+		this.isChecked = !this.isChecked;
+		this.drawer._system.redraw = true;
+	}
+}
+
+function ef_buttonOnGuiAction()
+{
 	this.drawer._system.redraw = true;
 }
 
@@ -41,7 +47,12 @@ let ef_Button = function(coord, drawer, text, onclick = null, img = null)
 	this.coord = coord;
 	this.drawer = drawer;
 	this.isChecked = false;
+	this.isDown = false;
+	this.isDisabled = false;
 	this.onclick = onclick === null ? ef_buttonOnClick.bind(this) : onclick;
+	this.onmousedown = ef_buttonOnGuiAction.bind(this);
+	this.onmouseup = ef_buttonOnGuiAction.bind(this);
+	
 	this.isCircle = coord.w === coord.h;
 	this.textArea = new BkText(
 		new BkCoord(0.05, 0.1, 0.9, 0.9, 0, 7),
@@ -73,31 +84,39 @@ ef_ButtonDrawer.prototype.draw = function(o)
 {
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
-	let isHovered = o === g_hoverObject;
-	let color = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
-	let shadowColor;
+	let color;
 	
-	let coordShadow = coord.anisotropicGrow((isHovered || o.isChecked) ? 1.2 : 1.1);
-	if (o.isChecked)
+	if (!o.isDisabled)
 	{
-		coord.y += coord.h * 0.05;
-		coordShadow.y += coord.h * 0.05;
-		shadowColor = 0xFF000000;
+		let isHovered = o === this._system.mouse.hover;
+		color = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
+		let shadowColor;
+		let coordShadow = coord.anisotropicGrow((isHovered || o.isChecked) ? 1.2 : 1.1);
+		if (o.isChecked || ((this._system.mouse.buttons === 1) && isHovered))
+		{
+			coord.y += coord.h * 0.05;
+			coordShadow.y += coord.h * 0.05;
+			shadowColor = 0xFF000000;
+		}
+		else
+		{
+			coordShadow.y += coordShadow.h * 0.1;
+			shadowColor = bkShadowColor(color);
+		}
+		
+		if (o.isCircle)
+		{
+			bkDrawShadowCircle(ctx, coordShadow, 0.5, shadowColor);
+		}
+		else
+		{
+			coord.x = Math.floor(coord.x);
+			bkDrawShadowRect(ctx, coordShadow, 0.2, shadowColor);
+		}
 	}
 	else
 	{
-		coordShadow.y += coordShadow.h * 0.1;
-		shadowColor = bkShadowColor(color);
-	}
-	
-	if (o.isCircle)
-	{
-		bkDrawShadowCircle(ctx, coordShadow, 0.5, shadowColor);
-	}
-	else
-	{
-		coord.x = Math.floor(coord.x);
-		bkDrawShadowRect(ctx, coordShadow, 0.2, shadowColor);
+		color = bkColorDesaturate(BUTTON_COLOR);
 	}
 	
 	bkDrawGlassButton(ctx, coord, color, true, o.isCircle ? 0.5 : 0.05);
@@ -153,7 +172,7 @@ ef_UserDrawer.prototype.draw = function(o)
 {
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
-	let isHovered = o === g_hoverObject;
+	let isHovered = o === this._system.mouse.hover;
 	let isSelected = ef_myUser === o;
 	
 	if (isHovered || isSelected || o.isChecked)
@@ -181,7 +200,7 @@ let ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	drawer._system.setImage(this, imgSrc);
 	
 	this.votesText = new BkText(
-		new BkCoord(-0.015, -0.015, 0.2, 0.2, 0, 6), null, LARGE_FONT_NAME);
+		new BkCoord(-0.015, -0.015, 0.27, 0.27, 0, 6), null, LARGE_FONT_NAME);
 	
 	this.setTextFields(name, description, phone, direction);
 }
@@ -200,8 +219,8 @@ ef_Place.prototype.setTextFields = function(name, description, phone, direction)
 	{
 		this.__description = description;
 		this.descriptionTextArea = new BkTextArea(
-			new BkCoord(0.05, 0.4, 0.9, 0.35, 0, 7),
-			description, FONT_NAME, 0.45, 3.5);
+			new BkCoord(0.05, 0.4, 0.9, 0.3, 0, 7),
+			description, FONT_NAME, 0.3, 3.5);
 	}
 	
 	let location = 'Phone: ' + phone + '\nAddress: ' + direction;
@@ -209,7 +228,7 @@ ef_Place.prototype.setTextFields = function(name, description, phone, direction)
 	{
 		this.__location = location;
 		this.locationTextArea = new BkTextArea(
-			new BkCoord(0, -1E-9, 0.78, 0.15, 0, 7),
+			new BkCoord(0, -1E-9, 0.68, 0.2, 0, 7),
 			location, FONT_NAME, 0.45, 6);
 	}
 }
@@ -239,9 +258,11 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
 	
-	let isHovered = (o === g_hoverObject);
-	let showDetails = ef_showInfoButton.isChecked || o.id === g_hoverUserPlaceId;
-	let boardColor = (o.id === g_hoverUserPlaceId || isHovered) ? SELECTED_GLASS_COLOR: GLASS_COLOR;
+	let hover = this._system.mouse.hover;
+	let isHovered = (o === hover);
+	let isUserHovered = (hover !== null) && (o.id === hover.placeId);
+	let showDetails = ef_showInfoButton.isChecked || isUserHovered;
+	let boardColor = (isUserHovered || isHovered) ? SELECTED_GLASS_COLOR: GLASS_COLOR;
 	
 	bkDrawGlassBoard(ctx, coord, boardColor, o.isSelected);
 
@@ -249,7 +270,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	if (showDetails || o.img === null || !o.img.isReady)
 	{
 		o.textArea.coord.y = showDetails ? 0.05 : 0.35;
-		ctx.fillStyle = '#ff8';
+		ctx.fillStyle = bkColorToStr(LARGE_FONT_COLOR);
 		o.textArea.draw(ctx, coord, '#442');
 	}
 	else
@@ -269,7 +290,7 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	
 
 	let bCoord = o.votesText.coord.toScreenCoord(coord);
-	bkDrawGlassButton(ctx, bCoord, o.isSelected ? SELECTED_PLACE_COLOR : PLACE_COLOR, true);
+	bkDrawGlassButton(ctx, bCoord, o.isSelected ? SELECTED_VOTES_COLOR : VOTES_COLOR, true, 0.5);
 	ctx.fillStyle = '#fff';
 	o.votesText.text = o.votes.toString();
 	o.votesText.draw(ctx, coord);
@@ -328,9 +349,9 @@ function getOrderList(list, getComparable)
 
 function _processUserPlaceJson(json)
 {
-	console.log(JSON.stringify(json));
+	//console.log(JSON.stringify(json));
 	
-	if (!json.userList || !json.placeList)
+	if (!json.users || !json.places)
 	{
 		return;
 	}
@@ -343,17 +364,17 @@ function _processUserPlaceJson(json)
 	
 	let selectedPlaceId = null;
 	ef_myUser = null;
-	let list = json.userList;
+	let list = json.users;
 	count = list.length;
 	for (let i = 0; i < count; ++i)
 	{
-		let userId = list[i].id_User;
+		let userId = list[i].userId;
 		let item = ef_getUserById(userId);
 		
 		if (item === null)
 		{
 			item = new ef_User(new BkCoord(), ef_userDrawer, userId,
-				list[i].name, list[i].id_Place);
+				list[i].name, list[i].placeId);
 			ef_users.push(item);
 			item.area = ef_usersArea;
 			bkSystem.add(item);
@@ -362,7 +383,7 @@ function _processUserPlaceJson(json)
 		{
 			item.drawer = ef_userDrawer;
 			item.setName(list[i].name);
-			item.placeId = list[i].id_Place;
+			item.placeId = list[i].placeId;
 		}
 		
 		item.comparable = list[i].name.toLowerCase();
@@ -395,7 +416,7 @@ function _processUserPlaceJson(json)
 		ef_places[i].drawer = null;
 	}
 	
-	list = json.placeList;
+	list = json.places;
 	let indexes = getOrderList(list, function(o){return o.name.toLowerCase();});
 	count = list.length;
 	for (let i = 0; i < count; ++i)
@@ -462,6 +483,19 @@ function _processUserPlaceJson(json)
 	bkSystem.redistribute();
 }
 
+function _menuClick(mouse)
+{
+	if (mouse.buttons === 1)
+	{
+		_restoreHideSideBar();
+	}
+}
+
+function _restoreHideSideBar()
+{
+	if (g_sideBarHidden) _restoreSideBar(); else _hideSideBar();
+}
+
 function _restoreSideBar()
 {
 	if (!g_sideBarHidden) return;
@@ -518,130 +552,67 @@ function _hideSideBar()
 	bkSystem.resize();
 }
 
-function _addSuggestion(addAllPlaces = false)
+// @param feastId Positive integer id
+// @param placeId Positive integer id, or -1 to remove current suggestion
+function ef_addSuggestion(feastId, placeId)
 {
-	let idPlace = addAllPlaces ? "all" : 
-		(this.isSelected ? "-1" : this.id.toString());
-
-	/*
-	$.ajax({
-		url: '/action/createSuggestion?id_food_meeting=' +
-			g_foodMeetingId.toString() + '&id_place=' + idPlace.toString(),
-		success: function(result){
-			_processUserPlaceJson(result);
-		}
-	});
-	*/
-	
-	let roomId = "vote_" + g_foodMeetingId.toString();
+	_hideSideBar();
 	g_comService.sendMessage({
-			user:g_userId,
-			room:roomId,
-			command:"CreateSuggestion",
+			user: 0,
+			room: "vote_" + feastId.toString(),
+			command: "CreateSuggestion",
 			events:[{
 				event:{ 
 					CreateSuggestionEvent:{
-						id_food_meeting: parseInt(g_idFoodMeeting),
-						id_place: idPlace,
-						userList:"",
-						placeList:""
+						feastId: feastId,
+						placeId: placeId,
+						places: "",
+						users: "",
 						}
 					}
 				}]
 		});
-
 }
 
-/*
-function _addAllPlaces()
+function _addSuggestion()
 {
-	$.ajax({
-		url: '/action/createSuggestion?id_food_meeting=' +
-			g_foodMeetingId.toString() + '&id_place=all',
-		success: function(result){
-			_processUserPlaceJson(result);
-		}
-	});
-}*/
-
-function _addAllPlaces()
-{
-	_addSuggestion(true);
+	ef_addSuggestion(g_feastId, this.isSelected ? -1 : this.id);
 }
 
-function _onMouseDown()
+function _addAllPlacesClick(mouse)
 {
-	let button = this.mouse.button;
-	if (1 === button)
+	if (mouse.buttons === 1)
 	{
-		let newSelection = this.select(this.mouse.x, this.mouse.y);
-		if (g_selectedObject !== newSelection)
-		{
-			g_selectedObject = newSelection;
-			this.redraw = true;
-			//this.redistribute();
-		}
-		
-		if (g_selectedObject === null)
-		{
-			if (this.item.length === 0)
-			{
-				_restoreSideBar();
-			}
-			else
-			{
-				_hideSideBar();
-			}
-		}
-		if (g_selectedObject.onclick) g_selectedObject.onclick();
-		
-	}
-	
-	return;
-}
-
-function _onMouseMove()
-{
-	let newHover = this.select(this.mouse.x, this.mouse.y);
-	if (g_hoverObject !== newHover)
-	{
-		g_hoverUserPlaceId = (newHover === null) ? null : newHover.placeId;
-		g_hoverObject = newHover;
-		let isPlace = (g_hoverObject !== null) && ef_isPlace(g_hoverObject);
-		
-		for (let i = 0, count = ef_users.length; i < count; ++i) 
-		{
-			ef_users[i].isChecked = isPlace && (g_hoverObject.id === ef_users[i].placeId);
-		}
-		
-		this.redraw = true;
+		ef_addSuggestion(g_feastId, -2);
 	}
 }
 
-function _onMouseOut()
+function _updateBrightenedUsers(hover)
 {
-	if (g_hoverObject !== null)
+	let isPlace = (hover !== null) && ef_isPlace(hover);
+	for (let i = 0, count = ef_users.length; i < count; ++i) 
 	{
-		g_hoverUserPlaceId = null;
-		g_hoverObject = null;
-		this.redraw = true;
+		ef_users[i].isChecked = isPlace && (hover.id === ef_users[i].placeId);
 	}
+}
+
+function _onMouseHover()
+{
+	_updateBrightenedUsers(this.mouse.hover);
+	this.redraw = true;
 }
 
 function _handleOnMessage(event)
 {
-	console.log("Message received");
 	$.each(event.events, function(index, item) {
 		let eventType = Object.getOwnPropertyNames(item.event)[0];
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
-				console.log('+ WebSockets connected');
 				break;
 			case "org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent":
 				let eventMessage = item.event[eventType];
-				console.log('+ Received suggestion event');
-				eventMessage.userList = JSON.parse(eventMessage.userList);
-				eventMessage.placeList = JSON.parse(eventMessage.placeList);
+				eventMessage.users = JSON.parse(eventMessage.users);
+				eventMessage.places = JSON.parse(eventMessage.places);
 				_processUserPlaceJson(eventMessage);
 				break;
 		}
@@ -668,27 +639,34 @@ function _start()
 	let buttonDrawer = new ef_ButtonDrawer(bkSystem);
 	ef_addAllPlacesButton = new ef_Button(
 		new BkCoord(-0.01,-0.01,0.28,0.08,0,6),
-		buttonDrawer, "Add Places", _addAllPlaces);
+		buttonDrawer, "Add Places", _addAllPlacesClick);
+		
 	ef_restoreSideBarButton = new ef_Button(
-		new BkCoord(0.02,0.02,0.07,0.07,0,6),
-		buttonDrawer, "\u2261", _restoreSideBar, '/assets/img/menu.svg');
+		new BkCoord(),
+		buttonDrawer, "\u2261", _menuClick, '/assets/img/menu.svg');
 	ef_restoreSideBarButton.area = buttonsArea;
 	ef_restoreSideBarButton.comparable = 0;
+	
 	ef_showInfoButton = new ef_Button(
-		new BkCoord(0.1,0.02,0.07,0.07,0,6),
-		buttonDrawer, "i", null, '/assets/img/info.svg');
+		new BkCoord(),
+		buttonDrawer, "Info", null, '/assets/img/info.svg');
 	ef_showInfoButton.area = buttonsArea;
 	ef_showInfoButton.comparable = 1;
 	
+	ef_finishButton = new ef_Button(
+		new BkCoord(),
+		buttonDrawer, "Finish", null, '/assets/img/finish.svg');
+	ef_finishButton.area = buttonsArea;
+	ef_finishButton.comparable = 2;
+	
 	bkSystem.add(ef_restoreSideBarButton);
 	bkSystem.add(ef_showInfoButton);
+	bkSystem.add(ef_finishButton);
 
-	bkSystem.onmousedown = _onMouseDown;
-	bkSystem.onmousemove = _onMouseMove;
-	bkSystem.onmouseout = _onMouseOut;
+	bkSystem.onmousehover = _onMouseHover;
 
 	// Communication
-	g_roomId = "vote_" + g_foodMeetingId.toString();
+	g_roomId = "vote_" + g_feastId.toString();
 	g_userId = parseInt(Cookies.get("userId"));
 	
 	g_comService = new CommunicationService();
@@ -696,7 +674,7 @@ function _start()
 	g_comService.connect('ws://' + location.host + '/ws', g_roomId);
 	
 	$.ajax({
-		url: '/action/getSuggestions?id_food_meeting=' + g_idFoodMeeting.toString(),
+		url: '/action/getSuggestions?feastId=' + g_feastId.toString(),
 		success: function(result){
 			_processUserPlaceJson(result);
 		}
@@ -705,7 +683,7 @@ function _start()
 	bkSystem.run();
 }
 
-// Requires g_foodMeetingId to be defined and valid
+// Requires g_feastId to be defined and valid
 $(window).on("load", function() {
 	_start();
 });

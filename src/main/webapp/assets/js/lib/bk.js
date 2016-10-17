@@ -314,6 +314,15 @@ function bkColorMix13RetainAlpha(colorA, colorB)
 		(colorA & 0xFF000000);
 }
 
+function bkColorDesaturate(color)
+{
+	let r = (color >> 16) & 0xFF;
+	let g = (color >> 8) & 0xFF;
+	let b = color & 0xFF;
+	let v = Math.round(Math.max(r, g, b) * 0.4 + r * 0.18 + g * 0.348 + b * 0.072);
+	return (v * 0x10101) | (color & 0xFF000000);
+}
+
 function bkColorSaturate(color)
 {
 	let r = (color >> 16) & 0xFF;
@@ -402,6 +411,8 @@ let BkSystem = function(canvasName, ratio = null)
 
 	this.redraw = false;
 	this.mouse = {
+		selected: null,
+		hover: null,
 		button: 0,
 		action: 0,
 		x0: 0,
@@ -535,6 +546,36 @@ function _bkGetDivisorsForRatio(n, ratio)
 	}	
 
 	return {w:w, h:h};
+}
+
+function _bkGetSquareDist(w, h, n)
+{
+	if (w <= 0 || h <= 0 || n <= 0) return new BkCoord();
+
+	// check against full h
+	let xh = Math.ceil(Math.sqrt(n * (h / w)));
+	let yh = Math.floor(xh * (w / h));
+	let lh = (xh * yh >= n) ? h / xh : 0;
+
+	// check against full w
+	let xw = Math.ceil(Math.sqrt(n * (w / h)));
+	let yw = Math.floor(xw * (h / w));
+	let lw = (xw * yw >= n) ? w / xw : 0;
+	
+	if (lw < lh)
+	{
+		return new BkCoord(yh, xh, lh);
+	}
+	return new BkCoord(xw, yw, lw);
+}
+
+function _bkGetRectDist(w, h, boxRatio, count)
+{
+	let sw = w / boxRatio;
+	let result = _bkGetSquareDist(sw, h, count);
+	result.h = result.w;
+	result.w *= boxRatio;
+	return result;
 }
 
 BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
@@ -733,11 +774,49 @@ BkSystem.prototype.doOnClick = function(e)
 	return false;
 }
 
+BkSystem.prototype.doOnMouseMove = function(e)
+{
+	let rect = this.canvas.getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+	let mouse = this.mouse;
+	mouse.buttons = e.buttons;
+	mouse.dx = x - mouse.x;
+	mouse.dy = y - mouse.y;
+	mouse.x = x;
+	mouse.y = y;
+	mouse.adx += Math.abs(mouse.dx);
+	mouse.ady += Math.abs(mouse.dy);
+	
+	if (this.onmousehover)
+	{
+		let hover = this.select(mouse.x, mouse.y);
+		if (mouse.hover !== hover)
+		{
+			mouse.hover = hover;
+			this.onmousehover();
+		}
+	}
+	
+	if (this.onmousemove) this.onmousemove();
+	return false;
+}
+
 BkSystem.prototype.doOnMouseOut = function(e)
 {
+	let mouse = this.mouse;
+	
+	if (this.onmousehover)
+	{
+		if (mouse.hover !== null)
+		{
+			mouse.hover = null;
+			this.onmousehover();
+		}
+	}
+	
 	if (this.onmouseout) this.onmouseout();
 	
-	this.mouse.button = 0;
 	return false;
 }
 
@@ -746,43 +825,57 @@ BkSystem.prototype.doOnMouseUp = function(e)
 	let rect = this.canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
-	this.mouse.x = x;
-	this.mouse.y = y;
+	let mouse = this.mouse;
+	mouse.x = x;
+	mouse.y = y;
 	
 	let sCoord = this.__screenCoord;
 	let sFactor = 1 / (sCoord.x < sCoord.y ? sCoord.x : sCoord.y);
-	let dx = (x - this.mouse.x0) * sFactor;
-	let dy = (y - this.mouse.y0) * sFactor;
-	let adx = this.mouse.adx * sFactor;
-	let ady = this.mouse.ady * sFactor;
+	let dx = (x - mouse.x0) * sFactor;
+	let dy = (y - mouse.y0) * sFactor;
+	let adx = mouse.adx * sFactor;
+	let ady = mouse.ady * sFactor;
 	
-	this.mouse.action = 0;
+	mouse.action = 0;
 	if (adx * 0.2 >= ady) 
 	{
 		if (dx >= 0.05)
 		{
-			this.mouse.action = 1;
+			mouse.action = 1;
 		}
 		else if (dx <= -0.05)
 		{
-			this.mouse.action = 3;
+			mouse.action = 3;
 		}
 	}
 	else if (ady * 0.2 >= adx) 
 	{
 		if (dy >= 0.05)
 		{
-			this.mouse.action = 4;
+			mouse.action = 4;
 		}
 		else if (dy <= -0.05)
 		{
-			this.mouse.action = 2;
+			mouse.action = 2;
 		}
+	}
+	
+	let selected = this.select(mouse.x, mouse.y);
+	if (mouse.selected === selected)
+	{
+		if (selected !== null && selected.onclick)
+		{
+			selected.onclick(mouse);
+		}
+	}
+	if (selected !== null && selected.onmouseup)
+	{
+		selected.onmouseup(mouse);
 	}
 	
 	if (this.onmouseup) this.onmouseup();
 	
-	this.mouse.button = 0;
+	this.mouse.buttons = 0;
 	return false;
 }
 
@@ -791,35 +884,29 @@ BkSystem.prototype.doOnMouseDown = function(e)
 	let rect = this.canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
-	this.mouse.x0 = x
-	this.mouse.y0 = y
-	this.mouse.x = x;
-	this.mouse.y = y;
-	this.mouse.dx = 0;
-	this.mouse.dy = 0;
-	this.mouse.adx = 0;
-	this.mouse.ady = 0;
-	this.mouse.button = e.which;
-	this.mouse.action = 0;
-
+	let mouse = this.mouse;
+	mouse.x0 = x
+	mouse.y0 = y
+	mouse.x = x;
+	mouse.y = y;
+	mouse.dx = 0;
+	mouse.dy = 0;
+	mouse.adx = 0;
+	mouse.ady = 0;
+	mouse.buttons = e.buttons;
+	mouse.action = 0;
+	
+	let selected = this.select(mouse.x, mouse.y);
+	if (mouse.selected !== selected)
+	{
+		mouse.selected = selected;
+	}
+	if (selected !== null && selected.onmousedown)
+	{
+		selected.onmousedown(mouse);
+	}
 	if (this.onmousedown) this.onmousedown();
 	
-	return false;
-}
-
-BkSystem.prototype.doOnMouseMove = function(e)
-{
-	let rect = this.canvas.getBoundingClientRect();
-	let x = e.clientX - rect.left;
-	let y = e.clientY - rect.top;
-	this.mouse.dx = x - this.mouse.x;
-	this.mouse.dy = y - this.mouse.y;
-	this.mouse.x = x;
-	this.mouse.y = y;
-	this.mouse.adx += Math.abs(this.mouse.dx);
-	this.mouse.ady += Math.abs(this.mouse.dy);
-	
-	this.onmousemove();
 	return false;
 }
 
@@ -839,14 +926,14 @@ BkSystem.prototype.run = function()
 	
 	window.addEventListener("resize", this.resize.bind(this), false);
 	
-	if (this.onmousemove)
+	if (this.onmousemove || this.onmousehover)
 	{
 		this.canvas.onmousemove = this.doOnMouseMove.bind(this);
 	}
-	
+
+	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
 	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
 	this.canvas.onmouseup = this.doOnMouseUp.bind(this);
-	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
 	this.canvas.onclick = this.doOnClick.bind(this);
 	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
 
