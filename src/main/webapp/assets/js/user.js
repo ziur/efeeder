@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function() {
 	$.uploadPreview({
 		input_field: "#image-upload",
 		preview_box: "#image-preview",

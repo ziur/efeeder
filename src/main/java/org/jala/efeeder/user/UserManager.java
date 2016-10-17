@@ -70,8 +70,7 @@ public class UserManager {
 		List<Integer> listId = new ArrayList<>();
 		listId.add(id);
 		List<User> users = getUsersById(listId);
-		if (users.isEmpty() == false)
-		{
+		if (users.isEmpty() == false) {
 			user = users.get(0);
 		}
 
@@ -88,8 +87,7 @@ public class UserManager {
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			List<User> users = getUsersFromResultSet(resultSet);
-			if (users.isEmpty() == false)
-			{
+			if (users.isEmpty() == false) {
 				user = users.get(0);
 			}
 		}
