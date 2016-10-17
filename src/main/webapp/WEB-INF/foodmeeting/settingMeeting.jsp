@@ -14,9 +14,8 @@
 	<jsp:body>
 		<div class="meetings-container">
 			<br/><br/><br/>
-			<div class="row">
-				
-				<div class="col s12">
+			<div class="row">				
+				<div class="offset-s1 col s10">
 					<div id="noUiSlider"></div>
 				</div>
 			</div>

@@ -73,7 +73,8 @@ var MeetingStateSllider = function() {
 	var sliderSections= [
 		{color: "#b3e5fc ", text: "Voting"},
 		{color: "#29b6f6", text: "Orders"},
-		{color: "#0277bd", text: "Payment"}
+		{color: "#0277bd", text: "Payment"},
+		{text: "Waiting to eat!"}
 	]
 	
 	var init = function() {
@@ -102,14 +103,14 @@ var MeetingStateSllider = function() {
 			var newStatus = $("#status").text();
 
 			if(now <= values[orderVotingHandle]) {
-				newStatus = "Voting";
+				newStatus = sliderSections[0].text;
 			} else if(now <= values[orderPaymentHandle]) {
-				newStatus = "Order";	
+				newStatus = sliderSections[1].text;	
 			} else if(now <= values[paymentEmptyHandle]) {
-				newStatus = "Payment";	
+				newStatus = sliderSections[2].text;	
 			} else
 			{
-				newStatus = "Waiting to Eat!";
+				newStatus = sliderSections[3].text;
 			}
 
 			$("#status").text(newStatus);	
@@ -118,17 +119,16 @@ var MeetingStateSllider = function() {
 		$(".noUi-connect").each(function(index){
 			$(this).css('background', sliderSections[index].color);
 
-			var tooltip = $("<div class='noUi-tooltip'>" +			
-					sliderSections[index].text +
-				"</div>"
-			)
-			.css('background', "#c8d8d6")
-			.css('bottom', '-900%')
-			.css('padding', '1px');
-
+			var tooltip = $("<div class='noUi-tooltip'>" + sliderSections[index].text + "</div>")
+				.css('background', "#c8d8d6")
+				.css('bottom', '-800%')
+				.css('padding', '1px')
+				.css('font-size', 'small');
+		
 			$(this).append(tooltip);
-			$(this).css('color', '#9e9e9e');
 		});
+		
+		$(".noUi-value").css("white-space", "nowrap")
 	}		
 	
 	function formatToDate(value) {
@@ -151,7 +151,6 @@ var MeetingStateSllider = function() {
 	function getMillisToRoundToQuarter(date) {
 		var minutes = date.minute();
 		var minutesToRoundToQuarter = 0;
-		console.log(minutes);
 		if(minutes < 15) {
 			minutesToRoundToQuarter = minutes
 		} else if (minutes < 30) {
