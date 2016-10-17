@@ -1,15 +1,12 @@
 package org.jala.efeeder.login;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.User;
+import org.jala.efeeder.user.UserManager;
 import org.jala.efeeder.util.Encrypt;
 
 /**
@@ -17,9 +14,7 @@ import org.jala.efeeder.util.Encrypt;
  */
 @Command
 public class LoginCommand implements CommandUnit {
-	
-	private static final String LOGIN_SQL = "Select id, email, name, last_name, image_path  from user where username=? and password=?";
-	
+
 	@Override
 	public Out execute(In parameters) throws Exception {
 
@@ -27,20 +22,11 @@ public class LoginCommand implements CommandUnit {
 
 		if(parameters.getParameter("username") == null || parameters.getParameter("password") == null)
 		{
-			return out.redirect("FoodMeeting");
+			return out.redirect("logout");
 		}
 
-		Connection connection = parameters.getConnection();
-		PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_SQL);
-		preparedStatement.setString(1, parameters.getParameter("username"));
-		preparedStatement.setString(2, Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
-		ResultSet resultSet = preparedStatement.executeQuery();
-		User user = null;
-
-		if (resultSet.next()) {
-			user = new User(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
-					resultSet.getString(4), resultSet.getString(5));
-		}
+		UserManager userManager = new UserManager(parameters.getConnection());
+		User user = userManager.getUserByUserNamePassword(parameters.getParameter("username"), Encrypt.getPasswordEncrypter(parameters.getParameter("password")));
 
 		if (user != null) {
 			out.setUser(user);
