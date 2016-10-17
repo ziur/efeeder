@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jala.efeeder.details;
 
 import java.sql.Connection;
@@ -52,7 +47,6 @@ public class DetailsCommand implements CommandUnit {
 		} catch (Exception ex) {
 			return OutBuilder.response("text/plain", ex.getMessage());
 		}
-
 	}
 
 	private double getPayment(List<Order> orderList) {
@@ -102,7 +96,6 @@ public class DetailsCommand implements CommandUnit {
 	}
 	
 	private Place getPlace(int idFoodMeeting, Connection connection) throws Exception {
-
 		try {
 			PreparedStatement prepareStatement = connection.prepareStatement("select id_place from food_meeting_user where id_food_meeting=?");
 			prepareStatement.setInt(1, idFoodMeeting);
@@ -126,11 +119,9 @@ public class DetailsCommand implements CommandUnit {
 		} catch (SQLException ex) {
 			throw new Exception("Failed to get place from database : " + ex.toString());
 		}
-
 	}
 
 	private User getBuyer(int buyerId, List<Order> orders) {
-
 		for (Order order : orders) {
 			User user = order.getUser();
 			if (user.getId() == buyerId) {
