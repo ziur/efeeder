@@ -16,7 +16,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  * @author rodrigo_ruiz
  */
 @Command
-public class UpdateUserCommand implements CommandUnit{
+public class UpdateUserPageCommand implements CommandUnit{
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();

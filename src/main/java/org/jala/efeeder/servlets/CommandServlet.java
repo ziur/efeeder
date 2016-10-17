@@ -62,7 +62,7 @@ public class CommandServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-				&& !request.getRequestURI().equals("/action/image") && !request.getRequestURI().equals("/action/CreateUser")
+				&& !request.getRequestURI().equals("/action/image") && !request.getRequestURI().equals("/action/CreateUpdateUser")
 				&& session.getAttribute("user") == null) {
 
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
@@ -87,7 +87,7 @@ public class CommandServlet extends HttpServlet {
 			Out out = executor.executeCommand(parameters, getCommand(request));
 
 			if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-					&& !request.getRequestURI().equals("/action/CreateUser")) {
+					&& !request.getRequestURI().equals("/action/CreateUpdateUser")) {
 				out.addResult("showNavBar", true);
 			}
 

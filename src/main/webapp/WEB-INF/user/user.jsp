@@ -20,7 +20,7 @@
 				<div class="col offset-m3 s12 m6">
 					<div class="card">
 						<div class="card-content">
-							<form id="create-user-form" role="form" action="CreateUser" method="post" enctype="multipart/form-data">
+							<form id="create-user-form" role="form" action="CreateUpdateUser" method="post" enctype="multipart/form-data">
 								<div class="row center-align">
 									<div id="image-preview" class="circle responsive-img">
 										<label for="image-upload" id="image-label" class="center">

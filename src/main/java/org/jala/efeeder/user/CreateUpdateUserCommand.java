@@ -20,7 +20,7 @@ import org.jala.efeeder.util.JsonMessage;
  * @author rodrigo_ruiz
  */
 @Command
-public class CreateUserCommand implements CommandUnit{
+public class CreateUpdateUserCommand implements CommandUnit{
 
 	@SuppressWarnings("finally")
 	@Override

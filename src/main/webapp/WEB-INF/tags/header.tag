@@ -6,7 +6,7 @@
 		<div class="nav-wrapper container"><a id="logo-container" href="/" class="brand-logo">Efeeder</a>
 			<ul class="right hide-on-med-and-down">
 				<li id="image_container_id" >
-					<a href="/action/updateuser">
+					<a href="/action/updateuserpage">
 						<image id="image-seccion-id" class="circle responsive-img" src="action/image?file_name=${user.getImage()}&type=user"/>
 					</a>
 				</li>
