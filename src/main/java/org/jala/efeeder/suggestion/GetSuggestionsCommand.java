@@ -89,11 +89,9 @@ public class GetSuggestionsCommand implements CommandUnit {
 			int winnerId = resSet.getInt("id_place");
 			int winnerVotes = resSet.getInt("votes");
 			int secondVotes = 0;
-			System.out.println("Winner id_place: " + winnerId + ", votes: " + winnerVotes);
 			if (resSet.next())
 			{
 				secondVotes = resSet.getInt("votes");
-				System.out.println("Second id_place: " + resSet.getInt("id_place") + ", votes: " + secondVotes);
 			}
 			if (winnerVotes > secondVotes) return winnerId;
 		}
