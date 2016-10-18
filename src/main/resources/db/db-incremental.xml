@@ -432,4 +432,21 @@
             referencedColumnNames="id"
             referencedTableName="places"/>
     </changeSet>
+	
+    <changeSet author="0x3" id="insert.winnerplace">
+		<addColumn catalogName="efeeder" tableName="food_meeting">
+			<column name="id_place" type="INT">
+			<constraints nullable="true"/>
+			</column>
+		</addColumn>
+        <addForeignKeyConstraint
+				baseColumnNames="id_place"
+                baseTableName="food_meeting"
+                constraintName="food_meeting_id_place_fk"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="places"/>
+    </changeSet>	
+	
 </databaseChangeLog>

@@ -17,6 +17,8 @@ let g_sideBarHidden = false;
 let g_comService = null;
 let g_roomId = null;
 let g_userId = null;
+let g_ownerId = 0;
+let g_winnerPlaceId = 0;
 
 let ef_placeDrawer = null;
 let ef_userDrawer = null;
@@ -356,6 +358,11 @@ function _processUserPlaceJson(json)
 		return;
 	}
 	
+	if (json.ownerId)
+	{
+		g_ownerId = json.ownerId;
+	}
+	
 	let count = ef_users.length;
 	for (let i = 0; i < count; ++i)
 	{
@@ -416,6 +423,10 @@ function _processUserPlaceJson(json)
 		ef_places[i].drawer = null;
 	}
 	
+	let topCount = 0;
+	let topVotes = 0;
+	let winnerPlaceId = 0;
+	
 	list = json.places;
 	let indexes = getOrderList(list, function(o){return o.name.toLowerCase();});
 	count = list.length;
@@ -424,14 +435,14 @@ function _processUserPlaceJson(json)
 		let placeId = list[i].id;
 		let item = ef_getPlaceById(placeId);
 		let isSelected = selectedPlaceId === placeId;
-		
+		let votes = list[i].votes;
 		if (item === null)
 		{
 			item = new ef_Place(new BkCoord(),
 				ef_placeDrawer,
 				list[i].id, list[i].name, list[i].description,
 				list[i].phone, list[i].direction,
-				list[i].votes, list[i].image_link,
+				votes, list[i].image_link,
 				isSelected);
 				
 			item.onclick = _addSuggestion.bind(item);
@@ -444,14 +455,30 @@ function _processUserPlaceJson(json)
 		{
 			item.drawer = ef_placeDrawer;
 			item.isSelected = isSelected;
-			item.votes = list[i].votes;
+			item.votes = votes;
 			item.setTextFields(
 				list[i].name, list[i].description,
 				list[i].phone, list[i].direction);
 			ef_placeDrawer._system.setImage(item, list[i].image_link);
 		}
 		
-		item.comparable = (indexes[i] / count) - list[i].votes;
+		
+		if (votes >= topVotes)
+		{
+			if (votes === topVotes)
+			{
+				++topCount;
+			}
+			else
+			{
+				topVotes = votes;
+				topCount = 1;
+				winnerPlaceId = placeId;
+			}
+		}
+		
+		
+		item.comparable = (indexes[i] / count) - votes;
 		item.area = ef_placesArea;
 		bkObjectSetSelected(item, isSelected);
 	}
@@ -479,6 +506,17 @@ function _processUserPlaceJson(json)
 	{
 		bkSystem.add(ef_addAllPlacesButton);
 	}
+	
+	if ( g_ownerId === g_userId)
+	{
+		ef_finishButton.isDisabled = topCount !== 1;
+		g_winnerPlaceId = winnerPlaceId;
+		bkSystem.add(ef_finishButton);
+	}
+	else
+	{
+		bkSystem.remove(ef_finishButton);
+	}	
 	
 	bkSystem.redistribute();
 }
@@ -619,6 +657,23 @@ function _handleOnMessage(event)
 	});
 }
 
+function _finishClick()
+{
+	if (this.isDisabled) return;
+	
+	$.ajax({
+		url: '/action/SetWinnerPlace?feastId=' + g_feastId.toString(),
+		success: function(result){
+			console.log(result);
+			//window.location.href = "action/order?id_food_meeting=" + g_feastId.toString();
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+		}
+	});
+	
+}
+
 function _start()
 {
 	$(".button-collapse").sideNav();
@@ -655,13 +710,12 @@ function _start()
 	
 	ef_finishButton = new ef_Button(
 		new BkCoord(),
-		buttonDrawer, "Finish", null, '/assets/img/finish.svg');
+		buttonDrawer, "Finish", _finishClick, '/assets/img/finish.svg');
 	ef_finishButton.area = buttonsArea;
 	ef_finishButton.comparable = 2;
 	
 	bkSystem.add(ef_restoreSideBarButton);
 	bkSystem.add(ef_showInfoButton);
-	bkSystem.add(ef_finishButton);
 
 	bkSystem.onmousehover = _onMouseHover;
 

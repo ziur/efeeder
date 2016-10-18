@@ -486,7 +486,7 @@ BkSystem.prototype.setBackgroundImage = function(src, alpha = null)
 
 function _bkGetDivisorsForRatio(n, ratio) 
 {
-	if (n <= 1) return {w:1, h:1};
+	if (n <= 1) return {x:1, y:1};
 		
 	let sqrtN = Math.sqrt(n);
 	let sqrtInvRatio = Math.sqrt(1 / ratio);
@@ -498,11 +498,11 @@ function _bkGetDivisorsForRatio(n, ratio)
 	
 	if (w < 1) 
 	{
-		return {w:1, h:n};
+		return {x:1, y:n};
 	}
 	if (h < 1) 
 	{
-		return {w:n, h:1};
+		return {x:n, y:1};
 	}
 	
 	if (w * h < n)
@@ -545,22 +545,48 @@ function _bkGetDivisorsForRatio(n, ratio)
 		--w;
 	}	
 
-	return {w:w, h:h};
+	return {x:w, y:h};
 }
 
 function _bkGetSquareDist(w, h, n)
 {
-	if (w <= 0 || h <= 0 || n <= 0) return new BkCoord();
+	if (w <= 0 || h <= 0 || n <= 0) return new BkCoord(1, 1, 0);
 
 	// check against full h
 	let xh = Math.ceil(Math.sqrt(n * (h / w)));
 	let yh = Math.floor(xh * (w / h));
-	let lh = (xh * yh >= n) ? h / xh : 0;
+	while (xh * yh < n)
+	{
+		if (yh < 1)
+		{
+			yh = 1;
+			xh = Math.ceil(yh * (h / w));
+		}
+		else
+		{
+			++xh;
+			yh = Math.floor(xh * (w / h));
+		}
+	}
+	let lh = h / xh;
 
 	// check against full w
 	let xw = Math.ceil(Math.sqrt(n * (w / h)));
 	let yw = Math.floor(xw * (h / w));
-	let lw = (xw * yw >= n) ? w / xw : 0;
+	while (xw * yw < n)
+	{
+		if (yw < 1)
+		{
+			yw = 1;
+			xw = Math.ceil(yw * (w / h));
+		}
+		else
+		{
+			++xw;
+			yw = Math.floor(xw * (h / w));
+		}
+	}
+	let lw = w / xw;
 	
 	if (lw < lh)
 	{
@@ -629,31 +655,30 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 	let padding = area.padding * (sw < sh ? sw : sh);
 	let padH = padding / sh;
 	let padW = padding / sw;
-	let cellH, cellW;
 	let dim;
 	if (area.__type <= 1)
 	{
 		dim = _bkGetDivisorsForRatio(count, sw / (sh * area.ratio));
 		if (area.__type === 1)
 		{
-			let cellRatio = (sw * dim.h) / (sh * dim.w);
-			if ((dim.w === 1) && (cellRatio < area.ratio))
+			let cellRatio = (sw * dim.y) / (sh * dim.x);
+			if ((dim.x === 1) && (cellRatio < area.ratio))
 			{
 				let n = Math.floor(area.ratio * sh / sw);
-				if (n > dim.h)
+				if (n > dim.y)
 				{
-					if (n - dim.h > 3) n = dim.h + 3;
-					dim.h = n;
+					if (n - dim.y > 3) n = dim.y + 3;
+					dim.y = n;
 				}
 			}
 			
-			if ((dim.h === 1) && (cellRatio > area.ratio))
+			if ((dim.y === 1) && (cellRatio > area.ratio))
 			{
 				let n = Math.floor(sw / (area.ratio * sh))
-				if (n > dim.w)
+				if (n > dim.x)
 				{
-					if (n - dim.w > 3) n = dim.w + 3;
-					dim.w = n;
+					if (n - dim.x > 3) n = dim.x + 3;
+					dim.x = n;
 				}
 			}
 		}
@@ -665,45 +690,43 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			((1 - p) / n) - p = w
 		*/
 
-		cellH = ((1 - padH) / dim.h) - padH;
-		cellW = ((1 - padW) / dim.w) - padW;
+		dim.h = ((1 - padH) / dim.y) - padH;
+		dim.w = ((1 - padW) / dim.x) - padW;
 	}
 	else if ((area.__type >= 2) && (area.__type <= 3))
 	{
-		let distributionRatio = sw / (sh * area.ratio);
-		let hCount = distributionRatio >= 1 ? 1 : Math.floor(1 / distributionRatio);
-		let wCount = distributionRatio <= 1 ? 1 : Math.floor(distributionRatio);
-		let x = Math.ceil(Math.sqrt(count / (hCount * wCount)));
-		dim = {w: wCount * x, h: hCount * x};
+		dim = _bkGetRectDist(sw, sh, area.ratio, count);
 		
-		if (distributionRatio >= 1)
-		{
-			cellH = ((1 - padH) / dim.h) - padH;
-			cellW = cellH / distributionRatio;
-		}
-		else
-		{
-			cellW = ((1 - padW) / dim.w) - padW;
-			cellH = cellW * distributionRatio;
-		}
+		/* Equation for pad calculation: 
+			1 = x * n + (p * x) * (n - 1) + 2 * p
+			1 = xn + pxn - px + 2p
+			1 = x(n + pn - p) + 2p
+			1 - 2p = x(n + pn - p)
+			x = (1 - 2p)/(n + pn - p)
+		*/
 		
-		if (area.__type == 3)
-		{
-			
-		}
+		
+		dim.h = (1 - 2 * padH) * (dim.h * dim.y) / ((dim.y + padH * dim.y - padH) * sh);
+		dim.w = (1 - 2 * padW) * (dim.w * dim.x) / ((dim.x + padW * dim.x - padW) * sw);
+		
+		//dim.h /= sh;
+		//dim.w /= sw;
 	}
 	
 	let rowCols, x, y, w, h, o, oIsSelected, selectedFactorW, selectedFactorH;
 	let index = 0;
-	for (let j = 0; j < dim.h; ++j)
+	let cellW = dim.w;
+	let cellH = dim.h;
+	
+	for (let j = 0; j < dim.y; ++j)
 	{
-		rowCols = dim.w;
+		rowCols = dim.x;
 		
 		if (area.__type === 0)
 		{
-			if ((j === 0) && ((dim.h * dim.w) > count))
+			if ((j === 0) && ((dim.y * dim.x) > count))
 			{
-				rowCols = count - (dim.h - 1) * dim.w;
+				rowCols = count - (dim.y - 1) * dim.x;
 			}
 			cellW = ((1 - padW) / rowCols) - padW;
 		}
@@ -717,8 +740,8 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			selectedFactorW = oIsSelected ? (cellW + padW) / cellW : 1;
 			selectedFactorH = oIsSelected ? (cellH + padH) / cellH : 1;
 			
-			x = ((cellW + padW) * i + padW + cellW * 0.5) * coord.w + coord.x;
-			y = ((cellH + padH) * j + padH + cellH * 0.5) * coord.h + coord.y;
+			x = ((cellW * (1 + padW)) * i + padW + cellW * 0.5) * coord.w + coord.x;
+			y = ((cellH * (1 + padH)) * j + padH + cellH * 0.5) * coord.h + coord.y;
 			w = cellW * selectedFactorW * coord.w;
 			h = cellH * selectedFactorH * coord.h;
 			
