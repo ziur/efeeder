@@ -50,9 +50,6 @@ var SettingMeeting = function() {
 					.closest("form")
 					.find("label[for='" + element.attr("id") + "']")
 					.attr('data-error', error.text());
-			},
-			submitHandler: function(form) {
-				console.log('form ok');
 			}
 		});
 
