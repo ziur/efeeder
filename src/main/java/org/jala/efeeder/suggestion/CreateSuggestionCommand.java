@@ -18,6 +18,7 @@ import org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent;
 
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getUserSuggestionsAsString;
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getPlacesSuggestionsAsString;
+import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getVoteFinisherUserId;
 
 /**
  *
@@ -38,6 +39,12 @@ public class CreateSuggestionCommand implements CommandUnit {
 	// Returns null upon success, an error string upon failure
 	// If idPlace is -1 deletes the user choice, if is -2 adds all of them
 	public static String createSuggestion(int feastId, int userId, int placeId, Connection connection) throws Exception {
+		int ownerId = getVoteFinisherUserId(feastId, connection);
+		if (ownerId <= 0)
+		{
+			return "Voting already closed.";
+		}
+		
 		boolean allPlaces = placeId == -2;
 		PreparedStatement stm;
 		
