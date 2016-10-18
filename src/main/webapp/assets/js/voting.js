@@ -351,16 +351,21 @@ function getOrderList(list, getComparable)
 
 function _processUserPlaceJson(json)
 {
-	//console.log(JSON.stringify(json));
+	console.log(JSON.stringify(json));
 	
 	if (!json.users || !json.places)
 	{
 		return;
 	}
 	
-	if (json.ownerId)
+	if (json.ownerId != null)
 	{
 		g_ownerId = json.ownerId;
+		if (g_ownerId <= 0)
+		{
+			_finishAction();
+			return;
+		}
 	}
 	
 	let count = ef_users.length;
@@ -594,6 +599,7 @@ function _hideSideBar()
 // @param placeId Positive integer id, or -1 to remove current suggestion
 function ef_addSuggestion(feastId, placeId)
 {
+	if (g_ownerId <= 0) return;
 	_hideSideBar();
 	g_comService.sendMessage({
 			user: 0,
@@ -664,14 +670,18 @@ function _finishClick()
 	$.ajax({
 		url: '/action/SetWinnerPlace?feastId=' + g_feastId.toString(),
 		success: function(result){
-			console.log(result);
-			//window.location.href = "action/order?id_food_meeting=" + g_feastId.toString();
+			_finishAction();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus, errorThrown);
 		}
 	});
 	
+}
+
+function _finishAction()
+{
+	window.location.href = "action/order?id_food_meeting=" + g_feastId.toString();
 }
 
 function _start()

@@ -26,17 +26,18 @@ import org.jala.efeeder.api.utils.JsonConverter;
 @Command
 public class GetSuggestionsCommand implements CommandUnit {
 
-    private static final String SELECT_OWNER_USER_SQL =
-            "SELECT id_user FROM food_meeting WHERE food_meeting.id=?";
+    private static final String SELECT_VOTE_FINISHER_SQL =
+            "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
 	private static final String SELECT_USERS_BY_MEETING_SQL =
             "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
     private static final String SELECT_PLACES_BY_MEETING_SQL =
             "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
     private static final String SELECT_WINNER_PLACE_SQL =
-			"SELECT id_place,count(id_user) AS votes FROM food_meeting_user WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 1";
+			"SELECT id_place,count(*) AS votes FROM food_meeting_user WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
 	
-	static public int getOwnerUserId(int feastId, Connection connection) throws Exception {
-        PreparedStatement ps = connection.prepareStatement(SELECT_OWNER_USER_SQL);
+	// Returns either the feast owner id or zero if the voting phase is over
+	static public int getVoteFinisherUserId(int feastId, Connection connection) throws Exception {
+        PreparedStatement ps = connection.prepareStatement(SELECT_VOTE_FINISHER_SQL);
         ps.setInt(1, feastId);
         ResultSet resSet = ps.executeQuery();
         if(resSet.next()) return resSet.getInt("id_user");
@@ -85,8 +86,16 @@ public class GetSuggestionsCommand implements CommandUnit {
 
         if (resSet.next())
 		{
-			System.out.println("id_place: " + resSet.getInt("id_place") + ", votes: " + resSet.getInt("votes"));
-			return resSet.getInt("id_place");
+			int winnerId = resSet.getInt("id_place");
+			int winnerVotes = resSet.getInt("votes");
+			int secondVotes = 0;
+			System.out.println("Winner id_place: " + winnerId + ", votes: " + winnerVotes);
+			if (resSet.next())
+			{
+				secondVotes = resSet.getInt("votes");
+				System.out.println("Second id_place: " + resSet.getInt("id_place") + ", votes: " + secondVotes);
+			}
+			if (winnerVotes > secondVotes) return winnerId;
 		}
 		
 		return 0;
@@ -100,7 +109,7 @@ public class GetSuggestionsCommand implements CommandUnit {
 				",\"places\":" +
 				getPlacesSuggestionsAsString(feastId, connection) +
 				",\"ownerId\":" +
-				Integer.toString(getOwnerUserId(feastId, connection)) +
+				Integer.toString(getVoteFinisherUserId(feastId, connection)) +
 				"}";
 	}
 
