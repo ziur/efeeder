@@ -7,17 +7,17 @@
         <link rel="stylesheet" type="text/css" href="/assets/css/printDetails.css" media="print">
     </jsp:attribute>
     <jsp:body>
-        <legend class="background:blue">
+        <div class="row">
             <div class="row">
                 <h2>Details of "${food_meeting.name}"</h2>
                 <div class="col s6">
-                    <h5 class="left-align">Lucky Buyer: ${buyer.name}</h5>
-                    <img src="action/image?file_name=${buyer.getImage()}&type=user" width="200" height="200" class="circle responsive-img">
+                    <h5 class="left-align">Lucky Buyer: ${buyer.name} ${buyer.lastName}</h5>
+                    <img src="action/image?file_name=${buyer.getImage()}&type=user" width="200" height="200" class="circle">
                 </div>
                 <div class="col s6">
                     <h5 class="left-align">The place: ${place.name}</h5>
-                    <h5 class="left-align">The place: ${place.direction}</h5>
-                    <img src="${place.image_link}" width="200" height="200" class="circle responsive-img">
+                    <h5 class="left-align">The address place: ${place.direction}</h5>
+                    <img src="${place.image_link}" width="200" height="200" class="circle">
                 </div>
             </div>
             <div class="row">
@@ -42,6 +42,6 @@
                 </table>
                 <h5 class="right-align">Total To Pay: ${payment}</h5>
             </div>
-        </legend>
+        </div>
     </jsp:body>
 </t:template>
