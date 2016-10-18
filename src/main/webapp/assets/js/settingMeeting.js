@@ -62,8 +62,6 @@ var SettingMeeting = function() {
 				image_link: "required"
 			}
 		});
-
-
 	};
 	return {
 		init : function() {
