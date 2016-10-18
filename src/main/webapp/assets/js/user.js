@@ -47,7 +47,7 @@ var User = function() {
 			var commandUrl = form.attr( "action" );
 
 			var createUserData = new FormData(form[0]);
-			createUserData.append("isNEw", isNew);
+			createUserData.append("isNew", isNew);
 			$.ajax({
 				url : commandUrl,
 				type : "post",
