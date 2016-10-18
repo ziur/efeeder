@@ -67,7 +67,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
 		List<MessageEvent> events = new ArrayList<>();
 
-		UserOwner userOwner = new UserOwner(user.getName(), user.getLastName(), user.getEmail());
+		UserOwner userOwner = new UserOwner(user.getName(), user.getLastName());
 
 		events.add(MessageEvent.newBuilder()
 			.setEvent(

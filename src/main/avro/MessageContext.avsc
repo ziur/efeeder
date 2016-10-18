@@ -121,7 +121,21 @@
 										},
 										{
 											"name": "userOwner",
-											"type": "UserOwner"
+											"type": {
+												"namespace": "org.jala.efeeder.servlets.websocket.avro",
+												"type": "record",
+												"name": "UserOwner",
+												"fields": [
+													{
+														"name": "name",
+														"type": "string"
+													},
+													{
+														"name": "lastName",
+														"type": "string"
+													}
+												]
+											}
 										}
 									]
 								},
@@ -148,8 +162,29 @@
 											"type": "double"
 										},
 										{
-											"name": "userOwner",
-											"type": ["UserOwner", "null"]
+											"name": "user",
+											"type": [
+												"null",
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "UserOrder",
+													"fields": [
+														{
+															"name": "name",
+															"type": "string"
+														},
+														{
+															"name": "lastName",
+															"type": "string"
+														},
+														{
+															"name": "email",
+															"type": "string"
+														}
+													]
+												}
+											]
 										}
 									]
 								}

@@ -34,9 +34,9 @@
 							<span id="my-order-details" class="title">${myOrder.details}</span>
 							<br />
 							<p id="my-order-cost">${myOrder.cost}</p>
-							<p>${myUser.name} ${myUser.lastName} - ${myUser.email}</p>
+							<p id="my-user-order">${myUser.name} ${myUser.lastName}</p>
 							<c:if test="${foodMeeting.status == 'Order'}">
-								<a id="btn-edit-my-order" class="btn-edit secondary-content">
+								<a href="#" id="btn-edit-my-order" class="btn-edit secondary-content">
 									<i class="material-icons">mode_edit</i>
 								</a>
 							</c:if>

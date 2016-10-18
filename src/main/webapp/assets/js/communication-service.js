@@ -9,184 +9,198 @@
 		}
 
 		var MESSAGE_CONTEXT_SCHEMA =
-		[{
-				"namespace": "org.jala.efeeder.servlets.websocket.avro",
-				"type": "record",
-				"name": "UserOwner",
-				"fields": [
-					{
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"name": "lastName",
-						"type": "string"
-					},
-					{
-						"name": "email",
-						"type": "string"
-					}
-				]
-			},
-			{
-				"namespace": "org.jala.efeeder.servlets.websocket.avro",
-				"type": "record",
-				"name": "MessageContext",
-				"alias": "MessageContext",
-				"fields": [
-					{
-						"name": "user",
-						"type": "int"
-					},
-					{
-						"name": "room",
-						"type": "string"
-					},
-					{
-						"name": "command",
-						"type": ["string", "null"], "default": ""
-					},
-					{
-						"name": "events",
-						"type": {
-							"type": "array",
-							"items": {
-								"namespace": "org.jala.efeeder.servlets.websocket.avro",
-								"type": "record",
-								"name": "MessageEvent",
-								"alias": "MessageEvent",
-								"fields": [
-									{
-										"name": "event",
-										"type": [
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "WelcomeEvent",
-												"alias": "WelcomeEvent",
-												"fields": [
-												]
-											},
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "CloseVotingEvent",
-												"alias": "CloseVotingEvent",
-												"fields": [
-												]
-											},
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "RaffleEvent",
-												"alias": "RaffleEvent",
-												"fields": [
-													{
-														"name": "chosen",
-														"type": "int"
-													},
-													{
-														"name": "items",
-														"type": {"type": "array", "items": "string"}
-													}
-												]
-											},
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "CreateSuggestionEvent",
-												"alias": "CreateSuggestionEvent",
-												"fields": [
-													{
-														"name": "id_food_meeting",
-														"type": "int"
-													},
-													{
-														"name": "id_place",
-														"type": "string"
-													},
-													{
-														"name": "userList",
-														"type": "string"
-													},
-													{
-														"name": "placeList",
-														"type": "string"
-													}
-												]
-											},
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "CreateFoodMeetingEvent",
-												"alias": "CreateFoodMeetingEvent",
-												"fields": [
-													{
-														"name": "id",
-														"type": "int"
-													},
-													{
-														"name": "name",
-														"type": "string"
-													},
-													{
-														"name": "eventDate",
-														"type": "long"
-													},
-													{
-														"name": "status",
-														"type": "string"
-													},
-													{
-														"name": "imageLink",
-														"type": "string"
-													},
-													{
-														"name": "width",
-														"type": "int"
-													},
-													{
-														"name": "userOwner",
-														"type": "UserOwner"
-													}
-												]
-											},
-											{
-												"namespace": "org.jala.efeeder.servlets.websocket.avro",
-												"type": "record",
-												"name": "CreateOrderEvent",
-												"alias": "CreateOrderEvent",
-												"fields": [
-													{
-														"name": "idFoodMeeting",
-														"type": "int"
-													},
-													{
-														"name": "idUser",
-														"type": "int"
-													},
-													{
-														"name": "details",
-														"type": "string"
-													},
-													{
-														"name": "cost",
-														"type": "double"
-													},
-													{
-														"name": "userOwner",
-														"type": ["UserOwner", "null"]
-													}
-												]
-											}
-										]
-									}
-								]
+				{
+					"namespace": "org.jala.efeeder.servlets.websocket.avro",
+					"type": "record",
+					"name": "MessageContext",
+					"alias": "MessageContext",
+					"fields": [
+						{
+							"name": "user",
+							"type": "int"
+						},
+						{
+							"name": "room",
+							"type": "string"
+						},
+						{
+							"name": "command",
+							"type": ["string", "null"], "default": ""
+						},
+						{
+							"name": "events",
+							"type": {
+								"type": "array",
+								"items": {
+									"namespace": "org.jala.efeeder.servlets.websocket.avro",
+									"type": "record",
+									"name": "MessageEvent",
+									"alias": "MessageEvent",
+									"fields": [
+										{
+											"name": "event",
+											"type": [
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "WelcomeEvent",
+													"alias": "WelcomeEvent",
+													"fields": [
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "CloseVotingEvent",
+													"alias": "CloseVotingEvent",
+													"fields": [
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "RaffleEvent",
+													"alias": "RaffleEvent",
+													"fields": [
+														{
+															"name": "chosen",
+															"type": "int"
+														},
+														{
+															"name": "items",
+															"type": {"type": "array", "items": "string"}
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "CreateSuggestionEvent",
+													"alias": "CreateSuggestionEvent",
+													"fields": [
+														{
+															"name": "id_food_meeting",
+															"type": "int"
+														},
+														{
+															"name": "id_place",
+															"type": "string"
+														},
+														{
+															"name": "userList",
+															"type": "string"
+														},
+														{
+															"name": "placeList",
+															"type": "string"
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "CreateFoodMeetingEvent",
+													"alias": "CreateFoodMeetingEvent",
+													"fields": [
+														{
+															"name": "id",
+															"type": "int"
+														},
+														{
+															"name": "name",
+															"type": "string"
+														},
+														{
+															"name": "eventDate",
+															"type": "long"
+														},
+														{
+															"name": "status",
+															"type": "string"
+														},
+														{
+															"name": "imageLink",
+															"type": "string"
+														},
+														{
+															"name": "width",
+															"type": "int"
+														},
+														{
+															"name": "userOwner",
+															"type": {
+																"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																"type": "record",
+																"name": "UserOwner",
+																"fields": [
+																	{
+																		"name": "name",
+																		"type": "string"
+																	},
+																	{
+																		"name": "lastName",
+																		"type": "string"
+																	}
+																]
+															}
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "CreateOrderEvent",
+													"alias": "CreateOrderEvent",
+													"fields": [
+														{
+															"name": "idFoodMeeting",
+															"type": "int"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														},
+														{
+															"name": "details",
+															"type": "string"
+														},
+														{
+															"name": "cost",
+															"type": "double"
+														},
+														{
+															"name": "user",
+															"type": ["null", {
+																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																	"type": "record",
+																	"name": "UserOrder",
+																	"fields": [
+																		{
+																			"name": "name",
+																			"type": "string"
+																		},
+																		{
+																			"name": "lastName",
+																			"type": "string"
+																		},
+																		{
+																			"name": "email",
+																			"type": "string"
+																		}
+																	]
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
 							}
 						}
-					}
-				]
-			}];
+					]
+				};
 
 	var MessageContextType = avro.parse(MESSAGE_CONTEXT_SCHEMA);
 

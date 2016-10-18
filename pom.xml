@@ -163,9 +163,6 @@
 				</executions>
 				<configuration>
 					<stringType>String</stringType>
-					<imports>
-						<import>${project.basedir}/src/main/avro/UserOwner.avsc</import>
-					</imports>
 				</configuration>
 			</plugin>
 			<plugin>

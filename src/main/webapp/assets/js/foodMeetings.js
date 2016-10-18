@@ -65,14 +65,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
-		var userOwner;
-
-		if (isWebSoccket) {
-			userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"];
-		}
-		else {
-			userOwner = newMeeting.userOwner;
-		}
+		var userOwner = newMeeting.userOwner;
 
 		self.meetings.push(newMeeting);
 		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
@@ -244,8 +237,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 										width: 0,
 										userOwner: {
 											name: "",
-											lastName: "",
-											email: ""
+											lastName: ""
 										}
 									}
 								}

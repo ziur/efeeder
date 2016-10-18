@@ -93,7 +93,7 @@
 				<column name="username"   value="0"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Huey.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 
@@ -105,7 +105,7 @@
 				<column name="username"   value="1"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Dewey.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 	
@@ -117,7 +117,7 @@
 				<column name="username"   value="2"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Louie.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 	
@@ -129,7 +129,7 @@
 				<column name="username"   value="3"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Donald.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 	
@@ -141,7 +141,7 @@
 				<column name="username"   value="4"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Scrooge.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 
@@ -315,7 +315,7 @@
             <column name="id_food_meeting" type="INT"/>
             <column name="id_user"         type="INT"/>
             <column name="order_name"      type="VARCHAR(200)"/>
-            <column name="Cost"            type="NUMBER"/>
+            <column name="Cost"            type="DECIMAL(10,2)"/>
         </createTable>
     </changeSet>
 
