@@ -34,7 +34,9 @@ public class FoodMeetingRoom {
         }
     }
 
-	// Static inner class of FoodMeetingRoom
+	/**
+	 * Inner class, FellowDinner are members of FoodMeetingRoom
+	 */
     public static class FellowDinner {
         private final Session session;
 		private final FoodMeetingRoom room;
