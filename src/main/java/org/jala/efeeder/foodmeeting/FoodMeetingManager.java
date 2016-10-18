@@ -10,6 +10,7 @@ import org.jala.efeeder.user.UserManager;
 public class FoodMeetingManager {
 
 	private static final String SELECT_BY_ID_FOOD_MEETING = "SELECT id, name, image_link, status, event_date, created_at, id_user FROM food_meeting WHERE id=?";
+	private static final String UPDATE_STATUS_BY_ID = "UPDATE food_meeting SET status=? WHERE id=? AND id_user=?;";
 
 	private final Connection connection;
 
@@ -32,5 +33,14 @@ public class FoodMeetingManager {
 		}
 
 		return foodMeeting;
+	}
+
+	public void setStatusById(int id, int idUser, String newStatus) throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STATUS_BY_ID);
+		preparedStatement.setString(1, newStatus);
+		preparedStatement.setInt(2, id);
+		preparedStatement.setInt(3, idUser);
+
+		preparedStatement.executeUpdate();
 	}
 }
