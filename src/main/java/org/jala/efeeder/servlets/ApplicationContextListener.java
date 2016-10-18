@@ -41,7 +41,8 @@ public class ApplicationContextListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
-			System.out.println("\nERROR: missing configuration file. Copy efeeder\\src\\main\\resources\\settings.properties.template to efeeder\\src\\main\\resources\\settings.properties and update as needed.");
+			Logger.getLogger(ApplicationContextListener.class.getName()).log(Level.SEVERE, null,
+					"Missing configuration file. Copy efeeder\\src\\main\\resources\\settings.properties.template to efeeder\\src\\main\\resources\\settings.properties and update as needed.");
 			throw e;
 		}
     }
