@@ -314,6 +314,15 @@ function bkColorMix13RetainAlpha(colorA, colorB)
 		(colorA & 0xFF000000);
 }
 
+function bkColorDesaturate(color)
+{
+	let r = (color >> 16) & 0xFF;
+	let g = (color >> 8) & 0xFF;
+	let b = color & 0xFF;
+	let v = Math.round(Math.max(r, g, b) * 0.4 + r * 0.18 + g * 0.348 + b * 0.072);
+	return (v * 0x10101) | (color & 0xFF000000);
+}
+
 function bkColorSaturate(color)
 {
 	let r = (color >> 16) & 0xFF;
@@ -402,6 +411,8 @@ let BkSystem = function(canvasName, ratio = null)
 
 	this.redraw = false;
 	this.mouse = {
+		selected: null,
+		hover: null,
 		button: 0,
 		action: 0,
 		x0: 0,
@@ -475,7 +486,7 @@ BkSystem.prototype.setBackgroundImage = function(src, alpha = null)
 
 function _bkGetDivisorsForRatio(n, ratio) 
 {
-	if (n <= 1) return {w:1, h:1};
+	if (n <= 1) return {x:1, y:1};
 		
 	let sqrtN = Math.sqrt(n);
 	let sqrtInvRatio = Math.sqrt(1 / ratio);
@@ -487,11 +498,11 @@ function _bkGetDivisorsForRatio(n, ratio)
 	
 	if (w < 1) 
 	{
-		return {w:1, h:n};
+		return {x:1, y:n};
 	}
 	if (h < 1) 
 	{
-		return {w:n, h:1};
+		return {x:n, y:1};
 	}
 	
 	if (w * h < n)
@@ -534,7 +545,63 @@ function _bkGetDivisorsForRatio(n, ratio)
 		--w;
 	}	
 
-	return {w:w, h:h};
+	return {x:w, y:h};
+}
+
+function _bkGetSquareDist(w, h, n)
+{
+	if (w <= 0 || h <= 0 || n <= 0) return new BkCoord(1, 1, 0);
+
+	// check against full h
+	let xh = Math.ceil(Math.sqrt(n * (h / w)));
+	let yh = Math.floor(xh * (w / h));
+	while (xh * yh < n)
+	{
+		if (yh < 1)
+		{
+			yh = 1;
+			xh = Math.ceil(yh * (h / w));
+		}
+		else
+		{
+			++xh;
+			yh = Math.floor(xh * (w / h));
+		}
+	}
+	let lh = h / xh;
+
+	// check against full w
+	let xw = Math.ceil(Math.sqrt(n * (w / h)));
+	let yw = Math.floor(xw * (h / w));
+	while (xw * yw < n)
+	{
+		if (yw < 1)
+		{
+			yw = 1;
+			xw = Math.ceil(yw * (w / h));
+		}
+		else
+		{
+			++xw;
+			yw = Math.floor(xw * (h / w));
+		}
+	}
+	let lw = w / xw;
+	
+	if (lw < lh)
+	{
+		return new BkCoord(yh, xh, lh);
+	}
+	return new BkCoord(xw, yw, lw);
+}
+
+function _bkGetRectDist(w, h, boxRatio, count)
+{
+	let sw = w / boxRatio;
+	let result = _bkGetSquareDist(sw, h, count);
+	result.h = result.w;
+	result.w *= boxRatio;
+	return result;
 }
 
 BkSystem.prototype.redistribute = function(updateSizesAndRedraw = true)
@@ -588,31 +655,30 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 	let padding = area.padding * (sw < sh ? sw : sh);
 	let padH = padding / sh;
 	let padW = padding / sw;
-	let cellH, cellW;
 	let dim;
 	if (area.__type <= 1)
 	{
 		dim = _bkGetDivisorsForRatio(count, sw / (sh * area.ratio));
 		if (area.__type === 1)
 		{
-			let cellRatio = (sw * dim.h) / (sh * dim.w);
-			if ((dim.w === 1) && (cellRatio < area.ratio))
+			let cellRatio = (sw * dim.y) / (sh * dim.x);
+			if ((dim.x === 1) && (cellRatio < area.ratio))
 			{
 				let n = Math.floor(area.ratio * sh / sw);
-				if (n > dim.h)
+				if (n > dim.y)
 				{
-					if (n - dim.h > 3) n = dim.h + 3;
-					dim.h = n;
+					if (n - dim.y > 3) n = dim.y + 3;
+					dim.y = n;
 				}
 			}
 			
-			if ((dim.h === 1) && (cellRatio > area.ratio))
+			if ((dim.y === 1) && (cellRatio > area.ratio))
 			{
 				let n = Math.floor(sw / (area.ratio * sh))
-				if (n > dim.w)
+				if (n > dim.x)
 				{
-					if (n - dim.w > 3) n = dim.w + 3;
-					dim.w = n;
+					if (n - dim.x > 3) n = dim.x + 3;
+					dim.x = n;
 				}
 			}
 		}
@@ -624,45 +690,43 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			((1 - p) / n) - p = w
 		*/
 
-		cellH = ((1 - padH) / dim.h) - padH;
-		cellW = ((1 - padW) / dim.w) - padW;
+		dim.h = ((1 - padH) / dim.y) - padH;
+		dim.w = ((1 - padW) / dim.x) - padW;
 	}
 	else if ((area.__type >= 2) && (area.__type <= 3))
 	{
-		let distributionRatio = sw / (sh * area.ratio);
-		let hCount = distributionRatio >= 1 ? 1 : Math.floor(1 / distributionRatio);
-		let wCount = distributionRatio <= 1 ? 1 : Math.floor(distributionRatio);
-		let x = Math.ceil(Math.sqrt(count / (hCount * wCount)));
-		dim = {w: wCount * x, h: hCount * x};
+		dim = _bkGetRectDist(sw, sh, area.ratio, count);
 		
-		if (distributionRatio >= 1)
-		{
-			cellH = ((1 - padH) / dim.h) - padH;
-			cellW = cellH / distributionRatio;
-		}
-		else
-		{
-			cellW = ((1 - padW) / dim.w) - padW;
-			cellH = cellW * distributionRatio;
-		}
+		/* Equation for pad calculation: 
+			1 = x * n + (p * x) * (n - 1) + 2 * p
+			1 = xn + pxn - px + 2p
+			1 = x(n + pn - p) + 2p
+			1 - 2p = x(n + pn - p)
+			x = (1 - 2p)/(n + pn - p)
+		*/
 		
-		if (area.__type == 3)
-		{
-			
-		}
+		
+		dim.h = (1 - 2 * padH) * (dim.h * dim.y) / ((dim.y + padH * dim.y - padH) * sh);
+		dim.w = (1 - 2 * padW) * (dim.w * dim.x) / ((dim.x + padW * dim.x - padW) * sw);
+		
+		//dim.h /= sh;
+		//dim.w /= sw;
 	}
 	
 	let rowCols, x, y, w, h, o, oIsSelected, selectedFactorW, selectedFactorH;
 	let index = 0;
-	for (let j = 0; j < dim.h; ++j)
+	let cellW = dim.w;
+	let cellH = dim.h;
+	
+	for (let j = 0; j < dim.y; ++j)
 	{
-		rowCols = dim.w;
+		rowCols = dim.x;
 		
 		if (area.__type === 0)
 		{
-			if ((j === 0) && ((dim.h * dim.w) > count))
+			if ((j === 0) && ((dim.y * dim.x) > count))
 			{
-				rowCols = count - (dim.h - 1) * dim.w;
+				rowCols = count - (dim.y - 1) * dim.x;
 			}
 			cellW = ((1 - padW) / rowCols) - padW;
 		}
@@ -676,8 +740,8 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			selectedFactorW = oIsSelected ? (cellW + padW) / cellW : 1;
 			selectedFactorH = oIsSelected ? (cellH + padH) / cellH : 1;
 			
-			x = ((cellW + padW) * i + padW + cellW * 0.5) * coord.w + coord.x;
-			y = ((cellH + padH) * j + padH + cellH * 0.5) * coord.h + coord.y;
+			x = ((cellW * (1 + padW)) * i + padW + cellW * 0.5) * coord.w + coord.x;
+			y = ((cellH * (1 + padH)) * j + padH + cellH * 0.5) * coord.h + coord.y;
 			w = cellW * selectedFactorW * coord.w;
 			h = cellH * selectedFactorH * coord.h;
 			
@@ -733,11 +797,49 @@ BkSystem.prototype.doOnClick = function(e)
 	return false;
 }
 
+BkSystem.prototype.doOnMouseMove = function(e)
+{
+	let rect = this.canvas.getBoundingClientRect();
+	let x = e.clientX - rect.left;
+	let y = e.clientY - rect.top;
+	let mouse = this.mouse;
+	mouse.buttons = e.buttons;
+	mouse.dx = x - mouse.x;
+	mouse.dy = y - mouse.y;
+	mouse.x = x;
+	mouse.y = y;
+	mouse.adx += Math.abs(mouse.dx);
+	mouse.ady += Math.abs(mouse.dy);
+	
+	if (this.onmousehover)
+	{
+		let hover = this.select(mouse.x, mouse.y);
+		if (mouse.hover !== hover)
+		{
+			mouse.hover = hover;
+			this.onmousehover();
+		}
+	}
+	
+	if (this.onmousemove) this.onmousemove();
+	return false;
+}
+
 BkSystem.prototype.doOnMouseOut = function(e)
 {
+	let mouse = this.mouse;
+	
+	if (this.onmousehover)
+	{
+		if (mouse.hover !== null)
+		{
+			mouse.hover = null;
+			this.onmousehover();
+		}
+	}
+	
 	if (this.onmouseout) this.onmouseout();
 	
-	this.mouse.button = 0;
 	return false;
 }
 
@@ -746,43 +848,57 @@ BkSystem.prototype.doOnMouseUp = function(e)
 	let rect = this.canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
-	this.mouse.x = x;
-	this.mouse.y = y;
+	let mouse = this.mouse;
+	mouse.x = x;
+	mouse.y = y;
 	
 	let sCoord = this.__screenCoord;
 	let sFactor = 1 / (sCoord.x < sCoord.y ? sCoord.x : sCoord.y);
-	let dx = (x - this.mouse.x0) * sFactor;
-	let dy = (y - this.mouse.y0) * sFactor;
-	let adx = this.mouse.adx * sFactor;
-	let ady = this.mouse.ady * sFactor;
+	let dx = (x - mouse.x0) * sFactor;
+	let dy = (y - mouse.y0) * sFactor;
+	let adx = mouse.adx * sFactor;
+	let ady = mouse.ady * sFactor;
 	
-	this.mouse.action = 0;
+	mouse.action = 0;
 	if (adx * 0.2 >= ady) 
 	{
 		if (dx >= 0.05)
 		{
-			this.mouse.action = 1;
+			mouse.action = 1;
 		}
 		else if (dx <= -0.05)
 		{
-			this.mouse.action = 3;
+			mouse.action = 3;
 		}
 	}
 	else if (ady * 0.2 >= adx) 
 	{
 		if (dy >= 0.05)
 		{
-			this.mouse.action = 4;
+			mouse.action = 4;
 		}
 		else if (dy <= -0.05)
 		{
-			this.mouse.action = 2;
+			mouse.action = 2;
 		}
+	}
+	
+	let selected = this.select(mouse.x, mouse.y);
+	if (mouse.selected === selected)
+	{
+		if (selected !== null && selected.onclick)
+		{
+			selected.onclick(mouse);
+		}
+	}
+	if (selected !== null && selected.onmouseup)
+	{
+		selected.onmouseup(mouse);
 	}
 	
 	if (this.onmouseup) this.onmouseup();
 	
-	this.mouse.button = 0;
+	this.mouse.buttons = 0;
 	return false;
 }
 
@@ -791,35 +907,29 @@ BkSystem.prototype.doOnMouseDown = function(e)
 	let rect = this.canvas.getBoundingClientRect();
 	let x = e.clientX - rect.left;
 	let y = e.clientY - rect.top;
-	this.mouse.x0 = x
-	this.mouse.y0 = y
-	this.mouse.x = x;
-	this.mouse.y = y;
-	this.mouse.dx = 0;
-	this.mouse.dy = 0;
-	this.mouse.adx = 0;
-	this.mouse.ady = 0;
-	this.mouse.button = e.which;
-	this.mouse.action = 0;
-
+	let mouse = this.mouse;
+	mouse.x0 = x
+	mouse.y0 = y
+	mouse.x = x;
+	mouse.y = y;
+	mouse.dx = 0;
+	mouse.dy = 0;
+	mouse.adx = 0;
+	mouse.ady = 0;
+	mouse.buttons = e.buttons;
+	mouse.action = 0;
+	
+	let selected = this.select(mouse.x, mouse.y);
+	if (mouse.selected !== selected)
+	{
+		mouse.selected = selected;
+	}
+	if (selected !== null && selected.onmousedown)
+	{
+		selected.onmousedown(mouse);
+	}
 	if (this.onmousedown) this.onmousedown();
 	
-	return false;
-}
-
-BkSystem.prototype.doOnMouseMove = function(e)
-{
-	let rect = this.canvas.getBoundingClientRect();
-	let x = e.clientX - rect.left;
-	let y = e.clientY - rect.top;
-	this.mouse.dx = x - this.mouse.x;
-	this.mouse.dy = y - this.mouse.y;
-	this.mouse.x = x;
-	this.mouse.y = y;
-	this.mouse.adx += Math.abs(this.mouse.dx);
-	this.mouse.ady += Math.abs(this.mouse.dy);
-	
-	this.onmousemove();
 	return false;
 }
 
@@ -839,14 +949,14 @@ BkSystem.prototype.run = function()
 	
 	window.addEventListener("resize", this.resize.bind(this), false);
 	
-	if (this.onmousemove)
+	if (this.onmousemove || this.onmousehover)
 	{
 		this.canvas.onmousemove = this.doOnMouseMove.bind(this);
 	}
-	
+
+	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
 	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
 	this.canvas.onmouseup = this.doOnMouseUp.bind(this);
-	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
 	this.canvas.onclick = this.doOnClick.bind(this);
 	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
 

@@ -25,7 +25,8 @@
 						},
 						{
 							"name": "command",
-							"type": ["string", "null"], "default": ""
+							"type": ["string", "null"],
+							"default": ""
 						},
 						{
 							"name": "events",
@@ -68,7 +69,10 @@
 														},
 														{
 															"name": "items",
-															"type": {"type": "array", "items": "string"}
+															"type": {
+																"type": "array",
+																"items": "string"
+															}
 														}
 													]
 												},
@@ -79,19 +83,19 @@
 													"alias": "CreateSuggestionEvent",
 													"fields": [
 														{
-															"name": "id_food_meeting",
+															"name": "feastId",
 															"type": "int"
 														},
 														{
-															"name": "id_place",
+															"name": "placeId",
+															"type": "int"
+														},
+														{
+															"name": "users",
 															"type": "string"
 														},
 														{
-															"name": "userList",
-															"type": "string"
-														},
-														{
-															"name": "placeList",
+															"name": "places",
 															"type": "string"
 														}
 													]
@@ -128,21 +132,24 @@
 														},
 														{
 															"name": "userOwner",
-															"type": {
-																"namespace": "org.jala.efeeder.servlets.websocket.avro",
-																"type": "record",
-																"name": "UserOwner",
-																"fields": [
-																	{
-																		"name": "name",
-																		"type": "string"
-																	},
-																	{
-																		"name": "lastName",
-																		"type": "string"
-																	}
-																]
-															}
+															"type": [
+																{
+																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																	"type": "record",
+																	"name": "UserOwner",
+																	"alias": "UserOwner",
+																	"fields": [
+																		{
+																			"name": "name",
+																			"type": "string"
+																		},
+																		{
+																			"name": "lastName",
+																			"type": "string"
+																		}
+																	]
+																}
+															]
 														}
 													]
 												},
@@ -170,7 +177,9 @@
 														},
 														{
 															"name": "user",
-															"type": ["null", {
+															"type": [
+																"null",
+																{
 																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
 																	"type": "record",
 																	"name": "UserOrder",

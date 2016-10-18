@@ -18,7 +18,6 @@ import org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent;
 
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getUserSuggestionsAsString;
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getPlacesSuggestionsAsString;
-import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getSuggestionsAsString;
 
 /**
  *
@@ -38,8 +37,8 @@ public class CreateSuggestionCommand implements CommandUnit {
 
 	// Returns null upon success, an error string upon failure
 	// If idPlace is -1 deletes the user choice, if is -2 adds all of them
-	public static String createSuggestion(int idFoodMeeting, int idUser, int idPlace, Connection connection) throws Exception {
-		boolean allPlaces = idPlace == -2;
+	public static String createSuggestion(int feastId, int userId, int placeId, Connection connection) throws Exception {
+		boolean allPlaces = placeId == -2;
 		PreparedStatement stm;
 		
 		if (allPlaces){
@@ -49,9 +48,9 @@ public class CreateSuggestionCommand implements CommandUnit {
 				PreparedStatement stmi = connection.prepareStatement(SET_PLACE_SUGGESTION);
 				while(resSet.next()) {
 					int id = resSet.getInt("id");
-					stmi.setInt(1, idFoodMeeting);
+					stmi.setInt(1, feastId);
 					stmi.setInt(2, id);
-					stmi.setInt(3, idFoodMeeting);
+					stmi.setInt(3, feastId);
 					stmi.setInt(4, id);
 					stmi.executeUpdate();
 				}
@@ -63,8 +62,8 @@ public class CreateSuggestionCommand implements CommandUnit {
 		else {
 			
 			stm = connection.prepareStatement(DELETE_USER_SUGGESTION);
-			stm.setInt(1, idFoodMeeting);
-			stm.setInt(2, idUser);
+			stm.setInt(1, feastId);
+			stm.setInt(2, userId);
 			try {
 				stm.executeUpdate();
 			} 
@@ -72,12 +71,12 @@ public class CreateSuggestionCommand implements CommandUnit {
 				return "Failed to remove: " + e.toString();
 			}	
 			
-			if (idPlace >= 0)
+			if (placeId >= 0)
 			{
 				stm = connection.prepareStatement(INSERT_USER_SUGGESTION);
-				stm.setInt(1, idFoodMeeting);
-				stm.setInt(2, idUser);			
-				stm.setInt(3, idPlace);
+				stm.setInt(1, feastId);
+				stm.setInt(2, userId);			
+				stm.setInt(3, placeId);
 				try {
 					stm.executeUpdate();
 				}
@@ -90,63 +89,12 @@ public class CreateSuggestionCommand implements CommandUnit {
 		return null;
 	}
 	
-	private static int getPlaceId(String placeId)
-	{
-		int result;
-		try {
-			if ("all".equals(placeId))
-			{
-				result = -2;
-			}
-			else
-			{
-				result = Integer.parseInt(placeId);
-				if (result < 0) result = -1;
-			}
-		}
-		catch (NumberFormatException e) {
-			result = -1;
-		}
-		return result;
-	}
-	
 	@Override
 	public Out execute(In parameters) throws Exception {
 		String error = null;		
-		int idFoodMeeting = -1;
-		int idPlace = -1;
 		int idUser = parameters.getUser().getId();
 		Connection connection = parameters.getConnection();
-		
 		MessageContext context = parameters.getMessageContext();
-		
-		// Deprecated AJAX mode
-		if (context == null)
-		{
-			try {
-				idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
-			}
-			catch (NumberFormatException e) {
-				idFoodMeeting = -1;
-				error = e.toString();
-			}  
-
-   			idPlace = getPlaceId(parameters.getParameter("id_place"));
-
-			if (error == null)
-			{
-				error = createSuggestion(idFoodMeeting, idUser, idPlace, connection);
-			}
-			
-			if (error != null)
-			{
-				return OutBuilder.response("text/plain", error);
-			}
-					
-			return OutBuilder.response("application/json", getSuggestionsAsString(parameters));
-		}
-		
-		// Web sockets mode
 		List<MessageEvent> messages = context.getEvents();
 		CreateSuggestionEvent createSuggestionEvent = null;
 		
@@ -159,11 +107,16 @@ public class CreateSuggestionCommand implements CommandUnit {
 			error = "Not a CreateSuggestionEvent: " + e.toString();
 		}
 		
-		if (createSuggestionEvent != null && error == null)
+		int feastId = -1;
+		int placeId = -1;		
+		if (createSuggestionEvent != null)
 		{
-			idFoodMeeting = createSuggestionEvent.getIdFoodMeeting();
-			idPlace = getPlaceId(createSuggestionEvent.getIdPlace().toString());
-			error = createSuggestion(idFoodMeeting, idUser, idPlace, connection);
+			feastId = createSuggestionEvent.getFeastId();
+			placeId = createSuggestionEvent.getPlaceId();
+		}
+		if (error == null)
+		{
+			error = createSuggestion(feastId, idUser, placeId, connection);
 		}
 		
 		if (error != null)
@@ -171,27 +124,21 @@ public class CreateSuggestionCommand implements CommandUnit {
 			return OutBuilder.response("text/plain", error);
 		}
 		
-		String roomId = context.getRoom().toString();
-		String users = getUserSuggestionsAsString(idFoodMeeting, connection);
-		String places = getPlacesSuggestionsAsString(idFoodMeeting, connection);	
-		
-		System.out.println("Food meeting id: " + idFoodMeeting);
-		System.out.println("Place id: " + idPlace);
-		System.out.println("User id: " + idUser);
-		System.out.println("users: " + users);
-		System.out.println("places: " + places);
+		String roomId = context.getRoom();
+		String users = getUserSuggestionsAsString(feastId, connection);
+		String places = getPlacesSuggestionsAsString(feastId, connection);	
 		
 		List<MessageEvent> events = new ArrayList<>();
 		events.add(MessageEvent.newBuilder().setEvent(
 				CreateSuggestionEvent.newBuilder().
-						setIdFoodMeeting(idFoodMeeting).
-						setIdPlace(Integer.toString(idPlace)).
-						setUserList(users).
-						setPlaceList(places).
+						setFeastId(0).
+						setPlaceId(0).
+						setUsers(users).
+						setPlaces(places).
 				build()).build());
 
-		MessageContext messageContext = MessageContext.newBuilder().
-				setRoom(roomId).setUser(idUser).setEvents(events).build();
+		MessageContext messageContext = MessageContext.newBuilder().setUser(0).
+				setRoom(roomId).setEvents(events).build();
 				
 		return OutBuilder.response(messageContext);
 	}

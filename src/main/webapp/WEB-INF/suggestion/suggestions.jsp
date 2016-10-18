@@ -6,15 +6,13 @@
     <jsp:attribute name="javascript">
 	<script src="/assets/js/lib/bubble.js"></script> 
 	<script>
-		var g_foodMeetingId = ${foodMeetingId};
-		// Deprecated:
-		var g_idFoodMeeting = g_foodMeetingId.toString();
+		var g_feastId = ${feastId};
 	</script>
 	<script src="/assets/js/place.js"></script>
 	<script id="placeTmpl" type="text/x-jsrender">
 	    <ul id="collid" class="collection">
 		<li id="{{:id}}" class="collection-item avatar">
-		    <img src="/assets/img/food.png" alt="" class="circle">
+		    <img src="/assets/img/food.svg" alt="" class="circle">
 		    <span class="title">{{:name}}</span>
 		    <p class="description">{{:description}}</p>
 		    <p class="description"> <span class="phone">Tel.:</span> {{:phone}} </p>
@@ -34,7 +32,7 @@
 			<c:forEach var="place" items="#{places}">
 			    <ul id="collid" class="collection">
 				<li id="${place.id}" class="collection-item avatar">
-				    <img src="/assets/img/food.png" alt="" class="circle">
+				    <img src="/assets/img/food.svg" alt="" class="circle">
 				    <span class="title">${place.name}</span>
 				    <p class="description">${place.description}</p>
 				    <p class="description"><span class="phone">Tel.:</span>${place.phone}</p>

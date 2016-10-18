@@ -60,13 +60,11 @@ public class CommandEndpoint {
         commandFactory = (CommandFactory) config.getUserProperties().get(CommandFactory.class.getName());
 
         LOG.log(Level.INFO, "Start connection" + session.getId());
-        fellowDinner = new FoodMeetingRoom.FellowDinner();
-        fellowDinner.setSession(session);
         FoodMeetingRoom room = getRoomManager().getRoom(roomId);
         if (room == null) {
             room = getRoomManager().registerRoom(roomId);
         }
-        room.addFellowDinner(fellowDinner);
+        fellowDinner = room.addFellowDinner(session);
 
         List<MessageEvent> events = new ArrayList<>();
         events.add(MessageEvent.newBuilder().setEvent(new WelcomeEvent()).build());
