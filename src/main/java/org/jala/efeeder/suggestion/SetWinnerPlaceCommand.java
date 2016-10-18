@@ -16,6 +16,8 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
+import org.jala.efeeder.foodmeeting.FoodMeetingManager;
+import org.jala.efeeder.foodmeeting.FoodMeetingStatus;
 import org.jala.efeeder.servlets.CommandEndpoint;
 import org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
@@ -29,7 +31,7 @@ import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getWinnerPlaceId
 @Command
 public class SetWinnerPlaceCommand implements CommandUnit {
 	private static final String SET_WINNER_PLACE =
-			"UPDATE food_meeting SET status='Order',id_place=? WHERE id=? AND id_user=?";
+			"UPDATE food_meeting SET id_place=? WHERE id=? AND id_user=?";
 	@Override
 	public Out execute(In parameters) throws Exception {
 		int feastId = 0;
@@ -43,6 +45,9 @@ public class SetWinnerPlaceCommand implements CommandUnit {
 			stm.setInt(2, feastId);
 			stm.setInt(3, idUser);
 			stm.executeUpdate();
+			
+			FoodMeetingManager meetingManager = new FoodMeetingManager(connection);
+			meetingManager.setStatusById(feastId, idUser, FoodMeetingStatus.Order);
 		}
 		catch (NumberFormatException | SQLException e) {
 			return OutBuilder.response("application/json", objectToJSON(e.toString()));
