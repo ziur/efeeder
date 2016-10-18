@@ -13,13 +13,13 @@ import lombok.Data;
  */
 @Data
 public class UserAndPlace {
-    private int id_User;
-    private int id_Place;
+    private int userId;
+    private int placeId;
     private String name;
 
-    public UserAndPlace(int id_User, int id_Place, String name) {
-        this.id_User = id_User;
-        this.id_Place = id_Place;
+    public UserAndPlace(int userId, int placeId, String name) {
+        this.userId = userId;
+        this.placeId = placeId;
         this.name = name;
     }
 }
