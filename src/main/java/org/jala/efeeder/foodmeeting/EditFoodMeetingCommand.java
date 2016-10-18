@@ -37,7 +37,6 @@ public class EditFoodMeetingCommand implements CommandUnit {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
 		DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
 		Timestamp eventDate = new Timestamp(dateTime.getMillis());
-		
 		Timestamp votingDate = new Timestamp(Long.parseLong(parameters.getParameter("voting-date")));
 		Timestamp orderDate = new Timestamp(Long.parseLong(parameters.getParameter("order-date")));
 		Timestamp paymentDate = new Timestamp(Long.parseLong(parameters.getParameter("payment-date")));

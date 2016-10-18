@@ -29,8 +29,7 @@ var SettingMeeting = function() {
 			vibrate : true
 		});
 
-		select.material_select();
-		
+		select.material_select();		
 		meetingStateSlider.init();
 	};
 	
@@ -40,7 +39,7 @@ var SettingMeeting = function() {
 		timeField.val(time);
 		var value = moment(dateField.val()).format("D MMMM, YYYY");
 		dateField.val(value);
-	};				
+	};
 
 	return {
 		init : function() {

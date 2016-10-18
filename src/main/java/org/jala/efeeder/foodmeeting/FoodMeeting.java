@@ -48,7 +48,6 @@ public class FoodMeeting {
 		LocalDate today = new LocalDate();
 		LocalDate endEventDate = new LocalDate(eventDate);
 		int days = Days.daysBetween(today, endEventDate).getDays();
-
 		return calculateWidth(days);
 	}
 	
@@ -62,8 +61,7 @@ public class FoodMeeting {
 			status = FoodMeetingStatus.Order.name();
 		} else if(now.before(this.paymentDate)) {
 			status = FoodMeetingStatus.Payment.name();
-		} else if(now.before(this.eventDate))
-		{
+		} else if(now.before(this.eventDate)) {
 			status = FoodMeetingStatus.Buying.name();
 		} else {
 			status = FoodMeetingStatus.Finish.name();
