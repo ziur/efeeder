@@ -431,7 +431,6 @@ function _processUserPlaceJson(json)
 	let topCount = 0;
 	let topVotes = 0;
 	let winnerPlaceId = 0;
-	
 	list = json.places;
 	let indexes = getOrderList(list, function(o){return o.name.toLowerCase();});
 	count = list.length;
@@ -466,8 +465,7 @@ function _processUserPlaceJson(json)
 				list[i].phone, list[i].direction);
 			ef_placeDrawer._system.setImage(item, list[i].image_link);
 		}
-		
-		
+
 		if (votes >= topVotes)
 		{
 			if (votes === topVotes)
@@ -481,8 +479,7 @@ function _processUserPlaceJson(json)
 				winnerPlaceId = placeId;
 			}
 		}
-		
-		
+
 		item.comparable = (indexes[i] / count) - votes;
 		item.area = ef_placesArea;
 		bkObjectSetSelected(item, isSelected);

@@ -35,7 +35,9 @@ public class GetSuggestionsCommand implements CommandUnit {
     private static final String SELECT_WINNER_PLACE_SQL =
 			"SELECT id_place,count(*) AS votes FROM food_meeting_user WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
 	
-	// Returns either the feast owner id or zero if the voting phase is over
+	/**
+	 * @return Either the feast owner id or zero if the voting phase is over
+	 */
 	static public int getVoteFinisherUserId(int feastId, Connection connection) throws Exception {
         PreparedStatement ps = connection.prepareStatement(SELECT_VOTE_FINISHER_SQL);
         ps.setInt(1, feastId);
@@ -84,18 +86,15 @@ public class GetSuggestionsCommand implements CommandUnit {
         ps.setInt(1, feastId);
         ResultSet resSet = ps.executeQuery();
 
-        if (resSet.next())
-		{
+        if (resSet.next()){
 			int winnerId = resSet.getInt("id_place");
 			int winnerVotes = resSet.getInt("votes");
 			int secondVotes = 0;
-			if (resSet.next())
-			{
+			if (resSet.next()){
 				secondVotes = resSet.getInt("votes");
 			}
 			if (winnerVotes > secondVotes) return winnerId;
 		}
-		
 		return 0;
 	}	
 	

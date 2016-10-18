@@ -5,7 +5,6 @@
  */
 package org.jala.efeeder.suggestion;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -23,13 +22,10 @@ import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getWinnerPlaceId
  */
 @Command
 public class SetWinnerPlaceCommand implements CommandUnit {
-	
 	private static final String SET_WINNER_PLACE =
 			"UPDATE food_meeting SET status='Order',id_place=? WHERE id=? AND id_user=?";
-
     @Override
     public Out execute(In parameters) throws Exception {
-		System.out.println("Setting winner...");
 		try {
 			int idUser = parameters.getUser().getId();
 			int feastId = Integer.parseInt(parameters.getParameter("feastId"));
@@ -44,7 +40,6 @@ public class SetWinnerPlaceCommand implements CommandUnit {
 		catch (NumberFormatException | SQLException e) {
 			return OutBuilder.response("application/json", objectToJSON(e.toString()));
 		}
-		
 		return OutBuilder.response("application/json", "{\"Success\":true}");
     }	
 }
