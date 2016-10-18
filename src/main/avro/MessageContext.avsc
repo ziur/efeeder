@@ -187,6 +187,30 @@
 											]
 										}
 									]
+								},
+								{
+									"namespace": "org.jala.efeeder.servlets.websocket.avro",
+									"type": "record",
+									"name": "ChangeFoodMeetingStatusEvent",
+									"alias": "ChangeFoodMeetingStatusEvent",
+									"fields": [
+										{
+											"name": "idFoodMeeting",
+											"type": "int"
+										},
+										{
+											"name": "idUser",
+											"type": "int"
+										},
+										{
+											"name": "newStatus",
+											"type": "string"
+										},
+										{
+											"name": "redirectTo",
+											"type": ["null", "string"]
+										}
+									]
 								}
 							]
 						}

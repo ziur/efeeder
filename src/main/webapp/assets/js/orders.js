@@ -10,22 +10,29 @@ $(document).ready(function () {
 		communicationService.onMessage(function (message) {
 			$.each(message.events, function (index, item) {
 				var eventType = Object.getOwnPropertyNames(item.event)[0];
-				orderEvent = item.event[eventType];
+				var event = item.event[eventType];
 
 				switch (eventType) {
 					case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 						console.log("Welcome to WebSockets");
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.CreateOrderEvent":
-						orderList.updateOrders(orderEvent);
+						orderList.updateOrders(event);
+						break;
+					case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
+						document.location.href = event.redirectTo['string'];
 						break;
 				}
 			});
 		});
 
 		communicationService.connect('ws://' + location.host + '/ws', idFoodMeeting);
+
 		var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, communicationService);
 		myOrder.init();
+
+		var paymentButton = new PaymentButton(idFoodMeeting, idUser, communicationService);
+		paymentButton.init();
 	});
 });
 
@@ -199,6 +206,52 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationSe
 	return {
 		init: function () {
 			enableEditMode();
+			addEvents();
+		}
+	};
+};
+
+var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
+	this.idFoodMeeting = idFoodMeeting;
+	this.idUser = idUser;
+	this.communicationService = communicationService;
+	this.btnPayment = $("#btn-payment");
+	this.newStatus = "Payment";
+
+	var self = this;
+
+	function addEvents() {
+		if (self.btnPayment === undefined) {
+			return false;
+		}
+
+		self.btnPayment.click(function () {
+			changeFoodMeetingStatus();
+		});
+	}
+
+	function changeFoodMeetingStatus() {
+		self.communicationService.sendMessage({
+			user: self.idUser,
+			room: self.idFoodMeeting,
+			command: "ChangeFoodMeetingStatus",
+			events: [
+				{
+					event: {
+						ChangeFoodMeetingStatusEvent: {
+							idFoodMeeting: parseInt(self.idFoodMeeting),
+							idUser: self.idUser,
+							newStatus: self.newStatus,
+							redirectTo: null
+						}
+					}
+				}
+			]
+		});
+	}
+
+	return {
+		init: function () {
 			addEvents();
 		}
 	};
