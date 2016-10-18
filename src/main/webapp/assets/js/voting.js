@@ -650,6 +650,10 @@ function _handleOnMessage(event)
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 				break;
+			case "org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent":
+				g_ownerId = 0;
+				_finishAction();
+				break;
 			case "org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent":
 				let eventMessage = item.event[eventType];
 				eventMessage.users = JSON.parse(eventMessage.users);
