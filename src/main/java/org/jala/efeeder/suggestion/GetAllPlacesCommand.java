@@ -8,7 +8,6 @@ package org.jala.efeeder.suggestion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
@@ -16,7 +15,6 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
-import org.jala.efeeder.api.command.PaginationResult;
 import org.jala.efeeder.api.utils.JsonConverter;
 
 /**
@@ -40,7 +38,7 @@ public class GetAllPlacesCommand implements CommandUnit {
                     resultSet.getString("description"), 
                     resultSet.getString("phone"),
                     resultSet.getString("direction"),
-                    resultSet.getString("image_link"), 0));
+                    resultSet.getString("image_link")));
         }
         
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(places));

@@ -35,7 +35,7 @@ $(document).ready( function () {
 	    var newPlace = ''+
 			'<ul id="collid" class="collection">'+
 			'<li id="'+place.id+'" class="collection-item avatar">'+
-			    '<img src="/assets/img/food.png" alt="" class="circle">'+
+			    '<img src="/assets/img/food.svg" alt="" class="circle">'+
 			    '<span class="title">'+place.name+'</span>'+
 			    '<p class="description">'+place.description+'</p>'+
 			    '<p class="description"> <span class="phone">Tel.:</span>'+place.phone+'</p>'+
@@ -46,14 +46,6 @@ $(document).ready( function () {
     });
 
     $(document).on('click', 'li', function () {
-	var idPlace = $(this).attr("id");
-	$.ajax({
-	    url: '/action/createSuggestion?id_food_meeting=' +
-	    g_idFoodMeeting.toString() + '&id_place=' + idPlace.toString(),
-	    success: function(result) {
-		_hideSideBar();
-		_processUserPlaceJson(result);
-	    }
-       });
+		ef_addSuggestion(g_feastId, parseInt($(this).attr("id")));   
     });
 });
