@@ -50,7 +50,7 @@
 								<label>Status</label>
 							</div>
 							<div class="input-field col s7">
-								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.eventDate}" >
+								<input id="date-field-id" type="date" name="date" class="datepicker" value="${date}" >
 								<label for="date">Date</label>
 							</div>
 							<div class="input-field col s5">

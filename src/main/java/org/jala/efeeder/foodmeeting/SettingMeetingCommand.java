@@ -17,6 +17,8 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.UserManager;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author Danitza Machicado
@@ -30,9 +32,10 @@ public class SettingMeetingCommand implements CommandUnit {
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
-
+		
 		FoodMeeting foodMeeting = new FoodMeeting();
 		String id = parameters.getParameter("id_food_meeting");
+		LocalDate date = null;
 		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
 		preparedStatement.setInt(1, Integer.valueOf(id));
 		ResultSet resultSet = preparedStatement.executeQuery();
@@ -40,11 +43,13 @@ public class SettingMeetingCommand implements CommandUnit {
 		UserManager userManager = new UserManager(parameters.getConnection());
 
 		if (resultSet.next()) {
+			date = resultSet.getTimestamp(4).toLocalDateTime().toLocalDate();
 			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
 					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userManager.getUserById(resultSet.getInt(6))));
 		}
-
+		
 		out.addResult("foodMeeting", foodMeeting);
+		out.addResult("date", date);
 		out.addResult("edit", !foodMeeting.getUserOwner().equals(parameters.getUser()));
 		out.forward("foodmeeting/settingMeeting.jsp");
 
