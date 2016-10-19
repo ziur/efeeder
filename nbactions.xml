@@ -21,7 +21,7 @@
         <actionName>CUSTOM-WsSchema</actionName>
         <displayName>WsSchema</displayName>
         <goals>
-            <goal>avro:schema</goal>
+            <goal>avro:schema -e</goal>
         </goals>
     </action>
 </actions>

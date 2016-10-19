@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
@@ -84,7 +84,7 @@
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet author="0x3" id="insert.user.0">
 		<insert catalogName="efeeder"
 				tableName="user">
@@ -93,7 +93,7 @@
 				<column name="username"   value="0"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Huey.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 
@@ -105,10 +105,10 @@
 				<column name="username"   value="1"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Dewey.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet author="0x3" id="insert.user.2">
 		<insert catalogName="efeeder"
 				tableName="user">
@@ -117,10 +117,10 @@
 				<column name="username"   value="2"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Louie.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet author="0x3" id="insert.user.3">
 		<insert catalogName="efeeder"
 				tableName="user">
@@ -129,10 +129,10 @@
 				<column name="username"   value="3"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Donald.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
-	
+
 	<changeSet author="0x3" id="insert.user.4">
 		<insert catalogName="efeeder"
 				tableName="user">
@@ -141,295 +141,311 @@
 				<column name="username"   value="4"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
 				<column name="email"      value="Scrooge.McDuck@cuacua.com"/>
-				<column name="image_path" value=""/>
+				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
 
-    <changeSet author="alexander" id="places.table">
-        <createTable catalogName="efeeder" tableName="places">
-            <column name="id"   type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="name" type="VARCHAR(200)"/>
-            <column name="description" type="VARCHAR(200)"/>
-            <column name="phone" type="VARCHAR(50)"/>
-            <column name="direction" type="VARCHAR(120)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="image_link" type="VARCHAR(200)"/>
-	    <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet author="alexander" id="places.table">
+		<createTable catalogName="efeeder" tableName="places">
+			<column name="id"   type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(200)"/>
+			<column name="description" type="VARCHAR(200)"/>
+			<column name="phone" type="VARCHAR(50)"/>
+			<column name="direction" type="VARCHAR(120)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="image_link" type="VARCHAR(200)"/>
+		<column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
 
-    <changeSet author="alexexander" id="createIndex.places_id_uindex">
-        <createIndex catalogName="efeeder"
-                indexName="places_id_uindex"
-                tableName="places"
-                unique="true">
-            <column name="id"/>
-        </createIndex>
-    </changeSet>
+	<changeSet author="alexexander" id="createIndex.places_id_uindex">
+		<createIndex catalogName="efeeder"
+				indexName="places_id_uindex"
+				tableName="places"
+				unique="true">
+			<column name="id"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet author="roger" id="food_meeting.table">
-        <createTable catalogName="efeeder" tableName="food_meeting">
-            <column name="id"         type="INT(11)" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name"             type="VARCHAR(200)"/>
-            <column name="image_link"       type="VARCHAR(500)"/>
-            <column name="status"           type="VARCHAR(50)"/>
-            <column name="event_date"       type="DATETIME"/>
-            <column name="id_user" type="INT(11)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="created_at"       type="DATETIME"/>
+	<changeSet author="roger" id="food_meeting.table">
+		<createTable catalogName="efeeder" tableName="food_meeting">
+			<column name="id"         type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name"             type="VARCHAR(200)"/>
+			<column name="image_link"       type="VARCHAR(500)"/>
+			<column name="status"           type="VARCHAR(50)"/>
+			<column name="event_date"       type="DATETIME"/>
+			<column name="id_user" type="INT(11)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="created_at"       type="DATETIME"/>
 			<column name="voting_time"       type="DATETIME"/>
 			<column name="order_time"       type="DATETIME"/>
 			<column name="payment_time"       type="DATETIME"/>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="food_meeting"
-                constraintName="food_meeting_id_user_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="user"/>
-    </changeSet>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="food_meeting"
+				constraintName="food_meeting_id_user_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
 
-    <changeSet author="0x3" id="insert.place.rellenos2">
-        <insert catalogName="efeeder"
-                tableName="places">
-            <column name="name" value="Rellenos Calama"/>
-            <column name="description" value="Relleno de papa, papa con queso y papa sin queso."/>
-            <column name="phone" value="466-6666"/>
-            <column name="direction" value="C/Calama"/>
-            <column name="image_link" value="http://www.guiaji.com.bo/archivos/especialidad_74_image.jpg"/>
-        </insert>
-    </changeSet>
-    
-    <changeSet author="roger" id="insert.food_meeting.CoffeeTime">
-        <insert catalogName="efeeder"
-                tableName="food_meeting">
-            <column name="name"             value="Coffee time"/>
-            <column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
-            <column name="status"           value="Voting"/>
-            <column name="event_date"       valueDate="now()"/>
-            <column name="id_user"          valueDate="1"/>
-            <column name="created_at"       value="now()"/>
+	<changeSet author="0x3" id="insert.place.rellenos2">
+		<insert catalogName="efeeder"
+				tableName="places">
+			<column name="name" value="Rellenos Calama"/>
+			<column name="description" value="Relleno de papa, papa con queso y papa sin queso."/>
+			<column name="phone" value="466-6666"/>
+			<column name="direction" value="C/Calama"/>
+			<column name="image_link" value="http://www.guiaji.com.bo/archivos/especialidad_74_image.jpg"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="roger" id="insert.food_meeting.CoffeeTime">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Coffee time"/>
+			<column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
+			<column name="status"           value="Voting"/>
+			<column name="event_date"       valueDate="now()"/>
+			<column name="id_user"          valueDate="1"/>
+			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      value="now()"/>
 			<column name="order_time"       value="now()"/>
 			<column name="payment_time"     value="now()"/>
-        </insert>
-    </changeSet>
+		</insert>
+	</changeSet>
 
-    <changeSet author="roger" id="insert.food_meeting.DiaDelProgramador">
-        <insert catalogName="efeeder"
-                tableName="food_meeting">
-            <column name="name"             value="Dia del programador"/>
-            <column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
-            <column name="status"           value="Voting"/>
-            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-            <column name="id_user"          value="1"/>
-            <column name="created_at"       value="now()"/>
+	<changeSet author="roger" id="insert.food_meeting.DiaDelProgramador">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Dia del programador"/>
+			<column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+			<column name="status"           value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
 			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
 			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-        </insert>
-    </changeSet>
+		</insert>
+	</changeSet>
 
-    <changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
-        <insert catalogName="efeeder"
-                tableName="food_meeting">
-            <column name="name"             value="Release celebration"/>
-            <column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
-            <column name="status"           value="Voting"/>
-            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-            <column name="id_user"          value="1"/>
-            <column name="created_at"       value="now()"/>
+	<changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Release celebration"/>
+			<column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+			<column name="status"           value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
 			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
 			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-        </insert>
-    </changeSet>
+		</insert>
+	</changeSet>
 
-    <changeSet author="0x3" id="insert.place.pollo2">
-        <insert catalogName="efeeder"
-                tableName="places">
-                <column name="name" value="Panchita"/>
-                <column name="description" value="Pollo frito con arroz blanco y papas fritas."/>
-                <column name="phone" value="4556565"/>
-                <column name="direction" value="Av. San Martin"/>
-                <column name="image_link" value="http://3.bp.blogspot.com/-qN5kZKaQDI8/VaQXIVteKyI/AAAAAAAADK0/y14wMy_3xjk/s200/Pollos-Panchita-Review-Cochabamba-Logo.jpg"/>
-        </insert>
-    </changeSet>
-	
-    <changeSet author="0x3" id="insert.place.carne">
-        <insert catalogName="efeeder"
-                tableName="places">
-                <column name="name" value="El Arriero"/>
-                <column name="description" value="Carnes, ensalada y guarniciones a gusto."/>
-                <column name="phone" value="4556565"/>
-                <column name="direction" value="Calle Buenos Aires No. 379, esq. Trinidad."/>
-                <column name="image_link" value="https://nbclatino.files.wordpress.com/2013/07/churrasco-steak-2010-featured-image.jpg"/>
-        </insert>
-    </changeSet>
-	
-    <changeSet author="0x3" id="insert.place.empanadas">
-        <insert catalogName="efeeder"
-                tableName="places">
-                <column name="name" value="Wist'upiku"/>
-                <column name="description" value="Empanadas picantes o blancas con helado artesanal de leche o canela."/>
-                <column name="phone" value="+591 4 4405071"/>
-                <column name="direction" value="Av. Melchor Pérez de Olguín, esq Quilla."/>
-                <column name="image_link" value="http://www.wistupiku.com/wp-content/uploads/2015/08/Producto-1.png"/>
-        </insert>
-    </changeSet>
-	
-    <changeSet author="0x3" id="insert.place.unicode">
-        <insert catalogName="efeeder"
-                tableName="places">
-                <column name="name" value="Sopa de Ñ y 龟"/>
-                <column name="description" value="Sopa de letras unicode (Ñ, 龟), de dos y tres bytes en codificación UTF-8."/>
-                <column name="phone" value="Ñ - 龟 123-4567"/>
-                <column name="direction" value="Av. Ñ, esq. 龟."/>
-                <column name="image_link" value=""/>
-        </insert>
-    </changeSet>	
-    
-    <changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
-        <insert catalogName="efeeder"
-                tableName="food_meeting">
-            <column name="name"             value="Lunes de escabeche"/>
-            <column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
-            <column name="status"           value="Voting"/>
-            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-            <column name="id_user"          value="1"/>
-            <column name="created_at"       value="now()"/>
+	<changeSet author="0x3" id="insert.place.pollo2">
+		<insert catalogName="efeeder"
+				tableName="places">
+				<column name="name" value="Panchita"/>
+				<column name="description" value="Pollo frito con arroz blanco y papas fritas."/>
+				<column name="phone" value="4556565"/>
+				<column name="direction" value="Av. San Martin"/>
+				<column name="image_link" value="http://3.bp.blogspot.com/-qN5kZKaQDI8/VaQXIVteKyI/AAAAAAAADK0/y14wMy_3xjk/s200/Pollos-Panchita-Review-Cochabamba-Logo.jpg"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.place.carne">
+		<insert catalogName="efeeder"
+				tableName="places">
+				<column name="name" value="El Arriero"/>
+				<column name="description" value="Carnes, ensalada y guarniciones a gusto."/>
+				<column name="phone" value="4556565"/>
+				<column name="direction" value="Calle Buenos Aires No. 379, esq. Trinidad."/>
+				<column name="image_link" value="https://nbclatino.files.wordpress.com/2013/07/churrasco-steak-2010-featured-image.jpg"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.place.empanadas">
+		<insert catalogName="efeeder"
+				tableName="places">
+				<column name="name" value="Wist'upiku"/>
+				<column name="description" value="Empanadas picantes o blancas con helado artesanal de leche o canela."/>
+				<column name="phone" value="+591 4 4405071"/>
+				<column name="direction" value="Av. Melchor Pérez de Olguín, esq Quilla."/>
+				<column name="image_link" value="http://www.wistupiku.com/wp-content/uploads/2015/08/Producto-1.png"/>
+		</insert>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.place.unicode">
+		<insert catalogName="efeeder"
+				tableName="places">
+				<column name="name" value="Sopa de Ñ y 龟"/>
+				<column name="description" value="Sopa de letras unicode (Ñ, 龟), de dos y tres bytes en codificación UTF-8."/>
+				<column name="phone" value="Ñ - 龟 123-4567"/>
+				<column name="direction" value="Av. Ñ, esq. 龟."/>
+				<column name="image_link" value=""/>
+		</insert>
+	</changeSet>	
+
+	<changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Lunes de escabeche"/>
+			<column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
+			<column name="status"           value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
 			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
 			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-        </insert>
-    </changeSet>
+		</insert>
+	</changeSet>
 
-    <changeSet author="roger" id="insert.food_meeting.fideosuchu">
-        <insert catalogName="efeeder"
-                tableName="food_meeting">
-            <column name="name"             value="fideosuchu"/>
-            <column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
-            <column name="status"           value="Voting"/>
-            <column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-            <column name="id_user"          value="1"/>
-            <column name="created_at"       value="now()"/>
+	<changeSet author="roger" id="insert.food_meeting.fideosuchu">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="fideosuchu"/>
+			<column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
+			<column name="status"           value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
 			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
 			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-        </insert>
-    </changeSet>
+		</insert>
+	</changeSet>
 
-    <changeSet author="roger" id="createtable.order">
-        <createTable catalogName="efeeder" tableName="orders">
-            <column name="id_food_meeting" type="INT"/>
-            <column name="id_user"         type="INT"/>
-            <column name="order_name"      type="VARCHAR(200)"/>
-            <column name="Cost"            type="NUMBER"/>
-        </createTable>
-    </changeSet>
+	<changeSet author="roger" id="createtable.order">
+		<createTable catalogName="efeeder" tableName="orders">
+			<column name="id_food_meeting" type="INT"/>
+			<column name="id_user"         type="INT"/>
+			<column name="order_name"      type="VARCHAR(200)"/>
+			<column name="Cost"            type="DECIMAL(10,2)"/>
+		</createTable>
+	</changeSet>
 
-    <changeSet author="roger" id="addPrimaryKey.table.order">
-        <addPrimaryKey catalogName="efeeder"
-                columnNames="id_food_meeting, id_user"
-                constraintName="pk_orders"
-                tableName="orders"/>
-    </changeSet>
+	<changeSet author="roger" id="addPrimaryKey.table.order">
+		<addPrimaryKey catalogName="efeeder"
+				columnNames="id_food_meeting, id_user"
+				constraintName="pk_orders"
+				tableName="orders"/>
+	</changeSet>
 
-    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="orders"
-                constraintName="fk_id_food_meeting"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
-    </changeSet>
+	<changeSet author="roger" id="addForeignKeyConstraint.fk_id_food_meeting">
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="orders"
+				constraintName="fk_id_food_meeting"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+	</changeSet>
 
-    <changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="orders"
-                constraintName="fk_id_user"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="user"/>
-    </changeSet>
+	<changeSet author="roger" id="addForeignKeyConstraint.fk_id_user">
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="orders"
+				constraintName="fk_id_user"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
 
-    <changeSet author="alexander" id="createtable.buyer">
-        <createTable catalogName="efeeder" tableName="buyer">
-            <column name="id_food_meeting" type="INT"/>
-            <column name="id_user"         type="INT"/>
-        </createTable>
-    </changeSet>
+	<changeSet author="alexander" id="createtable.buyer">
+		<createTable catalogName="efeeder" tableName="buyer">
+			<column name="id_food_meeting" type="INT"/>
+			<column name="id_user"         type="INT"/>
+		</createTable>
+	</changeSet>
 
-    <changeSet author="alexander" id="addPrimaryKey.table.buyer">
-        <addPrimaryKey catalogName="efeeder"
-                columnNames="id_food_meeting, id_user"
-                constraintName="pk_buyer"
-                tableName="buyer"/>
-    </changeSet>
+	<changeSet author="alexander" id="addPrimaryKey.table.buyer">
+		<addPrimaryKey catalogName="efeeder"
+				columnNames="id_food_meeting, id_user"
+				constraintName="pk_buyer"
+				tableName="buyer"/>
+	</changeSet>
 
-    <changeSet author="alexander" id="addForeignKeyConstraint.fk_id_food_meeting_by_buyer">
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="buyer"
-                constraintName="fk_id_food_meeting_by_buyer"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
-    </changeSet>
+	<changeSet author="alexander" id="addForeignKeyConstraint.fk_id_food_meeting_by_buyer">
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="buyer"
+				constraintName="fk_id_food_meeting_by_buyer"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+	</changeSet>
 
-    <changeSet author="alexander" id="addForeignKeyConstraint.fk_id_user_by_buyer">
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="buyer"
-                constraintName="fk_id_user_by_buyer"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="user"/>
-    </changeSet>
-    
-    <changeSet author="ricardo" id="food_meeting_user.table">
-        <createTable catalogName="efeeder" tableName="food_meeting_user">
-            <column name="id_food_meeting" type="INT(11)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="id_user" type="INT(11)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="id_place"  type="INT(11)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
-                baseTableName="food_meeting_user"
-                constraintName="food_meeting_user_id_food_meeting_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="food_meeting"/>
-        <addForeignKeyConstraint baseColumnNames="id_user"
-                baseTableName="food_meeting_user"
-                constraintName="food_meeting_user_id_user_fk"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                referencedColumnNames="id"
-                referencedTableName="user"/>
-        <addForeignKeyConstraint baseColumnNames="id_place"
-            baseTableName="food_meeting_user"
-            constraintName="food_meeting_user_id_place_fk"
-            onDelete="CASCADE"
-            onUpdate="RESTRICT"
-            referencedColumnNames="id"
-            referencedTableName="places"/>
-    </changeSet>
+	<changeSet author="alexander" id="addForeignKeyConstraint.fk_id_user_by_buyer">
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="buyer"
+				constraintName="fk_id_user_by_buyer"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
+
+	<changeSet author="ricardo" id="food_meeting_user.table">
+		<createTable catalogName="efeeder" tableName="food_meeting_user">
+			<column name="id_food_meeting" type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id_user" type="INT(11)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="id_place"  type="INT(11)">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="food_meeting_user"
+				constraintName="food_meeting_user_id_food_meeting_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="food_meeting_user"
+				constraintName="food_meeting_user_id_user_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+		<addForeignKeyConstraint baseColumnNames="id_place"
+			baseTableName="food_meeting_user"
+			constraintName="food_meeting_user_id_place_fk"
+			onDelete="CASCADE"
+			onUpdate="RESTRICT"
+			referencedColumnNames="id"
+			referencedTableName="places"/>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.winnerplace">
+		<addColumn catalogName="efeeder" tableName="food_meeting">
+			<column name="id_place" type="INT">
+			<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint
+			baseColumnNames="id_place"
+			baseTableName="food_meeting"
+			constraintName="food_meeting_id_place_fk"
+			onDelete="CASCADE"
+			onUpdate="RESTRICT"
+			referencedColumnNames="id"
+			referencedTableName="places"/>
+	</changeSet>	
 </databaseChangeLog>
