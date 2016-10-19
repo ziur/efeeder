@@ -37,7 +37,6 @@ var SettingMeeting = function() {
 	var setValues = function() {
 		var time = moment(dateField.val()).format("HH:mm");
 		timeField.val(time);
-		
 		dateField.pickadate('picker').set('select', dateField.val(), { format: 'yyyy-mm-dd' });
 	};
 
