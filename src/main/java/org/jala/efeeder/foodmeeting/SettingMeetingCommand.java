@@ -32,7 +32,7 @@ public class SettingMeetingCommand implements CommandUnit {
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
-		
+
 		FoodMeeting foodMeeting = new FoodMeeting();
 		String id = parameters.getParameter("id_food_meeting");
 		LocalDate date = null;
@@ -47,7 +47,7 @@ public class SettingMeetingCommand implements CommandUnit {
 			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
 					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userManager.getUserById(resultSet.getInt(6))));
 		}
-		
+
 		out.addResult("foodMeeting", foodMeeting);
 		out.addResult("date", date);
 		out.addResult("edit", !foodMeeting.getUserOwner().equals(parameters.getUser()));
