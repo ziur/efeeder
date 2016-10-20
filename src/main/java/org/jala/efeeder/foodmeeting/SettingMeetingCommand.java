@@ -17,8 +17,6 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.UserManager;
 
-import java.time.LocalDate;
-
 /**
  *
  * @author Danitza Machicado
