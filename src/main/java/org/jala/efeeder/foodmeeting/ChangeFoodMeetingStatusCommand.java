@@ -35,7 +35,7 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 						.setIdFoodMeeting(receivedEvent.getIdFoodMeeting())
 						.setIdUser(receivedEvent.getIdUser())
 						.setNewStatus(receivedEvent.getNewStatus())
-						.setRedirectTo("/action/FoodMeeting")
+						.setRedirectTo("/action/payment")
 						.build()
 				)
 				.build()
