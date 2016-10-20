@@ -27,7 +27,8 @@ var SettingMeeting = function() {
 		timeField.pickatime({
 			twelvehour : false,
 			autoclose : true,
-			vibrate : true
+			vibrate : true,
+			formatSubmit:'"HH:mm'
 		});
 
 		select.material_select();
@@ -35,8 +36,6 @@ var SettingMeeting = function() {
 	
 
 	var setValues = function() {
-		var time = moment(dateField.val()).format("HH:mm");
-		timeField.val(time);
 		dateField.pickadate('picker').set('select', dateField.val(), { format: 'yyyy-mm-dd' });
 	};
 

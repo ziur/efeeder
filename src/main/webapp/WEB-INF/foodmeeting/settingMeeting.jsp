@@ -50,11 +50,11 @@
 								<label>Status</label>
 							</div>
 							<div class="input-field col s7">
-								<input id="date-field-id" type="date" name="date" class="datepicker" value="${date}" >
+								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.date}" >
 								<label for="date">Date</label>
 							</div>
 							<div class="input-field col s5">
-								<input id="time-field-id" name="time" class="timepicker" type="time" >
+								<input id="time-field-id" name="time" class="timepicker" type="time" value="${foodMeeting.time}" >
 								<label for="timer-id">Schedule</label>
 							</div>
 							<div class="col s6 push-s3">
