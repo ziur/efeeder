@@ -67,10 +67,6 @@ public class FoodMeeting {
 		return width;
 	}
 	
-	/**
-	 *
-	 * @return
-	 */
 	public java.time.LocalDate getDate() {
 		return eventDate.toLocalDateTime().toLocalDate();
 	}
