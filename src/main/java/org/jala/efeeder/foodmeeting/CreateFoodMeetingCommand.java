@@ -45,7 +45,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
 		stm.setString(1, createMeetingEvent.getName().toString());
 		stm.setString(2, createMeetingEvent.getImageLink().toString());
-		stm.setString(3, FoodMeeting.DEFAULT_FOOD_MEETING_STATUS);
+		stm.setString(3, FoodMeetingStatus.Voting.name());
 		stm.setTimestamp(4, eventDate);
 		stm.setInt(5, userId);
 		stm.setTimestamp(6, createdAt);
@@ -78,7 +78,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 				.setId(foodMeeting.getId())
 				.setName(foodMeeting.getName())
 				.setImageLink(foodMeeting.getImageLink())
-				.setStatus(foodMeeting.getStatus())
+				.setStatus(foodMeeting.getStatus().name())
 				.setEventDate(foodMeeting.getEventDate().getTime())
 				.setWidth(foodMeeting.getWidth())
 				.setUserOwner(userOwner)

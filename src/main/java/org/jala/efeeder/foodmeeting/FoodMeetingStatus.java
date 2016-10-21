@@ -5,7 +5,9 @@ package org.jala.efeeder.foodmeeting;
  * @author Danitza Machicado
  */
 public enum FoodMeetingStatus {
-    Voting,
-    Order,
-    Finish            
+	Voting,
+	Order,
+	Payment,
+	Buying,
+	Finish
 }

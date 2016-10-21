@@ -8,9 +8,9 @@
 	</jsp:attribute>
 	<jsp:body>
 		<input type="hidden" id="hidden-field" name="inputName" value="hdnSalt">
-		<div class="row" style="margin-top: 10%;">
-			<div class="row">
-				<div class="col offset-m3 s12 m6">
+		<br/><br/><br/>
+		<div class="row">
+				<div class="col offset-s1 offset-m3 s10 m6">
 					<div class="card">
 						<div class="card-content">
 							<form id="login-form" role="form" action="login" >
@@ -46,13 +46,13 @@
 							</form>
 						</div>
 					</div>
-				<div class="row">
+				</div>
+				<div class="offset-s1 offset-m3 col s10 col m6">
 					<h6 class='right lighten-5 grey-text'>Don't you have an account yet??
 						<a href="user">Let's create one!</a>
 					</h6> 
 				</div>
-			</div>
+			
 		</div>
-	</div>
 	</jsp:body>
 </t:template>
