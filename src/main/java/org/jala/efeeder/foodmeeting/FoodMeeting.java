@@ -8,6 +8,8 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 import lombok.Data;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -68,5 +70,14 @@ public class FoodMeeting {
 		}
 
 		return width;
+	}
+	
+	public java.time.LocalDate getDate() {
+		return eventDate.toLocalDateTime().toLocalDate();
+	}
+	
+	public String getTime() {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
+		return fmt.print(eventDate.getTime());
 	}
 }

@@ -17,6 +17,7 @@ var SettingMeeting = function() {
 			selectMonths: true,
 			selectYears: 15,
 			closeOnSelect: true,
+			formatSubmit: 'd mmmm,yyyy',
 			clear:'',
 			onSet: function(arg) {
 				if ('select' in arg) {
@@ -26,10 +27,10 @@ var SettingMeeting = function() {
 		});
 
 		timeField.pickatime({
-			autoclose : false,
 			twelvehour : false,
 			autoclose : true,
-			vibrate : true
+			vibrate : true,
+			formatSubmit:'"HH:mm'
 		});
 
 		select.material_select();		
@@ -38,10 +39,7 @@ var SettingMeeting = function() {
 	
 
 	var setValues = function() {
-		var time = moment(dateField.val()).format("HH:mm");
-		timeField.val(time);
-		var value = moment(dateField.val()).format("D MMMM, YYYY");
-		dateField.val(value);
+		dateField.pickadate('picker').set('select', dateField.val(), { format: 'yyyy-mm-dd' });
 	};
 
 	var settingMeetingValidate = function() {
@@ -68,7 +66,7 @@ var SettingMeeting = function() {
 			addFieldEvent();
 			setValues();
 			settingMeetingValidate();
-		},
+		}
 	};
 
 };
