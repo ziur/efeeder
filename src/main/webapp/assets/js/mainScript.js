@@ -1,0 +1,1 @@
+$(".menu-navbar").sideNav();
