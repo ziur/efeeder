@@ -21,10 +21,6 @@ import org.jala.efeeder.user.UserManager;
 @Command
 public class FoodMeetingCommand implements CommandUnit {
 
-	private static final String SELECT_FOOD_MEETING_SQL = "Select id, name, image_link, status, event_date, created_at, "
-			+ "voting_time, order_time, payment_time, id_user " 
-			+ "from food_meeting where event_date >= ? order by event_date";
-
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
 	
 	@Override

@@ -132,35 +132,17 @@ var MeetingStateSllider = function() {
 			},
 		});
 		
-		slider.noUiSlider.on('update', function( values, handle ) {
-			var now = moment().valueOf();
+		slider.noUiSlider.on('update', function(values) {
 			var orderVotingHandle = 0;
 			var orderPaymentHandle = 1;
 			var paymentEmptyHandle = 2;
 			
 			$("#voting-date").val(Math.round(values[orderVotingHandle]));
 			$("#order-date").val(Math.round(values[orderPaymentHandle]));
-			$("#payment-date").val(Math.round(values[paymentEmptyHandle]));
-			
-			var newStatus = $("#status").text();
-
-			if(now <= values[orderVotingHandle]) {
-				newStatus = sliderSections[0].text;
-			} else if(now <= values[orderPaymentHandle]) {
-				newStatus = sliderSections[1].text;	
-			} else if(now <= values[paymentEmptyHandle]) {
-				newStatus = sliderSections[2].text;	
-			} else if(now <= eventDate.valueOf()) {
-				newStatus = sliderSections[3].text;
-			} else {
-				newStatus = sliderSections[4].text;
-			}
-
-			$("#status").text(newStatus);	
+			$("#payment-date").val(Math.round(values[paymentEmptyHandle]));						
 		});		
 		
-		addConnectorTooltips();
-		
+		addConnectorTooltips();		
 		modifyStyling();					
 	}		
 	

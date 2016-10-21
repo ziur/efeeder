@@ -26,8 +26,8 @@ import org.jala.efeeder.user.UserManager;
 @Command
 public class CreateFoodMeetingCommand implements CommandUnit {
 
-	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, event_date, id_user, created_at, voting_time, order_time, payment_time) "
-            + "values(?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, id_user, created_at, voting_time, order_time, payment_time) "
+            + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String createMeetingRoomId = "createMeetingRoomId";
 
 	@Override
@@ -45,12 +45,13 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
 		stm.setString(1, createMeetingEvent.getName().toString());
 		stm.setString(2, createMeetingEvent.getImageLink().toString());
-		stm.setTimestamp(3, eventDate);
-		stm.setInt(4, userId);
-		stm.setTimestamp(5, createdAt);
-		stm.setTimestamp(6, eventDate);
+		stm.setString(3, FoodMeetingStatus.Voting.name());
+		stm.setTimestamp(4, eventDate);
+		stm.setInt(5, userId);
+		stm.setTimestamp(6, createdAt);
 		stm.setTimestamp(7, eventDate);
 		stm.setTimestamp(8, eventDate);
+		stm.setTimestamp(9, eventDate);
 
 		stm.executeUpdate();
 
@@ -77,7 +78,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 				.setId(foodMeeting.getId())
 				.setName(foodMeeting.getName())
 				.setImageLink(foodMeeting.getImageLink())
-				.setStatus(foodMeeting.getStatus())
+				.setStatus(foodMeeting.getStatus().name())
 				.setEventDate(foodMeeting.getEventDate().getTime())
 				.setWidth(foodMeeting.getWidth())
 				.setUserOwner(userOwner)

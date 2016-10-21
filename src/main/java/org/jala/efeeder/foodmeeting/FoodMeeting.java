@@ -17,6 +17,7 @@ public class FoodMeeting {
 	private int id;
 	private String name;
 	private String imageLink;
+	private FoodMeetingStatus status;
 	private Timestamp eventDate;
 	private Timestamp votingDate;
 	private Timestamp orderDate;
@@ -27,7 +28,7 @@ public class FoodMeeting {
 	public FoodMeeting() {
 	}
 
-	public FoodMeeting(int id, String name,String imageLink, Timestamp eventDate, Timestamp createdAt,
+	public FoodMeeting(int id, String name,String imageLink, FoodMeetingStatus status, Timestamp eventDate, Timestamp createdAt,
 			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
 		this.id = id;
 		this.name = name;
@@ -36,12 +37,13 @@ public class FoodMeeting {
 		this.votingDate = votingDate;
 		this.orderDate = orderDate;
 		this.paymentDate = paymentDate;
+		this.status = status;
 		this.imageLink = imageLink;
 		this.userOwner = userOwner;
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, eventDate, eventDate, eventDate, null, userOwner);
 	}
 
 	public int getWidth() {
@@ -49,26 +51,7 @@ public class FoodMeeting {
 		LocalDate endEventDate = new LocalDate(eventDate);
 		int days = Days.daysBetween(today, endEventDate).getDays();
 		return calculateWidth(days);
-	}
-	
-	public String getStatus() {
-		String  status = FoodMeetingStatus.Voting.name();
-		Timestamp now = new Timestamp((new Date()).getTime());
-		
-		if(now.before(this.votingDate)) {
-			status = FoodMeetingStatus.Voting.name();
-		} else if(now.before(this.orderDate)) {
-			status = FoodMeetingStatus.Order.name();
-		} else if(now.before(this.paymentDate)) {
-			status = FoodMeetingStatus.Payment.name();
-		} else if(now.before(this.eventDate)) {
-			status = FoodMeetingStatus.Buying.name();
-		} else {
-			status = FoodMeetingStatus.Finish.name();
-		}
-		
-		return status;
-	}
+	}	
 
 	private int calculateWidth(int days) {
 		int maxWidth = 500;

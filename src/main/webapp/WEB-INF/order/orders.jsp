@@ -24,7 +24,7 @@
 						<div id="my-order-container">
 							<i class="material-icons circle">perm_identity</i>
 							<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />							
-							<c:if test="true">
+							<c:if test="${foodMeeting.status == 'Order'}">
 								<div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
 									<input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}" />
 								</div>
@@ -35,7 +35,7 @@
 							<br />
 							<p id="my-order-cost">${myOrder.cost}</p>
 							<p id="my-user-order">${myUser.name} ${myUser.lastName}</p>
-							<c:if test="true">
+							<c:if test="${foodMeeting.status == 'Order'}">
 								<a href="#" id="btn-edit-my-order" class="btn-edit secondary-content">
 									<i class="material-icons">mode_edit</i>
 								</a>

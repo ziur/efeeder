@@ -29,7 +29,6 @@ $(function() {
 				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
 
 					foodMeetingsList.addMeeting(eventMessage, true);
-					newFoodMeeting.reset();
 
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
 					Materialize.toast($toastContent, 5000);
@@ -250,6 +249,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 							}
 						]
 					});
+					
+				resetNewMeetingForm();
 			}
 		});
 

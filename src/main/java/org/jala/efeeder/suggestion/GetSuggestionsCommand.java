@@ -27,7 +27,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class GetSuggestionsCommand implements CommandUnit {
 
     private static final String SELECT_VOTE_FINISHER_SQL =
-            "SELECT id_user FROM food_meeting WHERE food_meeting.id=?";
+            "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
 	private static final String SELECT_USERS_BY_MEETING_SQL =
             "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
     private static final String SELECT_PLACES_BY_MEETING_SQL =

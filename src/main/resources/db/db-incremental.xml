@@ -179,6 +179,7 @@
 			</column>
 			<column name="name"             type="VARCHAR(200)"/>
 			<column name="image_link"       type="VARCHAR(500)"/>
+			<column name="status"           type="VARCHAR(50)"/> 
 			<column name="event_date"       type="DATETIME"/>
 			<column name="id_user" type="INT(11)">
 				<constraints nullable="true"/>
@@ -213,12 +214,13 @@
 				tableName="food_meeting">
 			<column name="name"             value="Coffee time"/>
 			<column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
-			<column name="event_date"       valueDate="now()"/>
+			<column name="status"			value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
 			<column name="id_user"          valueDate="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      value="now()"/>
-			<column name="order_time"       value="now()"/>
-			<column name="payment_time"     value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -227,6 +229,7 @@
 				tableName="food_meeting">
 			<column name="name"             value="Dia del programador"/>
 			<column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+			<column name="status"			value="Voting"/>			
 			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
@@ -241,6 +244,7 @@
 				tableName="food_meeting">
 			<column name="name"             value="Release celebration"/>
 			<column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+			<column name="status"			value="Voting"/>
 			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
@@ -294,11 +298,12 @@
 		</insert>
 	</changeSet>	
 
-	<changeSet author="roger" id="insert.food_meeting.lunesEscabeche">
+	<changeSet author="roger" id="insert.food_meeting.jalasoftAnniversary">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Lunes de escabeche"/>
-			<column name="image_link"       value="http://4.bp.blogspot.com/-CN411iYymCU/Upc9XThMlsI/AAAAAAAABEs/Tu6hidHT0Dc/s1600/1384332_10151653001601360_894261111_n.jpg"/>
+			<column name="name"             value="Jalasoft Anniversary"/>
+			<column name="image_link"       value="http://www.jalasoft.com/wp-content/uploads/2012/03/facilities_4.jpg"/>
+			<column name="status"			value="Voting"/>
 			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
@@ -308,17 +313,48 @@
 		</insert>
 	</changeSet>
 
-	<changeSet author="roger" id="insert.food_meeting.fideosuchu">
+	<changeSet author="roger" id="insert.food_meeting.tacosDay">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="fideosuchu"/>
-			<column name="image_link"       value="http://4.bp.blogspot.com/-UZrjIavCK-A/U6xt8AooWpI/AAAAAAAABY8/FxgWlU-0Z0w/s1600/2014-05-22+18.10.29.jpg"/>
+			<column name="name"             value="Taco's Day!"/>
+			<column name="image_link"       value="http://i.makeagif.com/media/11-10-2015/fcRD8f.gif"/>
+			<column name="status"			value="Voting"/>
 			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
 			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
 			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
 			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet author="roger" id="insert.food_meeting.teamBuilding">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Team building"/>
+			<column name="image_link"       value="http://vorkspace.com/blog/wp-content/uploads/Team-building.jpg"/>
+			<column name="status"			value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet author="roger" id="insert.food_meeting.sciquestAnniversary">
+		<insert catalogName="efeeder"
+				tableName="food_meeting">
+			<column name="name"             value="Sciquest Anniversary"/>
+			<column name="image_link"       value="https://www.sciquest.com/sites/default/themes/sciquest/logo.png"/>
+			<column name="status"			value="Voting"/>
+			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="id_user"          value="1"/>
+			<column name="created_at"       value="now()"/>
+			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
