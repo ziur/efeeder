@@ -447,5 +447,23 @@
 			onUpdate="RESTRICT"
 			referencedColumnNames="id"
 			referencedTableName="places"/>
-	</changeSet>	
+	</changeSet>
+        
+        <changeSet id="payment.table" author="alexander">
+            <createTable catalogName="efeeder" tableName="payment">
+			<column name="id_food_meeting"   type="INT(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="item_name"	  type="VARCHAR(200)"/>
+			<column name="item_description" type="VARCHAR(200)"/>
+			<column name="price" type="DECIMAL(10,2)"/>
+            </createTable>
+            <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+                baseTableName="payment"
+                constraintName="fk_food_meeting"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                referencedColumnNames="id"
+                referencedTableName="food_meeting"/>
+        </changeSet>
 </databaseChangeLog>
