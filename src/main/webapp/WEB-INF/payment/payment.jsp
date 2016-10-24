@@ -11,7 +11,7 @@
         </div>
         <div class="row">
             <form class="row col s12">
-                <div class="row">
+                <div class="row"style="display:${estate}">
                     <div class="input-field col s4">
                         <i class="material-icons prefix">library_add</i>
                         <input id="icon_prefix" type="text" class="validate">
@@ -25,7 +25,7 @@
                     <div class="input-field col s2">
                         <i class="material-icons prefix">payment</i>
                         <input id="icon_pay" type="number" class="validate">
-                        <label for="icon_pay">cost</label>
+                        <label for="icon_pay">price</label>
                     </div>
                     <div class="col s2">
                         <a class="btn-floating btn-large waves-effect waves-light green"><i class="material-icons">add</i></a>
@@ -43,26 +43,16 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>Coca-cola</td>
-                            <td>bebida gaseosa</td>
-                            <td>$6.87</td>
-                        </tr>
-                        <tr>
-                            <td>Jogo del Valle</td>
-                            <td>Jugo natural</td>
-                            <td>$11.76</td>
-                        </tr>
-                        <tr>
-                            <td>Cumpleañero Jonathan</td>
-                            <td>no paga</td>
-                            <td>$20.00</td>
-                        </tr>
+                        <c:forEach var="item" items="#{items}">
+                            <tr>
+                                <td>${item.name}</td>
+                                <td>${item.description}</td>
+                                <td>${item.price}</td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
-
-                <h5 class="right-align"><b>Additional features : </b> $38.78</h5>
-
+                <h5 class="right-align"><b>Additional features : </b> ${total_item_price}</h5>
             </div>
         </div>
     </jsp:body>

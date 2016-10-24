@@ -451,9 +451,12 @@
         
         <changeSet id="payment.table" author="alexander">
             <createTable catalogName="efeeder" tableName="payment">
-			<column name="id_food_meeting"   type="INT(11)">
-				<constraints primaryKey="true" nullable="false" />
+                        <column name="id" type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
 			</column>
+                        <column name="id_food_meeting"   type="INT(11)">
+                            <constraints nullable="false"/>
+                        </column>
 			<column name="item_name"	  type="VARCHAR(200)"/>
 			<column name="item_description" type="VARCHAR(200)"/>
 			<column name="price" type="DECIMAL(10,2)"/>
