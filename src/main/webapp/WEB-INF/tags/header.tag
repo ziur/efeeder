@@ -8,7 +8,7 @@
 				<a id="logo-container" href="/" class="brand-logo center">Efeeder</a>
 				<ul id="slide-out" class="side-nav" style="margin: 0;">
 					<li><div class="userView">
-						<img class="background" src="https://cdn.cloudpix.co/images/tumblr-backgrounds/backgrounds-tumblr-296bd1b4efa27c2da1461ed8ad37752d-large-1333006.jpg">
+						<img class="background" src="/assets/img/background-image.jpg">
 						<a><img class="circle" src="action/image?file_name=${user.getImage()}&type=user"></a>
 						<a><span class="white-text name">${user.getUserName()}</span></a>
 						<a><span class="white-text email">${user.getEmail()}</span></a>
