@@ -6,7 +6,7 @@
 		<nav class="light-blue lighten-1" role="navigation">
 			<div class="nav-wrapper container">
 				<a id="logo-container" href="/" class="brand-logo center">Efeeder</a>
-				<ul id="slide-out" class="side-nav">
+				<ul id="slide-out" class="side-nav" style="margin: 0;">
 					<li><div class="userView">
 						<img class="background" src="https://cdn.cloudpix.co/images/tumblr-backgrounds/backgrounds-tumblr-296bd1b4efa27c2da1461ed8ad37752d-large-1333006.jpg">
 						<a><img class="circle" src="action/image?file_name=${user.getImage()}&type=user"></a>

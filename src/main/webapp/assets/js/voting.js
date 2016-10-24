@@ -651,7 +651,9 @@ function _handleOnMessage(event)
 function _start()
 {
 	$(".button-collapse").sideNav();
-	$('#mainSideNav').get(0).style.transition = 'visibility 1s, left 1s';
+	let nav = $('#mainSideNav').get(0);
+	nav.style.zIndex="0";
+	nav.style.transition = 'visibility 1s, left 1s';
 	
 	bkSystem = new BkSystem('mainCanvas');
 	ef_usersArea = new BkArea(new BkCoord(0,0.1,0.2,0.9,0,7), 4, 2);
