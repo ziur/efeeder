@@ -15,6 +15,18 @@
 
 	<jsp:body>
 		<div class="row">
+			<div id="food-meeting-info" class="col-sm-12">
+				<div class="card">
+					<div class="card-image">
+						<img id="food-meeting-image" src="${foodMeeting.imageLink}" class="activator perfect-fit">
+						<span id="food-meeting-title" class="card-title">${foodMeeting.name}</span>
+					</div>
+					<div class="card-content">
+						<p>Place: </p>
+						<h6 id="food-meeting-date" class="quick-view-date grey-text lighten-1 truncate">${foodMeeting.eventDate}</h6>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="row">

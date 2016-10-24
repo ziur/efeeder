@@ -3,6 +3,8 @@ $(document).ready(function () {
 	var idFoodMeeting = $('#id-food-meeting').val();
 	var orderListContainer = $("#order-list");
 	var myOrderContainer = $("#my-order-container");
+	var foodMeetingInfo = new FoodMeetingInfo($("#food-meeting-info"));
+	foodMeetingInfo.init();
 	var orderList = new OrderList(idFoodMeeting, idUser, orderListContainer);
 
 	$(function () {
@@ -253,6 +255,22 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 	return {
 		init: function () {
 			addEvents();
+		}
+	};
+};
+
+var FoodMeetingInfo = function (foodMeetingInfoContainer) {
+	this.eventDate = foodMeetingInfoContainer.find("#food-meeting-date");
+
+	var self = this;
+
+	function fixEventDate() {
+		self.eventDate.text(moment(self.eventDate.text()).calendar());
+	}
+
+	return {
+		init: function () {
+			fixEventDate();
 		}
 	};
 };
