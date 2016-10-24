@@ -16,12 +16,12 @@ public class PaymentItem {
 	private int foodMeetingId;
 	private String name;
 	private String description;
-	private float price;
+	private double price;
 
 	public PaymentItem() {
 	}
 
-	public PaymentItem(int foodMeetingId, String name, String description, float price) {
+	public PaymentItem(int foodMeetingId, String name, String description, double price) {
 		this.foodMeetingId = foodMeetingId;
 		this.name = name;
 		this.description = description;

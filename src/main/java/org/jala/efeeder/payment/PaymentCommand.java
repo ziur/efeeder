@@ -36,12 +36,9 @@ public class PaymentCommand implements CommandUnit {
 		User user = parameters.getUser();
 		String isBuyer = (buyerId==user.getId()) ? "block" : "none";
 		
-		System.out.println("la llave food : " + foodMeetingId);
-		System.out.println("la llave buyer : " + buyerId);
-		System.out.println("la llave uesr buyer : " + user.getId());
-		System.out.println("la llave uesr buyer : " + isBuyer);
 		out.addResult("items", getExtraItems(foodMeetingId, connection));
 		out.addResult("estate", isBuyer);
+		out.addResult("id_food_meeting", foodMeetingId);
 		return out.forward("payment/payment.jsp");
 	}
 	
