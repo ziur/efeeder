@@ -13,48 +13,62 @@
 	</jsp:attribute>
 	<jsp:body>
 		<div class="meetings-container">
+			<br/><br/><br/>
+			<div class="row">				
+				<div class="offset-s1 col s10">
+					<div id="noUiSlider"></div>
+				</div>
+			</div>
+			<br/><br/><br/>
 			<div class="row">
-				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12">
+				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12"
+					  data-event-date="${foodMeeting.eventDate}" data-created-date="${foodMeeting.createdAt}"
+					  data-voting-date="${foodMeeting.votingDate}" data-order-date="${foodMeeting.orderDate}" data-payment-date="${foodMeeting.paymentDate}">
 					<input id="meeting-id" name="id-food-meeting" type="hidden" value="${foodMeeting.id}">
+					<input id="voting-date" name="voting-date" type="hidden" type="date">
+					<input id="order-date" name="order-date" type="hidden" type="date">
+					<input id="payment-date" name="payment-date" type="hidden" type="date">
 					<div class="row">
-						<div class="col m12 l4">
-							<div class="card">
+						<div class="col s12 l4 center">
+							<ul class="collection margin-bottom-0">
+								<li class="collection-item avatar" style="min-height: 0px">
+									<img src="action/image?file_name=${foodMeeting.userOwner.getImage()}&type=user" alt="" class="circle">
+									<p class="title">Owner:</p>
+									<p> ${foodMeeting.userOwner}</p>
+								</li>
+							</ul>	
+							<div class="card">								
 								<div class="card-image">
-									<img  width="350px" src="${foodMeeting.imageLink}" class="materialboxed" data-caption="${foodMeeting.name}" >
-									<ul class="collection">
-										<li class="collection-item avatar">
-											<img src="action/image?file_name=${foodMeeting.userOwner.getImage()}&type=user" alt="" class="circle">
-											<span class="title">Owner:</span>
-											<p> ${foodMeeting.userOwner}
-											</p>
-										</li>
-									</ul>
+									<img  width="350px" src="${foodMeeting.imageLink}" class="materialboxed" data-caption="${foodMeeting.name}" >									
 								</div>
 							</div>
+							
 						</div>
 						<div class="col m12 l8">
 							<div class="input-field col s12">
-								<label for="meeting_name">Meeting Name</label>
 								<input id="meeting_name" name="meeting_name" type="text" class="validate" value="${foodMeeting.name}" >
+								<label for="meeting_name">Meeting Name</label>
 							</div>
 							<div class="input-field col s12">
 								<input name="image_link" id="image_link" value="${foodMeeting.imageLink}" type="text" class="validate" >
 								<label for="image_link">Image Link</label>
 							</div>
 							<div class="input-field col s12">
-								<select name="status" id="status" >
+								<select name="status">
 									<option value="Voting" ${foodMeeting.status == 'Voting' ? 'selected' : ''} >Voting</option>
 									<option value="Order" ${foodMeeting.status == 'Order' ? 'selected' : ''} >Order</option>
+									<option value="Payment" ${foodMeeting.status == 'Payment' ? 'selected' : ''} >Payment</option>
+									<option value="Buying" ${foodMeeting.status == 'Buying' ? 'selected' : ''} >Buying</option>
 									<option value="Finish" ${foodMeeting.status == 'Finish' ? 'selected' : ''} >Finish</option>
 								</select>
 								<label>Status</label>
 							</div>
 							<div class="input-field col s7">
-								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.eventDate}" >
+								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.date}" >
 								<label for="date">Date</label>
 							</div>
 							<div class="input-field col s5">
-								<input id="time-field-id" name="time" class="timepicker" type="time" >
+								<input id="time-field-id" name="time" class="timepicker" type="time" value="${foodMeeting.time}" >
 								<label for="timer-id">Schedule</label>
 							</div>
 							<div class="col s6 push-s3">
@@ -64,15 +78,15 @@
 							<div class="col s6">
 								<input name="type" class="with-gap" type="radio" id="private" />
 								<label for="private">Private</label>
-							</div><br>	 
+							</div>
+							<div class="right"><br><br>
+								<button class="waves-effect waves-light btn">
+									<a href="/action/FoodMeeting" class="white-text">Cancel</a>
+								</button> 
+								<button type="submit" id="edit-meeting" class="waves-effect waves-light btn" >Save</button> 
+							</div>
 						</div>
-					</div>
-					<div class="row right"><br><br>
-						<button class="waves-effect waves-light btn">
-							<a href="/action/FoodMeeting" class="white-text">Cancel</a>
-						</button> 
-						<button type="submit" id="edit-meeting" class="waves-effect waves-light btn" >Save</button> 
-					</div>
+					</div>					
 				</form>
 			</div>  
 		</div>

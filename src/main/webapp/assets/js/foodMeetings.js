@@ -29,7 +29,6 @@ $(function() {
 				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
 
 					foodMeetingsList.addMeeting(eventMessage, true);
-					newFoodMeeting.reset();
 
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
 					Materialize.toast($toastContent, 5000);
@@ -65,14 +64,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
-		var userOwner;
-
-		if (isWebSoccket) {
-			userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"];
-		}
-		else {
-			userOwner = newMeeting.userOwner;
-		}
+		var userOwner = newMeeting.userOwner;
 
 		self.meetings.push(newMeeting);
 		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
@@ -114,8 +106,14 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			case 'Order':
 				page = "order";
 				break;
+			case 'Payment':
+				page = "payment";
+				break;	
+			case 'Buying':
+				page = "details";
+				break;	
 			case 'Finish':
-				page = "finish";
+				page = "details";
 				break;
 		}
 		return '/action/' + page + '?id_food_meeting=' + id;
@@ -251,6 +249,8 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 							}
 						]
 					});
+					
+				resetNewMeetingForm();
 			}
 		});
 
