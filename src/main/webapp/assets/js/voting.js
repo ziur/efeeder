@@ -27,7 +27,6 @@ let m_placeImg = null;
 let m_placeDrawer = null;
 let m_userDrawer = null;
 let m_myUser = null;
-let m_addAllPlacesButton = null;
 let m_showPlacesMenuButton = null;
 let m_showInfoButton = null;
 let m_finishButton = null;
@@ -559,7 +558,8 @@ function processUserPlaceJson(json)
 			}
 		}
 
-		item.comparable = (indexes[i] / count) - votes;
+		item.comparable = (indexes[i] / count) - votes * 2;
+		if (isSelected) --item.comparable;
 		item.area = m_placesArea;
 		bkObjectSetSelected(item, isSelected);
 	}
@@ -578,15 +578,6 @@ function processUserPlaceJson(json)
 		}
 	}
 	ef_places = list;
-	
-	if (ef_places.length > 0)
-	{
-		m_uiSystem.remove(m_addAllPlacesButton);
-	}
-	else
-	{
-		m_uiSystem.add(m_addAllPlacesButton);
-	}
 	
 	if ( m_ownerId === m_userId)
 	{
@@ -644,15 +635,6 @@ function hideSideBar()
 	m_sideBarHidden = true;
 }
 
-function onResize()
-{
-	let topPos = $("nav").height() + 12;
-	let maxHeight = $(document).height();
-	let usableHeight = (maxHeight - topPos) * 100 / maxHeight;
-	$('#mainCanvas').get(0).style = "position:fixed;padding:0;margin:0;left:0;width:100%;top:" +
-		topPos + "px;height:" + usableHeight +"vh";
-}
-
 /**
  * @param feastId Positive integer id
  * @param placeId Positive integer id, or -1 to remove current suggestion
@@ -660,6 +642,7 @@ function onResize()
 function addSuggestion(feastId, placeId)
 {
 	if (m_ownerId <= 0) return;
+	if (isNaN(placeId)) return;
 	
 	hideSideBar();
 	
@@ -694,14 +677,6 @@ function addSuggestionClick()
 		m_uiSystem.redraw = true;
 		
 		addSuggestion(m_feastId, placeId);
-	}
-}
-
-function addAllPlacesClick(mouse)
-{
-	if (mouse.buttons === 1)
-	{
-		addSuggestion(m_feastId, -2);
 	}
 }
 
@@ -768,11 +743,24 @@ function finishAction()
 		"action/order?id_food_meeting=" + m_feastId.toString());
 }
 
+function onResize()
+{
+	let topPos = $("nav").height();
+	let usableHeight = $(document).height() - topPos;
+	$('#mainCanvas').get(0).style =
+		"position:fixed;padding:0;margin:0;left:0;width:100%;top:" +
+		topPos + "px;height:" + usableHeight +"px";
+	let mainSideNav = $('#mainSideNav').get(0);
+	mainSideNav.style.top = topPos + "px";
+	mainSideNav.style.height = usableHeight + "px";
+}
+
 function initializeElement()
 {
 	$(".button-collapse").sideNav();
-	
-	$('#mainSideNav').get(0).style = "position:fixed;width: 300px;left: 0;top: 0;margin: 0;height: 100%;height: calc(100% + 60px);height: -moz-calc(100%);padding-bottom: 60px;background-color: #fff;overflow:auto;z-index:1;transition: visibility 1s, left 1s;"
+
+	$('#mainSideNav').get(0).style = "position:fixed;width: 300px;left: 0;top: " +
+		$("nav").height() + "px;margin: 0;height: 100%;height: calc(100% + 60px);height: -moz-calc(100%);padding-bottom: 60px;background-color: #fff;overflow:auto;z-index:1;transition: visibility 1s, left 1s;"
 	
 	$('#mainCanvas').get(0).parentElement.className = "";
 	$('.drag-target').get(0).style="visibility:hidden";	
@@ -788,11 +776,11 @@ function run()
 	m_growImg = m_uiSystem.createImage('/assets/img/grow.svg');
 	m_placeImg = m_uiSystem.createImage('/assets/img/place.svg');
 
-	m_usersArea = new BkArea(new BkCoord(0.01,0.11,0.23,0.88,0,7), 5.083, 1, 0, 0.12);
+	m_usersArea = new BkArea(new BkCoord(0.01,0.121,0.23,0.88,0,7), 5.083, 1, 0, 0.12);
 	m_uiSystem.addArea(m_usersArea);
 	m_placesArea = new BkArea(new BkCoord(0.24,0,0.76,1,0,7));
 	m_uiSystem.addArea(m_placesArea);
-	let buttonsArea = new BkArea(new BkCoord(0.01,0,0.23,0.1,0,7), 1, 2, 0);
+	let buttonsArea = new BkArea(new BkCoord(0.01,0.01,0.23,0.1,0,7), 1, 2, 0);
 	m_uiSystem.addArea(buttonsArea);
 	
 	m_uiSystem.setBackgroundImage('/assets/img/place.svg', 0.2);
@@ -800,10 +788,6 @@ function run()
 	m_userDrawer = new ef_UserDrawer(m_uiSystem);
 
 	let buttonDrawer = new ef_ButtonDrawer(m_uiSystem);
-	m_addAllPlacesButton = new ef_Button(
-		new BkCoord(-0.03,-0.03,0.28,0.08,0,6),
-		buttonDrawer, "Add Places", addAllPlacesClick);
-		
 	m_showPlacesMenuButton = new ef_Button(
 		new BkCoord(),
 		buttonDrawer, "Places", showPlacesClick, '/assets/img/places.svg');

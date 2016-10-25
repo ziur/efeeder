@@ -495,28 +495,49 @@ let BkSystem = function(canvasName, ratio = null)
 	this.bgImgAlpha = null;
 };
 
+/**
+ * Use this for events triggered several times and you only want to execute a
+ * function after the last event was triggered after certain time has elapsed.
+ * @returns A function that receives: a function, a delay and an id denoting
+ *          the group of events to be consolidated.
+ */
+function bkDelayCallbackAndExecuteOnce()
+{
+	var delayCallbackTimers = {};
+	return function (callback, delayMs, id) {
+		if (delayCallbackTimers[id]) clearTimeout (delayCallbackTimers[id]);
+		delayCallbackTimers[id] = setTimeout(callback, delayMs);
+	};
+};
+
+BkSystem.prototype.doOnResize = function()
+{
+	bkDelayCallbackAndExecuteOnce()(this.resize.bind(this), 200, 'resize');
+}
+
 BkSystem.prototype.resize = function()
 {
+	this.ctx.save();
 	if (this.onresize) this.onresize();
-	
+
 	this.width = this.canvas.clientWidth;
 	this.height = this.canvas.clientHeight;
 	this.canvas.width = this.width;
 	this.canvas.height = this.height;
-	this.__screenCoord = new BkCoord(this.width * 0.5, this.height * 0.5, this.width, this.height);
-
+	this.__screenCoord = new BkCoord(
+		this.width * 0.5, this.height * 0.5, this.width, this.height);
 	this.transform.resize(this.width, this.height, this.ratio);
-	
 	this.redistribute(false);
-	
+
 	// Execute custom resize for each UI object
 	let count = this.item.length;
 	for (let i = 0; i < count; ++i)
 	{
 		this.item[i].resize();
 	}
-
-	this.redraw = true;
+	//this.redraw = true;
+	this.__draw();
+	this.ctx.restore();
 }
 
 function bkOnImageLoad()
@@ -1001,7 +1022,7 @@ BkSystem.prototype.startDrawing = function()
 	
 	let first = __bkSystems.length === 0;
 	
-	window.addEventListener("resize", this.resize.bind(this), false);
+	window.addEventListener("resize", this.doOnResize.bind(this), false);
 	
 	this.resize();	
 	
@@ -1014,7 +1035,7 @@ BkSystem.prototype.stopDrawing = function()
 	if (this.__isDrawing === false) return;
 	this.__isDrawing = false;
 	
-	window.removeEventListener("resize", this.resize.bind(this), false);
+	window.removeEventListener("resize", this.doOnResize.bind(this), false);
 	
 	let i = __bkSystems.indexOf(this);
 	if (i !== -1) __bkSystems.splice(i, 1);
