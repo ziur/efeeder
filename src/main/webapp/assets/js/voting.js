@@ -689,7 +689,7 @@ function _start()
 {
 	$(".button-collapse").sideNav();
 	let nav = $('#mainSideNav').get(0);
-	nav.style.zIndex="0";
+	nav.style.zIndex= "0";
 	nav.style.transition = 'visibility 1s, left 1s';
 	
 	bkSystem = new BkSystem('mainCanvas');
