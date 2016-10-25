@@ -33,7 +33,7 @@
                 </div>
             </form>
             <div class="row">
-                <table>
+                <table id="items_id">
                     <thead>
                         <tr>
                             <th data-field="id">Item Name</th>
@@ -42,7 +42,7 @@
                         </tr>
                     </thead>
 
-                    <tbody id="tbodyid">
+                    <tbody>
                         <c:forEach var="item" items="#{items}">
                             <tr>
                                 <td>${item.name}</td>
@@ -52,7 +52,7 @@
                         </c:forEach>
                     </tbody>
                 </table>
-                <h5 class="right-align"><b>Additional features : </b> ${total_item_price}</h5>
+                <h5 id="total_items_price_id" class="right-align">${total_item_price}</h5>
             </div>
         </div>
     </jsp:body>
@@ -70,15 +70,22 @@
                 contentType: false,
                 cache: false,
                 success: function (data) {
-//                    location.href = "/action/login";
-                    $("#tbodyid").append("<tr><td>olaaa</td><td>otra</td><td>100</td></tr>");
-//                    alert("llego el dato" + data);
+                    $("#items_id tr:last").after("<tr><td>"+data.name+"</td><td>"+data.description+"</td><td>"+data.price+"</td></tr>");
+                    updatePay(parseFloat(data.price));
                 },
                 error: function (data) {
-//                    errorMessage(data.responseJSON.message);
-                    alert("No se completo el error");
+                    errorMessage(data.responseJSON.message);
                 }
             });
         });
+        
+        var totalItemsPrice = $("#total_items_price_id");
+        
+        var updatePay = function (num){
+            $(".validate").val("");
+            var numAux = parseFloat(totalItemsPrice.text())+num;
+            totalItemsPrice.text(numAux);
+            console.log("fff : " + numAux)
+        };
     });
 </script>

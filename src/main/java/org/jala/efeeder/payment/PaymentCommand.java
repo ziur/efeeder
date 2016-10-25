@@ -35,10 +35,12 @@ public class PaymentCommand implements CommandUnit {
 		int buyerId = Integer.parseInt(parameters.getParameter("id_buyer"));
 		User user = parameters.getUser();
 		String isBuyer = (buyerId==user.getId()) ? "block" : "none";
+		List<PaymentItem> itemList = getExtraItems(foodMeetingId, connection);
 		
-		out.addResult("items", getExtraItems(foodMeetingId, connection));
+		out.addResult("items", itemList);
 		out.addResult("estate", isBuyer);
 		out.addResult("id_food_meeting", foodMeetingId);
+		out.addResult("total_item_price", getTotalExternalItemPrice(itemList));
 		return out.forward("payment/payment.jsp");
 	}
 	
@@ -62,6 +64,16 @@ public class PaymentCommand implements CommandUnit {
 		}
 		
 		return resultItemsList;
+	}
+
+	private double getTotalExternalItemPrice(List<PaymentItem> itemList) {
+		double resp = 0;
+		
+		for (PaymentItem paymentItem : itemList) {
+			resp += paymentItem.getPrice();
+		}
+		
+		return resp;
 	}
 
 }
