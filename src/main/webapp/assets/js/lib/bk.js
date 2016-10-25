@@ -7,8 +7,8 @@ let BkTransform = function(width, height, ratio = 1)
 
 BkTransform.prototype.resize = function(width, height, ratio)
 {
-	this.dx = Math.floor(width * 0.5);
-	this.dy = Math.floor(height * 0.5);
+	this.dx = width * 0.5;
+	this.dy = height * 0.5;
 	let newRatio = this.dx / this.dy;
 	this.scale = (newRatio < ratio) ? (this.dx / ratio) : this.dy;
 	this.invScale = 1 / this.scale;
@@ -79,6 +79,7 @@ let BkCoord = function(x = 0, y = 0, w = 0, h = 0, z = 0, type = 0)
 	// if x, y are negative [-1..0[ they are relative to right or bottom.
 	// x, y are guaranteed to be in screen for [0..1[
 	// h, w are proportional to current canvas dimensions [0..1[
+	// A negative h or w makes it the complement of a positive w or h in type 6
 	// Becomes Type 0 when undocked
 	
 	// Type 8:
@@ -115,12 +116,27 @@ BkCoord.prototype.toScreen = function(transform)
 	{
 		let sw = transform.dx * 2;
 		let sh = transform.dy * 2;
-		let sm = sw < sh ? sw : sh;
+		let sm, uw, uh;
+		if (sw < sh)
+		{
+			sm = sw;
+			uw = 1;
+			uh = sh / sm;
+		}
+		else
+		{
+			sm = sh;
+			uh = 1;
+			uw = sw / sm;
+		}
 		let w = this.w;
+		if (w < 0) w += uw;
 		let h = this.h;
+		if (h < 0) h += uh;
+		
 		return new BkCoord(
-			(this.x + ((this.x < 0) ? (sw / sm - w * 0.5) : (w * 0.5))) * sm,
-			(this.y + ((this.y < 0) ? (sh / sm - h * 0.5) : (h * 0.5))) * sm,
+			(this.x + ((this.x < 0) ? (uw - w * 0.5) : (w * 0.5))) * sm,
+			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5))) * sm,
 			w * sm,
 			h * sm,
 			this.z);
@@ -129,11 +145,26 @@ BkCoord.prototype.toScreen = function(transform)
 	{
 		let sw = transform.dx * 2;
 		let sh = transform.dy * 2;
+		let uw = 1;
+		let uh = 1;
+		let sm = sw < sh ? sw : sh;
 		let w = this.w;
+		if (w < 0)
+		{
+			uw = sw / sm;
+			w += uw;
+			sw = sm;
+		}
 		let h = this.h;
+		if (h < 0)
+		{
+			uh = sh / sm;
+			h += uh;
+			sh = sm;
+		}
 		return new BkCoord(
-			(this.x + ((this.x < 0) ? (1 - w * 0.5) : (w * 0.5))) * sw,
-			(this.y + ((this.y < 0) ? (1 - h * 0.5) : (h * 0.5))) * sh,
+			(this.x + ((this.x < 0) ? (uw - w * 0.5) : (w * 0.5))) * sw,
+			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5))) * sh,
 			w * sw,
 			h * sh,
 			this.z);
@@ -163,7 +194,9 @@ BkCoord.prototype.toAbsolute = function(transform)
 		let sh = transform.dy * scale;
 		let sm = sw < sh ? sw : sh;
 		let w = this.w;
+		if (w < 0) w = (1 + w) * sw / sm;
 		let h = this.h;
+		if (h < 0) h = (1 + h) * sh / sm;
 		return new BkCoord(
 			(this.x + ((this.x < 0) ? (sw / sm - w * 0.5) : (w * 0.5))) * sm - 0.5 * sw,
 			(this.y + ((this.y < 0) ? (sh / sm - h * 0.5) : (h * 0.5))) * sm - 0.5 * sh,
@@ -176,12 +209,26 @@ BkCoord.prototype.toAbsolute = function(transform)
 		let scale = 2.0 * transform.invScale;
 		let sw = transform.dx * scale;
 		let sh = transform.dy * scale;
+		let uw = 1;
+		let uh = 1;
+		let sm = sw < sh ? sw : sh;
 		let w = this.w;
+		if (w < 0)
+		{
+			uw = sw / sm;
+			w += uw;
+			sw = sm;
+		}
 		let h = this.h;
-
+		if (h < 0)
+		{
+			uh = sh / sm;
+			h += uh;
+			sh = sm;
+		}
 		return new BkCoord(
-			(this.x + ((this.x < 0) ? (1 - w * 0.5) : (w * 0.5)) - 0.5) * sw,
-			(this.y + ((this.y < 0) ? (1 - h * 0.5) : (h * 0.5)) - 0.5) * sh,
+			(this.x + ((this.x < 0) ? (uw - w * 0.5) : (w * 0.5)) - 0.5) * sw,
+			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5)) - 0.5) * sh,
 			w * sw,
 			h * sh,
 			this.z);
@@ -215,7 +262,7 @@ BkCoord.prototype.fromScreen = function(transform)
 		this.z);
 }
 
-BkCoord.prototype.anisotropicGrow = function(scale)
+BkCoord.prototype.growScaleMin = function(scale)
 {
 	// Only for absolute coordinates
 	if (this.type !== 0) return null;
@@ -227,6 +274,18 @@ BkCoord.prototype.anisotropicGrow = function(scale)
 		this.y,
 		this.w + amount,
 		this.h + amount,
+		this.z);
+}
+
+BkCoord.prototype.growPixels = function(pixels)
+{
+	// Only for absolute coordinates
+	if (this.type !== 0) return null;
+	return new BkCoord(
+		this.x,
+		this.y,
+		this.w + pixels,
+		this.h + pixels,
 		this.z);
 }
 
@@ -355,9 +414,9 @@ function bkColorLighten(color)
 	if (m === 255) return bkColorMixRetainAlpha(color, 0xFFFFFF);
 	
 	let factor = 255 / m;
-	r = Math.floor(r * factor);
-	g = Math.floor(g * factor);
-	b = Math.floor(b * factor);
+	r = Math.round(r * factor);
+	g = Math.round(g * factor);
+	b = Math.round(b * factor);
 	return b + (g << 8) + (r << 16) | (color & 0xff000000);
 }
 
@@ -387,23 +446,30 @@ function bkObjectSetSelected(o, state = true)
 	if (state) o.flags |= 0x80000000; else o.flags &= 0x7FFFFFFF;
 }
 
-let BkArea = function(coord, ratio = 1, type = 0, padding = 0.04)
+let BkArea = function(coord, ratio = 1, type = 0, margin = 0.05, padding = 0.1, alignmentFlags = 0)
 {
 	this.coord = coord;
 	this.ratio = ratio;
 	this.padding = padding;
+	this.margin = margin;
 	// Type 0: Cover all the area, follow the ratio when possible.
 	// Type 1: Follow the ratio but cover at least 25% of the area.
-	// Type 2: Mandatory ratio, align to top left.
-	// Type 3: Mandatory ratio, align to bottom right.
-	this.__type = type;
+	// Type 2: Mandatory ratio
+	this.areaType = type;
+	// Bit 0x1 Flip horizontally
+	// Bit 0x2 Flip vertically
+	// Bit 0x4 Center horizontally
+	// Bit 0x8 Center vertically
+	this.alignmentFlags = alignmentFlags;
 }
 
 let BkSystem = function(canvasName, ratio = null)
 {
 	this.item = [];
 	this.area = [];
-	this.__running = false;
+	this.__isInteracting = false;
+	this.__isDrawing = false;
+	this.disabledColor = null;
 	this.transform = new BkTransform(1, 1);
 	this.canvas = document.getElementById(canvasName);
 	this.ctx = this.canvas.getContext('2d');
@@ -427,11 +493,12 @@ let BkSystem = function(canvasName, ratio = null)
 	
 	this.bgImg = null;
 	this.bgImgAlpha = null;
-	this.resize();
 };
 
 BkSystem.prototype.resize = function()
 {
+	if (this.onresize) this.onresize();
+	
 	this.width = this.canvas.clientWidth;
 	this.height = this.canvas.clientHeight;
 	this.canvas.width = this.width;
@@ -449,103 +516,41 @@ BkSystem.prototype.resize = function()
 		this.item[i].resize();
 	}
 
-	this.draw();
+	this.redraw = true;
 }
 
 function bkOnImageLoad()
 {
-	this.bkSystem.redraw = true;
+	this.uiSystem.redraw = true;
 	this.isReady = true;
 }
 
-BkSystem.prototype.createImage = function(src)
+/**
+ * @param src Image source.
+ * @param imgObject The object previous reference to the image. If src and
+ *        imgObject.src are the same the image is not created again.
+ * @return Either a new image or imgObject if src is the same.
+ */
+BkSystem.prototype.createImage = function(src, imgObject = null)
 {
-	if ((src === null) || (0 === src.length)) return null;
-	let img = new Image();
-	img.src = src;
-	img.bkSystem = this;
-	img.isReady = false;
-	img.addEventListener("load", bkOnImageLoad.bind(img), false);
-	return img;
-}
-
-BkSystem.prototype.setImage = function(object, src, propertyName = 'img')
-{
-	// If property is undefined, null or src doesn't math with the new src
-	if ((object[propertyName] == null) || (object[propertyName].src !== src))
+	if ((src === null) || (0 === src.length)) return imgObject;
+	
+	// If property is undefined, null or src doesn't match with the new src
+	if ((imgObject === null) || (imgObject.src !== src))
 	{
-		object[propertyName] = this.createImage(src);
+		imgObject = new Image();
+		imgObject.src = src;
+		imgObject.uiSystem = this;
+		imgObject.isReady = false;
+		imgObject.addEventListener("load", bkOnImageLoad.bind(imgObject), false);
 	}
+	return imgObject;
 }
 
 BkSystem.prototype.setBackgroundImage = function(src, alpha = null)
 {
 	this.bgImg = this.createImage(src);
 	this.bgImgAlpha = alpha;
-}
-
-function _bkGetDivisorsForRatio(n, ratio) 
-{
-	if (n <= 1) return {x:1, y:1};
-		
-	let sqrtN = Math.sqrt(n);
-	let sqrtInvRatio = Math.sqrt(1 / ratio);
-	let w = sqrtN * sqrtInvRatio * ratio;
-	let h = sqrtN * sqrtInvRatio;
-	
-	w = Math.floor(w);
-	h = Math.floor(h);
-	
-	if (w < 1) 
-	{
-		return {x:1, y:n};
-	}
-	if (h < 1) 
-	{
-		return {x:n, y:1};
-	}
-	
-	if (w * h < n)
-	{
-		if (ratio > 1)
-		{
-			++w;
-			if ((h * w) < n)
-			{
-				--w;
-				++h;
-				if ((h * w) < n)
-				{
-					++w;
-				}
-			}
-		}
-		else
-		{
-			++h;
-			if ((h * w) < n)
-			{
-				--h;
-				++w;
-				if ((h * w) < n)
-				{
-					++h;
-				}
-			}
-		}
-	}
-	
-	while ((h * w) >= (n + w))
-	{
-		--h;
-	}
-	
-	while ((h * w) >= (n + h))
-	{
-		--w;
-	}	
-
-	return {x:w, y:h};
 }
 
 function _bkGetSquareDist(w, h, n)
@@ -590,8 +595,14 @@ function _bkGetSquareDist(w, h, n)
 	
 	if (lw < lh)
 	{
-		return new BkCoord(yh, xh, lh);
+		xw = yh;
+		yw = xh;
+		lw = lh;
 	}
+	
+	// Prefer lower differences in dimensions
+	if ((xw - 1) * yw >= n) --xw;
+	if (xw * (yw - 1) >= n) --yw;
 	return new BkCoord(xw, yw, lw);
 }
 
@@ -650,85 +661,111 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 	let coord = area.coord.toScreen(this.transform);
 	let sw = coord.w;
 	let sh = coord.h;
+
+	let factorW, factorH;
+	if (sw < sh)
+	{
+		factorW = 1;
+		factorH = sw / sh;
+	}
+	else
+	{
+		factorW = sh / sw;
+		factorH = 1;
+	}
+	
+	let marginW = area.margin * factorW;
+	sw *= (1 - marginW);
+	let marginH = area.margin * factorH;
+	sh *= (1 - marginH);
+
 	// We need coordinates in the [0..1[ range
 	coord = area.coord;
-	let padding = area.padding * (sw < sh ? sw : sh);
-	let padH = padding / sh;
-	let padW = padding / sw;
-	let dim;
-	if (area.__type <= 1)
+	let padW, padH, cellW, cellH;
+	
+	let nPadding = area.ratio >= 1 ? area.padding : area.padding * area.ratio;
+	let cellRatio = (area.ratio + nPadding) / (1 + nPadding);
+	let dim = _bkGetRectDist(sw, sh, cellRatio, count);
+	
+	if (area.areaType <= 1)
 	{
-		dim = _bkGetDivisorsForRatio(count, sw / (sh * area.ratio));
-		if (area.__type === 1)
+		if (area.areaType === 0)
 		{
-			let cellRatio = (sw * dim.y) / (sh * dim.x);
-			if ((dim.x === 1) && (cellRatio < area.ratio))
+			// Use all the space
+			if (dim.x > dim.y)
 			{
-				let n = Math.floor(area.ratio * sh / sw);
-				if (n > dim.y)
-				{
-					if (n - dim.y > 3) n = dim.y + 3;
-					dim.y = n;
-				}
+				dim.x = Math.ceil(count / dim.y);
 			}
-			
-			if ((dim.y === 1) && (cellRatio > area.ratio))
+			else
 			{
-				let n = Math.floor(sw / (area.ratio * sh))
-				if (n > dim.x)
-				{
-					if (n - dim.x > 3) n = dim.x + 3;
-					dim.x = n;
-				}
+				dim.y = Math.ceil(count / dim.x);
 			}
 		}
 		
-		/* Equation for pad calculation: 
-			1 = (w + p) * n + p
-			1 - p = (w + p) * n
-			(1 - p) / n = w + p
-			((1 - p) / n) - p = w
-		*/
-
-		dim.h = ((1 - padH) / dim.y) - padH;
-		dim.w = ((1 - padW) / dim.x) - padW;
+		cellW = (1 - marginW) / dim.x;
+		cellH = (1 - marginH) / dim.y;
+		
+		if (cellW * sw < cellH * sh)
+		{
+			padW = area.padding;
+			padH = area.padding * (cellW * sw) / (cellH * sh);
+		}
+		else
+		{
+			padW = area.padding * (cellH * sh) / (cellW * sw);
+			padH = area.padding;
+		}
 	}
-	else if ((area.__type >= 2) && (area.__type <= 3))
+	else if (area.areaType == 2)
 	{
-		dim = _bkGetRectDist(sw, sh, area.ratio, count);
+		cellW = (1 - marginW) * (dim.w * dim.x) / (dim.x * sw);
+		cellH = (1 - marginH) * (dim.h * dim.y) / (dim.y * sh);
 		
-		/* Equation for pad calculation: 
-			1 = x * n + (p * x) * (n - 1) + 2 * p
-			1 = xn + pxn - px + 2p
-			1 = x(n + pn - p) + 2p
-			1 - 2p = x(n + pn - p)
-			x = (1 - 2p)/(n + pn - p)
-		*/
-		
-		
-		dim.h = (1 - 2 * padH) * (dim.h * dim.y) / ((dim.y + padH * dim.y - padH) * sh);
-		dim.w = (1 - 2 * padW) * (dim.w * dim.x) / ((dim.x + padW * dim.x - padW) * sw);
-		
-		//dim.h /= sh;
-		//dim.w /= sw;
+		padW = 1 - (area.ratio / (area.ratio + nPadding));
+		padH = 1 - (1 / (1 + nPadding));
 	}
+
 	
-	let rowCols, x, y, w, h, o, oIsSelected, selectedFactorW, selectedFactorH;
+	let oPadW = padW;
+	let rowCols, x, y, w, h, o, oIsSelected;
 	let index = 0;
-	let cellW = dim.w;
-	let cellH = dim.h;
+	
+	let flipFlagW = area.alignmentFlags & 1;
+	let flipFlagH = area.alignmentFlags & 2;
+	let centerFlagW = area.alignmentFlags & 4;
+	let centerFlagH = area.alignmentFlags & 8;
+	
+	let flipFactorW = flipFlagW ? -1 : 1;
+	let flipFactorH = flipFlagH ? -1 : 1;
+	
+	let offsetW = marginW * 0.5;
+	if (centerFlagW)
+	{
+		//let usedX = Math.ceil(count / dim.y);
+		offsetW += ((1 - marginW) - (dim.x * cellW)) * 0.5;
+	}
+	let offsetH = marginH * 0.5;
+	if (centerFlagH)
+	{
+		let usedY = Math.ceil(count / dim.x);
+		offsetH += ((1 - marginH) - (usedY * cellH)) * 0.5;
+	}
+
+	offsetW = flipFlagW ? (1 - offsetW) : offsetW;
+	offsetH = flipFlagH ? (1 - offsetH) : offsetH;
 	
 	for (let j = 0; j < dim.y; ++j)
 	{
 		rowCols = dim.x;
 		
-		if (area.__type === 0)
+		if (area.areaType === 0)
 		{
 			if ((j === 0) && ((dim.y * dim.x) > count))
 			{
 				rowCols = count - (dim.y - 1) * dim.x;
 			}
-			cellW = ((1 - padW) / rowCols) - padW;
+			cellW = (1 - marginW) / rowCols;
+			padW = oPadW * rowCols / dim.x;
 		}
 
 		for (let i = 0; i < rowCols; ++i)
@@ -737,13 +774,13 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			o = objects[index];
 			oIsSelected = bkObjectIsSelected(o);
 			
-			selectedFactorW = oIsSelected ? (cellW + padW) / cellW : 1;
-			selectedFactorH = oIsSelected ? (cellH + padH) / cellH : 1;
+			factorW = oIsSelected ? cellW : cellW * (1 - padW);
+			factorH = oIsSelected ? cellH : cellH * (1 - padH);
 			
-			x = ((cellW * (1 + padW)) * i + padW + cellW * 0.5) * coord.w + coord.x;
-			y = ((cellH * (1 + padH)) * j + padH + cellH * 0.5) * coord.h + coord.y;
-			w = cellW * selectedFactorW * coord.w;
-			h = cellH * selectedFactorH * coord.h;
+			x = (cellW * flipFactorW * (i + 0.5) + offsetW) * coord.w + coord.x;
+			y = (cellH * flipFactorH * (j + 0.5) + offsetH) * coord.h + coord.y;
+			w = factorW * coord.w;
+			h = factorH * coord.h;
 			
 			if (updateSizes && (o.coord.type >= 8))
 			{
@@ -781,7 +818,7 @@ function bkMainUpdateFrame()
 	{
 		if (i.redraw)
 		{
-			i.draw();
+			i.__draw();
 		}
 	}
 
@@ -822,6 +859,19 @@ BkSystem.prototype.doOnMouseMove = function(e)
 	}
 	
 	if (this.onmousemove) this.onmousemove();
+	return false;
+}
+
+BkSystem.prototype.doOnMouseEnter = function(e)
+{
+	let mouse = this.mouse;
+	if (e.buttons !== mouse.buttons)
+	{
+		mouse.selected = null;
+	}
+	
+	if (this.onmouseenter) this.onmouseenter();
+	
 	return false;
 }
 
@@ -899,6 +949,7 @@ BkSystem.prototype.doOnMouseUp = function(e)
 	if (this.onmouseup) this.onmouseup();
 	
 	this.mouse.buttons = 0;
+	this.mouse.selected = null;
 	return false;
 }
 
@@ -940,51 +991,79 @@ BkSystem.prototype.doOnContextMenu = function(e)
 	return false;
 }
 
-BkSystem.prototype.run = function()
+/**
+ * Register to resize events and drawing updates
+ */
+BkSystem.prototype.startDrawing = function()
 {
-	if (this.__running === true) return;
-	this.__running = true;
+	if (this.__isDrawing === true) return;
+	this.__isDrawing = true;
 	
 	let first = __bkSystems.length === 0;
 	
 	window.addEventListener("resize", this.resize.bind(this), false);
 	
-	if (this.onmousemove || this.onmousehover)
-	{
-		this.canvas.onmousemove = this.doOnMouseMove.bind(this);
-	}
-
-	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
-	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
-	this.canvas.onmouseup = this.doOnMouseUp.bind(this);
-	this.canvas.onclick = this.doOnClick.bind(this);
-	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
-
-	__bkSystems.push(this);
+	this.resize();	
 	
+	__bkSystems.push(this);
 	if (first) bkMainUpdateFrame();
 }
 
-BkSystem.prototype.stop = function()
+BkSystem.prototype.stopDrawing = function()
 {
-	if (this.__running === false) return;
-	this.__running = false;
+	if (this.__isDrawing === false) return;
+	this.__isDrawing = false;
 	
 	window.removeEventListener("resize", this.resize.bind(this), false);
-	
-	this.canvas.onclick = null;
-	this.canvas.mouseout = null;
-	this.canvas.mouseup = null;
-	this.canvas.mousemove = null;
-	this.canvas.mousedown = null;
 	
 	let i = __bkSystems.indexOf(this);
 	if (i !== -1) __bkSystems.splice(i, 1);
 }
 
-BkSystem.prototype.draw = function()
+/**
+ * Start processing input events
+ */
+BkSystem.prototype.startInteracting = function()
+{
+	if (this.__isInteracting === true) return;
+	
+	if (this.onmousemove || this.onmousehover)
+	{
+		this.canvas.onmousemove = this.doOnMouseMove.bind(this);
+	}
+	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
+	this.canvas.onmouseenter = this.doOnMouseEnter.bind(this);
+	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
+	this.canvas.onmouseup = this.doOnMouseUp.bind(this);
+	this.canvas.onclick = this.doOnClick.bind(this);
+	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
+	
+	this.__isInteracting = true;
+}
+
+/**
+ * Stop processing input events
+ */
+BkSystem.prototype.stopInteracting = function()
+{
+	if (this.__isInteracting === false) return;
+	
+	this.canvas.onmousemove = null;
+	this.canvas.onmouseout = null;
+	this.canvas.onmouseenter = null;
+	this.canvas.onmousedown = null;
+	this.canvas.onmouseup = null;
+	this.canvas.onclick = null;
+	this.canvas.oncontextmenu = null;
+	
+	this.__isInteracting = false;
+}
+
+BkSystem.prototype.__draw = function()
 {
 	this.redraw = false;
+	if ((this.width < 1) || (this.height < 1)) return;
+	
 	this.ctx.clearRect(0, 0, this.width, this.height);
 	if (this.bgImg !== null)
 	{
@@ -1021,6 +1100,12 @@ BkSystem.prototype.draw = function()
 		}
 		o.draw();
 	}
+	
+	if (!this.__isInteracting && this.disabledColor != null)
+	{
+		this.ctx.fillStyle = this.disabledColor;
+		bkFillRect(this.ctx, this.__screenCoord);
+	}	
 }
 
 BkSystem.prototype.add = function(o)
@@ -1146,7 +1231,7 @@ BkSystem.prototype.writeToScreenXY = function(text, x, y)
 {
 	this.ctx.textAlign = "left";
 	this.ctx.textBaseline = "top";
-	this.ctx.font = "12px Arial";
+	this.ctx.font = "12px Serif";
 	this.ctx.fillStyle = "#000";
 	this.ctx.fillText(text, x, y);
 }
@@ -1217,9 +1302,9 @@ Image.prototype.drawFill = function(ctx, coord)
 }
 
 // The following functions only use screen coordinates
-function bkDrawRectangle(ctx, coord)
+function bkFillRect(ctx, coord)
 {
-	ctx.rect(coord.x - coord.w * 0.5, coord.y - coord.h * 0.5, coord.w, coord.h);
+	ctx.fillRect(coord.x - coord.w * 0.5, coord.y - coord.h * 0.5, coord.w, coord.h);
 }
 
 function bkDrawRoundRectangle(ctx, coord, relRadius)
@@ -1241,33 +1326,21 @@ function bkDrawRoundRectangle(ctx, coord, relRadius)
 
 function bkDrawGlassButton(ctx, coord, color, drawFlat = false, relRadius = 0.125)
 {
-	let coordInner = coord.anisotropicGrow(0.96);
 	let lighterColor = bkColorLighten(color);
 	let darkColorStr = bkColorToStr(bkColorDarken(color));
 	let colorStr = bkColorToStr(color);
 	let lighterColorStr = bkColorToStr(lighterColor);
-	
-	ctx.lineWidth = (coord.w - coordInner.w);
-	
 	let x = coord.x + coord.w * 0.5;
 	let y = coord.y + coord.h * 0.5;
 	let grad;
-	
 	if (drawFlat)
 	{
-		let lightColorStr = bkColorToStr(bkColorMix31(color, lighterColor));
-		let r = (coord.w < coord.h) ? coord.h : coord.w;
-		grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-		grad.addColorStop(0, lighterColorStr);
-		grad.addColorStop(0.2, colorStr);
-		grad.addColorStop(0.4, lightColorStr);
-		grad.addColorStop(0.6, colorStr);
-		grad.addColorStop(0.7, lightColorStr);
-		grad.addColorStop(0.9, colorStr);
-		grad.addColorStop(1, lightColorStr);
+		ctx.lineWidth = (coord.w < coord.h ? coord.w : coord.h) * 0.06;
+		grad = colorStr;
 	}
 	else
 	{
+		ctx.lineWidth = coord.w * 0.04;
 		let lightColorStr = bkColorToStr(bkColorMix(lighterColor, color));
 		grad = ctx.createLinearGradient(x, y - coord.h, x, y);
 		grad.addColorStop(0, lighterColorStr);
@@ -1348,20 +1421,26 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 {
 	let colStr = bkColorToStr(col);
 	let fade = bkColorToStr(col & 0xFFFFFF);
-	let x0 = Math.floor(coord.x - coord.w * 0.5);
-	let y0 = Math.floor(coord.y - coord.h * 0.5);
-	let w = Math.floor(coord.w);
-	let h = Math.floor(coord.h);
+	let w = coord.w;
+	let h = coord.h;
+	if (blur > 1)
+	{
+		w += blur;
+		h += blur;
+	}
+	else
+	{
+		blur *= (w < h ? w : h);
+	}
+	let x0 = coord.x - w * 0.5;
+	let y0 = coord.y - h * 0.5;
+	
 	let x1 = x0 + w;
 	let y1 = y0 + h;
-	
-	blur = Math.floor(blur * (w < h ? w : h));
 	let blur2 = blur * 2;
 	
 	ctx.fillStyle = colStr;
-	ctx.beginPath();
-	ctx.rect(x0 + blur, y0 + blur, w - blur2, h - blur2);
-	ctx.fill();
+	ctx.fillRect(x0 + blur, y0 + blur, w - blur2, h - blur2);
 	
 	let grad = ctx.createLinearGradient(
 		0, y0, 0, y0 + blur);
@@ -1369,9 +1448,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, colStr);
 	
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x0 + blur, y0, w - blur2, blur);
-	ctx.fill();
+	ctx.fillRect(x0 + blur, y0, w - blur2, blur);
 	
 	grad = ctx.createLinearGradient(
 		0, y1 - blur, 0, y1);
@@ -1379,9 +1456,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 	
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x0 + blur, y1 - blur, w - blur2, blur);
-	ctx.fill();
+	ctx.fillRect(x0 + blur, y1 - blur, w - blur2, blur);
 	
 	grad = ctx.createLinearGradient(
 		x0, 0, x0 + blur, 0);
@@ -1389,9 +1464,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, colStr);
 	
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x0, y0 + blur, blur, h - blur2);
-	ctx.fill();
+	ctx.fillRect(x0, y0 + blur, blur, h - blur2);
 	
 	grad = ctx.createLinearGradient(
 		x1 - blur, 0, x1, 0);
@@ -1399,9 +1472,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x1 - blur, y0 + blur, blur, h - blur2);
-	ctx.fill();
+	ctx.fillRect(x1 - blur, y0 + blur, blur, h - blur2);
 	
 	let x = x0 + blur;
 	let y = y0 + blur;
@@ -1410,9 +1481,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x - blur, y - blur, blur, blur);
-	ctx.fill();
+	ctx.fillRect(x - blur, y - blur, blur, blur);
 	
 	y = y1 - blur;
 	
@@ -1420,9 +1489,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x - blur, y, blur, blur);
-	ctx.fill();
+	ctx.fillRect(x - blur, y, blur, blur);
 	
 	x = x1 - blur;
 	
@@ -1430,9 +1497,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x, y, blur, blur);
-	ctx.fill();
+	ctx.fillRect(x, y, blur, blur);
 	
 	y = y0 + blur;
 	
@@ -1440,14 +1505,12 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.beginPath();
-	ctx.rect(x, y - blur, blur, blur);
-	ctx.fill();
+	ctx.fillRect(x, y - blur, blur, blur);
 }
 
 function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = false)
 {
-	let innerCoord = coord.anisotropicGrow(0.98);
+	let innerCoord = coord.growScaleMin(0.98);
 	let lineWidth = (coord.w < coord.h) ? (coord.w - innerCoord.w) : (coord.h - innerCoord.h);
 	
 	let darkerCol = bkColorDarken(col);
@@ -1547,7 +1610,7 @@ function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = fals
 	grad.addColorStop(0.8, darkerColor);
 	ctx.fillStyle = grad;
 
-	let c = coord.anisotropicGrow(0.9);
+	let c = coord.growScaleMin(0.9);
 	_bkDrawGlassScrew(ctx, c.x - c.w * 0.5, c.y - c.h * 0.5, lineWidth);
 	_bkDrawGlassScrew(ctx, c.x + c.w * 0.5, c.y - c.h * 0.5, lineWidth);
 	_bkDrawGlassScrew(ctx, c.x - c.w * 0.5, c.y + c.h * 0.5, lineWidth);
@@ -1653,13 +1716,15 @@ function _bkSetFlagsFixWords(flags, words)
 	}
 }
 
-// Just one text line resized to fit in coord.
-// Text can be changed at any time.
+/**
+ * Just one text line resized to fit in coord.
+ * Text can be changed at any time.
+ */
 let BkText = function(coord, text, fontName, alignment = 4)
 {
 	this.fontName = fontName;
 	this.alignment = alignment;
-	this.fontHeight = null;
+	this._fontHeight = null;
 	this.__oldText = null;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
@@ -1668,7 +1733,7 @@ let BkText = function(coord, text, fontName, alignment = 4)
 
 BkText.prototype.resize = function()
 {
-	this.fontHeight = null;
+	this._fontHeight = null;
 }
 
 BkText.prototype.draw = function(ctx, screenCoord, border = null)
@@ -1676,45 +1741,54 @@ BkText.prototype.draw = function(ctx, screenCoord, border = null)
 	if (this.text.length <= 0) return;
 	
 	let coord = this.coord.toScreenCoord(screenCoord);
-	let done = (this.__oldText === this.text) && (this.fontHeight !== null);
+	let done = (this.__oldText === this.text) && (this._fontHeight !== null);
 	if (!done)
 	{
-		this.fontHeight = coord.h;
+		this._fontHeight = coord.h;
 		this.__oldText = this.text;
 	}
 
 	for(;;)
 	{
-		if (this.fontHeight < 1) return;
+		if (this._fontHeight < 1) return;
 		
-		ctx.font = this.fontHeight.toString() + 'px ' + this.fontName;
+		ctx.font = this._fontHeight.toString() + 'px ' + this.fontName;
 		
 		if (done) break;
 		
 		let tw = ctx.measureText(this.text).width;
 		if (coord.w >= tw) break;
 		
-		this.fontHeight *= coord.w / tw;
+		this._fontHeight *= coord.w / tw;
 		done = true;
 	}
 
-	_bkDrawTextLines(ctx, [this.text], coord, this.fontHeight, this.alignment, border);
+	_bkDrawTextLines(ctx, [this.text], coord, this._fontHeight, this.alignment, border);
 }
 
-// Several text lines auto distributed and resized to fit inside coord.
-// Doesn't allow text changes.
-let BkTextArea = function(coord, text, fontName, fontRelHeight = 0.5,
+/**
+ * Several text lines auto distributed and resized to fit inside coord.
+ * Doesn't allow text changes.
+ * @param fontHeight From 0 to 1: Maximum of area height
+ *                   Above 1: Maximum height in pixels
+ * @param alignment Nine available [0..8] from top left to bottom right.
+ *                  Flag: 0x10 Pad when not horizontally centered.
+ *                  Flag: 0x100 Avoid non symmetric two lines 
+ * @param leadingFactor Spacing between lines, multiplied by font height gives
+ *                      the line height.
+ */
+let BkTextArea = function(coord, text, fontName, fontHeight = 0.5,
 	alignment = 4, leadingFactor = 1.2)
 {
 	this.lines = [];
 	this.fontName = fontName;
-	this.fontRelHeight = fontRelHeight;
+	this._fontHeight = fontHeight;
 	this.alignment = alignment;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
 	this.leadingFactor = leadingFactor;
 	this.padding = 0;
-	this._fontHeight = null;
+	this._currentFontHeight = null;
 	this._requiresResize = true;
 	
 	this.words = _bkSplitText(text);
@@ -1876,11 +1950,11 @@ BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 	
 	if ((this.words.length <= 0) || (desiredHeight < 1))
 	{
-		this._fontHeight = 0;
+		this._currentFontHeight = 0;
 		return;
 	}
 	
-	if (this._fontHeight !== null) 
+	if (this._currentFontHeight !== null) 
 	{
 		// Not necessary if dimensions change less than one pixel
 		if (Math.abs(this.__measuredW - desiredWidth) < 1 && 
@@ -1896,12 +1970,13 @@ BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 	let h = Math.sqrt((desiredWidth * desiredHeight * 1.618) / this.text.length);
 	if (h < 1)
 	{
-		this._fontHeight = 0;
+		this._currentFontHeight = 0;
 		return;
 	}
 	let epsilon = 0.5;
 	let minh = 0;
-	let maxh = desiredHeight * this.fontRelHeight;
+	let maxh = this._fontHeight * (this._fontHeight > 1 ? 1 : desiredHeight);
+	
 	let useSqrtApproximation = true;
 	let besth = null;
 	let minimumError = desiredHeight;
@@ -2018,14 +2093,14 @@ BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 	}
 	if (h < 1)
 	{
-		this._fontHeight = 0;
+		this._currentFontHeight = 0;
 		return;
 	}
-	this._fontHeight = h;
+	this._currentFontHeight = h;
 	/**************************************************************************/
 	
 	// Fix ugly two lines for centred and left padding alignments
-	if ((this.__linesIndexesUsed == 2) && ((this.alignment % 3) > 0) && ((this.alignment % 3) < 2))
+	if ((this.__linesIndexesUsed == 2) && (this.alignment & 0x100))
 	{
 		while (this.__linesIndexes[0] >= 1)
 		{
@@ -2040,8 +2115,8 @@ BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 			}
 			break;
 		}
-		// Fix padding for left padding alignments
-		if (Math.floor(this.alignment) !== this.alignment)
+		// Fix padding when matters
+		if (this.alignment & 0x10)
 		{
 			let w0 = this._getLineWidth(0);
 			let w1 = this._getLineWidth(1);
@@ -2070,7 +2145,7 @@ BkTextArea.prototype.draw = function(ctx, screenCoord, border = null)
 	
 	let coord = this.coord.toScreenCoord(screenCoord);
 	if (this._requiresResize) this.adjustLines(ctx, coord.w, coord.h);
-	let fontH = this._fontHeight;
+	let fontH = this._currentFontHeight;
 	
 	if (fontH < 1) return;
 	
@@ -2086,74 +2161,49 @@ function _bkDrawTextLines(ctx, lines, coord, fontH, alignment, border, padding =
 	
 	// Firefox and Chrome agree on alphabetic
 	ctx.textBaseline = 'alphabetic';
+
+	// Get flags information
+	padding = (alignment & 0x10) ? padding * coord.w : 0;
 	
-	switch(alignment)
+	// Remove flags
+	alignment &= 0xF;
+	
+	// Horizontal alignment
+	x = coord.x;
+	let hAlignment = alignment % 3;
+	switch(hAlignment)
 	{
-	case 4:  // Center middle
+	case 1:
 		ctx.textAlign = 'center';
-		x = coord.x;
-		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
 		break;
-	case 3:  // Left middle
+	case 0:
 		ctx.textAlign = 'left';
-		x = coord.x - coord.w * 0.5;
-		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
+		x += (padding - coord.w) * 0.5;
 		break;
-	case 3.5:// Left middle with padding
-		ctx.textAlign = 'left';
-		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
-		break;
-	case 5:  // Right middle
+	case 2:
 		ctx.textAlign = 'right';
-		x = coord.x + coord.w * 0.5;
-		y = coord.y - lineHeight * (maxLines - 1) * 0.5;
-		break;
-	case 0:  // Left top
-		ctx.textAlign = 'left';
-		x = coord.x - coord.w * 0.5;
-		y = coord.y + (fontH - coord.h) * 0.5;
-		break;
-	case 0.5:  // Left top with padding
-		ctx.textAlign = 'left';
-		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y + (fontH - coord.h) * 0.5;
-		break;
-	case 1:  // Center top
-		ctx.textAlign = 'center';
-		x = coord.x;
-		y = coord.y + (fontH - coord.h) * 0.5;
-		break;
-	case 2:  // Right top
-		ctx.textAlign = 'right';
-		x = coord.x + coord.w * 0.5;
-		y = coord.y + (fontH - coord.h) * 0.5;
-		break;
-	case 6:  // Left bottom
-		ctx.textAlign = 'left';
-		x = coord.x - coord.w * 0.5;
-		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
-		break;
-	case 6.5:  // Left bottom with padding
-		ctx.textAlign = 'left';
-		x = coord.x + (padding - 1) * coord.w * 0.5;
-		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
-		break;
-	case 7:  // Center bottom
-		ctx.textAlign = 'center';
-		x = coord.x;
-		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
-		break;
-	case 8:  // Right bottom
-		ctx.textAlign = 'right';
-		x = coord.x + coord.w * 0.5;
-		y = coord.y + (coord.h - fontH) * 0.5 - lineHeight * (maxLines - 1);
+		x += (coord.w - padding) * 0.5;
 		break;
 	}
-	
-	// Adjusting to middle
-	y += fontH * 0.35;
 
+	// Adjusting to middle from alphabetic
+	y = coord.y + fontH * 0.35;
+	
+	// Vertical alignment
+	switch(alignment - hAlignment)
+	{
+	case 0:
+		y += (fontH - coord.h) * 0.5;
+		break;
+	case 3:
+		y += lineHeight * (1 - maxLines) * 0.5;
+		break;
+	case 6:
+		y += (coord.h - fontH) * 0.5 + lineHeight * (1 - maxLines);
+		break;
+	}
+
+	// Draw text border
 	if ((border !== null) && (fontH >= 4))
 	{
 		if (fontH < 60)
