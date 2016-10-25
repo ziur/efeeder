@@ -22,9 +22,7 @@ import org.jala.efeeder.user.UserManager;
  * @author Danitza Machicado
  */
 @Command
-public class SettingMeetingCommand implements CommandUnit {
-
-	private static final String SELECT_FOOD_MEETING_SQL = "Select name, image_link, status, event_date, created_at, id_user from food_meeting where id = ?";
+public class SettingMeetingCommand implements CommandUnit {	
 
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -33,17 +31,9 @@ public class SettingMeetingCommand implements CommandUnit {
 
 		FoodMeeting foodMeeting = new FoodMeeting();
 		String id = parameters.getParameter("id_food_meeting");
-		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
-		preparedStatement.setInt(1, Integer.valueOf(id));
-		ResultSet resultSet = preparedStatement.executeQuery();
-
-		UserManager userManager = new UserManager(parameters.getConnection());
-
-		if (resultSet.next()) {
-			foodMeeting = (new FoodMeeting(Integer.valueOf(id), resultSet.getString(1), resultSet.getString(2),
-					resultSet.getString(3), resultSet.getTimestamp(4), resultSet.getTimestamp(5), userManager.getUserById(resultSet.getInt(6))));
-		}
-
+		FoodMeetingManager meetingManager = new FoodMeetingManager(connection);
+		foodMeeting = meetingManager.getFoodMeetingById(Integer.parseInt(id));
+		
 		out.addResult("foodMeeting", foodMeeting);
 		out.addResult("edit", !foodMeeting.getUserOwner().equals(parameters.getUser()));
 		out.forward("foodmeeting/settingMeeting.jsp");

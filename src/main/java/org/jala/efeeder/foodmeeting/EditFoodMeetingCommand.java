@@ -24,7 +24,8 @@ import org.joda.time.format.DateTimeFormatter;
 @Command
 public class EditFoodMeetingCommand implements CommandUnit {
 
-	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=? WHERE id= ?;";
+	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, status=?, event_date=?, "
+			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
 
 	@Override
 	public Out execute(In parameters) throws Exception {
@@ -36,13 +37,19 @@ public class EditFoodMeetingCommand implements CommandUnit {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
 		DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
 		Timestamp eventDate = new Timestamp(dateTime.getMillis());
+		Timestamp votingDate = new Timestamp(Long.parseLong(parameters.getParameter("voting-date")));
+		Timestamp orderDate = new Timestamp(Long.parseLong(parameters.getParameter("order-date")));
+		Timestamp paymentDate = new Timestamp(Long.parseLong(parameters.getParameter("payment-date")));
 
 		try {
 			stm.setString(1, parameters.getParameter("meeting_name"));
 			stm.setString(2, parameters.getParameter("image_link"));
 			stm.setString(3, parameters.getParameter("status"));
 			stm.setTimestamp(4, eventDate);
-			stm.setInt(5, Integer.valueOf(parameters.getParameter("id-food-meeting")));
+			stm.setTimestamp(5, votingDate);
+			stm.setTimestamp(6, orderDate);
+			stm.setTimestamp(7, paymentDate);
+			stm.setInt(8, Integer.valueOf(parameters.getParameter("id-food-meeting")));
 			stm.executeUpdate();
 		} catch (Exception e) {
 		}

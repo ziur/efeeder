@@ -51,6 +51,6 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 
 	private void changeFoodMeetingStatus(ChangeFoodMeetingStatusEvent event, int idUser, Connection connection) throws SQLException {
 		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
-		foodMeetingManager.setStatusById(event.getIdFoodMeeting(), idUser, event.getNewStatus());
+		foodMeetingManager.setStatusById(event.getIdFoodMeeting(), idUser, FoodMeetingStatus.valueOf(event.getNewStatus()));
 	}
 }
