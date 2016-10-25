@@ -15,6 +15,18 @@
 
 	<jsp:body>
 		<div class="row">
+			<div id="food-meeting-info" class="col-sm-12">
+				<div class="card">
+					<div class="card-image">
+						<img id="food-meeting-image" src="${foodMeeting.imageLink}" class="activator perfect-fit">
+						<span id="food-meeting-title" class="card-title">${foodMeeting.name}</span>
+					</div>
+					<div class="card-content">
+						<p>Place: [NOT DEFINED]</p>
+						<h6 id="food-meeting-date" class="quick-view-date grey-text lighten-1 truncate">${foodMeeting.eventDate}</h6>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="row">
@@ -23,7 +35,7 @@
 					<li class="collection-item avatar">
 						<div id="my-order-container">
 							<i class="material-icons circle">perm_identity</i>
-							<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
+							<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />							
 							<c:if test="${foodMeeting.status == 'Order'}">
 								<div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
 									<input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}" />
