@@ -15,7 +15,7 @@ import org.jala.efeeder.foodmeeting.FoodMeeting;
 import org.jala.efeeder.foodmeeting.FoodMeetingManager;
 import org.jala.efeeder.order.Order;
 import org.jala.efeeder.order.OrderManager;
-import org.jala.efeeder.suggestion.Place;
+import org.jala.efeeder.places.Place;
 import org.jala.efeeder.user.User;
 
 /**

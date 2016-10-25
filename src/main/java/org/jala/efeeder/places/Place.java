@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jala.efeeder.suggestion;
+package org.jala.efeeder.places;
 
 import lombok.Data;
 
