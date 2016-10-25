@@ -46,6 +46,6 @@ $(document).ready( function () {
     });
 
     $(document).on('click', 'li', function () {
-		ef_addSuggestion(g_feastId, parseInt($(this).attr("id")));   
+		ef_votingView.addSuggestion(g_feastId, parseInt($(this).attr("id")));   
     });
 });

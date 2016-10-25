@@ -1,34 +1,41 @@
 'use strict';
 
-const BUTTON_COLOR = 0xE0308080;
-const BUTTON_HOVER_COLOR = 0xE040A0A0;
-const VOTES_COLOR = 0xC0000101;
-const SELECTED_VOTES_COLOR = 0xD000D0D0;
-const USER_COLOR = 0xF0F0F1F1;
-const SELECTED_USER_COLOR = 0xF8FDFEFE;
-const GLASS_COLOR = 0x60181C20;
-const SELECTED_GLASS_COLOR = 0xD0181C20;
+let VotingView = function(m_feastId)
+{
+
+const BUTTON_COLOR = 0xFF26A69A;
+const VOTES_COLOR = BUTTON_COLOR;
+const SELECTED_VOTES_COLOR = bkColorLighten(VOTES_COLOR);
+const BUTTON_HOVER_COLOR = bkColorMix31(BUTTON_COLOR, SELECTED_VOTES_COLOR);
+const USER_COLOR = 0xFFFFFFFF;
+const SELECTED_USER_COLOR = bkColorMix31(USER_COLOR, SELECTED_VOTES_COLOR);
+const BOARD_COLOR_STR = '#fff';
 const LARGE_FONT_NAME = 'Roboto';
-const LARGE_FONT_COLOR = 0xFFA0FFFF;
-const FONT_NAME = '"Times new roman"';
+const FONT_NAME = 'Tahoma';
 
-let bkSystem;
-let g_sideBarHidden = false;
-let g_comService = null;
-let g_roomId = null;
-let g_userId = null;
-let g_ownerId = 0;
-let g_winnerPlaceId = 0;
+let m_uiSystem;
+let m_sideBarHidden = false;
+let m_comService = null;
+let m_roomId = null;
+let m_userId = null;
+let m_ownerId = 0;
+let m_winnerPlaceId = 0;
 
-let ef_placeDrawer = null;
-let ef_userDrawer = null;
-let ef_myUser = null;
-let ef_addAllPlacesButton = null;
-let ef_restoreSideBarButton = null;
-let ef_showInfoButton = null;
-let ef_finishButton = null;
-let ef_usersArea = null;
-let ef_placesArea = null;
+let m_shrinkImg = null;
+let m_growImg = null;
+let m_placeImg = null;
+let m_placeDrawer = null;
+let m_userDrawer = null;
+let m_myUser = null;
+let m_addAllPlacesButton = null;
+let m_showPlacesMenuButton = null;
+let m_showInfoButton = null;
+let m_finishButton = null;
+let m_waitImage = null;
+let m_usersArea = null;
+let m_placesArea = null;
+
+let m_commandInProcess = false;
 
 function ef_buttonOnClick(mouse)
 {
@@ -44,7 +51,69 @@ function ef_buttonOnGuiAction()
 	this.drawer._system.redraw = true;
 }
 
-let ef_Button = function(coord, drawer, text, onclick = null, img = null)
+let ef_WaitImage = function(coord, drawer, imgSrc)
+{
+	this.coord = coord;
+	this.drawer = drawer;
+	this.img = drawer._system.createImage(imgSrc);
+	this.angle = 0;
+	this.textArea = new BkText(
+		new BkCoord(0.05, 0.05, 0.9, 0.9, 0, 7),
+		"Updating suggestions...", LARGE_FONT_NAME);	
+}
+
+ef_WaitImage.prototype.start = function()
+{
+	this.time0 = performance.now();
+	this.drawer._system.add(this);
+}
+
+ef_WaitImage.prototype.stop = function()
+{
+	this.drawer._system.remove(this);
+}
+
+ef_WaitImage.prototype.draw = function()
+{
+	if ((performance.now() - this.time0) > 500)
+	{
+		this.drawer.draw(this);
+	}
+	this.drawer._system.redraw = true;
+}
+
+ef_WaitImage.prototype.resize = function()
+{
+	this.textArea.resize();
+}
+
+let ef_WaitImageDrawer = function(system)
+{
+	this._ctx = system.ctx;
+	this._transform = system.transform;
+	this._system = system;
+}
+
+ef_WaitImageDrawer.prototype.draw = function(o)
+{
+	if ((o.img !== null) && o.img.isReady)
+	{
+		let coord = o.coord.toScreen(this._transform);
+		let ctx = this._ctx;
+		ctx.save();
+		ctx.translate(coord.x, coord.y);
+		ctx.rotate(o.angle);
+		ctx.translate(-coord.x, -coord.y);
+		o.img.draw(ctx, coord);
+		ctx.restore();
+		o.angle += 0.1;
+		if (o.angle > 2* Math.PI) o.angle -= 2* Math.PI;
+		ctx.fillStyle = '#555';
+		o.textArea.draw(ctx, coord);
+	}
+}
+
+let ef_Button = function(coord, drawer, text, onclick = null, imgSrc = null)
 {
 	this.coord = coord;
 	this.drawer = drawer;
@@ -59,10 +128,7 @@ let ef_Button = function(coord, drawer, text, onclick = null, img = null)
 	this.textArea = new BkText(
 		new BkCoord(0.05, 0.1, 0.9, 0.9, 0, 7),
 		text, FONT_NAME);
-	if (img !== null)
-	{
-		drawer._system.setImage(this, img);
-	}
+	this.img = drawer._system.createImage(imgSrc);
 }
 
 ef_Button.prototype.draw = function()
@@ -75,11 +141,11 @@ ef_Button.prototype.resize = function()
 	this.textArea.resize();
 }
 
-let ef_ButtonDrawer = function(bkSystem)
+let ef_ButtonDrawer = function(system)
 {
-	this._ctx = bkSystem.ctx;
-	this._transform = bkSystem.transform;
-	this._system = bkSystem;
+	this._ctx = system.ctx;
+	this._transform = system.transform;
+	this._system = system;
 }
 
 ef_ButtonDrawer.prototype.draw = function(o)
@@ -93,8 +159,9 @@ ef_ButtonDrawer.prototype.draw = function(o)
 		let isHovered = o === this._system.mouse.hover;
 		color = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
 		let shadowColor;
-		let coordShadow = coord.anisotropicGrow((isHovered || o.isChecked) ? 1.2 : 1.1);
-		if (o.isChecked || ((this._system.mouse.buttons === 1) && isHovered))
+		let coordShadow = coord.growScaleMin((isHovered || o.isChecked) ? 1.2 : 1.1);
+		//if (o.isChecked || ((this._system.mouse.buttons === 1) && isHovered))
+		if (o.isChecked || ((this._system.mouse.selected === o) && isHovered))
 		{
 			coord.y += coord.h * 0.05;
 			coordShadow.y += coord.h * 0.05;
@@ -150,7 +217,7 @@ ef_User.prototype.setName = function(name)
 		new BkCoord(0.1, 0.1, 0.8, 0.8, 0, 7),
 		name,
 		FONT_NAME,
-		1);
+		0.6);
 }
 
 ef_User.prototype.draw = function()
@@ -163,11 +230,11 @@ ef_User.prototype.resize = function()
 	this.textArea.resize();
 }
 
-let ef_UserDrawer = function(bkSystem)
+let ef_UserDrawer = function(system)
 {
-	this._ctx = bkSystem.ctx;
-	this._transform = bkSystem.transform;
-	this._system = bkSystem;
+	this._ctx = system.ctx;
+	this._transform = system.transform;
+	this._system = system;
 }
 
 ef_UserDrawer.prototype.draw = function(o)
@@ -175,15 +242,15 @@ ef_UserDrawer.prototype.draw = function(o)
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
 	let isHovered = o === this._system.mouse.hover;
-	let isSelected = ef_myUser === o;
+	let isSelected = m_myUser === o;
 	
-	if (isHovered || isSelected || o.isChecked)
-	{
-		let coordShadow = coord.anisotropicGrow((isHovered || o.isChecked) ? 1.25 : 1.1);
-		bkDrawShadowRect(ctx, coordShadow, 0.1, 0x80000000);
-	}
+	bkDrawShadowRect(ctx, coord, 10,
+		o.isChecked ? 0xFF000000 : (isHovered ? 0xD0000000 : 0x40000000));
 	
-	bkDrawGlassBoard(ctx, coord, (isSelected ? SELECTED_USER_COLOR : USER_COLOR), false, true);
+	let color = isSelected ? SELECTED_USER_COLOR : USER_COLOR;
+	
+	ctx.fillStyle = bkColorToStr(color);
+	bkFillRect(ctx, coord);
 
 	ctx.fillStyle = '#000';
 	o.textArea.draw(ctx, coord);
@@ -198,11 +265,11 @@ let ef_Place = function(coord, drawer, id, name, description, phone, direction, 
 	this.isSelected = isSelected;
 	this.__name = null;
 	this.__description = null;
-	this.__location = null;
-	drawer._system.setImage(this, imgSrc);
+	this.__footer  = null;
+	this.img = drawer._system.createImage(imgSrc);
 	
 	this.votesText = new BkText(
-		new BkCoord(-0.015, -0.015, 0.27, 0.27, 0, 6), null, LARGE_FONT_NAME);
+		new BkCoord(-0.025, -0.025, 0.25, 0.25, 0, 6), null, LARGE_FONT_NAME);
 	
 	this.setTextFields(name, description, phone, direction);
 }
@@ -213,26 +280,26 @@ ef_Place.prototype.setTextFields = function(name, description, phone, direction)
 	{
 		this.__name = name;
 		this.textArea = new BkTextArea(
-			new BkCoord(0.05, 0.05, 0.9, 0.3, 0, 7),
-			name, LARGE_FONT_NAME, 1, 4);
+			new BkCoord(0, -1E-9, -0.35, 0.26, 0, 6),
+			name, LARGE_FONT_NAME, 0.6, 3 | 0x100);
 	}
-	
+
 	if (this.__description !== description)
 	{
 		this.__description = description;
 		this.descriptionTextArea = new BkTextArea(
-			new BkCoord(0.05, 0.4, 0.9, 0.3, 0, 7),
-			description, FONT_NAME, 0.3, 3.5);
+			new BkCoord(0, -0.35, 1, 0.3, 0, 7),
+			description, FONT_NAME, 20, 3 | 0x110);
 	}
 	
-	let location = 'Phone: ' + phone + '\nAddress: ' + direction;
-	if (this.__location !== location)
+	let footer = 'Phone: ' + phone + '\nAddress: ' + direction;
+	if (this.__footer !== footer)
 	{
-		this.__location = location;
-		this.locationTextArea = new BkTextArea(
-			new BkCoord(0, -1E-9, 0.68, 0.2, 0, 7),
-			location, FONT_NAME, 0.45, 6);
-	}
+		this.__footer = footer;
+		this.footerTextArea = new BkTextArea(
+			new BkCoord(0, -1E-9, 1, 0.2, 0, 7),
+			footer, FONT_NAME, 20, 6);
+	}	
 }
 
 ef_Place.prototype.draw = function()
@@ -244,15 +311,15 @@ ef_Place.prototype.resize = function()
 {
 	this.textArea.resize();
 	this.descriptionTextArea.resize();
-	this.locationTextArea.resize();
+	this.footerTextArea.resize();
 	this.votesText.resize();
 }
 
-let ef_PlaceDrawer = function(bkSystem)
+let ef_PlaceDrawer = function(system)
 {
-	this._ctx = bkSystem.ctx;
-	this._transform = bkSystem.transform;
-	this._system = bkSystem;
+	this._ctx = system.ctx;
+	this._transform = system.transform;
+	this._system = system;
 }
 
 ef_PlaceDrawer.prototype.draw = function(o)
@@ -263,39 +330,51 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	let hover = this._system.mouse.hover;
 	let isHovered = (o === hover);
 	let isUserHovered = (hover !== null) && (o.id === hover.placeId);
-	let showDetails = ef_showInfoButton.isChecked || isUserHovered;
-	let boardColor = (isUserHovered || isHovered) ? SELECTED_GLASS_COLOR: GLASS_COLOR;
-	
-	bkDrawGlassBoard(ctx, coord, boardColor, o.isSelected);
+	let showDetails = m_showInfoButton.isChecked;
 
-	let coordInner = coord.anisotropicGrow(0.96);
-	if (showDetails || o.img === null || !o.img.isReady)
-	{
-		o.textArea.coord.y = showDetails ? 0.05 : 0.35;
-		ctx.fillStyle = bkColorToStr(LARGE_FONT_COLOR);
-		o.textArea.draw(ctx, coord, '#442');
-	}
-	else
-	{
-		if (!o.isSelected && !isHovered) ctx.globalAlpha = 0.6;
-		o.img.drawFill(ctx, coordInner);
-		if (!o.isSelected && !isHovered) ctx.globalAlpha = 1;
-	}
-	
-	if (showDetails)
-	{
-		ctx.fillStyle = '#fff';
-		o.descriptionTextArea.draw(ctx, coord);
-		let lCoord = coord.anisotropicGrow(0.93);
-		o.locationTextArea.draw(ctx, lCoord);
-	}
-	
+	bkDrawShadowRect(ctx, coord, 14,
+		isUserHovered ? 0xFF000000 : (isHovered ? 0xD0000000 : 0x40000000));
 
-	let bCoord = o.votesText.coord.toScreenCoord(coord);
-	bkDrawGlassButton(ctx, bCoord, o.isSelected ? SELECTED_VOTES_COLOR : VOTES_COLOR, true, 0.5);
+	ctx.fillStyle = BOARD_COLOR_STR;
+	bkFillRect(ctx, coord);
+	
+	if (!showDetails)
+	{
+		let imgCoord = new BkCoord(0, 0, -0.3, -0.3, 0, 7).toScreenCoord(coord);
+		imgCoord.w = coord.w;
+		imgCoord.x = coord.x;
+	
+		if (o.img === null)
+		{
+			if (m_placeImg.isReady) m_placeImg.drawFit(ctx, imgCoord);
+		}
+		else
+		{
+			if (o.img.isReady) o.img.drawFill(ctx, imgCoord);
+		}
+	}
+	
+	o.textArea.coord.y = showDetails ? 0 : -1E-9;
+	o.votesText.coord.y = showDetails ? 0.025 : -0.025;
+	
+	let votesCoord = o.votesText.coord.toScreenCoord(coord).growScaleMin(1.05);
+	bkDrawGlassButton(ctx, votesCoord, o.isSelected ? SELECTED_VOTES_COLOR : VOTES_COLOR, true, 0.5);
 	ctx.fillStyle = '#fff';
 	o.votesText.text = o.votes.toString();
 	o.votesText.draw(ctx, coord);
+	
+	coord = coord.growScaleMin(0.94);
+	
+	if (showDetails)
+	{
+		
+		ctx.fillStyle = '#000';
+		o.descriptionTextArea.draw(ctx, coord);
+		o.footerTextArea.draw(ctx, coord);
+	}
+	
+	ctx.fillStyle = '#000';
+	o.textArea.draw(ctx, coord);
 }
 
 let ef_places = [];
@@ -349,7 +428,7 @@ function getOrderList(list, getComparable)
 	return indexes;
 }
 
-function _processUserPlaceJson(json)
+function processUserPlaceJson(json)
 {
 	console.log(JSON.stringify(json));
 	
@@ -360,10 +439,10 @@ function _processUserPlaceJson(json)
 	
 	if (json.ownerId != null)
 	{
-		g_ownerId = json.ownerId;
-		if (g_ownerId <= 0)
+		m_ownerId = json.ownerId;
+		if (m_ownerId <= 0)
 		{
-			_finishAction();
+			finishAction();
 			return;
 		}
 	}
@@ -375,7 +454,7 @@ function _processUserPlaceJson(json)
 	}
 	
 	let selectedPlaceId = null;
-	ef_myUser = null;
+	m_myUser = null;
 	let list = json.users;
 	count = list.length;
 	for (let i = 0; i < count; ++i)
@@ -385,24 +464,24 @@ function _processUserPlaceJson(json)
 		
 		if (item === null)
 		{
-			item = new ef_User(new BkCoord(), ef_userDrawer, userId,
+			item = new ef_User(new BkCoord(), m_userDrawer, userId,
 				list[i].name, list[i].placeId);
 			ef_users.push(item);
-			item.area = ef_usersArea;
-			bkSystem.add(item);
+			item.area = m_usersArea;
+			m_uiSystem.add(item);
 		}
 		else
 		{
-			item.drawer = ef_userDrawer;
+			item.drawer = m_userDrawer;
 			item.setName(list[i].name);
 			item.placeId = list[i].placeId;
 		}
 		
 		item.comparable = list[i].name.toLowerCase();
 
-		if (g_userId === userId)
+		if (m_userId === userId)
 		{
-			ef_myUser = item;
+			m_myUser = item;
 			selectedPlaceId = item.placeId;
 		}
 	}
@@ -413,7 +492,7 @@ function _processUserPlaceJson(json)
 	{
 		if (ef_users[i].drawer === null)
 		{
-			bkSystem.remove(ef_users[i]);
+			m_uiSystem.remove(ef_users[i]);
 		}
 		else
 		{
@@ -443,27 +522,27 @@ function _processUserPlaceJson(json)
 		if (item === null)
 		{
 			item = new ef_Place(new BkCoord(),
-				ef_placeDrawer,
+				m_placeDrawer,
 				list[i].id, list[i].name, list[i].description,
 				list[i].phone, list[i].direction,
 				votes, list[i].image_link,
 				isSelected);
 				
-			item.onclick = _addSuggestion.bind(item);
+			item.onclick = addSuggestionClick.bind(item);
 			
 			ef_places.push(item);
-			item.area = ef_placesArea;
-			bkSystem.add(item);
+			item.area = m_placesArea;
+			m_uiSystem.add(item);
 		}
 		else
 		{
-			item.drawer = ef_placeDrawer;
+			item.drawer = m_placeDrawer;
 			item.isSelected = isSelected;
 			item.votes = votes;
 			item.setTextFields(
 				list[i].name, list[i].description,
 				list[i].phone, list[i].direction);
-			ef_placeDrawer._system.setImage(item, list[i].image_link);
+			item.img = m_placeDrawer._system.createImage(list[i].image_link, item.img);
 		}
 
 		if (votes >= topVotes)
@@ -481,7 +560,7 @@ function _processUserPlaceJson(json)
 		}
 
 		item.comparable = (indexes[i] / count) - votes;
-		item.area = ef_placesArea;
+		item.area = m_placesArea;
 		bkObjectSetSelected(item, isSelected);
 	}
 	
@@ -491,7 +570,7 @@ function _processUserPlaceJson(json)
 	{
 		if (ef_places[i].drawer === null)
 		{
-			bkSystem.remove(ef_places[i]);
+			m_uiSystem.remove(ef_places[i]);
 		}
 		else
 		{
@@ -502,103 +581,93 @@ function _processUserPlaceJson(json)
 	
 	if (ef_places.length > 0)
 	{
-		bkSystem.remove(ef_addAllPlacesButton);
+		m_uiSystem.remove(m_addAllPlacesButton);
 	}
 	else
 	{
-		bkSystem.add(ef_addAllPlacesButton);
+		m_uiSystem.add(m_addAllPlacesButton);
 	}
 	
-	if ( g_ownerId === g_userId)
+	if ( m_ownerId === m_userId)
 	{
-		ef_finishButton.isDisabled = topCount !== 1;
-		g_winnerPlaceId = winnerPlaceId;
-		bkSystem.add(ef_finishButton);
+		m_finishButton.isDisabled = topCount !== 1;
+		m_winnerPlaceId = winnerPlaceId;
+		m_uiSystem.add(m_finishButton);
 	}
 	else
 	{
-		bkSystem.remove(ef_finishButton);
+		m_uiSystem.remove(m_finishButton);
 	}	
 	
-	bkSystem.redistribute();
+	updateBrightenedUsers(m_uiSystem.mouse.hover);
+	
+	m_uiSystem.redistribute();
 }
 
-function _menuClick(mouse)
+function showPlacesClick(mouse)
 {
 	if (mouse.buttons === 1)
 	{
-		_restoreHideSideBar();
+		restoreSideBar();
 	}
 }
 
-function _restoreHideSideBar()
+function restoreSideBar()
 {
-	if (g_sideBarHidden) _restoreSideBar(); else _hideSideBar();
-}
-
-function _restoreSideBar()
-{
-	if (!g_sideBarHidden) return;
-	
-	let list = $('footer');
-	for (let i = 0; i < list.length; ++i)
-	{
-		list[i].style.visibility = 'visible';
-	}
-	
-	list = $('nav');
-	for (let i = 0; i < list.length; ++i)
-	{
-		list[i].style.visibility = 'visible';
-	}                        
+	if (!m_sideBarHidden) return;
 
 	let nav = $('#mainSideNav').get(0);
-	let w = nav.offsetWidth;
-	nav.style.visibility = 'visible';
-	nav.style.left = '0px';
-
-	let mainCanvas = $('#mainCanvas').get(0);
-	mainCanvas.style = "width:82.5vw;height:80vh";
+	if (nav)
+	{
+		nav.style.visibility = 'visible';
+		nav.style.left = '0px';
+	}
 	
-	g_sideBarHidden = false;
-	bkSystem.resize();
+	m_uiSystem.stopInteracting();
+	m_showPlacesMenuButton.isEnabled = false;
+	m_sideBarHidden = false;
 }
 
-function _hideSideBar()
+function hideSideBar()
 {
-	if (g_sideBarHidden) return;
+	if (m_sideBarHidden) return;
 	
-	let list = $('footer');
-	for (let i = 0; i < list.length; ++i)
-	{
-		list[i].style.visibility = 'hidden';
-	}
-	
-	list = $('nav');
-	for (let i = 0; i < list.length; ++i)
-	{
-		list[i].style.visibility = 'hidden';
-	}
-
 	let nav = $('#mainSideNav').get(0);
-	let w = nav.offsetWidth;
-	nav.style.visibility = 'hidden';
-	nav.style.left = '-' + w + 'px';
-
-	let mainCanvas = $('#mainCanvas').get(0);
-	mainCanvas.style = "position:fixed;padding:0;margin:0;top:0;left:0;width:100%;height:100%";
+	if (nav)
+	{
+		nav.style.visibility = 'hidden';
+		nav.style.left = '-' + nav.offsetWidth + 'px';
+	}
 	
-	g_sideBarHidden = true;
-	bkSystem.resize();
+	m_uiSystem.startInteracting();
+	m_showPlacesMenuButton.isEnabled = true;
+	m_sideBarHidden = true;
 }
 
-// @param feastId Positive integer id
-// @param placeId Positive integer id, or -1 to remove current suggestion
-function ef_addSuggestion(feastId, placeId)
+function onResize()
 {
-	if (g_ownerId <= 0) return;
-	_hideSideBar();
-	g_comService.sendMessage({
+	let topPos = $("nav").height() + 12;
+	let maxHeight = $(document).height();
+	let usableHeight = (maxHeight - topPos) * 100 / maxHeight;
+	$('#mainCanvas').get(0).style = "position:fixed;padding:0;margin:0;left:0;width:100%;top:" +
+		topPos + "px;height:" + usableHeight +"vh";
+}
+
+/**
+ * @param feastId Positive integer id
+ * @param placeId Positive integer id, or -1 to remove current suggestion
+ */
+function addSuggestion(feastId, placeId)
+{
+	if (m_ownerId <= 0) return;
+	
+	hideSideBar();
+	
+	m_commandInProcess = true;
+	m_waitImage.start();
+	m_uiSystem.canvas.cursor = 'progress';
+
+	m_comService.sendMessage({
 			user: 0,
 			room: "vote_" + feastId.toString(),
 			command: "CreateSuggestion",
@@ -615,63 +684,75 @@ function ef_addSuggestion(feastId, placeId)
 		});
 }
 
-function _addSuggestion()
+function addSuggestionClick()
 {
-	ef_addSuggestion(g_feastId, this.isSelected ? -1 : this.id);
+	if (!m_commandInProcess)
+	{
+		let placeId = this.isSelected ? -1 : this.id;
+		this.isSelected = !this.isSelected;
+
+		m_uiSystem.redraw = true;
+		
+		addSuggestion(m_feastId, placeId);
+	}
 }
 
-function _addAllPlacesClick(mouse)
+function addAllPlacesClick(mouse)
 {
 	if (mouse.buttons === 1)
 	{
-		ef_addSuggestion(g_feastId, -2);
+		addSuggestion(m_feastId, -2);
 	}
 }
 
-function _updateBrightenedUsers(hover)
+function updateBrightenedUsers(hover)
 {
-	let isPlace = (hover !== null) && ef_isPlace(hover);
+	let hoverId = ((hover !== null) && ef_isPlace(hover)) ? hover.id : -1;
 	for (let i = 0, count = ef_users.length; i < count; ++i) 
 	{
-		ef_users[i].isChecked = isPlace && (hover.id === ef_users[i].placeId);
+		ef_users[i].isChecked = hoverId === ef_users[i].placeId;
 	}
 }
 
-function _onMouseHover()
+function onMouseHover()
 {
-	_updateBrightenedUsers(this.mouse.hover);
+	updateBrightenedUsers(this.mouse.hover);
 	this.redraw = true;
 }
 
-function _handleOnMessage(event)
+function handleWsOnMessage(event)
 {
+	m_commandInProcess = false;
+	m_waitImage.stop();
+	m_uiSystem.canvas.cursor = 'auto';
+	
 	$.each(event.events, function(index, item) {
 		let eventType = Object.getOwnPropertyNames(item.event)[0];
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 				break;
 			case "org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent":
-				g_ownerId = 0;
-				_finishAction();
+				m_ownerId = 0;
+				finishAction();
 				break;
 			case "org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent":
 				let eventMessage = item.event[eventType];
 				eventMessage.users = JSON.parse(eventMessage.users);
 				eventMessage.places = JSON.parse(eventMessage.places);
-				_processUserPlaceJson(eventMessage);
+				processUserPlaceJson(eventMessage);
 				break;
 		}
 	});
 }
 
-function _finishClick()
+function finishClick()
 {
 	if (this.isDisabled) return;
 	
 	$.ajax({
-		url: '/action/SetWinnerPlace?feastId=' + g_feastId.toString(),
+		url: '/action/SetWinnerPlace?feastId=' + m_feastId.toString(),
 		success: function(result){
-			_finishAction();
+			finishAction();
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus, errorThrown);
@@ -680,77 +761,106 @@ function _finishClick()
 	
 }
 
-function _finishAction()
+function finishAction()
 {
-	window.location.href = "action/order?id_food_meeting=" + g_feastId.toString();
+	// We don't want to store current state in history, otherwise use href.
+	window.location.replace(
+		"action/order?id_food_meeting=" + m_feastId.toString());
 }
 
-function _start()
+function initializeElement()
 {
 	$(".button-collapse").sideNav();
-	let nav = $('#mainSideNav').get(0);
-	nav.style.zIndex= "0";
-	nav.style.transition = 'visibility 1s, left 1s';
 	
-	bkSystem = new BkSystem('mainCanvas');
-	ef_usersArea = new BkArea(new BkCoord(0,0.1,0.2,0.9,0,7), 4, 2);
-	bkSystem.addArea(ef_usersArea);
-	ef_placesArea = new BkArea(new BkCoord(0.2,0,0.8,1,0,7), 1, 0, 0.05);
-	bkSystem.addArea(ef_placesArea);
-	let buttonsArea = new BkArea(new BkCoord(0,0,0.2,0.1,0,7), 1, 2, 0.08);
-	bkSystem.addArea(buttonsArea);
+	$('#mainSideNav').get(0).style = "position:fixed;width: 300px;left: 0;top: 0;margin: 0;height: 100%;height: calc(100% + 60px);height: -moz-calc(100%);padding-bottom: 60px;background-color: #fff;overflow:auto;z-index:1;transition: visibility 1s, left 1s;"
 	
-	bkSystem.setBackgroundImage('/assets/img/place.svg', 0.2);
-	ef_placeDrawer = new ef_PlaceDrawer(bkSystem);
-	ef_userDrawer = new ef_UserDrawer(bkSystem);
+	$('#mainCanvas').get(0).parentElement.className = "";
+	$('.drag-target').get(0).style="visibility:hidden";	
+}
 
-	let buttonDrawer = new ef_ButtonDrawer(bkSystem);
-	ef_addAllPlacesButton = new ef_Button(
-		new BkCoord(-0.01,-0.01,0.28,0.08,0,6),
-		buttonDrawer, "Add Places", _addAllPlacesClick);
-		
-	ef_restoreSideBarButton = new ef_Button(
-		new BkCoord(),
-		buttonDrawer, "\u2261", _menuClick, '/assets/img/menu.svg');
-	ef_restoreSideBarButton.area = buttonsArea;
-	ef_restoreSideBarButton.comparable = 0;
+function run()
+{
+	initializeElement();
 	
-	ef_showInfoButton = new ef_Button(
+	m_uiSystem = new BkSystem('mainCanvas');
+	m_uiSystem.disabledColor = 'rgba(0,0,0,0.5)';
+	m_shrinkImg = m_uiSystem.createImage('/assets/img/shrink.svg');
+	m_growImg = m_uiSystem.createImage('/assets/img/grow.svg');
+	m_placeImg = m_uiSystem.createImage('/assets/img/place.svg');
+
+	m_usersArea = new BkArea(new BkCoord(0.01,0.11,0.23,0.88,0,7), 5.083, 1, 0, 0.12);
+	m_uiSystem.addArea(m_usersArea);
+	m_placesArea = new BkArea(new BkCoord(0.24,0,0.76,1,0,7));
+	m_uiSystem.addArea(m_placesArea);
+	let buttonsArea = new BkArea(new BkCoord(0.01,0,0.23,0.1,0,7), 1, 2, 0);
+	m_uiSystem.addArea(buttonsArea);
+	
+	m_uiSystem.setBackgroundImage('/assets/img/place.svg', 0.2);
+	m_placeDrawer = new ef_PlaceDrawer(m_uiSystem);
+	m_userDrawer = new ef_UserDrawer(m_uiSystem);
+
+	let buttonDrawer = new ef_ButtonDrawer(m_uiSystem);
+	m_addAllPlacesButton = new ef_Button(
+		new BkCoord(-0.03,-0.03,0.28,0.08,0,6),
+		buttonDrawer, "Add Places", addAllPlacesClick);
+		
+	m_showPlacesMenuButton = new ef_Button(
+		new BkCoord(),
+		buttonDrawer, "Places", showPlacesClick, '/assets/img/places.svg');
+	m_showPlacesMenuButton.area = buttonsArea;
+	m_showPlacesMenuButton.comparable = 0;
+	
+	m_showInfoButton = new ef_Button(
 		new BkCoord(),
 		buttonDrawer, "Info", null, '/assets/img/info.svg');
-	ef_showInfoButton.area = buttonsArea;
-	ef_showInfoButton.comparable = 1;
+	m_showInfoButton.area = buttonsArea;
+	m_showInfoButton.comparable = 1;
 	
-	ef_finishButton = new ef_Button(
+	m_finishButton = new ef_Button(
 		new BkCoord(),
-		buttonDrawer, "Finish", _finishClick, '/assets/img/finish.svg');
-	ef_finishButton.area = buttonsArea;
-	ef_finishButton.comparable = 2;
+		buttonDrawer, "Finish", finishClick, '/assets/img/finish.svg');
+	m_finishButton.area = buttonsArea;
+	m_finishButton.comparable = 2;
 	
-	bkSystem.add(ef_restoreSideBarButton);
-	bkSystem.add(ef_showInfoButton);
+	m_uiSystem.add(m_showPlacesMenuButton);
+	m_uiSystem.add(m_showInfoButton);
+	
+	m_userDrawer = new ef_UserDrawer(m_uiSystem);
+	m_waitImage = new ef_WaitImage(
+		new BkCoord(0,0,1,1),
+		new ef_WaitImageDrawer(m_uiSystem),
+		'/assets/img/wait.svg');
 
-	bkSystem.onmousehover = _onMouseHover;
-
+	m_uiSystem.onmousehover = onMouseHover;
+	m_uiSystem.onresize = onResize;
+		
 	// Communication
-	g_roomId = "vote_" + g_feastId.toString();
-	g_userId = parseInt(Cookies.get("userId"));
+	m_roomId = "vote_" + m_feastId.toString();
+	m_userId = parseInt(Cookies.get("userId"));
 	
-	g_comService = new CommunicationService();
-	g_comService.onMessage(_handleOnMessage);
-	g_comService.connect('ws://' + location.host + '/ws', g_roomId);
+	m_comService = new CommunicationService();
+	m_comService.onMessage(handleWsOnMessage);
+	m_comService.connect('ws://' + location.host + '/ws', m_roomId);
 	
 	$.ajax({
-		url: '/action/getSuggestions?feastId=' + g_feastId.toString(),
+		url: '/action/getSuggestions?feastId=' + m_feastId.toString(),
 		success: function(result){
-			_processUserPlaceJson(result);
+			processUserPlaceJson(result);
 		}
 	});	
 	
-	bkSystem.run();
+	m_uiSystem.startDrawing();
 }
 
-// Requires g_feastId to be defined and valid
+return {
+	run:run,
+	addSuggestion:addSuggestion
+};
+
+}
+
+let ef_votingView = new VotingView(g_feastId);
+
 $(window).on("load", function() {
-	_start();
+	ef_votingView.run();
 });
