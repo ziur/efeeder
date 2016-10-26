@@ -12,27 +12,28 @@ const SELECTED_USER_COLOR = bkColorMix31(USER_COLOR, SELECTED_VOTES_COLOR);
 const BOARD_COLOR_STR = '#fff';
 const LARGE_FONT_NAME = 'Roboto';
 const FONT_NAME = 'Tahoma';
+const LOADING_IMAGE_DELAY_MS = 400;
 
 let m_uiSystem;
-let m_sideBarHidden = false;
+let m_sideBarHidden = true;
 let m_comService = null;
 let m_roomId = null;
 let m_userId = null;
 let m_ownerId = 0;
-let m_winnerPlaceId = 0;
 
-let m_shrinkImg = null;
-let m_growImg = null;
 let m_placeImg = null;
+let m_voteImg = null;
 let m_placeDrawer = null;
 let m_userDrawer = null;
 let m_myUser = null;
+let m_selectedPlaceId = 0;
 let m_showPlacesMenuButton = null;
 let m_showInfoButton = null;
 let m_finishButton = null;
-let m_waitImage = null;
+let m_loadingImage = null;
 let m_usersArea = null;
 let m_placesArea = null;
+let m_buttonsArea = null;
 
 let m_commandInProcess = false;
 
@@ -50,7 +51,7 @@ function ef_buttonOnGuiAction()
 	this.drawer._system.redraw = true;
 }
 
-let ef_WaitImage = function(coord, drawer, imgSrc)
+let ef_LoadingImage = function(coord, drawer, imgSrc)
 {
 	this.coord = coord;
 	this.drawer = drawer;
@@ -61,27 +62,32 @@ let ef_WaitImage = function(coord, drawer, imgSrc)
 		"Updating suggestions...", LARGE_FONT_NAME);	
 }
 
-ef_WaitImage.prototype.start = function()
+ef_LoadingImage.prototype.start = function(startNow = false)
 {
 	this.time0 = performance.now();
-	this.drawer._system.add(this);
+	if (startNow) this.time0 -= LOADING_IMAGE_DELAY_MS;
+	let uiSystem = this.drawer._system;
+	uiSystem.add(this);
+	uiSystem.canvas.cursor = 'progress';
 }
 
-ef_WaitImage.prototype.stop = function()
+ef_LoadingImage.prototype.stop = function()
 {
-	this.drawer._system.remove(this);
+	let uiSystem = this.drawer._system;
+	uiSystem.canvas.cursor = 'auto';
+	uiSystem.remove(this);
 }
 
-ef_WaitImage.prototype.draw = function()
+ef_LoadingImage.prototype.draw = function()
 {
-	if ((performance.now() - this.time0) > 500)
+	if ((performance.now() - this.time0) >= LOADING_IMAGE_DELAY_MS)
 	{
 		this.drawer.draw(this);
 	}
 	this.drawer._system.redraw = true;
 }
 
-ef_WaitImage.prototype.resize = function()
+ef_LoadingImage.prototype.resize = function()
 {
 	this.textArea.resize();
 }
@@ -213,7 +219,7 @@ let ef_User = function(coord, drawer, id, name, placeId)
 ef_User.prototype.setName = function(name)
 {
 	this.textArea = new BkTextArea(
-		new BkCoord(0.1, 0.1, 0.8, 0.8, 0, 7),
+		new BkCoord(0.1, 0.05, -1.1, 0.9, 0, 6),
 		name,
 		FONT_NAME,
 		0.6);
@@ -253,6 +259,10 @@ ef_UserDrawer.prototype.draw = function(o)
 
 	ctx.fillStyle = '#000';
 	o.textArea.draw(ctx, coord);
+	if (o.placeId > 0)
+	{
+		m_voteImg.drawFit(ctx, new BkCoord(-0.15, 0.15, 0.7, 0.7, 0, 6).toScreenCoord(coord));
+	}
 }
 
 let ef_Place = function(coord, drawer, id, name, description, phone, direction, votes, imgSrc, isSelected)
@@ -287,17 +297,17 @@ ef_Place.prototype.setTextFields = function(name, description, phone, direction)
 	{
 		this.__description = description;
 		this.descriptionTextArea = new BkTextArea(
-			new BkCoord(0, -0.35, 1, 0.3, 0, 7),
-			description, FONT_NAME, 20, 3 | 0x110);
+			new BkCoord(0, -0.32, 1, 0.34, 0, 7),
+			description, FONT_NAME, 1, 3 | 0x110);
 	}
 	
-	let footer = 'Phone: ' + phone + '\nAddress: ' + direction;
+	let footer = 'Phone: ' + phone + '\n' + direction;
 	if (this.__footer !== footer)
 	{
 		this.__footer = footer;
 		this.footerTextArea = new BkTextArea(
-			new BkCoord(0, -1E-9, 1, 0.2, 0, 7),
-			footer, FONT_NAME, 20, 6);
+			new BkCoord(0, -1E-9, 1, 0.26, 0, 7),
+			footer, FONT_NAME, 1, 6);
 	}	
 }
 
@@ -363,17 +373,19 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	o.votesText.draw(ctx, coord);
 	
 	coord = coord.growScaleMin(0.94);
-	
-	if (showDetails)
-	{
-		
-		ctx.fillStyle = '#000';
-		o.descriptionTextArea.draw(ctx, coord);
-		o.footerTextArea.draw(ctx, coord);
-	}
-	
 	ctx.fillStyle = '#000';
 	o.textArea.draw(ctx, coord);
+	if (showDetails)
+	{
+		o.descriptionTextArea.fontHeight = o.textArea._currentFontHeight;
+		if (o.descriptionTextArea.fontHeight > 20)
+		{
+			o.descriptionTextArea.fontHeight = 20;
+		}
+		o.descriptionTextArea.draw(ctx, coord);
+		o.footerTextArea.fontHeight = o.descriptionTextArea._currentFontHeight;
+		o.footerTextArea.draw(ctx, coord);
+	}
 }
 
 let ef_places = [];
@@ -452,7 +464,7 @@ function processUserPlaceJson(json)
 		ef_users[i].drawer = null;
 	}
 	
-	let selectedPlaceId = null;
+	m_selectedPlaceId = 0;
 	m_myUser = null;
 	let list = json.users;
 	count = list.length;
@@ -481,7 +493,7 @@ function processUserPlaceJson(json)
 		if (m_userId === userId)
 		{
 			m_myUser = item;
-			selectedPlaceId = item.placeId;
+			m_selectedPlaceId = item.placeId;
 		}
 	}
 	
@@ -508,7 +520,6 @@ function processUserPlaceJson(json)
 	
 	let topCount = 0;
 	let topVotes = 0;
-	let winnerPlaceId = 0;
 	list = json.places;
 	let indexes = getOrderList(list, function(o){return o.name.toLowerCase();});
 	count = list.length;
@@ -516,7 +527,7 @@ function processUserPlaceJson(json)
 	{
 		let placeId = list[i].id;
 		let item = ef_getPlaceById(placeId);
-		let isSelected = selectedPlaceId === placeId;
+		let isSelected = m_selectedPlaceId === placeId;
 		let votes = list[i].votes;
 		if (item === null)
 		{
@@ -554,7 +565,6 @@ function processUserPlaceJson(json)
 			{
 				topVotes = votes;
 				topCount = 1;
-				winnerPlaceId = placeId;
 			}
 		}
 
@@ -582,7 +592,6 @@ function processUserPlaceJson(json)
 	if ( m_ownerId === m_userId)
 	{
 		m_finishButton.isDisabled = topCount !== 1;
-		m_winnerPlaceId = winnerPlaceId;
 		m_uiSystem.add(m_finishButton);
 	}
 	else
@@ -599,40 +608,8 @@ function showPlacesClick(mouse)
 {
 	if (mouse.buttons === 1)
 	{
-		restoreSideBar();
+		showSideBar();
 	}
-}
-
-function restoreSideBar()
-{
-	if (!m_sideBarHidden) return;
-
-	let nav = $('#mainSideNav').get(0);
-	if (nav)
-	{
-		nav.style.visibility = 'visible';
-		nav.style.left = '0px';
-	}
-	
-	m_uiSystem.stopInteracting();
-	m_showPlacesMenuButton.isEnabled = false;
-	m_sideBarHidden = false;
-}
-
-function hideSideBar()
-{
-	if (m_sideBarHidden) return;
-	
-	let nav = $('#mainSideNav').get(0);
-	if (nav)
-	{
-		nav.style.visibility = 'hidden';
-		nav.style.left = '-' + nav.offsetWidth + 'px';
-	}
-	
-	m_uiSystem.startInteracting();
-	m_showPlacesMenuButton.isEnabled = true;
-	m_sideBarHidden = true;
 }
 
 /**
@@ -645,11 +622,8 @@ function addSuggestion(feastId, placeId)
 	if (isNaN(placeId)) return;
 	
 	hideSideBar();
-	
 	m_commandInProcess = true;
-	m_waitImage.start();
-	m_uiSystem.canvas.cursor = 'progress';
-
+	m_loadingImage.start();
 	m_comService.sendMessage({
 			user: 0,
 			room: "vote_" + feastId.toString(),
@@ -689,6 +663,14 @@ function updateBrightenedUsers(hover)
 	}
 }
 
+function onClick()
+{
+	if (m_uiSystem._isInteracting)
+	{
+		hideSideBar();
+	}
+}
+
 function onMouseHover()
 {
 	updateBrightenedUsers(this.mouse.hover);
@@ -698,8 +680,7 @@ function onMouseHover()
 function handleWsOnMessage(event)
 {
 	m_commandInProcess = false;
-	m_waitImage.stop();
-	m_uiSystem.canvas.cursor = 'auto';
+	m_loadingImage.stop();
 	
 	$.each(event.events, function(index, item) {
 		let eventType = Object.getOwnPropertyNames(item.event)[0];
@@ -753,37 +734,81 @@ function onResize()
 	let mainSideNav = $('#mainSideNav').get(0);
 	mainSideNav.style.top = topPos + "px";
 	mainSideNav.style.height = usableHeight + "px";
+
+	let ratio = m_uiSystem.canvas.clientWidth / m_uiSystem.canvas.clientHeight;
+	if (ratio > 2.76)
+	{
+		m_placesArea.coord = new BkCoord(0,0,0.75,1,0,7);
+		m_usersArea.coord = new BkCoord(0.75,0,0.2,1,0,7);
+		m_buttonsArea.coord = new BkCoord(0.95,0.02,0.045,0.96,0,7);
+	}
+	else if (ratio <= 0.8)
+	{
+		m_placesArea.coord = new BkCoord(0,0,1,0.73,0,7);
+		m_usersArea.coord = new BkCoord(0,0.73,1,0.2,0,7);
+		m_buttonsArea.coord = new BkCoord(0.005,0.93,0.99,0.065,0,7);
+	
+	}
+	else
+	{
+		m_placesArea.coord = new BkCoord(0,0,0.76,1,0,7);
+		m_usersArea.coord = new BkCoord(0.76,0,0.24,0.88,0,7);
+		m_buttonsArea.coord = new BkCoord(0.76,0.88,0.235,0.11,0,7);
+	}
 }
 
 function initializeElement()
 {
-	$(".button-collapse").sideNav();
 
-	$('#mainSideNav').get(0).style = "position:fixed;width: 300px;left: 0;top: " +
-		$("nav").height() + "px;margin: 0;height: 100%;height: calc(100% + 60px);height: -moz-calc(100%);padding-bottom: 60px;background-color: #fff;overflow:auto;z-index:1;transition: visibility 1s, left 1s;"
+}
+
+function showSideBar()
+{
+	if (!m_sideBarHidden) return;
+
+	let nav = $('#mainSideNav').get(0);
+	if (nav)
+	{
+		nav.style.visibility = 'visible';
+		nav.style.left = '0px';
+	}
 	
-	$('#mainCanvas').get(0).parentElement.className = "";
-	$('.drag-target').get(0).style="visibility:hidden";	
+	m_uiSystem.stopInteracting();
+	m_sideBarHidden = false;
+}
+
+function hideSideBar()
+{
+	if (m_sideBarHidden) return;
+	
+	let nav = $('#mainSideNav').get(0);
+	if (nav)
+	{
+		nav.style.visibility = 'hidden';
+		nav.style.left = '-' + nav.offsetWidth + 'px';
+	}
+	
+	m_uiSystem.startInteracting();
+	m_sideBarHidden = true;
 }
 
 function run()
 {
-	initializeElement();
-	
 	m_uiSystem = new BkSystem('mainCanvas');
-	m_uiSystem.disabledColor = 'rgba(0,0,0,0.5)';
-	m_shrinkImg = m_uiSystem.createImage('/assets/img/shrink.svg');
-	m_growImg = m_uiSystem.createImage('/assets/img/grow.svg');
-	m_placeImg = m_uiSystem.createImage('/assets/img/place.svg');
-
-	m_usersArea = new BkArea(new BkCoord(0.01,0.121,0.23,0.88,0,7), 5.083, 1, 0, 0.12);
-	m_uiSystem.addArea(m_usersArea);
-	m_placesArea = new BkArea(new BkCoord(0.24,0,0.76,1,0,7));
-	m_uiSystem.addArea(m_placesArea);
-	let buttonsArea = new BkArea(new BkCoord(0.01,0.01,0.23,0.1,0,7), 1, 2, 0);
-	m_uiSystem.addArea(buttonsArea);
+	m_uiSystem.onresize = onResize;
 	
+	m_usersArea = new BkArea(null, 5.083, 1, null, 0.12);
+	m_placesArea = new BkArea();
+	m_buttonsArea = new BkArea(null, 1, 2, null, null, 0x3);	
+	m_uiSystem.addArea(m_usersArea);
+	m_uiSystem.addArea(m_placesArea);
+	m_uiSystem.addArea(m_buttonsArea);
+			
 	m_uiSystem.setBackgroundImage('/assets/img/place.svg', 0.2);
+	m_uiSystem.disabledColor = 'rgba(0,0,0,0.5)';
+	
+	m_voteImg = m_uiSystem.createImage('/assets/img/vote.svg');
+	m_placeImg = m_uiSystem.createImage('/assets/img/place.svg');
 	m_placeDrawer = new ef_PlaceDrawer(m_uiSystem);
 	m_userDrawer = new ef_UserDrawer(m_uiSystem);
 
@@ -791,33 +816,32 @@ function run()
 	m_showPlacesMenuButton = new ef_Button(
 		new BkCoord(),
 		buttonDrawer, "Places", showPlacesClick, '/assets/img/places.svg');
-	m_showPlacesMenuButton.area = buttonsArea;
+	m_showPlacesMenuButton.area = m_buttonsArea;
 	m_showPlacesMenuButton.comparable = 0;
 	
 	m_showInfoButton = new ef_Button(
 		new BkCoord(),
 		buttonDrawer, "Info", null, '/assets/img/info.svg');
-	m_showInfoButton.area = buttonsArea;
+	m_showInfoButton.area = m_buttonsArea;
 	m_showInfoButton.comparable = 1;
 	
 	m_finishButton = new ef_Button(
 		new BkCoord(),
 		buttonDrawer, "Finish", finishClick, '/assets/img/finish.svg');
-	m_finishButton.area = buttonsArea;
+	m_finishButton.area = m_buttonsArea;
 	m_finishButton.comparable = 2;
 	
 	m_uiSystem.add(m_showPlacesMenuButton);
 	m_uiSystem.add(m_showInfoButton);
+
+	m_uiSystem.onmousehover = onMouseHover;
+	m_uiSystem.onclick = onClick;
 	
-	m_userDrawer = new ef_UserDrawer(m_uiSystem);
-	m_waitImage = new ef_WaitImage(
+	m_loadingImage = new ef_LoadingImage(
 		new BkCoord(0,0,1,1),
 		new ef_WaitImageDrawer(m_uiSystem),
 		'/assets/img/wait.svg');
-
-	m_uiSystem.onmousehover = onMouseHover;
-	m_uiSystem.onresize = onResize;
-		
+				
 	// Communication
 	m_roomId = "vote_" + m_feastId.toString();
 	m_userId = parseInt(Cookies.get("userId"));
@@ -829,13 +853,29 @@ function run()
 	$.ajax({
 		url: '/action/getSuggestions?feastId=' + m_feastId.toString(),
 		success: function(result){
+			$("#preloader").hide();
+			m_uiSystem.startDrawing();
 			processUserPlaceJson(result);
+			if (m_selectedPlaceId === 0)
+			{
+				showSideBar();
+			}
+			else
+			{
+				m_uiSystem.startInteracting();
+			}
 		}
 	});	
-	
-	m_uiSystem.startDrawing();
 }
 
+function initialize()
+{
+	$('#mainSideNav').get(0).style = "position:fixed;visibility:hidden;width:300px;left:-300px;top:" +
+		$("nav").height() + "px;margin:0;padding-bottom:60px;background-color:#fff; overflow:auto;z-index:1;transition:visibility 1s,left 1s;"
+	$('#mainCanvas').get(0).className = "";
+}
+
+initialize();
 return {
 	run:run,
 	addSuggestion:addSuggestion
