@@ -7,6 +7,7 @@ package org.jala.efeeder.payment;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -37,7 +38,17 @@ public class AddPaymentItemCommand implements CommandUnit {
 		prepareStatement.setDouble(4, itemPrice);
 		prepareStatement.executeUpdate();
 		
-		return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaymentItem(idFoodMeeting, itemName, itemDescription, itemPrice)));
+		prepareStatement = connection.prepareStatement("select id from payment where id_food_meeting=? and item_name=?");
+		prepareStatement.setInt(1, idFoodMeeting);
+		prepareStatement.setString(2, itemName);
+		ResultSet res = prepareStatement.executeQuery();
+		int itemId = 0;
+		
+		if(res.next()){
+			itemId = res.getInt("id");
+		}
+		
+		return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaymentItem(itemId, idFoodMeeting, itemName, itemDescription, itemPrice)));
 	}
 	
 }

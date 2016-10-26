@@ -13,6 +13,7 @@ import lombok.Data;
  */
 @Data
 public class PaymentItem {
+	private int id;
 	private int foodMeetingId;
 	private String name;
 	private String description;
@@ -21,7 +22,8 @@ public class PaymentItem {
 	public PaymentItem() {
 	}
 
-	public PaymentItem(int foodMeetingId, String name, String description, double price) {
+	public PaymentItem(int id, int foodMeetingId, String name, String description, double price) {
+		this.id = id;
 		this.foodMeetingId = foodMeetingId;
 		this.name = name;
 		this.description = description;

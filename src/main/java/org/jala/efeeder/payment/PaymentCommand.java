@@ -53,7 +53,7 @@ public class PaymentCommand implements CommandUnit {
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
-				resultItemsList.add(new PaymentItem(foodMeetingId, 
+				resultItemsList.add(new PaymentItem(result.getInt("id"), foodMeetingId, 
 						result.getString("item_name"), 
 						result.getString("item_description"), 
 						result.getFloat("price")));
