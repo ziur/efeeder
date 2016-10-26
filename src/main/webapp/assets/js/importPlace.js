@@ -13,7 +13,8 @@ var ImportPlace = function() {
 	var form = $("#import-form");
 	var importButton = $("#import-button");
 	var textArea = $("#textarea-log");
-	var fileText = $("#file-text"); 
+	var fileText = $("#file-text");
+	var logMessageContainer = $("#log-message-container"); 
 
 	var addEventClick= function () {
 		importButton.click(function (event) {
@@ -38,17 +39,20 @@ var ImportPlace = function() {
 				contentType: false,
 				cache : false,
 				success : function(data) {
-					textArea.val(data);
-					textArea.trigger('autoresize');
-					
+					showLogs(data);
 				},
 				error: function(data){
-					textArea.val(data.responseJSON);
-					textArea.trigger('autoresize');
+					showLogs(data.responseJSON);
 				}
 			});
 		}
 	};
+	
+	var showLogs = function(message) {
+		textArea.val(message);
+		textArea.trigger('autoresize');
+		logMessageContainer.attr("hidden", false);
+	}
 
 	return {
 		init: function(){
