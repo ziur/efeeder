@@ -46,18 +46,41 @@
                     <tbody>
                         <c:forEach var="item" items="#{items}">
                         <label hidden="true">${item.id}</label>
-                            <tr id="${item.id}">
-                                <td>${item.name}</td>
-                                <td>${item.description}</td>
-                                <td>${item.price}</td>
-                                <td>
-                                    <a class="btn-floating btn-small waves-effect waves-light red" style="display:${estate}"><i class="material-icons">delete</i></a>
-                                </td>
-                            </tr>
-                        </c:forEach>
+                        <tr id="${item.id}">
+                            <td>${item.name}</td>
+                            <td>${item.description}</td>
+                            <td>${item.price}</td>
+                            <td>
+                                <a class="btn-floating btn-small waves-effect waves-light red delete-item" style="display:${estate}"><i class="material-icons">delete</i></a>
+                            </td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
                 <h5 id="total_items_price_id" class="right-align">${total_item_price}</h5>
+            </div>
+            <div class="row">
+                <ul class="collection">
+                    <li class="collection-header"><h4>Extra Items</h4></li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">taxi</span>
+                        <p>12.5</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">coca-cola</span>
+                        <p>10.5</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">vasos</span>
+                        <p>5.0</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                </ul>
             </div>
         </div>
     </jsp:body>
@@ -75,10 +98,10 @@
                 contentType: false,
                 cache: false,
                 success: function (data) {
-                    var button = "<td><a class='btn-floating btn-small waves-effect waves-light red'><i class='material-icons'>delete</i></a></td>";
-                    $("#items_id tr:last").after("<tr id='"+ data.id +"'><td>" + data.name + "</td><td>" + data.description + "</td><td>" + data.price + "</td>" + button + "</tr>");
+                    var button = "<td><a class='btn-floating btn-small waves-effect waves-light red delete-item'><i class='material-icons'>delete</i></a></td>";
+                    $("#items_id tr:last").after("<tr id='" + data.id + "'><td>" + data.name + "</td><td>" + data.description + "</td><td>" + data.price + "</td>" + button + "</tr>");
                     updatePay(parseFloat(data.price));
-                    $(".red").click(function () {
+                    $(".delete-item").click(function () {
                         var d = this.parentNode.parentNode.rowIndex;
                         var aa = this;
                         document.getElementById('items_id').deleteRow(d);
@@ -100,7 +123,7 @@
             totalItemsPrice.text(numAux);
         };
 
-        $(".red").click(
+        $(".delete-item").click(
                 function () {
                     var d = this.parentNode.parentNode.rowIndex;
                     var aa = this;
@@ -108,17 +131,16 @@
                     deletePayItem(this.parentNode.parentNode.id);
                     updatePayDeleted(this.parentNode.parentNode);
                 });
-        
+
         var functionDeleteRow = function () {
-                    var d = this.parentNode.parentNode.rowIndex;
-                    var aa = this;
-                    document.getElementById('items_id').deleteRow(d);
-                    deletePayItem(this.parentNode.parentNode.id);
-                    updatePayDeleted(this.parentNode.parentNode);
-                };
+            var d = this.parentNode.parentNode.rowIndex;
+            var aa = this;
+            document.getElementById('items_id').deleteRow(d);
+            deletePayItem(this.parentNode.parentNode.id);
+            updatePayDeleted(this.parentNode.parentNode);
+        };
 
         var deletePayItem = function (index) {
-            console.log("borrare : " + index);
             var index_value = {"index_key": "index"};
             $.ajax({
                 url: '/action/deletePaymentItem?index=' + index,
@@ -127,11 +149,9 @@
                 }
             });
         };
-        
+
         var updatePayDeleted = function (numWrapper) {
             var num = numWrapper.children[2].textContent;
-            console.log("la cosa 222222 : " + num);
-//            $(".validate").val("");
             var numAux = parseFloat(totalItemsPrice.text()) - parseFloat(num);
             totalItemsPrice.text(numAux);
         };
