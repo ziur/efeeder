@@ -43,7 +43,7 @@ var ImportPlace = function() {
 					
 				},
 				error: function(data){
-					textArea.val(data);
+					textArea.val(data.responseJSON);
 					textArea.trigger('autoresize');
 				}
 			});

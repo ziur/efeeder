@@ -1,11 +1,7 @@
 
 package org.jala.efeeder.places;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jala.efeeder.api.command.Command;
@@ -39,6 +35,11 @@ public class ImportPlaceCommand implements CommandUnit {
 		Place currentPlace = null;
 
 		for (String line : lines) {
+
+			if (line.startsWith("#"))
+			{
+				continue;
+			}
 
 			messageLog.append("Import: " + line);
 			messageLog.append(System.getProperty("line.separator"));
