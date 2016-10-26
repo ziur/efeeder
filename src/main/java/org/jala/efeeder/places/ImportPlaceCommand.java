@@ -1,8 +1,8 @@
-
 package org.jala.efeeder.places;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -19,36 +19,43 @@ import org.jala.efeeder.api.utils.JsonConverter;
  */
 @Command
 public class ImportPlaceCommand implements CommandUnit {
+	private final String SEP = ", "; 
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute(In in) throws Exception {
 		ExitStatus status = ExitStatus.SUCCESS;
 
 		StringBuilder messageLog = new StringBuilder();
-		
+
 		String result = "";
 
-		List<String> lines = parameters.getParameters("lines");
-
-		PlaceManager placeManager = new PlaceManager(parameters.getConnection());
+		PlaceManager placeManager = new PlaceManager(in.getConnection());
 
 		Place currentPlace = null;
 
-		for (String line : lines) {
+		StringBuilder importLine = null;
 
-			if (line.startsWith("#"))
-			{
-				continue;
-			}
+		for (Map.Entry<String, List<String>> entry : in.getAllParameters().entrySet()) {
 
-			messageLog.append("Import: " + line);
-			messageLog.append(System.getProperty("line.separator"));
+			List<String> values = entry.getValue();
 
-			String[] placeData = line.split(",");
+			if (values.size() == 6) {
+				String type = values.get(0);
 
-			if (placeData[0].length() > 0) {
-				if ("PLACE".equals(placeData[0]) && placeData.length == 6) {
-					currentPlace = new Place(-1, placeData[1], placeData[2], placeData[3], placeData[4], placeData[5]);
+				if ("PLACE".equals(type)) {
+					String name = values.get(1);
+					String description = values.get(2);
+					String phone = values.get(3);
+					String direction = values.get(4);
+					String imageLink = values.get(5);
+
+					importLine = new StringBuilder().append("Import Place: ").append(name).append(SEP).append(description)
+							.append(SEP).append(phone).append(SEP).append(direction).append(SEP).append(imageLink);
+
+					messageLog.append(importLine);
+					messageLog.append(System.getProperty("line.separator"));
+
+					currentPlace = new Place(-1, name, description, phone, direction, imageLink);
 
 					try {
 						placeManager.insertPlace(currentPlace);
@@ -66,7 +73,7 @@ public class ImportPlaceCommand implements CommandUnit {
 		}
 
 		result = JsonConverter.objectToJSON(messageLog);
-		
+
 		return OutBuilder.response("application/json", result, status);
 	}
 }

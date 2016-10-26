@@ -1,40 +1,47 @@
 package org.jala.efeeder.api.utils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
 
+import com.opencsv.CSVReader;
+
 public class ReadFileUtil {
 
-	public static List<String> readContentFileItem(FileItem fileItem) {
+	public static Map<String, List<String>> readCSVFile(FileItem fileItem) {
 
-		List<String> lines = new ArrayList<String>();
+		Map<String, List<String>> parameters = new HashMap<>();
 
-		BufferedReader br = null;
+		CSVReader reader = null;
 
 		try {
-			String sCurrentLine;
 
-			br = new BufferedReader(new InputStreamReader(fileItem.getInputStream(), "UTF-8"));
+			reader = new CSVReader(new InputStreamReader(fileItem.getInputStream(), "UTF-8"));
 
-			while ((sCurrentLine = br.readLine()) != null) {
-				lines.add(sCurrentLine);
+			String[] nextLine;
+			int count=0;
+			while ((nextLine = reader.readNext()) != null) {
+				if (nextLine[0].startsWith("#")) {
+					continue;
+				}
+				parameters.put(String.valueOf(count), Arrays.asList(nextLine));
+				count++;
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (br != null)br.close();
+				if (reader != null)reader.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
 		}
 
-		return lines;
+		return parameters;
 	}
 }

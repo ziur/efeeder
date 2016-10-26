@@ -50,7 +50,7 @@ public class FileResourceManager {
 							in.addParameter(item.getFieldName(), Arrays.asList(path));
 							break;
 						case "importFile":
-							in.addParameter("lines", ReadFileUtil.readContentFileItem(item));
+							in.addParameter(ReadFileUtil.readCSVFile(item));
 							break;
 					};
 				} else {

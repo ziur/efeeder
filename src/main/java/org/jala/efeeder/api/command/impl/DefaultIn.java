@@ -41,6 +41,16 @@ public class DefaultIn implements In {
 	}
 
 	@Override
+	public void addParameter(Map<String, List<String>> newParameters) {
+		parameters.putAll(newParameters);
+	}
+
+	@Override
+	public Map<String, List<String>> getAllParameters() {
+		return parameters;
+	}
+
+	@Override
 	public String getParameter(String key) {
 		if(!parameters.containsKey(key)) {
 			return null;
