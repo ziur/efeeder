@@ -378,6 +378,10 @@ ef_PlaceDrawer.prototype.draw = function(o)
 	if (showDetails)
 	{
 		o.descriptionTextArea.fontHeight = o.textArea._currentFontHeight;
+		if (o.descriptionTextArea.fontHeight > 20)
+		{
+			o.descriptionTextArea.fontHeight = 20;
+		}
 		o.descriptionTextArea.draw(ctx, coord);
 		o.footerTextArea.fontHeight = o.descriptionTextArea._currentFontHeight;
 		o.footerTextArea.draw(ctx, coord);
