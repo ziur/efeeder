@@ -19,6 +19,7 @@ import org.jala.efeeder.user.User;
  */
 public class DefaultIn implements In {
 	private Connection connection;
+	private String pathEfeederImages;
 	private final Map<String, List<String>> parameters;
 	@Setter
 	@Getter
@@ -48,6 +49,16 @@ public class DefaultIn implements In {
 	@Override
 	public Map<String, List<String>> getAllParameters() {
 		return parameters;
+	}
+
+	@Override
+	public String getPathEfeederImages() {
+		return pathEfeederImages;
+	}
+	
+	@Override
+	public void setPathEfeederImages(String pathEfeederImages) {
+		this.pathEfeederImages = pathEfeederImages;
 	}
 
 	@Override

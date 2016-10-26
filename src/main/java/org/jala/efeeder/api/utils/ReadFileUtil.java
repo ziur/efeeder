@@ -26,7 +26,7 @@ public class ReadFileUtil {
 			String[] nextLine;
 			int count=0;
 			while ((nextLine = reader.readNext()) != null) {
-				if (nextLine[0].startsWith("#")) {
+				if (nextLine[0].startsWith("#") || nextLine[0].length() == 0) {
 					continue;
 				}
 				parameters.put(String.valueOf(count), Arrays.asList(nextLine));

@@ -15,6 +15,8 @@ import org.jala.efeeder.user.User;
 public interface In {
 	void addParameter(String key, List<String> values);
 	void addParameter(Map<String, List<String>> newParameters);
+	String getPathEfeederImages();
+	void setPathEfeederImages(String pathEfeederImages);
 	Map<String, List<String>> getAllParameters();
 	String getParameter(String key);
 	List<String> getParameters(String key);

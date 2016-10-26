@@ -90,7 +90,7 @@ public class CommandServlet extends HttpServlet {
 
 			parameters.setUser(User.class.cast(session.getAttribute("user")));
 			parameters.setContext(getServletContext());
-			parameters.addParameter("image_path", Arrays.asList(getImagePath()));
+			parameters.setPathEfeederImages(getImagePath());
 
 			Out out = executor.executeCommand(parameters, getCommand(request));
 

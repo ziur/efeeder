@@ -42,7 +42,7 @@ public class ImageCommand implements CommandUnit {
 		this.defaultPath = path;
 
 		if (!imageName.equals("empty")) {
-			path = parameters.getParameter("image_path") + "/" + imageName;
+			path = parameters.getPathEfeederImages() + "/" + imageName;
 		}
 
 		String extension = FilenameUtils.getExtension(path);
