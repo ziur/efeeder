@@ -54,7 +54,7 @@ public class ImportPlaceCommand implements CommandUnit {
 			if (values.size() > 0) {
 
 				importHandler = importFactory.getHandler(values.get(0));
-				importResult = importHandler.importObject(values, currentPlace);
+				importResult = importHandler.importObject(key, values, currentPlace);
 				if (importResult.isSuccessful()) {
 					if (importResult.getObjectImported() instanceof Place) {
 						currentPlace = (Place) importResult.getObjectImported();

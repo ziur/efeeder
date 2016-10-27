@@ -39,6 +39,9 @@ public class Place {
 		this.direction = direction;
 		this.image_link = image_link;
 	}
+	public Place(String name, String description, String phone, String direction, String image_link) {
+		this(0, name, phone, direction, image_link);
+	}
 	
 	public Place(int id, String name, String phone, String direction, String img_link) {
 		this(id, name, "", phone, direction, img_link, 0);

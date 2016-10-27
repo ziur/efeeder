@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ImportHandler {
 	
-	ImportResult importObject(List<String> values, Object parentObject) throws Exception;
+	ImportResult importObject(int lineNumber, List<String> values, Object parentObject) throws Exception;
 
 }
