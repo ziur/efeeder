@@ -4,8 +4,10 @@
 
 <t:template>
     <jsp:attribute name="javascript">
+        <script src="/assets/js/payment.js"></script>
     </jsp:attribute>
     <jsp:body>
+        <input id="input-food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
         <div class="row">
             Rodri's block
         </div>
@@ -14,21 +16,24 @@
                 <div class="row"style="display:${estate}">
                     <div class="input-field col s4">
                         <i class="material-icons prefix">library_add</i>
-                        <input id="icon_prefix" type="text" name="item_name" class="validate">
-                        <label for="icon_prefix">item name</label>
+                        <input id="input-item-name-id" type="text" name="item_name" class="validate">
+                        <label for="input-item-name-id">item name</label>
                     </div>
                     <div class="input-field col s4">
                         <i class="material-icons prefix">comment</i>
-                        <input id="icon_telephone" type="text" name="item_description" class="validate">
-                        <label for="icon_telephone">description</label>
+                        <input id="input-item-description-id" type="text" name="item_description" class="validate">
+                        <label for="input-item-description-id">description</label>
                     </div>
                     <div class="input-field col s2">
                         <i class="material-icons prefix">payment</i>
-                        <input id="icon_pay" type="number" name="item_price" class="validate">
-                        <label for="icon_pay">price</label>
+                        <input id="input-item-price-id" type="number" name="item_price" class="validate">
+                        <label for="input-item-price-id">price</label>
                     </div>
                     <div class="col s2">
-                        <a id="addItemId" class="btn-floating btn-large waves-effect waves-light green"><i class="material-icons">add</i></a>
+                        <button id="addItemId" class="btn waves-effect waves-light" type="submit">ADD
+                            <i class="material-icons right">add</i>
+                        </button>
+
                     </div>
                 </div>
             </form>
@@ -66,94 +71,22 @@
                         <i class="material-icons circle green">shopping_basket</i>
                         <span class="title">taxi</span>
                         <p>12.5</p>
-                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
                     </li>
                     <li class="collection-item avatar">
                         <i class="material-icons circle green">shopping_basket</i>
                         <span class="title">coca-cola</span>
                         <p>10.5</p>
-                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
                     </li>
                     <li class="collection-item avatar">
                         <i class="material-icons circle green">shopping_basket</i>
                         <span class="title">vasos</span>
                         <p>5.0</p>
-                        <a href="#!" class="secondary-content"><i class="material-icons">delete</i></a>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
                     </li>
                 </ul>
             </div>
         </div>
     </jsp:body>
 </t:template>
-<script>
-    $(document).ready(function () {
-        $("#addItemId").click(function () {
-            var createUserData = new FormData($("#formAddItemId")[0]);
-            createUserData.append("id_food_meeting", ${id_food_meeting});
-            $.ajax({
-                url: "addPaymentItem",
-                type: "post",
-                data: createUserData,
-                processData: false,
-                contentType: false,
-                cache: false,
-                success: function (data) {
-                    var button = "<td><a class='btn-floating btn-small waves-effect waves-light red delete-item'><i class='material-icons'>delete</i></a></td>";
-                    $("#items_id tr:last").after("<tr id='" + data.id + "'><td>" + data.name + "</td><td>" + data.description + "</td><td>" + data.price + "</td>" + button + "</tr>");
-                    updatePay(parseFloat(data.price));
-                    $(".delete-item").click(function () {
-                        var d = this.parentNode.parentNode.rowIndex;
-                        var aa = this;
-                        document.getElementById('items_id').deleteRow(d);
-                        deletePayItem(this.parentNode.parentNode.id);
-                        updatePayDeleted(this.parentNode.parentNode);
-                    });
-                },
-                error: function (data) {
-                    errorMessage(data.responseJSON.message);
-                }
-            });
-        });
-
-        var totalItemsPrice = $("#total_items_price_id");
-
-        var updatePay = function (num) {
-            $(".validate").val("");
-            var numAux = parseFloat(totalItemsPrice.text()) + num;
-            totalItemsPrice.text(numAux);
-        };
-
-        $(".delete-item").click(
-                function () {
-                    var d = this.parentNode.parentNode.rowIndex;
-                    var aa = this;
-                    document.getElementById('items_id').deleteRow(d);
-                    deletePayItem(this.parentNode.parentNode.id);
-                    updatePayDeleted(this.parentNode.parentNode);
-                });
-
-        var functionDeleteRow = function () {
-            var d = this.parentNode.parentNode.rowIndex;
-            var aa = this;
-            document.getElementById('items_id').deleteRow(d);
-            deletePayItem(this.parentNode.parentNode.id);
-            updatePayDeleted(this.parentNode.parentNode);
-        };
-
-        var deletePayItem = function (index) {
-            var index_value = {"index_key": "index"};
-            $.ajax({
-                url: '/action/deletePaymentItem?index=' + index,
-                success: function (result) {
-                    console.log("resultt : " + result);
-                }
-            });
-        };
-
-        var updatePayDeleted = function (numWrapper) {
-            var num = numWrapper.children[2].textContent;
-            var numAux = parseFloat(totalItemsPrice.text()) - parseFloat(num);
-            totalItemsPrice.text(numAux);
-        };
-    });
-</script>

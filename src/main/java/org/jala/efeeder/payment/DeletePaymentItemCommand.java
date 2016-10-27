@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jala.efeeder.payment;
 
 import java.sql.Connection;
@@ -29,7 +24,7 @@ public class DeletePaymentItemCommand implements CommandUnit {
 			PreparedStatement preparedStatement = connection.prepareStatement("delete from payment where id=?");
 			preparedStatement.setInt(1, index);
 			preparedStatement.executeUpdate();
-			return OutBuilder.response("text/plain", "ya se hizo lo nesesario");
+			return OutBuilder.response("text/plain", "correctly!!");
 		} catch (SQLException ex) {
 			return OutBuilder.newError(ex);
 		}
