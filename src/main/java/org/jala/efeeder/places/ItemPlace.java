@@ -3,7 +3,6 @@ package org.jala.efeeder.places;
 import lombok.Data;
 
 @Data
-
 public class ItemPlace {
 	private int id;
 	private String name;

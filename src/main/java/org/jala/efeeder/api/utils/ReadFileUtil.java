@@ -20,13 +20,12 @@ public class ReadFileUtil {
 		CSVReader reader = null;
 
 		try {
-
 			reader = new CSVReader(new InputStreamReader(fileItem.getInputStream(), "UTF-8"));
 
 			String[] nextLine;
 			int count=0;
 			while ((nextLine = reader.readNext()) != null) {
-				if (nextLine[0].startsWith("#") || nextLine[0].length() == 0) {
+				if (nextLine[0].startsWith("#") || nextLine[0].trim().length() == 0) {
 					continue;
 				}
 				parameters.put(String.valueOf(count), Arrays.asList(nextLine));
