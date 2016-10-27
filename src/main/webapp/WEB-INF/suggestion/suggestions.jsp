@@ -79,6 +79,7 @@
 	    </div>
 	</div>
         <div style="height:25px;"> </div>
+		<input type="hidden" id="voting_time" value="${votingTime}" />
         <canvas id="mainCanvas" style="width:82.3vw;height:80vh;"/>
     </jsp:body>    
 </t:template>

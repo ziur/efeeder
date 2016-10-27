@@ -52,6 +52,7 @@
 		<script src="/assets/js/lib/materialize.clockpicker.js"></script>
 		<script src="/assets/js/lib/jquery.validate.js"></script>
 		<script src="/assets/js/lib/jquery.uploadPreview.min.js"></script>
+		<script type="text/javascript" src="/assets/js/lib/jquery.countdown.js"></script>
 		<script src="/assets/js/communication-service.js"></script>
 		<script src="/assets/js/formPlaceValidation.js"></script>
 

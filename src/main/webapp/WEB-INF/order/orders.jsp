@@ -14,7 +14,7 @@
 	</jsp:attribute>
 
 	<jsp:body>
-		<div class="row">
+		<div class="row">	
 		</div>
 
 		<div class="row">
@@ -24,6 +24,7 @@
 						<div id="my-order-container">
 							<i class="material-icons circle">perm_identity</i>
 							<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
+							<input type="hidden" id="order_time" value="${orderTime}" />
 							<c:if test="${foodMeeting.status == 'Order'}">
 								<div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
 									<input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}" />
