@@ -4,13 +4,12 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.SettingsManager;
 import org.jala.efeeder.api.command.impl.DefaultIn;
@@ -20,6 +19,8 @@ import org.jala.efeeder.api.command.impl.DefaultIn;
  * @author alexander_castro
  */
 public class FileResourceManager {
+	
+	final static Logger logger = Logger.getLogger(FileResourceManager.class);
 
 	private static String DATA_KEY = "image_folder_path";
 	private static String EMPTY = "empty";
@@ -27,6 +28,8 @@ public class FileResourceManager {
 	public static String IMG_FILE = "img";
 	private File diretorio;
 	private final ServletContext context;
+	private final String SAVE_IMAGE = "saveImage";
+	private final String IMPORT_FILE = "importFile";
 
 	public FileResourceManager(ServletContext context) {
 		this.context = context;
@@ -45,11 +48,11 @@ public class FileResourceManager {
 				if (!item.isFormField()) {
 					
 					switch(typeProcess){
-						case "saveImage":
+						case SAVE_IMAGE:
 							String path = processUploadedFile(item, request.getSession().getId());
 							in.addParameter(item.getFieldName(), Arrays.asList(path));
 							break;
-						case "importFile":
+						case IMPORT_FILE:
 							in.addParameter(ReadFileUtil.readCSVFile(item));
 							break;
 					};
@@ -61,7 +64,7 @@ public class FileResourceManager {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(FileResourceManager.class.getName()).log(Level.SEVERE, null, e);
+			logger.error("Error at the moment to proccess the file tu upload", e);
 		}
 		return in;
 	}
