@@ -3,7 +3,10 @@ $(document).ready(function () {
 	var idFoodMeeting = $('#id-food-meeting').val();
 	var orderListContainer = $("#order-list");
 	var myOrderContainer = $("#my-order-container");
-	var orderList = new OrderList(idFoodMeeting, idUser, orderListContainer);
+	var foodMeetingInfo = new FoodMeetingInfo($("#food-meeting-info"));
+	foodMeetingInfo.init();
+	var toastMessage = new ToastMessage();
+	var orderList = new OrderList(idFoodMeeting, idUser, orderListContainer, toastMessage);
 
 	$(function () {
 		var communicationService = new CommunicationService();
@@ -28,7 +31,7 @@ $(document).ready(function () {
 
 		communicationService.connect('ws://' + location.host + '/ws', idFoodMeeting);
 
-		var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, communicationService);
+		var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, communicationService, toastMessage);
 		myOrder.init();
 
 		var paymentButton = new PaymentButton(idFoodMeeting, idUser, communicationService);
@@ -36,12 +39,13 @@ $(document).ready(function () {
 	});
 });
 
-var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
+var OrderList = function (idFoodMeeting, idUser, orderListContainer, toastMessage) {
 	this.idFoodMeeting = idFoodMeeting;
 	this.idUser = idUser;
 	this.orderListContainer = orderListContainer;
 	this.orders = [];
 	this.orderTemplate;
+	this.toastMessage = toastMessage;
 
 	var self = this;
 
@@ -49,7 +53,7 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 		orderTemplate = template;
 		$.post('/action/getOrdersByFoodMeeting', {idFoodMeeting: idFoodMeeting}).done(function (orders) {
 			_.each(orders, function (order) {
-				addOrder(order);
+				addOrder(order, false);
 			});
 		});
 	});
@@ -62,7 +66,7 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 		orderEvent.user = userProp;
 	};
 
-	var addOrder = function (newOrder) {
+	var addOrder = function (newOrder, showToast) {
 		fixUserProperty(newOrder);
 
 		var $orderTemplate = $.templates(orderTemplate);
@@ -79,6 +83,9 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 		var $newOrder = $($orderTemplate.render(data));
 		orderListContainer.append($newOrder);
 		self.orders.push(newOrder);
+		if (showToast) {
+			self.toastMessage.showMessage(self.toastMessage.OrderStates.NEW, userOwner.name + " " + userOwner.lastName);
+		}
 	};
 
 	var updateOrder = function (order, index) {
@@ -91,6 +98,7 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 		orderCostHTML.text(order.cost);
 		userOrderHTML.text(order.user.name + " " + order.user.lastName);
 		self.orders[index] = order;
+		self.toastMessage.showMessage(self.toastMessage.OrderStates.UPDATE, order.user.name + " " + order.user.lastName);
 	};
 
 	var addOrUpdateOrder = function (orderEvent) {
@@ -112,7 +120,7 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 		if (updateIndex > -1) {
 			updateOrder(orderEvent, updateIndex);
 		} else {
-			addOrder(orderEvent);
+			addOrder(orderEvent, true);
 		}
 	};
 
@@ -123,8 +131,9 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer) {
 	};
 };
 
-var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationService) {
+var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationService, toastMessage) {
 	this.myOrderContainer = myOrderContainer;
+	this.userOrder = myOrderContainer.children('#my-user-order');
 	this.orderDetails = myOrderContainer.children('#my-order-details');
 	this.orderDetailsInput = myOrderContainer.children('#my-order-details-input');
 	this.orderCost = myOrderContainer.children('#my-order-cost');
@@ -134,6 +143,7 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationSe
 	this.idFoodMeeting = idFoodMeeting;
 	this.idUser = idUser;
 	this.communicationService = communicationService;
+	this.toastMessage = toastMessage;
 
 	var self = this;
 
@@ -179,6 +189,7 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationSe
 			self.orderCost.text(orderCostText);
 
 			saveMyOrder();
+			self.toastMessage.showMessage(self.toastMessage.OrderStates.UPDATE_MY_ORDER, self.userOrder.text());
 		}
 	}
 
@@ -278,5 +289,57 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 		init: function () {
 			addEvents();
 		}
+	};
+};
+
+var FoodMeetingInfo = function (foodMeetingInfoContainer) {
+	this.eventDate = foodMeetingInfoContainer.find("#food-meeting-date");
+
+	var self = this;
+
+	function fixEventDate() {
+		self.eventDate.text(moment(self.eventDate.text()).calendar());
+	}
+
+	return {
+		init: function () {
+			fixEventDate();
+		}
+	};
+};
+
+var ToastMessage = function () {
+	this.OrderStates = {
+		NEW: 0,
+		UPDATE: 1,
+		UPDATE_MY_ORDER: 2
+	};
+	this.duration = 5000;
+
+	var self = this;
+
+	function showMessage(orderStates, userName) {
+		var toastContent;
+		switch (orderStates) {
+			case self.OrderStates.NEW:
+				toastContent = $('<span>' + userName + ' has added an order!</span>');
+				break;
+			case self.OrderStates.UPDATE:
+				toastContent = $('<span>' + userName + ' has updated an order!</span>');
+				break;
+			case self.OrderStates.UPDATE_MY_ORDER:
+				toastContent = $('<span>My order has been updated successfully!</span>');
+				break;
+			default:
+				return false;
+		}
+		Materialize.toast(toastContent, self.duration);
+	}
+
+	return {
+		showMessage: function (orderStates, userName) {
+			showMessage(orderStates, userName);
+		},
+		OrderStates: self.OrderStates
 	};
 };

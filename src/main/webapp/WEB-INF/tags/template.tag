@@ -23,6 +23,7 @@
 		<link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
 		<link rel="stylesheet" href="/assets/css/place.css">
 		<link rel="stylesheet" href="/assets/css/imageUpload.css">
+		<link rel="stylesheet" href="/assets/css/nouislider.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	</head>
 
@@ -53,9 +54,10 @@
 		<script src="/assets/js/lib/jquery.validate.js"></script>
 		<script src="/assets/js/lib/jquery.uploadPreview.min.js"></script>
 		<script type="text/javascript" src="/assets/js/lib/jquery.countdown.js"></script>
+		<script src="/assets/js/lib/nouislider.min.js"></script>
 		<script src="/assets/js/communication-service.js"></script>
 		<script src="/assets/js/formPlaceValidation.js"></script>
-
+		<script src="/assets/js/mainScript.js"></script>
 		<jsp:invoke fragment="javascript"/>
 
 	</body>
