@@ -22,5 +22,5 @@
                 <a href="#" data-activates="slide-out" class="menu-navbar"><i class="material-icons">menu</i></a>
 			</div>
 		</nav>
-	</div>						
+	</div>	
 </c:if>
