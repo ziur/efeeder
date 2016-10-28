@@ -94,8 +94,8 @@
 		</div>
 	    </div>
 	</div>
-		<input type="hidden" id="voting_time" value="${votingTime}" />
-		<canvas id="mainCanvas"/>	
+	<input type="hidden" id="voting_time" value="${votingTime}" />
+	<canvas id="mainCanvas"/>	
 	</jsp:body>
 </t:template>
 

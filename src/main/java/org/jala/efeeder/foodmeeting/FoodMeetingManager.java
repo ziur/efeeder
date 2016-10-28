@@ -66,7 +66,7 @@ public class FoodMeetingManager {
 		}
 		return null;
 	}
-	
+
 	public void setStatusById(int id, int idUser, FoodMeetingStatus newStatus) throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STATUS_BY_ID);
 		preparedStatement.setString(1, newStatus.name());

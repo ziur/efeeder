@@ -772,7 +772,7 @@ function showSideBar()
 		nav.style.visibility = 'visible';
 		nav.style.left = '0px';
 	}
-	
+
 	m_uiSystem.stopInteracting();
 	m_sideBarHidden = false;
 }
