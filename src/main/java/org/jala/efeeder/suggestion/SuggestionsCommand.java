@@ -48,6 +48,6 @@ public class SuggestionsCommand implements CommandUnit {
 	
 	private Timestamp getSuggestionTime(Connection connection, int idFoodMeeting) throws SQLException {
 		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
-		return foodMeetingManager.getStatusTime(idFoodMeeting, "Voting");
+		return foodMeetingManager.getFoodMeetingById(idFoodMeeting).getVotingDate();
 	}
 }

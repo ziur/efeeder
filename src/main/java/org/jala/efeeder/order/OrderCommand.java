@@ -47,7 +47,7 @@ public class OrderCommand implements CommandUnit {
 
 	private Timestamp getOrderTime(Connection connection, String idFoodMeeting) throws SQLException {
 		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
-		return foodMeetingManager.getStatusTime(Integer.parseInt(idFoodMeeting), "Order");
+		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting)).getOrderDate();
 	}
 	
 	private List<Order> getOrders(Connection connection, String idFoodMeeting) throws SQLException {
