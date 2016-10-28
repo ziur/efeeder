@@ -7,6 +7,7 @@
         <script src="/assets/js/payment.js"></script>
     </jsp:attribute>
     <jsp:body>
+        <input id="input-food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
         <div class="row">
             <div class="col-sm-12">
                 <ul class="collection" >
@@ -64,21 +65,24 @@
                 <div class="row"style="display:${estate}">
                     <div class="input-field col s4">
                         <i class="material-icons prefix">library_add</i>
-                        <input id="icon_prefix" type="text" name="item_name" class="validate">
-                        <label for="icon_prefix">item name</label>
+                        <input id="input-item-name-id" type="text" name="item_name" class="validate">
+                        <label for="input-item-name-id">item name</label>
                     </div>
                     <div class="input-field col s4">
                         <i class="material-icons prefix">comment</i>
-                        <input id="icon_telephone" type="text" name="item_description" class="validate">
-                        <label for="icon_telephone">description</label>
+                        <input id="input-item-description-id" type="text" name="item_description" class="validate">
+                        <label for="input-item-description-id">description</label>
                     </div>
                     <div class="input-field col s2">
                         <i class="material-icons prefix">payment</i>
-                        <input id="icon_pay" type="number" name="item_price" class="validate">
-                        <label for="icon_pay">price</label>
+                        <input id="input-item-price-id" type="number" name="item_price" class="validate">
+                        <label for="input-item-price-id">price</label>
                     </div>
                     <div class="col s2">
-                        <a id="addItemId" class="btn-floating btn-large waves-effect waves-light green"><i class="material-icons">add</i></a>
+                        <button id="addItemId" class="btn waves-effect waves-light" type="submit">ADD
+                            <i class="material-icons right">add</i>
+                        </button>
+
                     </div>
                 </div>
             </form>
@@ -89,53 +93,49 @@
                             <th data-field="id">Item Name</th>
                             <th data-field="name">Description</th>
                             <th data-field="price">Item Price</th>
+                            <th></th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <c:forEach var="item" items="#{items}">
-                            <tr>
-                                <td>${item.name}</td>
-                                <td>${item.description}</td>
-                                <td>${item.price}</td>
-                            </tr>
-                        </c:forEach>
+                        <label hidden="true">${item.id}</label>
+                        <tr id="${item.id}">
+                            <td>${item.name}</td>
+                            <td>${item.description}</td>
+                            <td>${item.price}</td>
+                            <td>
+                                <a class="btn-floating btn-small waves-effect waves-light red delete-item" style="display:${estate}"><i class="material-icons">delete</i></a>
+                            </td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
                 <h5 id="total_items_price_id" class="right-align">${total_item_price}</h5>
             </div>
+            <div class="row">
+                <ul class="collection">
+                    <li class="collection-header"><h4>Extra Items</h4></li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">taxi</span>
+                        <p>12.5</p>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">coca-cola</span>
+                        <p>10.5</p>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <i class="material-icons circle green">shopping_basket</i>
+                        <span class="title">vasos</span>
+                        <p>5.0</p>
+                        <a class="secondary-content"><i class="material-icons">delete</i></a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </jsp:body>
 </t:template>
-<script>
-    $(document).ready(function () {
-        $("#addItemId").click(function () {
-            var createUserData = new FormData($("#formAddItemId")[0]);
-            createUserData.append("id_food_meeting", ${id_food_meeting});
-            $.ajax({
-                url: "addPaymentItem",
-                type: "post",
-                data: createUserData,
-                processData: false,
-                contentType: false,
-                cache: false,
-                success: function (data) {
-                    $("#items_id tr:last").after("<tr><td>" + data.name + "</td><td>" + data.description + "</td><td>" + data.price + "</td></tr>");
-                    updatePay(parseFloat(data.price));
-                },
-                error: function (data) {
-                    errorMessage(data.responseJSON.message);
-                }
-            });
-        });
-
-        var totalItemsPrice = $("#total_items_price_id");
-
-        var updatePay = function (num) {
-            $(".validate").val("");
-            var numAux = parseFloat(totalItemsPrice.text()) + num;
-            totalItemsPrice.text(numAux);
-            console.log("fff : " + numAux)
-        };
-    });
-</script>
