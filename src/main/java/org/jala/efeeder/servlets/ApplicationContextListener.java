@@ -57,12 +57,14 @@ public class ApplicationContextListener implements ServletContextListener {
         SettingsManager settingsFactory = new SettingsManager();
 
         try {
-            String settingPath = System.getProperty("app.settings");
+            String settingPath = System.getenv("EFEEDER_SETTINGS");
             InputStream input;
             if (settingPath == null || !settingPath.isEmpty()) {
+                System.out.println("Reading settings from classpath (DEV mode): " + SETTINGS_PROPERTIES_PATH);
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
                 input = classLoader.getResourceAsStream(SETTINGS_PROPERTIES_PATH);
             } else {
+                System.out.println("Reading settings from file: " + settingPath);
                 input = new FileInputStream(settingPath);
             }
             prop.load(input);
