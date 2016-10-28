@@ -3,6 +3,7 @@ package org.jala.efeeder.servlets;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ import org.jala.efeeder.api.command.ResponseAction;
 import org.jala.efeeder.api.command.SettingsManager;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
-import org.jala.efeeder.api.utils.ImageResourceManager;
+import org.jala.efeeder.api.utils.FileResourceManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 import org.jala.efeeder.user.User;
 
@@ -36,6 +37,13 @@ import org.jala.efeeder.user.User;
 public class CommandServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5585317604797123555L;
+	
+	private static final Map<String, String> FileAction = new HashMap<String, String>(){
+        {
+            put("/action/CreateUpdateUser", "saveImage");
+            put("/action/ImportPlace", "importFile");
+        }
+    };
 
 	private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
@@ -71,8 +79,8 @@ public class CommandServlet extends HttpServlet {
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			In parameters;
 			if (isMultipart) {
-				ImageResourceManager sourceImageM = new ImageResourceManager(getServletContext());
-				parameters = sourceImageM.saveImage(request);
+				FileResourceManager sourceImageM = new FileResourceManager(getServletContext());
+				parameters = sourceImageM.process(request, FileAction.get(request.getRequestURI()));
 			} else {
 				parameters = InBuilder.createIn(request);
 			}
@@ -82,7 +90,7 @@ public class CommandServlet extends HttpServlet {
 
 			parameters.setUser(User.class.cast(session.getAttribute("user")));
 			parameters.setContext(getServletContext());
-			parameters.addParameter("image_path", Arrays.asList(getImagePath()));
+			parameters.setPathEfeederImages(getImagePath());
 
 			Out out = executor.executeCommand(parameters, getCommand(request));
 
@@ -160,6 +168,6 @@ public class CommandServlet extends HttpServlet {
 				.getAttribute(SettingsManager.SETTINGS_FACTORY_KEY);
 
 		String startPath = "" + settings.getData("image_folder_path");
-		return Paths.get(startPath, ImageResourceManager.ASSETS_FILE, ImageResourceManager.IMG_FILE).toString();
+		return Paths.get(startPath, FileResourceManager.ASSETS_FILE, FileResourceManager.IMG_FILE).toString();
 	}
 }

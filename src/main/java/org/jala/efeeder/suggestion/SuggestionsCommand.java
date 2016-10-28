@@ -13,6 +13,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.foodmeeting.FoodMeetingManager;
+import org.jala.efeeder.places.Place;
 
 /**
  *
