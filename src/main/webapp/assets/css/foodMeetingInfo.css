@@ -68,7 +68,6 @@ label#label-collpase-card:before, label#label-collpase-card:after {
 	transition: all 1s ease-in-out  0.4s;
 }
 
-
 div#food-meeting-info div.card {
 	position: relative;
 }
