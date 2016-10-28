@@ -1,0 +1,84 @@
+#food-meeting-card-content {
+	padding: 0;
+}
+
+#food-meeting-card-content .collapsible-body {
+	padding: 2rem;
+}
+
+#food-meeting-card-content .collapsible-body p {
+	padding: 0;
+}
+
+#food-meeting-details {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#food-meeting-image {
+	height: 280px;
+}
+
+#food-meeting-info-tabs {
+	margin-bottom: 20px;
+}
+
+label#label-collpase-card {
+	position: absolute;
+	right: 40px;
+	top: 10px;
+	width: 0;
+	height: 0;
+	z-index: 2;
+	color: white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	cursor: pointer;
+}
+
+label#label-collpase-card:before, label#label-collpase-card:after {
+	display:none;
+}
+
+#food-meeting-title {
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	bottom: 220px;
+
+	-webkit-transition: all 1s ease-in-out 0.2s;
+	-moz-transition: all 1s ease-in-out  0.2s;
+	-o-transition: all 1s ease-in-out  0.2s;
+	transition: all 1s ease-in-out  0.2s;
+}
+
+#input-collapse-card:checked~div.content-card-collapsable {
+	max-height: 2000px;
+
+	-webkit-transition: all 1.5s ease-in-out;
+	-moz-transition: all 1.5s ease-in-out;
+	-o-transition: all 1.5s ease-in-out;
+	transition: all 1.5s ease-in-out;
+}
+
+#input-collapse-card:checked~div.content-card-collapsable #food-meeting-title {
+	bottom: 0;
+
+	-webkit-transition: all 1s ease-in-out 0.4s;
+	-moz-transition: all 1s ease-in-out  0.4s;
+	-o-transition: all 1s ease-in-out  0.4s;
+	transition: all 1s ease-in-out  0.4s;
+}
+
+div#food-meeting-info div.card {
+	position: relative;
+}
+div.content-card-collapsable {
+	height: auto;
+	max-height: 45px;
+	display: block;
+	overflow-y: hidden;
+
+	-webkit-transition: all 1.5s ease-in-out;
+	-moz-transition: all 1.5s ease-in-out;
+	-o-transition: all 1.5s ease-in-out;
+	transition: all 1.5s ease-in-out;
+}
