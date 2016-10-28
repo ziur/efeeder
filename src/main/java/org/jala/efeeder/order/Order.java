@@ -15,13 +15,15 @@ public class Order {
 	private User user;
 	private String details;
 	private Double cost;
+        private Double payment;
 
-	public Order(int idFoodMeeting, int idUser, String details, Double cost) {
+	public Order(int idFoodMeeting, int idUser, String details, Double cost, Double payment) {
 		this.idFoodMeeting = idFoodMeeting;
 		this.idUser = idUser;
 		this.user = null;
 		this.details = details;
 		this.cost = cost;
+                this.payment = payment;
 	}
 
 	public void setUser(User user) {

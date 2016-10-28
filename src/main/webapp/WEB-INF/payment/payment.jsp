@@ -4,11 +4,61 @@
 
 <t:template>
     <jsp:attribute name="javascript">
+        <script src="/assets/js/payment.js"></script>
     </jsp:attribute>
     <jsp:body>
         <div class="row">
-            Rodri's block
-        </div>
+            <div class="col-sm-12">
+                <ul class="collection" >
+                    <div id="my-order-container">
+                        <li class="collection-item avatar">
+
+                            <i class="material-icons circle">perm_identity</i>
+                            <input type="hidden" id="id-food-meeting" value="${id_food_meeting}"/>
+                            <div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
+                                <input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}"/>
+                            </div>
+                            <span class="my-order-details" class="title">${myOrder.details}</span>
+                            <br/>
+                            <p class="my-order-cost">${myOrder.cost}</p>
+                            <p>${myUser.name} ${myUser.lastName}</p>                            
+                            <c:if test="${buyer.getUserId() == user.getId()}">
+                                <input type="number" id="my-order-cost-input" value="${myOrder.payment}" placeholder="Payment" />
+                                <p class="my-order-cost" style="display: none;">${myOrder.payment}</p>
+                                <a href="#" class="btn-edit-my-order btn-edit secondary-content">
+                                    <i class="material-icons">crop_square</i>
+                                </a>
+                            </c:if>
+
+                        </li>
+
+                        <c:forEach var="order" items="#{orders}">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle">perm_identity</i>
+                                <span class="my-order-details" class="title">${order.details}</span>
+                                <br/>
+                                <p class="my-order-cost">${order.cost}</p>
+                                <p>${order.user.name} ${order.user.lastName}</p>
+                                <c:if test="${buyer.getUserId() == user.getId()}">
+                                    <input type="number" id="my-order-cost-input" value="${order.payment}" placeholder="Payment" />
+                                    <p class="my-order-cost" style="display: none;">${order.payment}</p>
+                                    <a href="#" class="btn-edit-my-order btn-edit secondary-content">
+                                        <i class="material-icons">crop_square</i>
+                                    </a>
+                                </c:if>
+                            </li>
+                        </c:forEach>
+                    </div>
+                </ul>
+            </div>
+            <c:if test="${foodMeeting.userOwner.id == myUser.id}">
+                <div class="col-sm-12">
+                    <div class="fixed-action-btn horizontal">
+                        <a id="btn-payment" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">payment</i></a>
+                    </div>
+                </div>
+            </c:if>
+        </div>   
         <div class="row">
             <form id="formAddItemId" class="row col s12">
                 <div class="row"style="display:${estate}">
@@ -70,7 +120,7 @@
                 contentType: false,
                 cache: false,
                 success: function (data) {
-                    $("#items_id tr:last").after("<tr><td>"+data.name+"</td><td>"+data.description+"</td><td>"+data.price+"</td></tr>");
+                    $("#items_id tr:last").after("<tr><td>" + data.name + "</td><td>" + data.description + "</td><td>" + data.price + "</td></tr>");
                     updatePay(parseFloat(data.price));
                 },
                 error: function (data) {
@@ -78,12 +128,12 @@
                 }
             });
         });
-        
+
         var totalItemsPrice = $("#total_items_price_id");
-        
-        var updatePay = function (num){
+
+        var updatePay = function (num) {
             $(".validate").val("");
-            var numAux = parseFloat(totalItemsPrice.text())+num;
+            var numAux = parseFloat(totalItemsPrice.text()) + num;
             totalItemsPrice.text(numAux);
             console.log("fff : " + numAux)
         };
