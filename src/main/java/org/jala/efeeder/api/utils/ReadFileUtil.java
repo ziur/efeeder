@@ -17,10 +17,7 @@ public class ReadFileUtil {
 
 		Map<String, List<String>> parameters = new HashMap<>();
 
-		CSVReader reader = null;
-
-		try {
-			reader = new CSVReader(new InputStreamReader(fileItem.getInputStream(), "UTF-8"));
+		try (CSVReader reader = new CSVReader(new InputStreamReader(fileItem.getInputStream(), "UTF-8"));) {
 
 			String[] nextLine;
 			int count=0;
@@ -33,14 +30,7 @@ public class ReadFileUtil {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (reader != null)reader.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
 		}
-
 		return parameters;
 	}
 }
