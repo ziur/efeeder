@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import org.jala.efeeder.user.UserManager;
 
@@ -13,7 +12,7 @@ public class FoodMeetingManager {
 
 	private static final String SELECT_BY_ID_FOOD_MEETING = "SELECT id, name, image_link, status, event_date, created_at, "
 			+ "voting_time, order_time, payment_time, id_user FROM food_meeting WHERE id=?";
-	private static final String UPDATE_STATUS_BY_ID = "UPDATE food_meeting SET status=? WHERE id=? AND id_user=?";
+	private static final String UPDATE_STATUS_BY_ID = "UPDATE food_meeting SET status=? WHERE id=? AND id_user=?;";
 
 	private final Connection connection;
 
@@ -38,7 +37,7 @@ public class FoodMeetingManager {
 
 		return foodMeeting;
 	}
-	
+
 	public void setStatusById(int id, int idUser, FoodMeetingStatus newStatus) throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STATUS_BY_ID);
 		preparedStatement.setString(1, newStatus.name());

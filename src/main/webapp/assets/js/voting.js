@@ -772,7 +772,7 @@ function showSideBar()
 		nav.style.visibility = 'visible';
 		nav.style.left = '0px';
 	}
-	
+
 	m_uiSystem.stopInteracting();
 	m_sideBarHidden = false;
 }
@@ -868,8 +868,32 @@ function run()
 	});	
 }
 
+function initChronometer() {
+	$(".countdown").attr("data-date", $('#voting_time').val());
+	$('.countdown').countdown({
+		refresh: 1000,
+		offset: 0,
+		onEnd: function() {
+			return;
+		},
+		render: function(date) {
+			if (date.days !== 0) {
+				this.el.innerHTML = date.days + " DAYS";
+			} else {
+				this.el.innerHTML = this.leadingZeros(date.hours) + ":" +
+				this.leadingZeros(date.min) + "." +
+				this.leadingZeros(date.sec);
+				if (date.min <= 30 && date.hours === 0){
+					$(".countdown").css('color', 'red');
+				}
+			}
+		}
+	});
+}
+
 function initialize()
 {
+	initChronometer();
 	$('#mainSideNav').get(0).style = "position:fixed;visibility:hidden;width:300px;left:-300px;top:" +
 		$("nav").height() + "px;margin:0;padding-bottom:60px;background-color:#fff; overflow:auto;z-index:1;transition:visibility 1s,left 1s;"
 	$('#mainCanvas').get(0).className = "";
