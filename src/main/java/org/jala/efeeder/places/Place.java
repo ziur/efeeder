@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jala.efeeder.suggestion;
+package org.jala.efeeder.places;
 
 import lombok.Data;
 
@@ -38,6 +38,9 @@ public class Place {
 		this.phone = phone;
 		this.direction = direction;
 		this.image_link = image_link;
+	}
+	public Place(String name, String description, String phone, String direction, String image_link) {
+		this(0, name, phone, direction, image_link);
 	}
 	
 	public Place(int id, String name, String phone, String direction, String img_link) {

@@ -10,7 +10,6 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
-import org.jala.efeeder.suggestion.Place;
 
 /**
  *

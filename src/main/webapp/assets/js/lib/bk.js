@@ -446,20 +446,31 @@ function bkObjectSetSelected(o, state = true)
 	if (state) o.flags |= 0x80000000; else o.flags &= 0x7FFFFFFF;
 }
 
-let BkArea = function(coord, ratio = 1, type = 0, margin = 0.05, padding = 0.1, alignmentFlags = 0)
+let BkArea = function(coord, ratio, type, margin, padding, alignmentFlags)
 {
+	if (coord == null) coord = null;
 	this.coord = coord;
+	if (ratio == null) ratio = 1;
 	this.ratio = ratio;
-	this.padding = padding;
-	this.margin = margin;
 	// Type 0: Cover all the area, follow the ratio when possible.
 	// Type 1: Follow the ratio but cover at least 25% of the area.
 	// Type 2: Mandatory ratio
-	this.areaType = type;
+	if (type == null) type = 0;
+	this.areaType = type;	
+	if (margin == null) margin = 0.04;
+	this.margin = margin;	
+	if (padding == null) padding = 0.1;
+	this.padding = padding;
+
 	// Bit 0x1 Flip horizontally
 	// Bit 0x2 Flip vertically
 	// Bit 0x4 Center horizontally
 	// Bit 0x8 Center vertically
+	// Bit 0x10 No left margin
+	// Bit 0x20 No right margin
+	// Bit 0x40 No top margin
+	// Bit 0x80 No bottom margin
+	if (alignmentFlags == null) alignmentFlags = 0;	
 	this.alignmentFlags = alignmentFlags;
 }
 
@@ -467,8 +478,9 @@ let BkSystem = function(canvasName, ratio = null)
 {
 	this.item = [];
 	this.area = [];
-	this.__isInteracting = false;
-	this.__isDrawing = false;
+	this._isInteracting = false;
+	this.__wasInteracting = false;
+	this._isDrawing = false;
 	this.disabledColor = null;
 	this.transform = new BkTransform(1, 1);
 	this.canvas = document.getElementById(canvasName);
@@ -493,30 +505,54 @@ let BkSystem = function(canvasName, ratio = null)
 	
 	this.bgImg = null;
 	this.bgImgAlpha = null;
+	this.canvas.onclick = this.doOnClick.bind(this);	
 };
+
+/**
+ * Use this for events triggered several times and you only want to execute a
+ * function after the last event was triggered after certain time has elapsed.
+ * @returns A function that receives: a function, a delay and an id denoting
+ *          the group of events to be consolidated.
+ */
+let bkDelayCallbackAndExecuteOnce = (function()
+{
+	var delayCallbackTimers = {};
+	return function (callback, delayMs, id) {
+		if (delayCallbackTimers[id])
+		{
+			clearTimeout(delayCallbackTimers[id]);
+		}
+		delayCallbackTimers[id] = setTimeout(callback, delayMs);
+	};
+}());
+
+BkSystem.prototype.doOnResize = function()
+{
+	bkDelayCallbackAndExecuteOnce(this.resize.bind(this), 200, 'resize');
+}
 
 BkSystem.prototype.resize = function()
 {
+	this.ctx.save();
 	if (this.onresize) this.onresize();
-	
+
 	this.width = this.canvas.clientWidth;
 	this.height = this.canvas.clientHeight;
 	this.canvas.width = this.width;
 	this.canvas.height = this.height;
-	this.__screenCoord = new BkCoord(this.width * 0.5, this.height * 0.5, this.width, this.height);
-
+	this.__screenCoord = new BkCoord(
+		this.width * 0.5, this.height * 0.5, this.width, this.height);
 	this.transform.resize(this.width, this.height, this.ratio);
-	
 	this.redistribute(false);
-	
+
 	// Execute custom resize for each UI object
 	let count = this.item.length;
 	for (let i = 0; i < count; ++i)
 	{
 		this.item[i].resize();
 	}
-
 	this.redraw = true;
+	this.ctx.restore();
 }
 
 function bkOnImageLoad()
@@ -829,8 +865,18 @@ function bkMainUpdateFrame()
 
 BkSystem.prototype.doOnClick = function(e)
 {
-	if (this.onclick) this.onclick();
+	if (!this._isInteracting)
+	{
+		if (this.__wasInteracting)
+		{
+			this.__wasInteracting = false;
+			return false;
+		}
+		
+		this.startInteracting();
+	}
 	
+	if (this.onclick) this.onclick();
 	return false;
 }
 
@@ -996,12 +1042,12 @@ BkSystem.prototype.doOnContextMenu = function(e)
  */
 BkSystem.prototype.startDrawing = function()
 {
-	if (this.__isDrawing === true) return;
-	this.__isDrawing = true;
+	if (this._isDrawing === true) return;
+	this._isDrawing = true;
 	
 	let first = __bkSystems.length === 0;
 	
-	window.addEventListener("resize", this.resize.bind(this), false);
+	window.addEventListener("resize", this.doOnResize.bind(this), false);
 	
 	this.resize();	
 	
@@ -1011,10 +1057,10 @@ BkSystem.prototype.startDrawing = function()
 
 BkSystem.prototype.stopDrawing = function()
 {
-	if (this.__isDrawing === false) return;
-	this.__isDrawing = false;
+	if (this._isDrawing === false) return;
+	this._isDrawing = false;
 	
-	window.removeEventListener("resize", this.resize.bind(this), false);
+	window.removeEventListener("resize", this.doOnResize.bind(this), false);
 	
 	let i = __bkSystems.indexOf(this);
 	if (i !== -1) __bkSystems.splice(i, 1);
@@ -1025,7 +1071,7 @@ BkSystem.prototype.stopDrawing = function()
  */
 BkSystem.prototype.startInteracting = function()
 {
-	if (this.__isInteracting === true) return;
+	if (this._isInteracting === true) return;
 	
 	if (this.onmousemove || this.onmousehover)
 	{
@@ -1033,12 +1079,12 @@ BkSystem.prototype.startInteracting = function()
 	}
 	this.canvas.onmouseout = this.doOnMouseOut.bind(this);
 	this.canvas.onmouseenter = this.doOnMouseEnter.bind(this);
-	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
 	this.canvas.onmouseup = this.doOnMouseUp.bind(this);
-	this.canvas.onclick = this.doOnClick.bind(this);
 	this.canvas.oncontextmenu = this.doOnContextMenu.bind(this);
+	this.canvas.onmousedown = this.doOnMouseDown.bind(this);
 	
-	this.__isInteracting = true;
+	this._isInteracting = true;
+	if (this.disabledColor != null) this.redraw = true;
 }
 
 /**
@@ -1046,17 +1092,18 @@ BkSystem.prototype.startInteracting = function()
  */
 BkSystem.prototype.stopInteracting = function()
 {
-	if (this.__isInteracting === false) return;
+	if (this._isInteracting === false) return;
+	this.__wasInteracting = true;
 	
 	this.canvas.onmousemove = null;
 	this.canvas.onmouseout = null;
 	this.canvas.onmouseenter = null;
-	this.canvas.onmousedown = null;
 	this.canvas.onmouseup = null;
-	this.canvas.onclick = null;
 	this.canvas.oncontextmenu = null;
+	this.canvas.onmousedown = null;
 	
-	this.__isInteracting = false;
+	this._isInteracting = false;
+	if (this.disabledColor != null) this.redraw = true;
 }
 
 BkSystem.prototype.__draw = function()
@@ -1101,7 +1148,7 @@ BkSystem.prototype.__draw = function()
 		o.draw();
 	}
 	
-	if (!this.__isInteracting && this.disabledColor != null)
+	if (!this._isInteracting && this.disabledColor != null)
 	{
 		this.ctx.fillStyle = this.disabledColor;
 		bkFillRect(this.ctx, this.__screenCoord);
@@ -1724,7 +1771,7 @@ let BkText = function(coord, text, fontName, alignment = 4)
 {
 	this.fontName = fontName;
 	this.alignment = alignment;
-	this._fontHeight = null;
+	this.fontHeight = null;
 	this.__oldText = null;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
@@ -1733,7 +1780,7 @@ let BkText = function(coord, text, fontName, alignment = 4)
 
 BkText.prototype.resize = function()
 {
-	this._fontHeight = null;
+	this.__oldText = null;
 }
 
 BkText.prototype.draw = function(ctx, screenCoord, border = null)
@@ -1741,29 +1788,29 @@ BkText.prototype.draw = function(ctx, screenCoord, border = null)
 	if (this.text.length <= 0) return;
 	
 	let coord = this.coord.toScreenCoord(screenCoord);
-	let done = (this.__oldText === this.text) && (this._fontHeight !== null);
+	let done = this.__oldText === this.text;
 	if (!done)
 	{
-		this._fontHeight = coord.h;
+		this.fontHeight = coord.h;
 		this.__oldText = this.text;
 	}
 
 	for(;;)
 	{
-		if (this._fontHeight < 1) return;
+		if (this.fontHeight < 1) return;
 		
-		ctx.font = this._fontHeight.toString() + 'px ' + this.fontName;
+		ctx.font = this.fontHeight.toString() + 'px ' + this.fontName;
 		
 		if (done) break;
 		
 		let tw = ctx.measureText(this.text).width;
 		if (coord.w >= tw) break;
 		
-		this._fontHeight *= coord.w / tw;
+		this.fontHeight *= coord.w / tw;
 		done = true;
 	}
 
-	_bkDrawTextLines(ctx, [this.text], coord, this._fontHeight, this.alignment, border);
+	_bkDrawTextLines(ctx, [this.text], coord, this.fontHeight, this.alignment, border);
 }
 
 /**
@@ -1782,7 +1829,7 @@ let BkTextArea = function(coord, text, fontName, fontHeight = 0.5,
 {
 	this.lines = [];
 	this.fontName = fontName;
-	this._fontHeight = fontHeight;
+	this.fontHeight = fontHeight;
 	this.alignment = alignment;
 	// relative to the coord to provide when drawing
 	this.coord = coord;
@@ -1975,7 +2022,7 @@ BkTextArea.prototype.adjustLines = function(ctx, desiredWidth, desiredHeight)
 	}
 	let epsilon = 0.5;
 	let minh = 0;
-	let maxh = this._fontHeight * (this._fontHeight > 1 ? 1 : desiredHeight);
+	let maxh = this.fontHeight * (this.fontHeight > 1 ? 1 : desiredHeight);
 	
 	let useSqrtApproximation = true;
 	let besth = null;

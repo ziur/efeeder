@@ -18,7 +18,7 @@
 		<link href="/assets/css/select2.min.css" rel="stylesheet">
 		<link href="/assets/css/app.css" rel="stylesheet">
 		<link href="/assets/css/foodMeetings.css" rel="stylesheet">
-		<link href="/assets/css/order.css" rel="stylesheet">
+		<link href="/assets/css/foodMeetingInfo.css" rel="stylesheet">
 		<link rel="stylesheet" href="/assets/css/materialize.css">
 		<link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
 		<link rel="stylesheet" href="/assets/css/place.css">
