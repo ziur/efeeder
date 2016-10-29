@@ -689,7 +689,7 @@ function handleWsOnMessage(event)
 				break;
 			case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
 				m_ownerId = 0;
-				_finishAction();
+				finishAction();
 				break;
 			case "org.jala.efeeder.servlets.websocket.avro.CreateSuggestionEvent":
 				let eventMessage = item.event[eventType];
@@ -780,25 +780,14 @@ function showSideBar()
 function hideSideBar()
 {
 	if (m_sideBarHidden) return;
-<<<<<<< HEAD
-	
 	let nav = $('#mainSideNav').get(0);
+	
 	if (nav)
 	{
 		nav.style.visibility = 'hidden';
 		nav.style.left = '-' + nav.offsetWidth + 'px';
 	}
 	
-=======
-	
-	let nav = $('#mainSideNav').get(0);
-	if (nav)
-	{
-		nav.style.visibility = 'hidden';
-		nav.style.left = '-' + nav.offsetWidth + 'px';
-	}
-	
->>>>>>> master
 	m_uiSystem.startInteracting();
 	m_sideBarHidden = true;
 }
@@ -910,10 +899,15 @@ function initialize()
 	$('#mainCanvas').get(0).className = "";
 }
 
+function closeWebsocketConnection() {
+	m_comService.disconnect();
+}
+
 initialize();
 return {
 	run:run,
-	addSuggestion:addSuggestion
+	addSuggestion:addSuggestion,
+	closeWebsocketConnection: closeWebsocketConnection
 };
 
 }
@@ -925,5 +919,6 @@ $(window).on("load", function() {
 });
 
 $(window).on('beforeunload', function() {
-	m_comService.disconnect();
+	ef_votingView.closeWebsocketConnection();
 });
+

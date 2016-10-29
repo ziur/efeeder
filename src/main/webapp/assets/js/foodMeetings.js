@@ -109,6 +109,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		
 		var meetingName = _.find(self.meetings, {id: idFoodMeeting}).name;
 		
+		$("#" + idFoodMeeting + " .img-redirect-to").prop("href", getImagRedirectTo(idFoodMeeting, newStatus));
 		$("#" + idFoodMeeting + " .status").text(newStatus);		
 		var $toastContent = $('<span><a href="#' + idFoodMeeting + '" class="white-text">' + meetingName
 				+ ' is now in ' + newStatus + ' mode!'+'</a></span>');
@@ -125,7 +126,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 				page = "order";
 				break;
 			case 'Payment':
-				page = "payment";
+				page = "details";
 				break;	
 			case 'Buying':
 				page = "details";
