@@ -19,8 +19,9 @@ import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 import org.jala.efeeder.foodmeeting.FoodMeetingManager;
 import org.jala.efeeder.foodmeeting.FoodMeetingStatus;
 import org.jala.efeeder.servlets.CommandEndpoint;
-import org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent;
+import org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext.Builder;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getWinnerPlaceId;
 
@@ -55,11 +56,19 @@ public class SetWinnerPlaceCommand implements CommandUnit {
 
 		try {
 			String roomId = "vote_" + Integer.toString(feastId);
+			String homeRoomId = "createMeetingRoomId";
 			List<MessageEvent> events = new ArrayList<>();
 			events.add(MessageEvent.newBuilder().setEvent(
-					CloseVotingEvent.newBuilder().build()).build());
-			CommandEndpoint.getRoomManager().getRoom(roomId).sendMessage(
-					MessageContext.newBuilder().setUser(0).setRoom(roomId).setEvents(events).build());
+					ChangeFoodMeetingStatusEvent.newBuilder()
+						.setIdFoodMeeting(feastId)
+						.setIdUser(parameters.getUser().getId())
+						.setNewStatus(FoodMeetingStatus.Order.name())
+						.build())
+					.build());
+			
+			Builder messageBuilder = MessageContext.newBuilder().setUser(0).setEvents(events);
+			CommandEndpoint.sendMessage(messageBuilder.setRoom(roomId).build());
+			CommandEndpoint.sendMessage(messageBuilder.setRoom(homeRoomId).build());
 		}
 		catch (Exception e) {
 			return OutBuilder.response("application/json", objectToJSON(e.toString()));

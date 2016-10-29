@@ -650,7 +650,7 @@ function _handleOnMessage(event)
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 				break;
-			case "org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent":
+			case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
 				g_ownerId = 0;
 				_finishAction();
 				break;
@@ -751,4 +751,8 @@ function _start()
 // Requires g_feastId to be defined and valid
 $(window).on("load", function() {
 	_start();
+});
+
+$(window).on('beforeunload', function() {
+	g_comService.disconnect();
 });

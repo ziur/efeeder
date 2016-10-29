@@ -33,6 +33,9 @@ $(function() {
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
 					Materialize.toast($toastContent, 5000);
 					break;
+				case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
+					foodMeetingsList.notifyMeetingStatusChanged(eventMessage);
+					break;
 			}
 		});
 	});
@@ -40,6 +43,10 @@ $(function() {
 	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
 	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 	newFoodMeeting.init();
+	
+	$(window).on('beforeunload', function() {
+		communicationService.disconnect();
+	});
 });
 
 var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
@@ -79,8 +86,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"detailedViewDate": moment(newMeeting.eventDate).format('MMMM Do YYYY, h:mm a'),
 			"width": newMeeting.width,
 			"styles": isNewMeetingFirst ? "is-first col s12 l9" : "col s6 l3",
-			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
-			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
+			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,			
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
 			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
@@ -95,6 +101,18 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			foodMeetingsContainer.isotope('insert', $newFoodMeeting);
 			$("#preloader").hide();
 		});
+	}
+	
+	var notifyMeetingStatusChanged = function(message) {
+		var newStatus = message.newStatus;
+		var idFoodMeeting = message.idFoodMeeting;
+		
+		var meetingName = _.find(self.meetings, {id: idFoodMeeting}).name;
+		
+		$("#" + idFoodMeeting + " .status").text(newStatus);		
+		var $toastContent = $('<span><a href="#' + idFoodMeeting + '" class="white-text">' + meetingName
+				+ ' is now in ' + newStatus + ' mode!'+'</a></span>');
+		Materialize.toast($toastContent, 5000);
 	}
 
 	var getImagRedirectTo = function(id, status) {
@@ -138,7 +156,8 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		init: function() {
 			addEvent();
 		},
-		addMeeting: insertMeeting
+		addMeeting: insertMeeting,
+		notifyMeetingStatusChanged: notifyMeetingStatusChanged
 	};
 };
 
