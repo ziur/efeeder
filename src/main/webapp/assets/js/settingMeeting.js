@@ -73,12 +73,12 @@ var SettingMeeting = function() {
 
 var MeetingStateSllider = function() {
 	var slider = document.getElementById('noUiSlider');
-	var eventDate= moment($("#edit-meeting").data("eventDate"), "YYYY-MM-DD HH:mm:ss");
-	var createdDate = moment($("#edit-meeting").data("createdDate"), "YYYY-MM-DD HH:mm:ss");
+	var eventDate= moment($("#edit-meeting").data("eventDate"), "YYYY-MM-DD HH:mm").seconds(0);
+	var createdDate = moment($("#edit-meeting").data("createdDate"), "YYYY-MM-DD HH:mm").seconds(0);
 	
-	var votingDate = moment($("#edit-meeting").data("votingDate"), "YYYY-MM-DD HH:mm:ss");
-	var orderDate = moment($("#edit-meeting").data("orderDate"), "YYYY-MM-DD HH:mm:ss");
-	var paymentDate = moment($("#edit-meeting").data("paymentDate"), "YYYY-MM-DD HH:mm:ss");
+	var votingDate = moment($("#edit-meeting").data("votingDate"), "YYYY-MM-DD HH:mm").seconds(0);
+	var orderDate = moment($("#edit-meeting").data("orderDate"), "YYYY-MM-DD HH:mm").seconds(0);
+	var paymentDate = moment($("#edit-meeting").data("paymentDate"), "YYYY-MM-DD HH:mm").seconds(0);
 	
 	var firstHandlerPosition = votingDate.valueOf();
 	var secondHandlerPosition = orderDate.valueOf();

@@ -215,12 +215,12 @@
 			<column name="name"             value="Coffee time"/>
 			<column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          valueDate="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -230,12 +230,12 @@
 			<column name="name"             value="Dia del programador"/>
 			<column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
 			<column name="status"			value="Voting"/>			
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -245,12 +245,12 @@
 			<column name="name"             value="Release celebration"/>
 			<column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -304,12 +304,12 @@
 			<column name="name"             value="Jalasoft Anniversary"/>
 			<column name="image_link"       value="http://www.jalasoft.com/wp-content/uploads/2012/03/facilities_4.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -319,12 +319,12 @@
 			<column name="name"             value="Taco's Day!"/>
 			<column name="image_link"       value="http://i.makeagif.com/media/11-10-2015/fcRD8f.gif"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 	
@@ -334,12 +334,12 @@
 			<column name="name"             value="Team building"/>
 			<column name="image_link"       value="http://vorkspace.com/blog/wp-content/uploads/Team-building.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 	
@@ -349,12 +349,12 @@
 			<column name="name"             value="Sciquest Anniversary"/>
 			<column name="image_link"       value="https://www.sciquest.com/sites/default/themes/sciquest/logo.png"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="event_date"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 			<column name="id_user"          value="1"/>
 			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="voting_time"      valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
+			<column name="order_time"       valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME)"/>
+			<column name="payment_time"     valueDate="DATE_FORMAT(DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY), '%Y-%m-%d %H:%i:00')" type="DATETIME"/>
 		</insert>
 	</changeSet>
 

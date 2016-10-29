@@ -80,4 +80,22 @@ public class FoodMeeting {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
 		return fmt.print(eventDate.getTime());
 	}
+	
+	public FoodMeetingStatus getStatusByTime(Timestamp time) {
+		FoodMeetingStatus state = FoodMeetingStatus.Voting;
+		if(time.compareTo(this.votingDate) >= 0) {
+			state = FoodMeetingStatus.Order;
+		}
+		if(time.compareTo(this.orderDate) >= 0) {
+			state = FoodMeetingStatus.Payment;
+		}
+		if(time.compareTo(this.paymentDate) >= 0) {
+			state = FoodMeetingStatus.Buying;
+		}
+		if(time.compareTo(this.eventDate) >= 0) {
+			state = FoodMeetingStatus.Finish;
+		}
+		
+		return state;
+	}
 }
