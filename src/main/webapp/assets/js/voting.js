@@ -780,6 +780,7 @@ function showSideBar()
 function hideSideBar()
 {
 	if (m_sideBarHidden) return;
+<<<<<<< HEAD
 	
 	let nav = $('#mainSideNav').get(0);
 	if (nav)
@@ -788,6 +789,16 @@ function hideSideBar()
 		nav.style.left = '-' + nav.offsetWidth + 'px';
 	}
 	
+=======
+	
+	let nav = $('#mainSideNav').get(0);
+	if (nav)
+	{
+		nav.style.visibility = 'hidden';
+		nav.style.left = '-' + nav.offsetWidth + 'px';
+	}
+	
+>>>>>>> master
 	m_uiSystem.startInteracting();
 	m_sideBarHidden = true;
 }
@@ -914,5 +925,5 @@ $(window).on("load", function() {
 });
 
 $(window).on('beforeunload', function() {
-	g_comService.disconnect();
+	m_comService.disconnect();
 });
