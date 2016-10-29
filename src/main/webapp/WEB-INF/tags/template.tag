@@ -18,7 +18,7 @@
 		<link href="/assets/css/select2.min.css" rel="stylesheet">
 		<link href="/assets/css/app.css" rel="stylesheet">
 		<link href="/assets/css/foodMeetings.css" rel="stylesheet">
-		<link href="/assets/css/order.css" rel="stylesheet">
+		<link href="/assets/css/foodMeetingInfo.css" rel="stylesheet">
 		<link rel="stylesheet" href="/assets/css/materialize.css">
 		<link rel="stylesheet" href="/assets/css/materialize.clockpicker.css">
 		<link rel="stylesheet" href="/assets/css/place.css">
@@ -53,10 +53,11 @@
 		<script src="/assets/js/lib/materialize.clockpicker.js"></script>
 		<script src="/assets/js/lib/jquery.validate.js"></script>
 		<script src="/assets/js/lib/jquery.uploadPreview.min.js"></script>
+		<script type="text/javascript" src="/assets/js/lib/jquery.countdown.js"></script>
 		<script src="/assets/js/lib/nouislider.min.js"></script>
 		<script src="/assets/js/communication-service.js"></script>
 		<script src="/assets/js/formPlaceValidation.js"></script>
-
+		<script src="/assets/js/mainScript.js"></script>
 		<jsp:invoke fragment="javascript"/>
 
 	</body>

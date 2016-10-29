@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.jala.efeeder.user.UserManager;
@@ -43,7 +41,7 @@ public class FoodMeetingManager {
 
 		return foodMeeting;
 	}
-	
+
 	public void setStatusById(int id, int idUser, FoodMeetingStatus newStatus) throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STATUS_BY_ID_AND_USER);
 		preparedStatement.setString(1, newStatus.name());

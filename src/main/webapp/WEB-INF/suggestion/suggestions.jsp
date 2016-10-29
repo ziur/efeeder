@@ -3,26 +3,42 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:template>
-    <jsp:attribute name="javascript">
-	<script src="/assets/js/lib/bubble.js"></script> 
+	<jsp:attribute name="javascript">
 	<script>
 		var g_feastId = ${feastId};
 	</script>
+	<script src="/assets/js/lib/bk.js"></script>
+	<script src="/assets/js/voting.js"></script>	
 	<script src="/assets/js/place.js"></script>
 	<script id="placeTmpl" type="text/x-jsrender">
-	    <ul id="collid" class="collection">
+		<ul id="collid" class="collection">
 		<li id="{{:id}}" class="collection-item avatar">
-		    <img src="/assets/img/food.svg" alt="" class="circle">
-		    <span class="title">{{:name}}</span>
-		    <p class="description">{{:description}}</p>
-		    <p class="description"> <span class="phone">Tel.:</span> {{:phone}} </p>
+			<img src="/assets/img/food.svg" alt="" class="circle">
+			<span class="title">{{:name}}</span>
+			<p class="description">{{:description}}</p>
+			<p class="description"> <span class="phone">Tel.:</span> {{:phone}} </p>
 		</li>
-	    </ul>
+		</ul>
 	</script>
-    </jsp:attribute>
-        
-    <jsp:body>
-	<div id="mainSideNav" class="side-nav fixed left-nav-bar-prapper">
+	</jsp:attribute>
+
+	<jsp:body>
+		<div id="preloader" class="col s12 center-align">
+			<div style="height:30vh"></div>	
+			<div class="valign preloader-wrapper big active">
+				<div class="valign spinner-layer spinner-blue-only">
+				  <div class="circle-clipper left">
+					<div class="circle"></div>
+				  </div><div class="gap-patch">
+					<div class="circle"></div>
+				  </div><div class="circle-clipper right">
+					<div class="circle"></div>
+				  </div>
+				</div>
+			</div>
+			<div style="text-align:center;color:#9e9e9e;font-weight:400;font-family:sans-serif;font-size:1.64rem;">Loading places...</div>
+		</div>		
+	<div id="mainSideNav" style="visibility:hidden">
 	    <div class="search-box-container">
 		<input id="search" type="text" autocomplete="off" placeholder="Search for ..." >
 	    </div>
@@ -78,10 +94,8 @@
 		</div>
 	    </div>
 	</div>
-        <div style="height:25px;"> </div>
-        <canvas id="mainCanvas" style="width:82.3vw;height:80vh;"/>
-    </jsp:body>    
+	<input type="hidden" id="voting_time" value="${votingTime}" />
+	<canvas id="mainCanvas"/>	
+	</jsp:body>
 </t:template>
-    
-<script src="/assets/js/lib/bk.js"></script>
-<script src="/assets/js/voting.js"></script>
+
