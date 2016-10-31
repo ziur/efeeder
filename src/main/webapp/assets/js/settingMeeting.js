@@ -85,6 +85,7 @@ var MeetingStateSllider = function() {
 	var thirdHandlerPosition = paymentDate.valueOf();
 	
 	var fifteenMinutesStep =  15*60*1000;
+	var oneMinuteStep =  60*1000;
 	var maxMediumDevicesWidth = 992;
 	var isSmallScreen = $(window).width() <= maxMediumDevicesWidth;
 	var calendarSettings = isSmallScreen ? 
@@ -119,7 +120,7 @@ var MeetingStateSllider = function() {
 			connect: [true, true, true, false],
 			tooltips: [	{ to: formatToDate }, { to: formatToDate }, { to: formatToDate } ],
 			range: {
-				'min': [  createdDate.valueOf() ],
+				'min': [  createdDate.valueOf(), oneMinuteStep ],
 				'25%': [ get25Range(createdDate, eventDate), fifteenMinutesStep ],
 				'max': [ eventDate.valueOf() ]
 			},
@@ -174,17 +175,24 @@ var MeetingStateSllider = function() {
 	
 	function get25Range(createdDate, eventDate) {
 		var millisecondsOfAnHour = 60*60*1000;		
+		var millisecondsInFifteenMinutes = 15*60*1000;
 		var result;
 
 		var hoursBetween = eventDate.diff(createdDate, 'hours');
 
 		if(hoursBetween <= 6) {
-			result = createdDate.valueOf() + (eventDate.valueOf() - createdDate.valueOf())* 25/100
+			result = createdDate.valueOf() + (eventDate.valueOf() - createdDate.valueOf())* 25/100;
+			
+			var fixedToQuarterResult = result - getMillisToRoundToQuarter(result);
+			if(fixedToQuarterResult > createdDate.valueOf()) {
+				result = fixedToQuarterResult;
+			}
 		} else {
 			result = eventDate.valueOf() - 6 * millisecondsOfAnHour;
+			result = result - getMillisToRoundToQuarter(result);
 		}
 
-		return result - getMillisToRoundToQuarter(result);
+		return result;
 	}
 
 	function getMillisToRoundToQuarter(date) {

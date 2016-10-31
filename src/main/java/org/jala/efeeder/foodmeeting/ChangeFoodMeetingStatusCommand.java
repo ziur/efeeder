@@ -41,8 +41,7 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 						.build()
 				)
 				.build()
-		);
-		
+		);		
 		String homeRoomId = WebsocketsConstants.homeRoom;		
 		Builder messageBuilder = MessageContext.newBuilder()				
 				.setUser(receivedMessage.getUser())
