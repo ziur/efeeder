@@ -133,12 +133,17 @@
 														{
 															"name": "userOwner",
 															"type": [
+																"null",
 																{
 																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
 																	"type": "record",
 																	"name": "UserOwner",
 																	"alias": "UserOwner",
 																	"fields": [
+																		{
+																			"name": "id",
+																			"type": "int"
+																		},
 																		{
 																			"name": "name",
 																			"type": "string"

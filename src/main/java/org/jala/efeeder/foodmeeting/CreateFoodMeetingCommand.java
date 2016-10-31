@@ -70,7 +70,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
 		List<MessageEvent> events = new ArrayList<>();
 
-		UserOwner userOwner = new UserOwner(user.getName(), user.getLastName());
+		UserOwner userOwner = new UserOwner(user.getId(), user.getName(), user.getLastName());
 
 		events.add(MessageEvent.newBuilder()
 			.setEvent(
