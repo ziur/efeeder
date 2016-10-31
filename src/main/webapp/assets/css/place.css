@@ -18,7 +18,7 @@
 #custom-card {
     background-color: rgb(241, 241, 241);
     margin: 0px;
-    height: 576px;
+    height: 600px;
     box-shadow: none;
 }
 
@@ -36,12 +36,12 @@
     color: rgba(0,0,0,0.87);
     font-size: 13px;
     text-transform: uppercase;
-    font-family: DINNextLTPro-Medium;
+    font-family: inherit;
     letter-spacing: 0;
 }
 #places > ul > li p.description {
     color: #4d4d4d;
-    font-family: DINNextLTPro-Light;
+    font-family: inherit;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
 }
@@ -75,4 +75,27 @@
 button#add-new-place {
     float: right;
     top: -8px;
+}
+#place-form input {
+    color: #4d4d4d;
+    font-family: inherit;
+    font-size: 16px;
+}
+#tag-chip > div.chip {
+    display: inline-block;
+    height: 25px;
+    color: #4d4d4d;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 200;
+    line-height: 22px;
+    border-radius: 11px;
+    padding: 0 10px;
+}
+#tag-chip > div.chip > i {
+    cursor: pointer;
+    float: right;
+    font-size: 13px;
+    line-height: 24px;
+    border-radius: 10px
 }

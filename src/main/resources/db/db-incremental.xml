@@ -159,7 +159,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="image_link" type="VARCHAR(200)"/>
-		<column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
+			<column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
@@ -200,7 +200,41 @@
 			<column name="name"/>
 		</createIndex>
 	</changeSet>
-
+	
+	<changeSet id="tags" author="ricardo">
+	    <createTable catalogName="efeeder" tableName="tags">
+		<column name="id" type="INT(11)" autoIncrement="true">
+		    <constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="name" type="VARCHAR(200)"/>
+	    </createTable>
+	</changeSet>
+	
+	<changeSet id="tag_places" author="ricardo">
+	    <createTable tableName="tag_places" catalogName="efeeder">
+		<column name="id_tag" type="INT(11)">
+		    <constraints nullable="false"/>
+		</column>
+		<column name="id_place" type="INT(11)">
+		    <constraints nullable="false"/>
+		</column>
+	    </createTable>
+	    <addForeignKeyConstraint baseTableName="tag_places" 
+			    baseColumnNames="id_tag" 
+			    constraintName="tag_places_id_tag_fk" 
+			    onDelete="CASCADE"
+			    onUpdate="RESTRICT"
+			    referencedTableName="tags" 
+			    referencedColumnNames="id"/>
+	    <addForeignKeyConstraint baseTableName="tag_places" 
+			    baseColumnNames="id_place" 
+			    constraintName="tag_places_id_places_fk"
+			    onDelete="CASCADE"
+			    onUpdate="RESTRICT" 
+			    referencedTableName="places" 
+			    referencedColumnNames="id"/>
+	</changeSet>
+	    	    
 	<changeSet author="roger" id="food_meeting.table">
 		<createTable catalogName="efeeder" tableName="food_meeting">
 			<column name="id"         type="INT(11)" autoIncrement="true">

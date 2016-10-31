@@ -21,9 +21,9 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class SearchPlaceCommand implements CommandUnit {
 	private static final Logger LOG = Logger.getLogger(SearchPlaceCommand.class.getName());
 	private static final int ENTRIES_BY_PAGE = 5;
-	private static final String SEARCH_PLACES_QUERY = "SELECT * "+
-														"FROM places %s"+
-														"ORDER BY created_at DESC LIMIT %d OFFSET %d";
+	private static final String SEARCH_PLACES_QUERY_PATHERM =
+		"select * from places where places.name like '%%%s%%' or id in (select tp.id_place from tag_places as tp where tp.id_tag in (select t.id from tags as t where t.name like '%%%s%%')) LIMIT %d OFFSET %d";
+	         
 	@Override
 	public Out execute(In parameters) throws Exception {
 		int page = 1;
@@ -36,8 +36,10 @@ public class SearchPlaceCommand implements CommandUnit {
 		page --;
 
 		Statement statement = parameters.getConnection().createStatement();
-		String query = String.format(SEARCH_PLACES_QUERY, getWhere(term), ENTRIES_BY_PAGE, ENTRIES_BY_PAGE*page);
+		String query = prepareQuery(term, ENTRIES_BY_PAGE, ENTRIES_BY_PAGE*page);
+		
 		ResultSet resultSet = statement.executeQuery(query);
+		
 		List<Place> places = new ArrayList<>();
 		while (resultSet.next()) {
 			places.add(new Place(resultSet.getInt("id"), 
@@ -50,11 +52,10 @@ public class SearchPlaceCommand implements CommandUnit {
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(places));
 	}
 
-	private String getWhere(String term) {
-		if (term == null || term.isEmpty()) {
+	private String prepareQuery(String term, int ENTRIES_BY_PAGE, int page) {
+		if (term == null || term.isEmpty()) 
 			return "";
-		}
-		term += "%";
-		return String.format("WHERE name like \"%s\" ", term);
+		else 
+			return String.format(SEARCH_PLACES_QUERY_PATHERM, term, term, ENTRIES_BY_PAGE, page);
 	}
 }
