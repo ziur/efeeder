@@ -1,7 +1,7 @@
 <div class="meeting grid-item {{:styles}}" id="{{:id}}" data-date="{{:date}}">
 	<div class="card">
 		<div class="card-image waves-effect waves-block waves-light" >
-			<a href="{{:imgRedirectTo}}">
+			<a class="img-redirect-to" href="{{:imgRedirectTo}}">
 				<img src="{{:imageLink}}" style="height: {{:imgHeight}}px" class="perfect-fit">
 			</a>
 		</div>
@@ -17,7 +17,7 @@
 					<h6 class="quick-view-date grey-text lighten-1 truncate">{{:quickViewDate}}</h6>
 				</div>
 				<div class="col s4">
-					<span class="{{:statusStyles}}" data-badge-caption={{:status}}></span>
+					<span class="status new badge" data-badge-caption="">{{:status}}</span>
 				</div>  
 			</div>
 		</div>

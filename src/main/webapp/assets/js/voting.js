@@ -687,7 +687,7 @@ function handleWsOnMessage(event)
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 				break;
-			case "org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent":
+			case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
 				m_ownerId = 0;
 				finishAction();
 				break;
@@ -780,8 +780,8 @@ function showSideBar()
 function hideSideBar()
 {
 	if (m_sideBarHidden) return;
-	
 	let nav = $('#mainSideNav').get(0);
+	
 	if (nav)
 	{
 		nav.style.visibility = 'hidden';
@@ -899,10 +899,15 @@ function initialize()
 	$('#mainCanvas').get(0).className = "";
 }
 
+function closeWebsocketConnection() {
+	m_comService.disconnect();
+}
+
 initialize();
 return {
 	run:run,
-	addSuggestion:addSuggestion
+	addSuggestion:addSuggestion,
+	closeWebsocketConnection: closeWebsocketConnection
 };
 
 }
@@ -912,3 +917,8 @@ let ef_votingView = new VotingView(g_feastId);
 $(window).on("load", function() {
 	ef_votingView.run();
 });
+
+$(window).on('beforeunload', function() {
+	ef_votingView.closeWebsocketConnection();
+});
+

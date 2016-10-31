@@ -1,20 +1,26 @@
-$(function() {
+$(function() {	
+	var communicationService = new CommunicationService();	
+	initComponents(communicationService);
+		
+	$(window).on('beforeunload', function() {
+		communicationService.disconnect();
+	});
+});
 
-	var createMeetingRoomId = "createMeetingRoomId";
+var initComponents = function(communicationService){
+	var homeRoomId = "homeRoom";
 	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
 	var $newMeeting = $("#new-meeting");
-
 	var foodMeetingsContainer = $('.food-meetings');
-
+	
 	var foodMeetingsList = new FoodMeetingsList(foodMeetingsContainer, $newMeetingPlaceholder);
 	foodMeetingsList.init();
 
 	var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"),
 		$('.image-link'), $('.image-links'), $("#image-card-id"));
 	modal.init();
-
-	var communicationService = new CommunicationService();
-
+	
+	communicationService.connect('ws://' + location.host + '/ws', homeRoomId);	
 	communicationService.onMessage(function(event) {
 		$.each(event.events, function(index, item) {
 			var eventType = Object.getOwnPropertyNames(item.event)[0];
@@ -33,14 +39,16 @@ $(function() {
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
 					Materialize.toast($toastContent, 5000);
 					break;
+				case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
+					foodMeetingsList.notifyMeetingStatusChanged(eventMessage);
+					break;
 			}
 		});
 	});
-
-	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
-	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
+			
+	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, homeRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 	newFoodMeeting.init();
-});
+}
 
 var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
@@ -79,8 +87,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"detailedViewDate": moment(newMeeting.eventDate).format('MMMM Do YYYY, h:mm a'),
 			"width": newMeeting.width,
 			"styles": isNewMeetingFirst ? "is-first col s12 l9" : "col s6 l3",
-			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,
-			"statusStyles": newMeeting.status === 'Finish' ? 'new badge blue' : 'new badge',
+			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,			
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
 			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
@@ -96,6 +103,19 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			$("#preloader").hide();
 		});
 	}
+	
+	var notifyMeetingStatusChanged = function(message) {
+		var newStatus = message.newStatus;
+		var idFoodMeeting = message.idFoodMeeting;
+		
+		var meetingName = _.find(self.meetings, {id: idFoodMeeting}).name;
+		
+		$("#" + idFoodMeeting + " .img-redirect-to").prop("href", getImagRedirectTo(idFoodMeeting, newStatus));
+		$("#" + idFoodMeeting + " .status").text(newStatus);		
+		var $toastContent = $('<span><a href="#' + idFoodMeeting + '" class="white-text">' + meetingName
+				+ ' is now in ' + newStatus + ' mode!'+'</a></span>');
+		Materialize.toast($toastContent, 5000);
+	}
 
 	var getImagRedirectTo = function(id, status) {
 		var page = "suggestions";
@@ -107,7 +127,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 				page = "order";
 				break;
 			case 'Payment':
-				page = "payment";
+				page = "details";
 				break;	
 			case 'Buying':
 				page = "details";
@@ -138,13 +158,14 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		init: function() {
 			addEvent();
 		},
-		addMeeting: insertMeeting
+		addMeeting: insertMeeting,
+		notifyMeetingStatusChanged: notifyMeetingStatusChanged
 	};
 };
 
-var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting) {
+var NewFoodMeeting = function(foodMeetingsContainer, homeRoomId, communicationService, newMeetingPlaceholder, newMeeting) {
 	this.foodMeetingsContainer = foodMeetingsContainer;
-	this.createMeetingRoomId = createMeetingRoomId;
+	this.homeRoomId = homeRoomId;
 	this.communicationService = communicationService;
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
 	this.newMeeting = newMeeting;
@@ -228,7 +249,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 				self.communicationService.sendMessage(
 					{
 						user: parseInt(Cookies.get("userId")),
-						room: self.createMeetingRoomId,
+						room: self.homeRoomId,
 						command: "CreateFoodMeeting",
 						events: [
 							{

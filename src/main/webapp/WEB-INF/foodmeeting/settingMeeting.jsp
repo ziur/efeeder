@@ -52,17 +52,7 @@
 							<div class="input-field col s12">
 								<input name="image_link" id="image_link" value="${foodMeeting.imageLink}" type="text" class="validate" >
 								<label for="image_link">Image Link</label>
-							</div>
-							<div class="input-field col s12">
-								<select name="status">
-									<option value="Voting" ${foodMeeting.status == 'Voting' ? 'selected' : ''} >Voting</option>
-									<option value="Order" ${foodMeeting.status == 'Order' ? 'selected' : ''} >Order</option>
-									<option value="Payment" ${foodMeeting.status == 'Payment' ? 'selected' : ''} >Payment</option>
-									<option value="Buying" ${foodMeeting.status == 'Buying' ? 'selected' : ''} >Buying</option>
-									<option value="Finish" ${foodMeeting.status == 'Finish' ? 'selected' : ''} >Finish</option>
-								</select>
-								<label>Status</label>
-							</div>
+							</div>							
 							<div class="input-field col s7">
 								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.date}" >
 								<label for="date">Date</label>

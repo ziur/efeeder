@@ -23,7 +23,7 @@ $(document).ready(function () {
 						orderList.updateOrders(event);
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
-						document.location.href = event.redirectTo['string'];
+						document.location.href = "/action/FoodMeeting";
 						break;
 				}
 			});
@@ -36,6 +36,10 @@ $(document).ready(function () {
 
 		var paymentButton = new PaymentButton(idFoodMeeting, idUser, communicationService);
 		paymentButton.init();
+		
+		$(window).on('beforeunload', function() {
+			communicationService.disconnect();
+		});
 	});
 });
 

@@ -40,7 +40,7 @@
 								</div>
 								<div class="row">
 									<div class="form-group col-xs-12">
-										<button class="btn btn-primary col s3 offset-s7" type="submit">Login</button>
+										<button class="btn btn-primary col s4 offset-s6 col m3 offset-m7" type="submit">Login</button>
 									</div>
 								</div>
 							</form>
