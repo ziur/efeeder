@@ -27,7 +27,6 @@ $(function() {
 					break;
 
 				case "org.jala.efeeder.servlets.websocket.avro.CreateFoodMeetingEvent":
-
 					foodMeetingsList.addMeeting(eventMessage, true);
 
 					var $toastContent = $('<span><a href="#' + eventMessage.id + '" class="white-text">' + eventMessage.name + ' meeting was created successfully!</a></span>');
@@ -71,10 +70,11 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		var $foodMeetingTmpl = $.templates(foodMeetingTmpl);
 		var imageHeight = 188;
 		var firstImageHeight = 500;
-		var userOwner = newMeeting.userOwner;
+		var userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"] || newMeeting.userOwner;
 
 		self.meetings.push(newMeeting);
 		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
+		var isMeetingOwner = userOwner.id === parseInt(Cookies.get("userId"));
 
 		var data = {
 			"id": newMeeting.id,
@@ -88,6 +88,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 			"styles": isNewMeetingFirst ? "is-first col s12 l9" : "col s6 l3",
 			"imgHeight": isNewMeetingFirst ? firstImageHeight : imageHeight,			
 			"imgRedirectTo": getImagRedirectTo(newMeeting.id, newMeeting.status),
+			"settingButtonStyles": isMeetingOwner ? "" : "hide",
 			"userOwner": userOwner.name + ' ' + userOwner.lastName,
 		};
 
@@ -261,6 +262,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, homeRoomId, communicationSe
 										imageLink: imageLink,
 										width: 0,
 										userOwner: {
+											id: 0,
 											name: "",
 											lastName: ""
 										}
