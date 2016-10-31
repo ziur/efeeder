@@ -35,8 +35,7 @@ public class SettingMeetingCommand implements CommandUnit {
 		foodMeeting = meetingManager.getFoodMeetingById(Integer.parseInt(id));
 		boolean isMeetingOwner = foodMeeting.getUserOwner().equals(parameters.getUser());
 		
-		out.addResult("foodMeeting", foodMeeting);
-		out.addResult("edit", !isMeetingOwner);
+		out.addResult("foodMeeting", foodMeeting);		
 
 		if(isMeetingOwner) {
 			out.forward("foodmeeting/settingMeeting.jsp");
