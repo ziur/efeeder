@@ -83,16 +83,16 @@ public class FoodMeeting {
 
 	public FoodMeetingStatus getStatusByTime(Timestamp time) {
 		FoodMeetingStatus state = FoodMeetingStatus.Voting;		
-		if(this.votingDate.compareTo(time) < 0) {
+		if(this.votingDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Order;
 		}
-		if(this.orderDate.compareTo(time) < 0) {
+		if(this.orderDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Payment;
 		}
-		if(this.paymentDate.compareTo(time) < 0) {
+		if(this.paymentDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Buying;
 		}
-		if(this.eventDate.compareTo(time) < 0) {
+		if(this.eventDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Finish;
 		}		
 		return state;
