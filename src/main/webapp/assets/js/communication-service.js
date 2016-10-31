@@ -265,7 +265,7 @@
           return self.serialize(json);
       }
     };
-  
+
   CommunicationService.prototype.disconnect = function () {
 	  this.socket.close();
   }

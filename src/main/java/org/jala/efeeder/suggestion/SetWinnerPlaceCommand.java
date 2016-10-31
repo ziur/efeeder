@@ -66,7 +66,7 @@ public class SetWinnerPlaceCommand implements CommandUnit {
 						.setNewStatus(FoodMeetingStatus.Order.name())
 						.build())
 					.build());
-			
+
 			Builder messageBuilder = MessageContext.newBuilder().setUser(0).setEvents(events);
 			CommandEndpoint.sendMessage(messageBuilder.setRoom(roomId).build());
 			CommandEndpoint.sendMessage(messageBuilder.setRoom(homeRoomId).build());

@@ -15,7 +15,7 @@ public class DateFormatter {
 	public static String format(Timestamp date) {
 		return SIMPLE_FORMAT.format(date);
 	}
-	
+
 	public static String format(Date date) {
 		return SIMPLE_FORMAT.format(date);
 	}

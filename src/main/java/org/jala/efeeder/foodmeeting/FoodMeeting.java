@@ -80,7 +80,7 @@ public class FoodMeeting {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
 		return fmt.print(eventDate.getTime());
 	}
-	
+
 	public FoodMeetingStatus getStatusByTime(Timestamp time) {
 		FoodMeetingStatus state = FoodMeetingStatus.Voting;		
 		if(this.votingDate.compareTo(time) < 0) {

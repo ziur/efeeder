@@ -55,7 +55,7 @@ public class FoodMeetingManager {
 		preparedStatement.setInt(3, idUser);
 		preparedStatement.executeUpdate();
 	}
-	
+
 	public List<FoodMeeting> getUnfinishedMeetings() throws SQLException {
 		List<FoodMeeting> meetings = new ArrayList<>();
 		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_UNFINISHED_FOOD_MEETINGS_SQL);
@@ -70,7 +70,7 @@ public class FoodMeetingManager {
 
 		return meetings;
 	}
-	
+
 	public void updateFoodMeeting(FoodMeeting meeting) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(UPDATE_FOOD_MEETING_SQL);
 
