@@ -24,6 +24,7 @@ import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext.Builder;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getWinnerPlaceId;
+import org.jala.efeeder.util.constants.WebsocketsConstants;
 
 /**
  *
@@ -55,8 +56,8 @@ public class SetWinnerPlaceCommand implements CommandUnit {
 		}
 
 		try {
-			String roomId = "vote_" + Integer.toString(feastId);
-			String homeRoomId = "createMeetingRoomId";
+			String roomId = WebsocketsConstants.voteRoomPrefix + Integer.toString(feastId);
+			String homeRoomId = WebsocketsConstants.homeRoom;
 			List<MessageEvent> events = new ArrayList<>();
 			events.add(MessageEvent.newBuilder().setEvent(
 					ChangeFoodMeetingStatusEvent.newBuilder()

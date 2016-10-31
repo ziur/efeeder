@@ -17,6 +17,8 @@ import org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext.Builder;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
+import org.jala.efeeder.util.DateFormatter;
+import org.jala.efeeder.util.constants.WebsocketsConstants;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -38,7 +40,7 @@ public class ChangeMeetingStateJob implements org.quartz.Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		Logger.getLogger(ChangeMeetingStateJob.class.getName())
 				.log(Level.INFO, "Executing meeting states check at " + 
-				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(context.getScheduledFireTime()) + "...");
+				DateFormatter.format(context.getScheduledFireTime()) + "...");
 		try {		
  			List<FoodMeeting> unfinishedMeetings = this.meetingManager.getUnfinishedMeetings();
 			
@@ -69,7 +71,7 @@ public class ChangeMeetingStateJob implements org.quartz.Job {
 	
 	private void notifyClients(FoodMeeting meeting) {
 		String roomId = this.getRoomIdToNotify(meeting);
-		String homeRoomId = "createMeetingRoomId";
+		String homeRoomId = WebsocketsConstants.homeRoom;
 		
 		ChangeFoodMeetingStatusEvent changeStatusEvent = 
 				new ChangeFoodMeetingStatusEvent(meeting.getId(), 
@@ -91,7 +93,7 @@ public class ChangeMeetingStateJob implements org.quartz.Job {
 				
 		switch (meeting.getStatus()) {
 			case Order:
-				roomId = "vote_" + meetingId;
+				roomId = WebsocketsConstants.voteRoomPrefix + meetingId;
 				break;						
 		}
 		

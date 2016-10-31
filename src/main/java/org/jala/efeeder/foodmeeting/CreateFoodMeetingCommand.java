@@ -19,6 +19,7 @@ import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import org.jala.efeeder.servlets.websocket.avro.UserOwner;
 import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
+import org.jala.efeeder.util.constants.WebsocketsConstants;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -28,7 +29,6 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 
 	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, id_user, created_at, voting_time, order_time, payment_time) "
             + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String createMeetingRoomId = "createMeetingRoomId";
 
 	@Override
 	public Out execute(In context) throws Exception {
@@ -87,7 +87,7 @@ public class CreateFoodMeetingCommand implements CommandUnit {
 			.build()
 		);
 		MessageContext messageContext = MessageContext.newBuilder()
-											.setRoom(createMeetingRoomId)
+											.setRoom(WebsocketsConstants.homeRoom)
 											.setUser(0)
 											.setEvents(events)
 											.build();

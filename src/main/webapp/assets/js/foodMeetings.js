@@ -1,6 +1,6 @@
 $(function() {
 
-	var createMeetingRoomId = "createMeetingRoomId";
+	var homeRoomId = "homeRoom";
 	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
 	var $newMeeting = $("#new-meeting");
 
@@ -40,8 +40,8 @@ $(function() {
 		});
 	});
 
-	communicationService.connect('ws://' + location.host + '/ws', createMeetingRoomId);
-	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, createMeetingRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
+	communicationService.connect('ws://' + location.host + '/ws', homeRoomId);
+	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, homeRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 	newFoodMeeting.init();
 	
 	$(window).on('beforeunload', function() {
@@ -162,9 +162,9 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	};
 };
 
-var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, communicationService, newMeetingPlaceholder, newMeeting) {
+var NewFoodMeeting = function(foodMeetingsContainer, homeRoomId, communicationService, newMeetingPlaceholder, newMeeting) {
 	this.foodMeetingsContainer = foodMeetingsContainer;
-	this.createMeetingRoomId = createMeetingRoomId;
+	this.homeRoomId = homeRoomId;
 	this.communicationService = communicationService;
 	this.newMeetingPlaceholder = newMeetingPlaceholder;
 	this.newMeeting = newMeeting;
@@ -248,7 +248,7 @@ var NewFoodMeeting = function(foodMeetingsContainer, createMeetingRoomId, commun
 				self.communicationService.sendMessage(
 					{
 						user: parseInt(Cookies.get("userId")),
-						room: self.createMeetingRoomId,
+						room: self.homeRoomId,
 						command: "CreateFoodMeeting",
 						events: [
 							{

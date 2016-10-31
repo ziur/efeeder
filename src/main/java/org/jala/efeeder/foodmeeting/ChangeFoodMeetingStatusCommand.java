@@ -15,6 +15,7 @@ import org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext.Builder;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
+import org.jala.efeeder.util.constants.WebsocketsConstants;
 
 /**
  *
@@ -42,7 +43,7 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 				.build()
 		);
 		
-		String homeRoomId = "createMeetingRoomId";		
+		String homeRoomId = WebsocketsConstants.homeRoom;		
 		Builder messageBuilder = MessageContext.newBuilder()				
 				.setUser(receivedMessage.getUser())
 				.setEvents(events);
