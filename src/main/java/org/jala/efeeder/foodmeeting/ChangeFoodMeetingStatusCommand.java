@@ -42,11 +42,12 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 				)
 				.build()
 		);		
-		String homeRoomId = WebsocketsConstants.homeRoom;		
+		
 		Builder messageBuilder = MessageContext.newBuilder()				
 				.setUser(receivedMessage.getUser())
 				.setEvents(events);
 		
+		String homeRoomId = WebsocketsConstants.homeRoom;		
 		CommandEndpoint.sendMessage(messageBuilder.setRoom(homeRoomId).build());
 
 		return OutBuilder.response(messageBuilder.setRoom(homeRoomId).setRoom(receivedMessage.getRoom()).build());

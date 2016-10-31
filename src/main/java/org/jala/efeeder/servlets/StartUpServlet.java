@@ -4,12 +4,11 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.log4j.Logger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -24,7 +23,8 @@ import org.jala.efeeder.scheduledJobs.ChangeMeetingStateJob;
  */
 public class StartUpServlet extends HttpServlet {
 	
-	private Scheduler scheduler = null;
+	private Scheduler scheduler = null;		
+	private final static Logger logger = Logger.getLogger(StartUpServlet.class);
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {				
@@ -43,7 +43,7 @@ public class StartUpServlet extends HttpServlet {
 
 			scheduler.scheduleJob(changeMeetingStateJob, changeMeetingStateTrigger);
 		} catch (SchedulerException ex) {
-			Logger.getLogger(StartUpServlet.class.getName()).log(Level.SEVERE, "Error when trying to start quartz jobs scheduler.", ex);
+			logger.error("Error when trying to start quartz jobs scheduler.", ex);			
 		}
 			
 	}
@@ -53,7 +53,7 @@ public class StartUpServlet extends HttpServlet {
 		try {
 			scheduler.shutdown();
 		} catch (SchedulerException ex) {
-			Logger.getLogger(StartUpServlet.class.getName()).log(Level.SEVERE, "Error trying to shutdown quartz jobs scheduler", ex);
+			logger.error("Error trying to shutdown quartz jobs scheduler", ex);					
 		}
 	}
 }

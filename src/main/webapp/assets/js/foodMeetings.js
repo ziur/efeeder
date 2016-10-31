@@ -1,20 +1,26 @@
-$(function() {
+$(function() {	
+	var communicationService = new CommunicationService();	
+	initComponents(communicationService);
+		
+	$(window).on('beforeunload', function() {
+		communicationService.disconnect();
+	});
+});
 
+var initComponents = function(communicationService){
 	var homeRoomId = "homeRoom";
 	var $newMeetingPlaceholder = $("#new-meeting-placeholder");
 	var $newMeeting = $("#new-meeting");
-
 	var foodMeetingsContainer = $('.food-meetings');
-
+	
 	var foodMeetingsList = new FoodMeetingsList(foodMeetingsContainer, $newMeetingPlaceholder);
 	foodMeetingsList.init();
 
 	var modal = new ModalSearchImage($("#image-card-id"), $("#image-link-id"),
 		$('.image-link'), $('.image-links'), $("#image-card-id"));
 	modal.init();
-
-	var communicationService = new CommunicationService();
-
+	
+	communicationService.connect('ws://' + location.host + '/ws', homeRoomId);	
 	communicationService.onMessage(function(event) {
 		$.each(event.events, function(index, item) {
 			var eventType = Object.getOwnPropertyNames(item.event)[0];
@@ -39,15 +45,10 @@ $(function() {
 			}
 		});
 	});
-
-	communicationService.connect('ws://' + location.host + '/ws', homeRoomId);
+			
 	var newFoodMeeting = new NewFoodMeeting(foodMeetingsContainer, homeRoomId, communicationService, $newMeetingPlaceholder, $newMeeting);
 	newFoodMeeting.init();
-	
-	$(window).on('beforeunload', function() {
-		communicationService.disconnect();
-	});
-});
+}
 
 var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 	this.newMeetingPlaceholder = newMeetingPlaceholder;

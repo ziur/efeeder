@@ -5,14 +5,15 @@
  */
 package org.jala.efeeder.foodmeeting;
 
-import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-
+import org.apache.log4j.Logger;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.servlets.StartUpServlet;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,16 +24,14 @@ import org.joda.time.format.DateTimeFormatter;
  */
 @Command
 public class EditFoodMeetingCommand implements CommandUnit {
-
-	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
-			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
+	private final static Logger logger = Logger.getLogger(StartUpServlet.class);
 
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
-
-		PreparedStatement stm = parameters.getConnection()
-				.prepareStatement(UPDATE_FOOD_MEETING_SQL);
+		
+		FoodMeetingManager meetingManager = new FoodMeetingManager(parameters.getConnection());
+		FoodMeeting meeting = meetingManager.getFoodMeetingById(Integer.valueOf(parameters.getParameter("id-food-meeting")));				
 
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM, yyyy HH:mm");
 		DateTime dateTime = formatter.parseDateTime(parameters.getParameter("date") + " " + parameters.getParameter("time"));
@@ -40,19 +39,20 @@ public class EditFoodMeetingCommand implements CommandUnit {
 		Timestamp votingDate = new Timestamp(Long.parseLong(parameters.getParameter("voting-date")));
 		Timestamp orderDate = new Timestamp(Long.parseLong(parameters.getParameter("order-date")));
 		Timestamp paymentDate = new Timestamp(Long.parseLong(parameters.getParameter("payment-date")));
-
+		
+		meeting.setName(parameters.getParameter("meeting_name"));
+		meeting.setImageLink(parameters.getParameter("image_link"));
+		meeting.setEventDate(eventDate);
+		meeting.setVotingDate(votingDate);
+		meeting.setOrderDate(orderDate);
+		meeting.setPaymentDate(paymentDate);
+		
 		try {
-			stm.setString(1, parameters.getParameter("meeting_name"));
-			stm.setString(2, parameters.getParameter("image_link"));
-			stm.setTimestamp(3, eventDate);
-			stm.setTimestamp(4, votingDate);
-			stm.setTimestamp(5, orderDate);
-			stm.setTimestamp(6, paymentDate);
-			stm.setInt(7, Integer.valueOf(parameters.getParameter("id-food-meeting")));
-			stm.executeUpdate();
-		} catch (Exception e) {
+			meetingManager.updateFoodMeeting(meeting);				
+		} catch (SQLException ex) {
+			logger.error("Error when updating meeting with id: " + meeting.getId(), ex);
 		}
-
+		
 		return out.redirect("/action/FoodMeeting");
 	}
 }

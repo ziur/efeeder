@@ -4,10 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jala.efeeder.user.UserManager;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class FoodMeetingManager {
 
@@ -17,6 +21,8 @@ public class FoodMeetingManager {
 			+ "created_at, voting_time, order_time, payment_time, id_user "
 			+ "from food_meeting where status != 'Finish' order by event_date";	
 	private static final String UPDATE_STATUS_BY_ID_AND_USER = "UPDATE food_meeting SET status=? WHERE id=? AND id_user=?";
+	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
+			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
 
 	private final Connection connection;
 	private UserManager userManager;
@@ -52,7 +58,6 @@ public class FoodMeetingManager {
 	
 	public List<FoodMeeting> getUnfinishedMeetings() throws SQLException {
 		List<FoodMeeting> meetings = new ArrayList<>();
-
 		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_UNFINISHED_FOOD_MEETINGS_SQL);
 		ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -64,5 +69,18 @@ public class FoodMeetingManager {
 		}
 
 		return meetings;
+	}
+	
+	public void updateFoodMeeting(FoodMeeting meeting) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(UPDATE_FOOD_MEETING_SQL);
+
+		stm.setString(1, meeting.getName());
+		stm.setString(2, meeting.getImageLink());
+		stm.setTimestamp(3, meeting.getEventDate());
+		stm.setTimestamp(4, meeting.getVotingDate());
+		stm.setTimestamp(5, meeting.getOrderDate());
+		stm.setTimestamp(6, meeting.getPaymentDate());
+		stm.setInt(7, meeting.getId());
+		stm.executeUpdate();
 	}
 }
