@@ -82,8 +82,7 @@ public class FoodMeeting {
 	}
 	
 	public FoodMeetingStatus getStatusByTime(Timestamp time) {
-		FoodMeetingStatus state = FoodMeetingStatus.Voting;
-		
+		FoodMeetingStatus state = FoodMeetingStatus.Voting;		
 		if(this.votingDate.compareTo(time) < 0) {
 			state = FoodMeetingStatus.Order;
 		}

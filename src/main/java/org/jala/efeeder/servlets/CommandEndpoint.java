@@ -100,14 +100,12 @@ public class CommandEndpoint {
     }
 	
 	public static boolean sendMessage(MessageContext message) {
-		boolean isRoomEmpty = true;
-		
+		boolean isRoomEmpty = true;		
 		FoodMeetingRoom foodMeetingRoom = CommandEndpoint.getRoomManager().getRoom(message.getRoom());
 		isRoomEmpty = (foodMeetingRoom == null);
 		if(!isRoomEmpty) {
 			foodMeetingRoom.sendMessage(message);
-		}
-		
+		}		
 		return isRoomEmpty;		
 	}
 }
