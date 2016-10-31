@@ -66,8 +66,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 		var userOwner = newMeeting.userOwner["org.jala.efeeder.servlets.websocket.avro.UserOwner"] || newMeeting.userOwner;
 
 		self.meetings.push(newMeeting);
-		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;
-		console.log(Cookies.get("userId"));
+		var isNewMeetingFirst = _.sortBy(self.meetings, "eventDate")[0].id === newMeeting.id;		
 		var isMeetingOwner = userOwner.id === parseInt(Cookies.get("userId"));
 
 		var data = {
