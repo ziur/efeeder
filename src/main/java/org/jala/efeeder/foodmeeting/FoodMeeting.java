@@ -48,6 +48,10 @@ public class FoodMeeting {
 		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, eventDate, eventDate, eventDate, null, userOwner);
 	}
 
+	public FoodMeeting(int id, String name, String imageLink, FoodMeetingStatus status, Timestamp eventDate, User userOwner) {
+		this(id, name, imageLink, status, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+	}
+
 	public int getWidth() {
 		LocalDate today = new LocalDate();
 		LocalDate endEventDate = new LocalDate(eventDate);
