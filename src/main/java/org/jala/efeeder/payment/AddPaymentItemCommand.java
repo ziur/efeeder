@@ -3,12 +3,19 @@ package org.jala.efeeder.payment;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
+import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
+import org.jala.efeeder.servlets.CommandEndpoint;
+import org.jala.efeeder.servlets.websocket.avro.CreateExtraItemPayment;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 
 /**
  *
@@ -41,6 +48,24 @@ public class AddPaymentItemCommand implements CommandUnit {
 		
 		if(res.next()){
 			itemId = res.getInt("id");
+		}
+		
+		try {
+//			String roomId = Integer.toString(idFoodMeeting);
+			String roomId = "addItem";
+			List<MessageEvent> events = new ArrayList<>();
+			events.add(MessageEvent.newBuilder().setEvent(
+					CreateExtraItemPayment.newBuilder()
+							.setItemId(itemId)
+							.setItemName(itemName)
+							.setItemPrice(itemPrice)
+							.setStatus("add")
+							.build()).build());
+			CommandEndpoint.getRoomManager().getRoom(roomId).sendMessage(
+					MessageContext.newBuilder().setUser(0).setRoom(roomId).setEvents(events).build());
+		}
+		catch (Exception e) {
+			return OutBuilder.response("application/json", objectToJSON(e.toString()));
 		}
 		
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaymentItem(itemId, idFoodMeeting, itemName, itemDescription, itemPrice)));
