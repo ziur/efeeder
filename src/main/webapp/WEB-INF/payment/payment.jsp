@@ -8,6 +8,7 @@
     </jsp:attribute>
     <jsp:body>
         <input id="input-food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
+        <input id="input-state-id" hidden="true" value="${estate}" type="text"/>
         <div class="row">
             Rodri's block
         </div>
@@ -16,17 +17,17 @@
                 <div class="row"style="display:${estate}">
                     <div class="input-field col s4">
                         <i class="material-icons prefix">library_add</i>
-                        <input id="input-item-name-id" type="text" name="item_name" class="validate">
+                        <input id="input-item-name-id" type="text" name="item_name" class="validate" required="true">
                         <label for="input-item-name-id">item name</label>
                     </div>
                     <div class="input-field col s4">
                         <i class="material-icons prefix">comment</i>
-                        <input id="input-item-description-id" type="text" name="item_description" class="validate">
+                        <input id="input-item-description-id" type="text" name="item_description" class="validate" required="true">
                         <label for="input-item-description-id">description</label>
                     </div>
                     <div class="input-field col s2">
                         <i class="material-icons prefix">payment</i>
-                        <input id="input-item-price-id" type="number" name="item_price" class="validate">
+                        <input id="input-item-price-id" type="number" name="item_price" class="validate" required="true" step="any">
                         <label for="input-item-price-id">price</label>
                     </div>
                     <div class="col s2">
