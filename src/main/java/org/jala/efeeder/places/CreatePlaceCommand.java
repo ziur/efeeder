@@ -67,9 +67,9 @@ public class CreatePlaceCommand implements CommandUnit {
 		int tagId = -1; //not exits tag with this id
 		PreparedStatement preparedStatement = connection.prepareStatement(GET_TAG_ID_QUERY);
 		preparedStatement.setString(1, tag);
-		ResultSet rSet = preparedStatement.executeQuery();
-		if (rSet.next()) 
-			return rSet.getInt("id");
+		ResultSet resultSet = preparedStatement.executeQuery();
+		if (resultSet.next()) 
+			return resultSet.getInt("id");
 		else  
 			return tagId;
 	}
@@ -84,9 +84,9 @@ public class CreatePlaceCommand implements CommandUnit {
 	}
 
 	private void updateTagPlaces(int tagId, int placeId) throws SQLException {
-		PreparedStatement prepareStatement1 = connection.prepareStatement(UPDATE_TAG_PLACES_QUERY);
-		prepareStatement1.setInt(1, tagId);
-		prepareStatement1.setInt(2, placeId);
-		prepareStatement1.execute();
+		PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_TAG_PLACES_QUERY);
+		prepareStatement.setInt(1, tagId);
+		prepareStatement.setInt(2, placeId);
+		prepareStatement.execute();
 	}
 }
