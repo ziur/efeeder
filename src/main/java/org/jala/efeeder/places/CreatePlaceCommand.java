@@ -22,7 +22,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class CreatePlaceCommand implements CommandUnit {
 	private static final String UPDATE_PLACE_QUERY = "INSERT INTO places(name, description, phone, direction, image_link) values(?, ?, ?, ?, ?)";
 	private static final String UPDATE_TAG_QUERY = "INSERT INTO tags(name) values(?)";
-    private static final String GET_TAG_ID_QUERY = "SELECT id FROM tags WHERE name=?";
+	private static final String GET_TAG_ID_QUERY = "SELECT id FROM tags WHERE name=?";
 	private static final String UPDATE_TAG_PLACES_QUERY = "INSERT INTO tag_places(id_tag, id_place) values(?, ?)";
 			
 	private Connection connection;
