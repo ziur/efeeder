@@ -16,6 +16,7 @@
 						</div></li>
                     <li><a href="/">Home</a></li>
                     <li><a href="/action/updateuserpage">Profile</a></li>
+                    <li><a href="/action/usermeetings">History</a></li>
                     <li><div class="divider"></div></li>
                     <li><a class="waves-effect" href="/action/logout"><i class="material-icons">power_settings_new</i>Log Out</a></li>
                 </ul>
