@@ -53,9 +53,10 @@ public class SearchPlaceCommand implements CommandUnit {
 	}
 
 	private String prepareQuery(String term, int ENTRIES_BY_PAGE, int page) {
-		if (term == null || term.isEmpty()) 
+		if (term == null || term.isEmpty()) {
 			return String.format(SEARCH_PLACES_QUERY_PATTERN, "", "", ENTRIES_BY_PAGE, page);
-		else 
+		} else { 
 			return String.format(SEARCH_PLACES_QUERY_PATTERN, term, term, ENTRIES_BY_PAGE, page);
+		}
 	}
 }

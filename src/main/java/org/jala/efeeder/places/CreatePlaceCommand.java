@@ -49,9 +49,9 @@ public class CreatePlaceCommand implements CommandUnit {
 		/* tag name will be one-off */
 		for (String tag : tags) {
 			int tagId = getTagId(tag);
-			if(tagId > 0)
+			if(tagId > 0) {
 				updateTagPlaces(tagId, placeId);
-			else {
+			} else {
 				int newTagId = createNewTag(tag);
 				updateTagPlaces(newTagId, placeId);
 			}
@@ -68,10 +68,11 @@ public class CreatePlaceCommand implements CommandUnit {
 		PreparedStatement preparedStatement = connection.prepareStatement(GET_TAG_ID_QUERY);
 		preparedStatement.setString(1, tag);
 		ResultSet resultSet = preparedStatement.executeQuery();
-		if (resultSet.next()) 
+		if (resultSet.next()) { 
 			return resultSet.getInt("id");
-		else  
+		} else { 
 			return tagId;
+		}
 	}
 
 	private int createNewTag(String tag) throws SQLException {
