@@ -687,7 +687,7 @@ function handleWsOnMessage(event)
 		switch (eventType) {
 			case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 				break;
-			case "org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent":
+			case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
 				m_ownerId = 0;
 				finishAction();
 				break;
@@ -772,7 +772,7 @@ function showSideBar()
 		nav.style.visibility = 'visible';
 		nav.style.left = '0px';
 	}
-	
+
 	m_uiSystem.stopInteracting();
 	m_sideBarHidden = false;
 }
@@ -780,8 +780,8 @@ function showSideBar()
 function hideSideBar()
 {
 	if (m_sideBarHidden) return;
-	
 	let nav = $('#mainSideNav').get(0);
+	
 	if (nav)
 	{
 		nav.style.visibility = 'hidden';
@@ -868,17 +868,46 @@ function run()
 	});	
 }
 
+function initChronometer() {
+	$(".countdown").attr("data-date", $('#voting_time').val());
+	$('.countdown').countdown({
+		refresh: 1000,
+		offset: 0,
+		onEnd: function() {
+			return;
+		},
+		render: function(date) {
+			if (date.days !== 0) {
+				this.el.innerHTML = date.days + " DAYS";
+			} else {
+				this.el.innerHTML = this.leadingZeros(date.hours) + ":" +
+				this.leadingZeros(date.min) + "." +
+				this.leadingZeros(date.sec);
+				if (date.min <= 30 && date.hours === 0){
+					$(".countdown").css('color', 'red');
+				}
+			}
+		}
+	});
+}
+
 function initialize()
 {
+	initChronometer();
 	$('#mainSideNav').get(0).style = "position:fixed;visibility:hidden;width:300px;left:-300px;top:" +
 		$("nav").height() + "px;margin:0;padding-bottom:60px;background-color:#fff; overflow:auto;z-index:1;transition:visibility 1s,left 1s;"
 	$('#mainCanvas').get(0).className = "";
 }
 
+function closeWebsocketConnection() {
+	m_comService.disconnect();
+}
+
 initialize();
 return {
 	run:run,
-	addSuggestion:addSuggestion
+	addSuggestion:addSuggestion,
+	closeWebsocketConnection: closeWebsocketConnection
 };
 
 }
@@ -888,3 +917,8 @@ let ef_votingView = new VotingView(g_feastId);
 $(window).on("load", function() {
 	ef_votingView.run();
 });
+
+$(window).on('beforeunload', function() {
+	ef_votingView.closeWebsocketConnection();
+});
+

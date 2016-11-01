@@ -24,6 +24,7 @@ public class OrderManager {
     private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
     private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user) VALUES(?, ?, ?, ?);";
     private static final String UPDATE_ORDER = "UPDATE orders SET order_name=?, cost=? WHERE id_food_meeting=? AND id_user=?;";
+    private static final String UPDATE_PAYMENT = "UPDATE orders SET payment=? WHERE id_food_meeting=? AND id_user=?;";
 
     private final Connection connection;
 
@@ -91,6 +92,10 @@ public class OrderManager {
     public void updateOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
         executeUpdateOrder(idFoodMeeting, idUser, details, cost, UPDATE_ORDER);
     }
+    
+    public void updatePayment(int idFoodMeeting, int idUser, double payment) throws SQLException {
+        executeUpdatePayment(idFoodMeeting, idUser, payment, UPDATE_PAYMENT);
+    }
 
     private void executeUpdateOrder(int idFoodMeeting, int idUser, String details, double cost, String query)
             throws SQLException {
@@ -104,6 +109,17 @@ public class OrderManager {
         preparedStatement.executeUpdate();
     }
 
+    private void executeUpdatePayment(int idFoodMeeting, int idUser, double payment, String query)
+            throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setDouble(1, payment);
+        preparedStatement.setInt(2, idFoodMeeting);
+        preparedStatement.setInt(3, idUser);
+
+        preparedStatement.executeUpdate();
+    }
+    
     private void joinUserToOrder(List<Order> orders, List<Integer> idUsers) throws SQLException {
         UserManager userManager = new UserManager(connection);
         List<User> users = userManager.getUsersById(idUsers);

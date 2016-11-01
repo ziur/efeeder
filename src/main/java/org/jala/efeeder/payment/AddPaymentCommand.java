@@ -5,12 +5,14 @@
  */
 package org.jala.efeeder.payment;
 
+import java.sql.Connection;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
+import org.jala.efeeder.order.OrderManager;
 
 /**
  *
@@ -26,7 +28,9 @@ public class AddPaymentCommand implements CommandUnit {
         String details = parameters.getParameter("details");
         String cost = parameters.getParameter("cost");
         String payment = parameters.getParameter("payment");
-        
+        Connection connection = parameters.getConnection();
+        OrderManager orderManager = new OrderManager(connection);
+        orderManager.updatePayment(Integer.valueOf(idFoodMeeting), Integer.valueOf(idUser), Double.valueOf(payment));
         
         return OutBuilder.response("application/json", JsonConverter.objectToJSON("{}"));
     }

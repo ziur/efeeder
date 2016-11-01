@@ -7,45 +7,35 @@
         <script src="/assets/js/payment.js"></script>
     </jsp:attribute>
     <jsp:body>
-        <input id="input-food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
+        <input id="food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
         <div class="row">
             <div class="col-sm-12">
                 <ul class="collection" >
                     <div id="my-order-container">
-                        <li class="collection-item avatar">
-
-                            <i class="material-icons circle">perm_identity</i>
-                            <input type="hidden" id="id-food-meeting" value="${id_food_meeting}"/>
-                            <div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
-                                <input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}"/>
-                            </div>
-                            <span class="my-order-details" class="title">${myOrder.details}</span>
-                            <br/>
-                            <p class="my-order-cost">${myOrder.cost}</p>
-                            <p>${myUser.name} ${myUser.lastName}</p>                            
-                            <c:if test="${buyer.getUserId() == user.getId()}">
-                                <input type="number" id="my-order-cost-input" value="${myOrder.payment}" placeholder="Payment" />
-                                <p class="my-order-cost" style="display: none;">${myOrder.payment}</p>
-                                <a href="#" class="btn-edit-my-order btn-edit secondary-content">
-                                    <i class="material-icons">crop_square</i>
-                                </a>
-                            </c:if>
-
-                        </li>
-
                         <c:forEach var="order" items="#{orders}">
-                            <li class="collection-item avatar">
+                            <li class="collection-item avatar" id="order-${order.idUser}">
                                 <i class="material-icons circle">perm_identity</i>
+                                <p><b>${order.user.name} ${order.user.lastName}</b></p>
                                 <span class="my-order-details" class="title">${order.details}</span>
                                 <br/>
-                                <p class="my-order-cost">${order.cost}</p>
-                                <p>${order.user.name} ${order.user.lastName}</p>
+                                <input id="user-id" hidden="true" value="${order.idUser}" type="text"/>
+                                <p class="my-order-cost">${order.cost} </p> 
+                                <p class="partial-by-order"> + ${partialByOrder} = ${partialByOrder + order.cost} </p>                                
                                 <c:if test="${buyer.getUserId() == user.getId()}">
-                                    <input type="number" id="my-order-cost-input" value="${order.payment}" placeholder="Payment" />
-                                    <p class="my-order-cost" style="display: none;">${order.payment}</p>
-                                    <a href="#" class="btn-edit-my-order btn-edit secondary-content">
-                                        <i class="material-icons">crop_square</i>
-                                    </a>
+                                    <c:if test="${order.payment >= partialByOrder + order.cost}">    
+                                        <input style="display: none;" type="number" id="my-order-cost-input" value="${order.payment}" placeholder="Payment" />
+                                        <p class="label-payment">${order.payment}</p>
+                                        <a href="#" class="btn-edit-my-order btn-edit secondary-content">
+                                            <i class="material-icons">done</i>
+                                        </a>                                        
+                                    </c:if>
+                                    <c:if test="${order.payment < partialByOrder + order.cost}">    
+                                        <input type="number" id="my-order-cost-input" value="${order.payment}" placeholder="Payment" />
+                                        <p class="label-payment" style="display: none;">${order.payment}</p>
+                                        <a href="#" class="btn-edit-my-order btn-edit secondary-content">
+                                            <i class="material-icons">crop_square</i>
+                                        </a>                                        
+                                    </c:if>
                                 </c:if>
                             </li>
                         </c:forEach>

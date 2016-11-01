@@ -41,7 +41,6 @@ public class PaymentCommand implements CommandUnit {
         List<Order> orders = getOrders(connection, idFoodMeeting);
         Buyer buyer = buyerManager.getBuyerByFoodMeetingId(Integer.valueOf(idFoodMeeting));
         User user = parameters.getUser();
-        Order myOrder = extractMyOrder(idUser, orders);
 
         int foodMeetingId = Integer.parseInt(parameters.getParameter("id_food_meeting"));
         int buyerId = buyer != null ? buyer.getUserId() : 0;
@@ -49,15 +48,16 @@ public class PaymentCommand implements CommandUnit {
         String isBuyer = (buyerId == user.getId()) ? "block" : "none";
         List<PaymentItem> itemList = getExtraItems(foodMeetingId, connection);
 
+        double itemTotalPrice = getTotalExternalItemPrice(itemList);
+        double partialByOrder = itemTotalPrice > 0 ? itemTotalPrice / orders.size() : 0;
         out.addResult("items", itemList);
         out.addResult("estate", isBuyer);
         out.addResult("id_food_meeting", foodMeetingId);
-        out.addResult("total_item_price", getTotalExternalItemPrice(itemList));
-
+        out.addResult("total_item_price", itemTotalPrice);
+        out.addResult("partialByOrder", partialByOrder);
         out.addResult("myUser", user);
         out.addResult("buyer", buyer);
         out.addResult("orders", orders);
-        out.addResult("myOrder", myOrder);
 
         if (buyer == null) {
             return out.redirect("wheeldecide/wheel.jsp");

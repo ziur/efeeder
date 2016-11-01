@@ -2,6 +2,7 @@ package org.jala.efeeder.order;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -33,6 +34,7 @@ public class OrderCommand implements CommandUnit {
 		out.addResult("orders", orders);
 		out.addResult("myOrder", myOrder);
 		out.addResult("myUser", parameters.getUser());
+		out.addResult("orderTime",  getOrderTime(connection, idFoodMeeting));
 		out.forward("order/orders.jsp");
 
 		return out;
@@ -43,6 +45,11 @@ public class OrderCommand implements CommandUnit {
 		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting));
 	}
 
+	private Timestamp getOrderTime(Connection connection, String idFoodMeeting) throws SQLException {
+		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
+		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting)).getOrderDate();
+	}
+	
 	private List<Order> getOrders(Connection connection, String idFoodMeeting) throws SQLException {
 		OrderManager orderManager = new OrderManager(connection);
 		return orderManager.getOrdersWithUserByFoodMeeting(Integer.parseInt(idFoodMeeting));
