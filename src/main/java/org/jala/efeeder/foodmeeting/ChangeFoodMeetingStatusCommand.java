@@ -10,9 +10,12 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.MessageContextUtils;
+import org.jala.efeeder.servlets.CommandEndpoint;
 import org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.servlets.websocket.avro.MessageContext.Builder;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
+import org.jala.efeeder.util.constants.WebsocketsConstants;
 
 /**
  *
@@ -35,18 +38,19 @@ public class ChangeFoodMeetingStatusCommand implements CommandUnit {
 						.setIdFoodMeeting(receivedEvent.getIdFoodMeeting())
 						.setIdUser(receivedEvent.getIdUser())
 						.setNewStatus(receivedEvent.getNewStatus())
-						.setRedirectTo("/action/payment?id_food_meeting=" + receivedEvent.getIdFoodMeeting())
 						.build()
 				)
 				.build()
 		);
-		MessageContext messageContext = MessageContext.newBuilder()
-				.setRoom(receivedMessage.getRoom())
+		
+		Builder messageBuilder = MessageContext.newBuilder()				
 				.setUser(receivedMessage.getUser())
-				.setEvents(events)
-				.build();
+				.setEvents(events);
 
-		return OutBuilder.response(messageContext);
+		String homeRoomId = WebsocketsConstants.homeRoom;		
+		CommandEndpoint.sendMessage(messageBuilder.setRoom(homeRoomId).build());
+
+		return OutBuilder.response(messageBuilder.setRoom(homeRoomId).setRoom(receivedMessage.getRoom()).build());
 	}
 
 	private void changeFoodMeetingStatus(ChangeFoodMeetingStatusEvent event, int idUser, Connection connection) throws SQLException {

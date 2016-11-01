@@ -45,7 +45,7 @@ public class FoodMeeting {
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, new Timestamp(System.currentTimeMillis()), eventDate, eventDate, eventDate, userOwner);
 	}
 
 	public int getWidth() {
@@ -79,5 +79,22 @@ public class FoodMeeting {
 	public String getTime() {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
 		return fmt.print(eventDate.getTime());
+	}
+
+	public FoodMeetingStatus getStatusByTime(Timestamp time) {
+		FoodMeetingStatus state = FoodMeetingStatus.Voting;		
+		if(this.votingDate.compareTo(time) <= 0) {
+			state = FoodMeetingStatus.Order;
+		}
+		if(this.orderDate.compareTo(time) <= 0) {
+			state = FoodMeetingStatus.Payment;
+		}
+		if(this.paymentDate.compareTo(time) <= 0) {
+			state = FoodMeetingStatus.Buying;
+		}
+		if(this.eventDate.compareTo(time) <= 0) {
+			state = FoodMeetingStatus.Finish;
+		}		
+		return state;
 	}
 }

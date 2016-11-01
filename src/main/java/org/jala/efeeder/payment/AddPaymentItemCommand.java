@@ -13,7 +13,6 @@ import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
 import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 import org.jala.efeeder.servlets.CommandEndpoint;
-import org.jala.efeeder.servlets.websocket.avro.CloseVotingEvent;
 import org.jala.efeeder.servlets.websocket.avro.CreateExtraItemPayment;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
