@@ -23,29 +23,38 @@ $(function () {
                     var itemPrice = eventMessage.itemPrice;
 
                     var $toastContent = $('<span><a href="#' + itemId + '" class="white-text">' + itemName + ' item was created successfully!</a></span>');
-                    console.log("el evento : " + $toastContent);
-                    Materialize.toast($toastContent, 5000);
+
                     var totalItemsPrice = $("#total_items_price_id");
                     
                     var buttonStyle = "style='display:" + inputState + "'"
                     var button = "<td><a class='btn-floating btn-small waves-effect waves-light red delete-item' "+ buttonStyle +"><i class='material-icons'>delete</i></a></td>";
-//                    if(inputState.localeCompare(""))
+
                     $("#items_id tr:last").after("<tr id='" + itemId + "'><td>" + itemName + "</td><td>" + "la descripcion" + "</td><td>" + itemPrice + "</td>" + button + "</tr>");
 
                     $(".validate").val("");
                     var numAux = parseFloat(totalItemsPrice.text()) + itemPrice;
                     totalItemsPrice.text(numAux);
+                    
+                    Materialize.toast($toastContent, 5000);
+                    break;
+                case "org.jala.efeeder.servlets.websocket.avro.DeleteExtraItemPayment":
+                    var item_id = eventMessage.tableIndex;
+                    var stringId = "#" + item_id;
+                    var indexRowOnTable = $(stringId).index() + 1;
+                    var itemPrice = $(stringId).children("td")[2].textContent;
+                    document.getElementById('items_id').deleteRow(indexRowOnTable);
+                    paymentItem.updateTotal(itemPrice);
+                    Materialize.toast("Item delete!", 2000);
                     break;
             }
         });
     });
 
     communicationService.connect('ws://' + location.host + '/ws', addExternalItemId);
-    console.log("el id esss del roon : " + addExternalItemId);
 });
 
 var PaymentItem = function() {
-	var table = $("#create-user-form");
+	var table = $("#items_id");
 	var foodMeetingId = $("#input-food-meeting-id");
 	var deleteItemButton = $('.delete-item');
 	var formAddItem = $('#formAddItemId');
@@ -59,12 +68,8 @@ var PaymentItem = function() {
                 createItem(event, true);
             }); 
             
-            deleteItemButton.click(function () {
-                var d = this.parentNode.parentNode.rowIndex;
-                var aa = this;
-                document.getElementById('items_id').deleteRow(d);
+            table.on('click', 'a.delete-item', function() {
                 deletePayItem(this.parentNode.parentNode.id);
-                updatePayDeleted(this.parentNode.parentNode);
             });
 	};
     
@@ -79,7 +84,7 @@ var PaymentItem = function() {
             contentType: false,
             cache: false,
             success: function (data) {
-                Materialize.toast(data + ' sended.', 2000);
+                console.log("was sended and success");
             },
             error: function (data) {
                 errorMessage(data.responseJSON.message);
@@ -88,26 +93,24 @@ var PaymentItem = function() {
         event.preventDefault();
     };
     
-    var functionDeleteRow = function () {
-        var d = this.parentNode.parentNode.rowIndex;
-        var aa = this;
-        document.getElementById('items_id').deleteRow(d);
-        deletePayItem(this.parentNode.parentNode.id);
-        updatePayDeleted(this.parentNode.parentNode);
+    var updateClickDeleteItem = function () {
+        deleteItemButton.click(function (){
+            deletePayItem(this.parentNode.parentNode.id);
+        });
     };
 
     var deletePayItem = function (index) {
         var index_value = {"index_key": "index"};
+        var item_id = {"index_key": "index"};
         $.ajax({
             url: '/action/deletePaymentItem?index=' + index,
             success: function (result) {
-                Materialize.toast('You delete' + result, 2000);
+                console.log('You delete ' + result);
             }
         });
     };
 
-    var updatePayDeleted = function (numWrapper) {
-        var num = numWrapper.children[2].textContent;
+    var updatePayDeletedOnTotal = function (num) {
         var numAux = parseFloat(totalItemsPrice.text()) - parseFloat(num);
         totalItemsPrice.text(numAux);
     };
@@ -116,5 +119,11 @@ var PaymentItem = function() {
 		init: function(){
 			addEventClick();
 		},
+        updateTotal: function (num){
+            updatePayDeletedOnTotal(num);
+        },
+        updateClick: function (){
+            updateClickDeleteItem();
+        }
 	};
 };

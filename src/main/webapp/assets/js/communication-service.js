@@ -226,30 +226,42 @@
 														}
 													]
 												},
-                                                                                                {
-                                                                                                        "namespace": "org.jala.efeeder.servlets.websocket.avro",
-                                                                                                        "type": "record",
-                                                                                                        "name": "CreateExtraItemPayment",
-                                                                                                        "alias": "CreateExtraItemPayment",
-                                                                                                        "fields": [
-                                                                                                                {
-                                                                                                                        "name": "itemId",
-                                                                                                                        "type": "int"
-                                                                                                                },
-                                                                                                                {
-                                                                                                                        "name": "itemName",
-                                                                                                                        "type": "string"
-                                                                                                                },
-                                                                                                                {
-                                                                                                                        "name": "itemPrice",
-                                                                                                                        "type": "double"
-                                                                                                                },
-                                                                                                                {
-                                                                                                                        "name": "status",
-                                                                                                                        "type": "string"
-                                                                                                                }
-                                                                                                        ]
-                                                                                                }
+                                                {
+                                                    "namespace": "org.jala.efeeder.servlets.websocket.avro",
+                                                    "type": "record",
+                                                    "name": "CreateExtraItemPayment",
+                                                    "alias": "CreateExtraItemPayment",
+                                                    "fields": [
+                                                        {
+                                                                "name": "itemId",
+                                                                "type": "int"
+                                                        },
+                                                        {
+                                                                "name": "itemName",
+                                                                "type": "string"
+                                                        },
+                                                        {
+                                                                "name": "itemPrice",
+                                                                "type": "double"
+                                                        },
+                                                        {
+                                                                "name": "status",
+                                                                "type": "string"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "namespace": "org.jala.efeeder.servlets.websocket.avro",
+                                                    "type": "record",
+                                                    "name": "DeleteExtraItemPayment",
+                                                    "alias": "DeleteExtraItemPayment",
+                                                    "fields": [
+                                                        {
+                                                                "name": "tableIndex",
+                                                                "type": "int"
+                                                        }
+                                                    ]
+                                                }
 											]
 										}
 									]
