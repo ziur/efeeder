@@ -21,7 +21,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class SearchPlaceCommand implements CommandUnit {
 	private static final Logger LOG = Logger.getLogger(SearchPlaceCommand.class.getName());
 	private static final int ENTRIES_BY_PAGE = 10;
-	private static final String SEARCH_PLACES_QUERY_PATHERM =
+	private static final String SEARCH_PLACES_QUERY_PATTERN =
 		"select * from places where places.name like '%%%s%%' or id in (select tp.id_place from tag_places as tp where tp.id_tag in (select t.id from tags as t where t.name like '%%%s%%')) LIMIT %d OFFSET %d";
 	         
 	@Override
@@ -54,8 +54,8 @@ public class SearchPlaceCommand implements CommandUnit {
 
 	private String prepareQuery(String term, int ENTRIES_BY_PAGE, int page) {
 		if (term == null || term.isEmpty()) 
-			return String.format(SEARCH_PLACES_QUERY_PATHERM, "", "", ENTRIES_BY_PAGE, page);
+			return String.format(SEARCH_PLACES_QUERY_PATTERN, "", "", ENTRIES_BY_PAGE, page);
 		else 
-			return String.format(SEARCH_PLACES_QUERY_PATHERM, term, term, ENTRIES_BY_PAGE, page);
+			return String.format(SEARCH_PLACES_QUERY_PATTERN, term, term, ENTRIES_BY_PAGE, page);
 	}
 }
