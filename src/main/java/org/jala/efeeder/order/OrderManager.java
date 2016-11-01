@@ -12,97 +12,109 @@ import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
 
 /**
- * 
+ *
  * @author amir_aranibar
  *
  */
 public class OrderManager {
-	private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost FROM orders";
-	private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
-	private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
-	private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user) VALUES(?, ?, ?, ?);";
-	private static final String UPDATE_ORDER = "UPDATE orders SET order_name=?, cost=? WHERE id_food_meeting=? AND id_user=?;";
 
-	private final Connection connection;
+    private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost, payment FROM orders";
+    private static final String USERS_QUERY = "SELECT id, name, last_name, email FROM user WHERE id=%d";
+    private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
+    private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
+    private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user) VALUES(?, ?, ?, ?);";
+    private static final String UPDATE_ORDER = "UPDATE orders SET order_name=?, cost=? WHERE id_food_meeting=? AND id_user=?;";
 
-	public OrderManager(Connection connection) {
-		this.connection = connection;
-	}
+    private final Connection connection;
 
-	public List<Order> getOrdersWithUserByFoodMeeting(int idFoodMeeting) throws SQLException {
-		List<Order> orders = getOrdersByFoodMeeting(idFoodMeeting);
-		List<Integer> idUsers = new ArrayList<>();
+    public OrderManager(Connection connection) {
+        this.connection = connection;
+    }
 
-		orders.stream().forEach((order) -> {
-			idUsers.add(order.getIdUser());
-		});
+    public List<Order> getOrdersWithUserByFoodMeeting(int idFoodMeeting) throws SQLException {
+        List<Order> orders = getOrdersByFoodMeeting(idFoodMeeting);
+        List<Integer> idUsers = new ArrayList<>();
 
-		joinUserToOrder(orders, idUsers);
+        orders.stream().forEach((order) -> {
+            idUsers.add(order.getIdUser());
+        });
 
-		return orders;
-	}
+        joinUserToOrder(orders, idUsers);
 
-	public List<Order> getOrdersByFoodMeeting(int idFoodMeeting) throws SQLException {
-		List<Order> orders = new ArrayList<>();
+        return orders;
+    }
 
-		PreparedStatement preparedStatement = connection.prepareStatement(ORDERS_BY_FOOD_MEETING_QUERY);
-		preparedStatement.setInt(1, idFoodMeeting);
-		ResultSet resultSet = preparedStatement.executeQuery();
+    public List<Order> getOrdersByFoodMeeting(int idFoodMeeting) throws SQLException {
+        List<Order> orders = new ArrayList<>();
 
-		while (resultSet.next()) {
-			int idUser = resultSet.getInt(2);
-			Order order = new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4));
-			orders.add(order);
-		}
+        PreparedStatement preparedStatement = connection.prepareStatement(ORDERS_BY_FOOD_MEETING_QUERY);
+        preparedStatement.setInt(1, idFoodMeeting);
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-		return orders;
-	}
+        while (resultSet.next()) {
+            int idUser = resultSet.getInt(2);
+            int userId = resultSet.getInt(2);
+            PreparedStatement preparedUserStatement = connection.prepareStatement(String.format(USERS_QUERY, userId));
+            ResultSet userResultSet = preparedUserStatement.executeQuery();
+            User user = null;
+            if (userResultSet.next()) {
+                user = new User(userResultSet.getInt(1), userResultSet.getString(4), userResultSet.getString(2), userResultSet.getString(2));
+            }
+            Order order = new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), resultSet.getDouble(5));
+            if (user != null) {
+                order.setUser(user);
+            }
+            orders.add(order);
+        }
 
-	public Order getMyOrder(int idUser, int idFoodMeeting) throws SQLException {
-		Order myOrder = null;
-		PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
-		preparedStatement.setInt(1, idFoodMeeting);
-		preparedStatement.setInt(2, idUser);
-		ResultSet resultSet = preparedStatement.executeQuery();
+        return orders;
+    }
 
-		if (resultSet.next()) {
-			myOrder = new Order(idFoodMeeting, idUser, resultSet.getString(3), resultSet.getDouble(4));
-		}
+    public Order getMyOrder(int idUser, int idFoodMeeting) throws SQLException {
+        Order myOrder = null;
+        PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
+        preparedStatement.setInt(1, idFoodMeeting);
+        preparedStatement.setInt(2, idUser);
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-		return myOrder;
-	}
+        if (resultSet.next()) {
+            myOrder = new Order(idFoodMeeting, idUser, resultSet.getString(3), resultSet.getDouble(4), resultSet.getDouble(5));
+        }
 
-	public void insertOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
-		executeUpdateOrder(idFoodMeeting, idUser, details, cost, INSERT_ORDER);
-	}
+        return myOrder;
+    }
 
-	public void updateOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
-		executeUpdateOrder(idFoodMeeting, idUser, details, cost, UPDATE_ORDER);
-	}
+    public void insertOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
+        executeUpdateOrder(idFoodMeeting, idUser, details, cost, INSERT_ORDER);
+    }
 
-	private void executeUpdateOrder(int idFoodMeeting, int idUser, String details, double cost, String query)
-			throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(query);
+    public void updateOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
+        executeUpdateOrder(idFoodMeeting, idUser, details, cost, UPDATE_ORDER);
+    }
 
-		preparedStatement.setString(1, details);
-		preparedStatement.setDouble(2, cost);
-		preparedStatement.setInt(3, idFoodMeeting);
-		preparedStatement.setInt(4, idUser);
+    private void executeUpdateOrder(int idFoodMeeting, int idUser, String details, double cost, String query)
+            throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-		preparedStatement.executeUpdate();
-	}
+        preparedStatement.setString(1, details);
+        preparedStatement.setDouble(2, cost);
+        preparedStatement.setInt(3, idFoodMeeting);
+        preparedStatement.setInt(4, idUser);
 
-	private void joinUserToOrder(List<Order> orders, List<Integer> idUsers) throws SQLException {
-		UserManager userManager = new UserManager(connection);
-		List<User> users = userManager.getUsersById(idUsers);
+        preparedStatement.executeUpdate();
+    }
 
-		orders.stream().forEach((order) -> {
-			Optional<User> result = users.stream()
-					.filter(user -> order.getIdUser() == user.getId()).findFirst();
-			if (result.isPresent()) {
-				order.setUser(result.get());
-				users.remove(result.get());
-			}
-		});
-	}
+    private void joinUserToOrder(List<Order> orders, List<Integer> idUsers) throws SQLException {
+        UserManager userManager = new UserManager(connection);
+        List<User> users = userManager.getUsersById(idUsers);
+
+        orders.stream().forEach((order) -> {
+            Optional<User> result = users.stream()
+                    .filter(user -> order.getIdUser() == user.getId()).findFirst();
+            if (result.isPresent()) {
+                order.setUser(result.get());
+                users.remove(result.get());
+            }
+        });
+    }
 }

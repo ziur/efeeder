@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jala.efeeder.image;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
@@ -42,7 +37,7 @@ public class ImageCommand implements CommandUnit {
 		this.defaultPath = path;
 
 		if (!imageName.equals("empty")) {
-			path = parameters.getParameter("image_path") + "/" + imageName;
+			path = parameters.getPathEfeederImages() + "/" + imageName;
 		}
 
 		String extension = FilenameUtils.getExtension(path);
