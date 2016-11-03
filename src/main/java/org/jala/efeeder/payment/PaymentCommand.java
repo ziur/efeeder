@@ -77,7 +77,6 @@ public class PaymentCommand implements CommandUnit {
             while (result.next()) {
                 resultItemsList.add(new PaymentItem(result.getInt("id"),
                         foodMeetingId,
-                        result.getString("item_name"),
                         result.getString("item_description"),
                         result.getDouble("price")));
             }

@@ -26,17 +26,17 @@ $(document).ready(function () {
 
                     case "org.jala.efeeder.servlets.websocket.avro.CreateExtraItemPayment":
                         var itemId = eventMessage.itemId;
-                        var itemName = eventMessage.itemName;
+                        var itemDescription = eventMessage.itemDescription;
                         var itemPrice = eventMessage.itemPrice;
 
-                        var $toastContent = $('<span><a href="#' + itemId + '" class="white-text">' + itemName + ' item was created successfully!</a></span>');
+                        var $toastContent = $('<span><a href="#' + itemId + '" class="white-text">' + itemDescription + ' item was created successfully!</a></span>');
 
                         var totalItemsPrice = $("#total_items_price_id");
 
                         var buttonStyle = "style='display:" + inputState + "'"
                         var button = "<td><a class='btn-floating btn-small waves-effect waves-light red delete-item' " + buttonStyle + "><i class='material-icons'>delete</i></a></td>";
 
-                        $("#items_id tr:last").after("<tr id='" + itemId + "'><td>" + itemName + "</td><td>" + "la descripcion" + "</td><td>" + itemPrice + "</td>" + button + "</tr>");
+                        $("#items_id tr:last").after("<tr id='" + itemId + "'><td>" + itemDescription + "</td><td>" + itemPrice + "</td>" + button + "</tr>");
 
                         $(".validate").val("");
                         var numAux = parseFloat(totalItemsPrice.text()) + itemPrice;
@@ -49,7 +49,7 @@ $(document).ready(function () {
                         var item_id = eventMessage.tableIndex;
                         var stringId = "#" + item_id;
                         var indexRowOnTable = $(stringId).index() + 1;
-                        var itemPrice = $(stringId).children("td")[2].textContent;
+                        var itemPrice = $(stringId).children("td")[1].textContent;
                         document.getElementById('items_id').deleteRow(indexRowOnTable);
                         paymentItem.updateTotal(itemPrice);
                         Materialize.toast("Item delete!", 2000);

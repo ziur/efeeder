@@ -2,7 +2,6 @@ package org.jala.efeeder.payment;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
@@ -12,7 +11,6 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 import org.jala.efeeder.servlets.CommandEndpoint;
-import org.jala.efeeder.servlets.websocket.avro.CreateExtraItemPayment;
 import org.jala.efeeder.servlets.websocket.avro.DeleteExtraItemPayment;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;

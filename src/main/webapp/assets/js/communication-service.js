@@ -230,7 +230,7 @@
                                                                 "type": "int"
                                                         },
                                                         {
-                                                                "name": "itemName",
+                                                                "name": "itemDescription",
                                                                 "type": "string"
                                                         },
                                                         {

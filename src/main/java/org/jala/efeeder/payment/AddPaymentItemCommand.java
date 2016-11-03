@@ -10,7 +10,6 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
-import org.jala.efeeder.api.utils.JsonConverter;
 import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 import org.jala.efeeder.servlets.CommandEndpoint;
 import org.jala.efeeder.servlets.websocket.avro.CreateExtraItemPayment;
@@ -26,23 +25,21 @@ public class AddPaymentItemCommand implements CommandUnit {
 
 	@Override
 	public Out execute(In parameters) throws Exception {
-		String itemName = parameters.getParameter("item_name");
 		String itemDescription = parameters.getParameter("item_description");
 		double itemPrice = Double.parseDouble(parameters.getParameter("item_price"));
 		int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
 		Connection connection = parameters.getConnection();
 		
 		PreparedStatement prepareStatement = connection.
-				prepareStatement("INSERT INTO efeeder.payment (id_food_meeting, item_name, item_description, price)	VALUES (?, ?, ?, ?)");
+				prepareStatement("INSERT INTO efeeder.payment (id_food_meeting, item_description, price)	VALUES (?, ?, ?)");
 		prepareStatement.setInt(1, idFoodMeeting);
-		prepareStatement.setString(2, itemName);
-		prepareStatement.setString(3, itemDescription);
-		prepareStatement.setDouble(4, itemPrice);
+		prepareStatement.setString(2, itemDescription);
+		prepareStatement.setDouble(3, itemPrice);
 		prepareStatement.executeUpdate();
 		
-		prepareStatement = connection.prepareStatement("select id from payment where id_food_meeting=? and item_name=?");
+		prepareStatement = connection.prepareStatement("select id from payment where id_food_meeting=? and item_description=?");
 		prepareStatement.setInt(1, idFoodMeeting);
-		prepareStatement.setString(2, itemName);
+		prepareStatement.setString(2, itemDescription);
 		ResultSet res = prepareStatement.executeQuery();
 		int itemId = 0;
 		
@@ -51,13 +48,12 @@ public class AddPaymentItemCommand implements CommandUnit {
 		}
 		
 		try {
-//			String roomId = Integer.toString(idFoodMeeting);
 			String roomId = "addItem";
 			List<MessageEvent> events = new ArrayList<>();
 			events.add(MessageEvent.newBuilder().setEvent(
 					CreateExtraItemPayment.newBuilder()
 							.setItemId(itemId)
-							.setItemName(itemName)
+							.setItemDescription(itemDescription)
 							.setItemPrice(itemPrice)
 							.setStatus("add")
 							.build()).build());
@@ -68,7 +64,7 @@ public class AddPaymentItemCommand implements CommandUnit {
 			return OutBuilder.response("application/json", objectToJSON(e.toString()));
 		}
 		
-		return OutBuilder.response("application/json", JsonConverter.objectToJSON(new PaymentItem(itemId, idFoodMeeting, itemName, itemDescription, itemPrice)));
+		return OutBuilder.response("application/json", objectToJSON("Command complite"));
 	}
 	
 }

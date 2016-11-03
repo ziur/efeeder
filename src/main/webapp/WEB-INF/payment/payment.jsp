@@ -54,12 +54,7 @@
         </div>   
         <div class="row">
             <form id="formAddItemId" class="row col s12">
-                <div class="row"style="display:${estate}">
-                    <div class="input-field col s4">
-                        <i class="material-icons prefix">library_add</i>
-                        <input id="input-item-name-id" type="text" name="item_name" class="validate" required="true">
-                        <label for="input-item-name-id">item name</label>
-                    </div>
+                <div class="row" style="display:${estate}">
                     <div class="input-field col s4">
                         <i class="material-icons prefix">comment</i>
                         <input id="input-item-description-id" type="text" name="item_description" class="validate" required="true">
@@ -82,7 +77,6 @@
                 <table id="items_id">
                     <thead>
                         <tr>
-                            <th data-field="id">Item Name</th>
                             <th data-field="name">Description</th>
                             <th data-field="price">Item Price</th>
                             <th></th>
@@ -93,7 +87,6 @@
                         <c:forEach var="item" items="#{items}">
                         <label hidden="true">${item.id}</label>
                         <tr id="${item.id}">
-                            <td>${item.name}</td>
                             <td>${item.description}</td>
                             <td>${item.price}</td>
                             <td>
@@ -104,29 +97,6 @@
                     </tbody>
                 </table>
                 <h5 id="total_items_price_id" class="right-align">${total_item_price}</h5>
-            </div>
-            <div class="row">
-                <ul class="collection">
-                    <li class="collection-header"><h4>Extra Items</h4></li>
-                    <li class="collection-item avatar">
-                        <i class="material-icons circle green">shopping_basket</i>
-                        <span class="title">taxi</span>
-                        <p>12.5</p>
-                        <a class="secondary-content"><i class="material-icons">delete</i></a>
-                    </li>
-                    <li class="collection-item avatar">
-                        <i class="material-icons circle green">shopping_basket</i>
-                        <span class="title">coca-cola</span>
-                        <p>10.5</p>
-                        <a class="secondary-content"><i class="material-icons">delete</i></a>
-                    </li>
-                    <li class="collection-item avatar">
-                        <i class="material-icons circle green">shopping_basket</i>
-                        <span class="title">vasos</span>
-                        <p>5.0</p>
-                        <a class="secondary-content"><i class="material-icons">delete</i></a>
-                    </li>
-                </ul>
             </div>
         </div>
     </jsp:body>
