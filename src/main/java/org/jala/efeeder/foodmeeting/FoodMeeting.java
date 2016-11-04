@@ -1,8 +1,8 @@
 package org.jala.efeeder.foodmeeting;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
+import org.jala.efeeder.places.Place;
 import org.jala.efeeder.user.User;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -25,6 +25,7 @@ public class FoodMeeting {
 	private Timestamp orderDate;
 	private Timestamp paymentDate;
 	private User userOwner;
+	private Place place;
 	private Timestamp createdAt;
 
 	public FoodMeeting() {

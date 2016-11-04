@@ -3,7 +3,7 @@
 	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+		 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet author="rodrigo" id="user.table">
 		<createTable catalogName="efeeder" tableName="user">
@@ -40,7 +40,7 @@
 	<changeSet author="roger" id="insert.user.test">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Test"/>
+				<column name="name"	   value="Test"/>
 				<column name="last_name"  value="Test"/>
 				<column name="username"   value="Test"/>
 				<column name="password"   value="0cbc6611f5540bd0809a388dc95a615b"/>
@@ -52,7 +52,7 @@
 	<changeSet author="roger" id="insert.user.alejandro">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Alejandro"/>
+				<column name="name"	   value="Alejandro"/>
 				<column name="last_name"  value="Ruiz"/>
 				<column name="username"   value="ARuiz"/>
 				<column name="password"   value="eb047191cc210ca039bedc203d75f849"/>
@@ -64,7 +64,7 @@
 	<changeSet author="roger" id="insert.user.amir">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Amir"/>
+				<column name="name"	   value="Amir"/>
 				<column name="last_name"  value="Aranibar"/>
 				<column name="username"   value="AAranibar"/>
 				<column name="password"   value="87d61b7bb95c4d9fd3bbf6dd393f39e2"/>
@@ -76,7 +76,7 @@
 	<changeSet author="roger" id="insert.user.ricardo">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Ricardo"/>
+				<column name="name"	   value="Ricardo"/>
 				<column name="last_name"  value="Ramirez"/>
 				<column name="username"   value="RRamirez"/>
 				<column name="password"   value="74e51c42cf9fb9d73f1bec7bde6be0c4"/>
@@ -88,11 +88,11 @@
 	<changeSet author="0x3" id="insert.user.0">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Huey"/>
+				<column name="name"	   value="Huey"/>
 				<column name="last_name"  value="McDuck"/>
 				<column name="username"   value="0"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
-				<column name="email"      value="Huey.McDuck@cuacua.com"/>
+				<column name="email"	  value="Huey.McDuck@cuacua.com"/>
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
@@ -100,11 +100,11 @@
 	<changeSet author="0x3" id="insert.user.1">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Dewey"/>
+				<column name="name"	   value="Dewey"/>
 				<column name="last_name"  value="McDuck"/>
 				<column name="username"   value="1"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
-				<column name="email"      value="Dewey.McDuck@cuacua.com"/>
+				<column name="email"	  value="Dewey.McDuck@cuacua.com"/>
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
@@ -112,11 +112,11 @@
 	<changeSet author="0x3" id="insert.user.2">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Louie"/>
+				<column name="name"	   value="Louie"/>
 				<column name="last_name"  value="McDuck"/>
 				<column name="username"   value="2"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
-				<column name="email"      value="Louie.McDuck@cuacua.com"/>
+				<column name="email"	  value="Louie.McDuck@cuacua.com"/>
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
@@ -124,11 +124,11 @@
 	<changeSet author="0x3" id="insert.user.3">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Donald"/>
+				<column name="name"	   value="Donald"/>
 				<column name="last_name"  value="McDuck"/>
 				<column name="username"   value="3"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
-				<column name="email"      value="Donald.McDuck@cuacua.com"/>
+				<column name="email"	  value="Donald.McDuck@cuacua.com"/>
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
@@ -136,11 +136,11 @@
 	<changeSet author="0x3" id="insert.user.4">
 		<insert catalogName="efeeder"
 				tableName="user">
-				<column name="name"       value="Scrooge"/>
+				<column name="name"	   value="Scrooge"/>
 				<column name="last_name"  value="McDuck"/>
 				<column name="username"   value="4"/>
 				<column name="password"   value="cfcd208495d565ef66e7dff9f98764da"/>
-				<column name="email"      value="Scrooge.McDuck@cuacua.com"/>
+				<column name="email"	  value="Scrooge.McDuck@cuacua.com"/>
 				<column name="image_path" value="empty"/>
 		</insert>
 	</changeSet>
@@ -174,7 +174,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="description" type="VARCHAR(200)"/>
-			<column name="price"       type="NUMBER">
+			<column name="price"	   type="NUMBER">
 				<constraints nullable="false" />
 			</column>
 			<column name="image_link" type="VARCHAR(200)"/>
@@ -203,20 +203,20 @@
 
 	<changeSet author="roger" id="food_meeting.table">
 		<createTable catalogName="efeeder" tableName="food_meeting">
-			<column name="id"         type="INT(11)" autoIncrement="true">
+			<column name="id"		 type="INT(11)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="name"             type="VARCHAR(200)"/>
-			<column name="image_link"       type="VARCHAR(500)"/>
-			<column name="status"           type="VARCHAR(50)"/> 
-			<column name="event_date"       type="DATETIME"/>
+			<column name="name"			 type="VARCHAR(200)"/>
+			<column name="image_link"	   type="VARCHAR(500)"/>
+			<column name="status"		   type="VARCHAR(50)"/> 
+			<column name="event_date"	   type="DATETIME"/>
 			<column name="id_user" type="INT(11)">
 				<constraints nullable="true"/>
 			</column>
-			<column name="created_at"       type="DATETIME"/>
-			<column name="voting_time"       type="DATETIME"/>
-			<column name="order_time"       type="DATETIME"/>
-			<column name="payment_time"       type="DATETIME"/>
+			<column name="created_at"	   type="DATETIME"/>
+			<column name="voting_time"	   type="DATETIME"/>
+			<column name="order_time"	   type="DATETIME"/>
+			<column name="payment_time"	   type="DATETIME"/>
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="id_user"
 				baseTableName="food_meeting"
@@ -241,45 +241,45 @@
 	<changeSet author="roger" id="insert.food_meeting.CoffeeTime">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Coffee time"/>
-			<column name="image_link"       value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
+			<column name="name"			 value="Coffee time"/>
+			<column name="image_link"	   value="https://images.sciencedaily.com/2016/06/160614100258_1_540x360.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
-			<column name="id_user"          valueDate="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="id_user"		  valueDate="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 HOUR)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
 	<changeSet author="roger" id="insert.food_meeting.DiaDelProgramador">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Dia del programador"/>
-			<column name="image_link"       value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
+			<column name="name"			 value="Dia del programador"/>
+			<column name="image_link"	   value="http://www.calendario-colombia.com/fotos_eventos/2015-09-13-dia-del-programador.jpg"/>
 			<column name="status"			value="Voting"/>			
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
 	<changeSet author="roger" id="insert.food_meeting.ReleaseCelebration">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Release celebration"/>
-			<column name="image_link"       value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
+			<column name="name"			 value="Release celebration"/>
+			<column name="image_link"	   value="https://www.intland.com/wp-content/uploads/2014/07/codeBeamer-ALM-software-Agile-Release-Planning-336x336.png"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
@@ -330,69 +330,69 @@
 	<changeSet author="roger" id="insert.food_meeting.jalasoftAnniversary">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Jalasoft Anniversary"/>
-			<column name="image_link"       value="http://www.jalasoft.com/wp-content/uploads/2012/03/facilities_4.jpg"/>
+			<column name="name"			 value="Jalasoft Anniversary"/>
+			<column name="image_link"	   value="http://www.jalasoft.com/wp-content/uploads/2012/03/facilities_4.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 5 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
 	<changeSet author="roger" id="insert.food_meeting.tacosDay">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Taco's Day!"/>
-			<column name="image_link"       value="http://i.makeagif.com/media/11-10-2015/fcRD8f.gif"/>
+			<column name="name"			 value="Taco's Day!"/>
+			<column name="image_link"	   value="http://i.makeagif.com/media/11-10-2015/fcRD8f.gif"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME)"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 8 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 	
 	<changeSet author="roger" id="insert.food_meeting.teamBuilding">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Team building"/>
-			<column name="image_link"       value="http://vorkspace.com/blog/wp-content/uploads/Team-building.jpg"/>
+			<column name="name"			 value="Team building"/>
+			<column name="image_link"	   value="http://vorkspace.com/blog/wp-content/uploads/Team-building.jpg"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME)"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 15 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 	
 	<changeSet author="roger" id="insert.food_meeting.sciquestAnniversary">
 		<insert catalogName="efeeder"
 				tableName="food_meeting">
-			<column name="name"             value="Sciquest Anniversary"/>
-			<column name="image_link"       value="https://www.sciquest.com/sites/default/themes/sciquest/logo.png"/>
+			<column name="name"			 value="Sciquest Anniversary"/>
+			<column name="image_link"	   value="https://www.sciquest.com/sites/default/themes/sciquest/logo.png"/>
 			<column name="status"			value="Voting"/>
-			<column name="event_date"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
-			<column name="id_user"          value="1"/>
-			<column name="created_at"       value="now()"/>
-			<column name="voting_time"      valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
-			<column name="order_time"       valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME)"/>
-			<column name="payment_time"     valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="event_date"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="id_user"		  value="1"/>
+			<column name="created_at"	   value="now()"/>
+			<column name="voting_time"	  valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
+			<column name="order_time"	   valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME)"/>
+			<column name="payment_time"	 valueDate="DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 22 DAY)" type="DATETIME"/>
 		</insert>
 	</changeSet>
 
 	<changeSet author="roger" id="createtable.order">
 		<createTable catalogName="efeeder" tableName="orders">
 			<column name="id_food_meeting" type="INT"/>
-			<column name="id_user"         type="INT"/>
-			<column name="order_name"      type="VARCHAR(200)"/>
-			<column name="Cost"            type="DECIMAL(10,2)"/>
+			<column name="id_user"		 type="INT"/>
+			<column name="order_name"	  type="VARCHAR(200)"/>
+			<column name="Cost"			type="DECIMAL(10,2)"/>
 		</createTable>
 	</changeSet>
 
@@ -426,7 +426,7 @@
 	<changeSet author="alexander" id="createtable.buyer">
 		<createTable catalogName="efeeder" tableName="buyer">
 			<column name="id_food_meeting" type="INT"/>
-			<column name="id_user"         type="INT"/>
+			<column name="id_user"		 type="INT"/>
 		</createTable>
 	</changeSet>
 
@@ -506,5 +506,73 @@
 			onUpdate="RESTRICT"
 			referencedColumnNames="id"
 			referencedTableName="places"/>
-	</changeSet>	
+	</changeSet>
+
+	<changeSet author="roger" id="addColumn.quantity.orders">
+		<addColumn catalogName="efeeder"
+				schemaName="public"
+				tableName="orders">
+			<column name="quantity" type="INT"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="roger" id="addColumn.id_place_item.orders">
+		<addColumn catalogName="efeeder"
+				schemaName="public"
+				tableName="orders">
+			<column name="id_place_item" type="INT(11)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Roger" id="dropForeignKeyConstraint.fk_id_food_meeting">
+		<dropForeignKeyConstraint baseTableName="orders" constraintName="fk_id_food_meeting"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="dropForeignKeyConstraint.fk_id_user">
+		<dropForeignKeyConstraint baseTableName="orders" constraintName="fk_id_user"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="dropPrimaryKey.pk_orders">
+		<dropPrimaryKey catalogName="efeeder"
+				constraintName="pk_orders"
+				schemaName="public"
+				tableName="orders"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="1-addForeignKeyConstraint.fk_id_food_meeting">
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="orders"
+				constraintName="fk_id_food_meeting"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="1-addForeignKeyConstraint.fk_id_user">
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="orders"
+				constraintName="fk_id_user"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
+	
+	<changeSet author="roger" id="1-addForeignKeyConstraint.fk_id_place_item">
+		<addForeignKeyConstraint baseColumnNames="id_place_item"
+				baseTableName="orders"
+				constraintName="fk_id_place_item"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="place_item"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="addPrimaryKey.table.orders">
+		<addPrimaryKey catalogName="efeeder"
+				columnNames="id_food_meeting, id_user, id_place_item"
+				constraintName="pk_orders"
+				tableName="orders"/>
+	</changeSet>
 </databaseChangeLog>

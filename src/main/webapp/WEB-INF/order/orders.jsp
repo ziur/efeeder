@@ -11,37 +11,43 @@
 <t:template>
 	<jsp:attribute name="javascript">
 		<script src="/assets/js/orders.js"></script>
+		<script src="/assets/js/myOrder.js"></script>
+		<script src="/assets/js/searchMenu.js"></script>
 	</jsp:attribute>
 
 	<jsp:body>
 		<t:foodMeetingInfo foodMeeting="${foodMeeting}"/>
 
 		<div class="row">
+			<div id="search-menu-modal" class="modal modal-fixed-footer" >
+				<%@include file='searchMenu.jsp'%>
+			</div>
 			<div class="col-sm-12">
 				<ul id="order-list" class="collection">
-					<li class="collection-item avatar">
-						<div id="my-order-container">
-							<i class="material-icons circle">perm_identity</i>
-							<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
-							<input type="hidden" id="order_time" value="${orderTime}" />
-							<c:if test="${foodMeeting.status == 'Order'}">
-								<div class="input-field col s9 m10 l11" id="my-order-details-input" style="display: none;">
-									<input type="text" id="my-order-text" placeholder="Details" value="${myOrder.details}" />
-								</div>
-								<input type="number" id="my-order-cost-input" value="${myOrder.cost}" placeholder="Cost" style="display: none;" />
-							</c:if>
-
-							<span id="my-order-details" class="title">${myOrder.details}</span>
-							<br />
-							<p id="my-order-cost">${myOrder.cost}</p>
-							<p id="my-user-order">${myUser.name} ${myUser.lastName}</p>
-							<c:if test="${foodMeeting.status == 'Order'}">
-								<a href="#" id="btn-edit-my-order" class="btn-edit secondary-content">
-									<i class="material-icons">mode_edit</i>
-								</a>
-							</c:if>
-						</div>
-					</li>
+					<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
+					<input type="hidden" id="order_time" value="${orderTime}" />
+					<c:if test="${foodMeeting.status == 'Order'}">
+						<t:orderItem/>
+					</c:if>
+					<c:forEach var="myOrder" items="#{myOrders}">
+						<li class="collection-item avatar">
+							<div id="my-order-container">
+								<i class="material-icons circle">perm_identity</i>
+	
+								<span id="my-order-details" class="title">${myOrder.placeItem.name}</span>
+								<br />
+								<p class="user-order">Cantidad: ${myOrder.quantity}</p>
+								<p class="user-order">Detalles: ${myOrder.details}</p>
+								<p class="order-cost">Costo: ${myOrder.cost}</p>
+								<p class="user-order">Usuario: ${myUser.name} ${myUser.lastName}</p>
+								<c:if test="${foodMeeting.status == 'Order'}">
+									<a href="#" id="btn-edit-my-order" class="btn-edit secondary-content">
+										<i class="material-icons">remove</i>
+									</a>
+								</c:if>
+							</div>
+						</li>
+					</c:forEach>
 				</ul>
 			</div>
 			<c:if test="${foodMeeting.userOwner.id == myUser.id}">

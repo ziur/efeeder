@@ -168,6 +168,14 @@
 															"type": "int"
 														},
 														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
+														{
+															"name": "quantity",
+															"type": "int"
+														},
+														{
 															"name": "details",
 															"type": "string"
 														},
@@ -194,6 +202,23 @@
 																		},
 																		{
 																			"name": "email",
+																			"type": "string"
+																		}
+																	]
+																}
+															]
+														},
+														{
+															"name": "placeItem",
+															"type": [
+																"null",
+																{
+																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																	"type": "record",
+																	"name": "PlaceItemOrder",
+																	"fields": [
+																		{
+																			"name": "name",
 																			"type": "string"
 																		}
 																	]

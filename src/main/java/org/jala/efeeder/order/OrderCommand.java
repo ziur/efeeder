@@ -3,6 +3,7 @@ package org.jala.efeeder.order;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -11,6 +12,8 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.foodmeeting.FoodMeeting;
 import org.jala.efeeder.foodmeeting.FoodMeetingManager;
+import org.jala.efeeder.places.Place;
+import org.jala.efeeder.places.PlaceManager;
 
 /**
  *
@@ -27,12 +30,14 @@ public class OrderCommand implements CommandUnit {
 		Connection connection = parameters.getConnection();
 
 		FoodMeeting foodMeeting = getFoodMeeting(connection, idFoodMeeting);
+		Place placeSelected = getPlaceSelect(connection, foodMeeting);
 		List<Order> orders = getOrders(connection, idFoodMeeting);
-		Order myOrder = extractMyOrder(idUser, orders);
+		List<Order> myOrders = extractMyOrder(idUser, orders);
 
 		out.addResult("foodMeeting", foodMeeting);
+		out.addResult("place", placeSelected);
 		out.addResult("orders", orders);
-		out.addResult("myOrder", myOrder);
+		out.addResult("myOrders", myOrders);
 		out.addResult("myUser", parameters.getUser());
 		out.addResult("orderTime",  getOrderTime(connection, idFoodMeeting));
 		out.forward("order/orders.jsp");
@@ -54,18 +59,22 @@ public class OrderCommand implements CommandUnit {
 		OrderManager orderManager = new OrderManager(connection);
 		return orderManager.getOrdersWithUserByFoodMeeting(Integer.parseInt(idFoodMeeting));
 	}
+	
+	private Place getPlaceSelect(Connection connection, FoodMeeting foodMeeting) throws SQLException {
+		PlaceManager placeManager = new PlaceManager(connection);
+		return placeManager.getPlaceByFoodMeeting(foodMeeting);
+	}
 
-	private Order extractMyOrder(int idUser, List<Order> orders) {
-		Order myOrder = null;
+	private List<Order> extractMyOrder(int idUser, List<Order> orders) {
+		List<Order> myOrders = new ArrayList<>();
 
 		for (Order order : orders) {
 			if (order.getIdUser() == idUser) {
-				myOrder = order;
-				break;
+				myOrders.add(order);
 			}
 		}
 
-		orders.remove(myOrder);
-		return myOrder;
+		orders.remove(myOrders);
+		return myOrders;
 	}
 }

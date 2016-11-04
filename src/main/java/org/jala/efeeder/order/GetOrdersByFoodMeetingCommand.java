@@ -1,5 +1,6 @@
 package org.jala.efeeder.order;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -28,11 +29,12 @@ public class GetOrdersByFoodMeetingCommand implements CommandUnit {
 	}
 	
 	private void extractMyOrder(List<Order> orders, int idUser) {
+		List<Order> listToRemove = new ArrayList<Order>();
 		for (Order order : orders) {
 			if (order.getIdUser() == idUser) {
-				orders.remove(order);
-				break;
+				listToRemove.add(order);
 			}
 		}
+		orders.removeAll(listToRemove);
 	}
 }
