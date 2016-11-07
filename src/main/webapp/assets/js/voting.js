@@ -673,7 +673,7 @@ function processUserPlaceJson(json)
 				list[i].phone, list[i].direction);
 			item.img = m_placeDrawer._system.createImage(list[i].image_link, item.img);
 		}
-		
+
 		if (votes >= topVotes)
 		{
 			if (votes === topVotes)
