@@ -5,12 +5,15 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	this.modalContainer = modalContainer;
 	this.btnEditIcon = btnEditIcon;
 	this.btnAdd = btnAdd;
+	this.addNewItemBtn  = $("#add_new_item_button");
 	this.idPlaceItem =idPlaceItem;
 	this.imageList = $('.image-link');
 	this.messageOrder = messageOrder;
 
 	var self = this;
-	
+
+	var form = $("#create-place-item-form");
+
 	var id;
 	var name;
 	var price;
@@ -39,8 +42,32 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 			price = $(this).data("price");
 			self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
 		});
+
+		self.addNewItemBtn.click(function() {
+			var formData = form.serialize();
+
+			var commandUrl = form.attr( "action" );
+
+			var createData = new FormData(form[0]);
+			
+			$.ajax({
+				url : commandUrl,
+				type : "post",
+				data : createData,
+				processData: false,
+				contentType: false,
+				cache : false,
+				success : function(data) {
+					
+					onModalHide();
+				},
+				error: function(data){
+					
+				}
+			});
+		});
 	};
-	
+
 	var organizeModalImages = function() {
 		$('.image-links').imagesLoaded().done(function() {
 			$('.image-links').masonry({
