@@ -105,6 +105,7 @@ public class CreateOrderCommand implements CommandUnit {
 
 		return OutBuilder.response(messageContext);
 	}
+
 	private Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
 		List<MessageEvent> events = new ArrayList<>();
 

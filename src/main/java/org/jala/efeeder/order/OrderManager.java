@@ -23,7 +23,6 @@ public class OrderManager {
 	private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
 	private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
 	private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user, id_place_item, quantity) VALUES(?, ?, ?, ?, ?, ?);";
-	private static final String UPDATE_ORDER = "UPDATE orders SET order_name=?, cost=? WHERE id_food_meeting=? AND id_user=?;";
 	private static final String DELETE_ORDER = "DELETE FROM orders ";
 	private static final String WHERE_PRIMARY_KEY = " WHERE id_food_meeting = ? AND id_user = ? AND id_place_item = ?";
 
@@ -89,10 +88,6 @@ public class OrderManager {
 		executeUpdateOrder(idFoodMeeting, idUser,idPlaceItem, quantity, details, cost, INSERT_ORDER);
 	}
 
-	public void updateOrder(int idFoodMeeting, int idUser, String details, double cost) throws SQLException {
-		//executeUpdateOrder(idFoodMeeting, idUser, details, cost, UPDATE_ORDER);
-	}
-
 	public void deleteOrder(int idFoodMeeting, int idUser, int idPlaceItem)
 			throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ORDER + WHERE_PRIMARY_KEY);
@@ -127,7 +122,6 @@ public class OrderManager {
 					.filter(user -> order.getIdUser() == user.getId()).findFirst();
 			if (result.isPresent()) {
 				order.setUser(result.get());
-				//users.remove(result.get());
 			}
 		});
 	}
