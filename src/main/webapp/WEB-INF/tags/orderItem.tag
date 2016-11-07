@@ -4,6 +4,9 @@
 
 <div class="row">
 	<li class="collection-item avatar">
+		<div class="row center-align">
+			<h6 id="message-order" class='center lighten-1 grey-text'>Please add your orders.</h6>
+		</div>
 		<div id="my-order-container">
 			<i class="material-icons circle">perm_identity</i>
 			<input type="hidden" id="id-place-item"/>

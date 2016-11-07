@@ -52,6 +52,22 @@
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
+													"name": "ErrorEvent",
+													"alias": "ErrorEvent",
+													"fields": [
+														{
+															"name": "errorMessage",
+															"type": "string"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
 													"name": "CloseVotingEvent",
 													"alias": "CloseVotingEvent",
 													"fields": [
@@ -218,6 +234,10 @@
 																	"name": "PlaceItemOrder",
 																	"fields": [
 																		{
+																			"name": "id",
+																			"type": "int"
+																		},
+																		{
 																			"name": "name",
 																			"type": "string"
 																		}
@@ -225,6 +245,26 @@
 																}
 															]
 														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "RemoveOrderEvent",
+													"alias": "RemoveOrderEvent",
+													"fields": [
+														{
+															"name": "idFoodMeeting",
+															"type": "int"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														},
+														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
 													]
 												},
 												{

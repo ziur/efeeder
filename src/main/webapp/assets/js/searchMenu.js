@@ -1,4 +1,4 @@
-var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCost, btnEditIcon, btnAdd, idPlaceItem) {
+var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCost, btnEditIcon, btnAdd, idPlaceItem, messageOrder) {
 	this.orderName = orderName;
 	this.orderCost = orderCost;
 	this.orderQuantity = orderQuantity;
@@ -7,6 +7,7 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	this.btnAdd = btnAdd;
 	this.idPlaceItem =idPlaceItem;
 	this.imageList = $('.image-link');
+	this.messageOrder = messageOrder;
 
 	var self = this;
 	
@@ -19,6 +20,10 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	};
 
 	var onModalHide = function() {
+		self.messageOrder.removeClass("red-text");
+		self.messageOrder.addClass('grey-text');
+		self.messageOrder.text("Please add your orders.");
+
 		self.idPlaceItem.val(id);
 		self.orderName.val(name);
 		self.orderQuantity.val(1);

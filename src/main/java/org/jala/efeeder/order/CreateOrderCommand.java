@@ -14,12 +14,14 @@ import org.jala.efeeder.api.utils.MessageContextUtils;
 import org.jala.efeeder.places.PlaceItem;
 import org.jala.efeeder.places.PlaceItemManager;
 import org.jala.efeeder.servlets.websocket.avro.CreateOrderEvent;
+import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import org.jala.efeeder.servlets.websocket.avro.PlaceItemOrder;
 import org.jala.efeeder.servlets.websocket.avro.UserOrder;
 import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
+import org.jala.efeeder.util.EfeederErrorMessage;
 
 /**
  * Created by alejandro on 09-09-16.
@@ -33,7 +35,9 @@ public class CreateOrderCommand implements CommandUnit {
 		return out;
 	}
 
-	private Out saveOrder(In parameters) throws SQLException {
+	private Out saveOrder(In parameters){
+		
+		
 		CreateOrderEvent createOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(), CreateOrderEvent.class);
 
 		int idFoodMeeting = createOrderEvent.getIdFoodMeeting();
@@ -44,19 +48,19 @@ public class CreateOrderCommand implements CommandUnit {
 		double cost = createOrderEvent.getCost();
 		Connection connection = parameters.getConnection();
 
-		OrderManager orderManager = new OrderManager(connection);
-		List<Order> myOrders = orderManager.getMyOrder(idUser, idFoodMeeting);
-		
-		//revisar
-		if (true) {
+		try {
+			OrderManager orderManager = new OrderManager(connection);
+	
 			orderManager.insertOrder(idFoodMeeting, idUser,idPlaceItem, quantity, details, cost);
-		} else {
-			orderManager.updateOrder(idFoodMeeting, idUser, details, cost);
-		}
-		UserOrder userOrder = getUserOrder(connection, idUser);
-		PlaceItemOrder placeItemOrder = getPlaceItemOrder(connection, idPlaceItem);
+	
+			UserOrder userOrder = getUserOrder(connection, idUser);
+			PlaceItemOrder placeItemOrder = getPlaceItemOrder(connection, idPlaceItem);
 
-		return buildResponse(idFoodMeeting, idUser,idPlaceItem, quantity, details, cost, userOrder, placeItemOrder);
+			return buildResponse(idFoodMeeting, idUser,idPlaceItem, quantity, details, cost, userOrder, placeItemOrder);
+		} catch (SQLException e) {
+			
+			return buildErrorResponse(idFoodMeeting, idUser, EfeederErrorMessage.getEfeederMessage(e.getMessage(), this));
+		}
 	}
 
 	private UserOrder getUserOrder(Connection connection, int idUser) throws SQLException {
@@ -70,7 +74,7 @@ public class CreateOrderCommand implements CommandUnit {
 		PlaceItemManager placeItemManager = new PlaceItemManager(connection);
 		PlaceItem placeItem = placeItemManager.getPlaceItemById(idPlaceItem);
 
-		return new PlaceItemOrder(placeItem.getName());
+		return new PlaceItemOrder(placeItem.getId(), placeItem.getName());
 	}
 
 	private Out buildResponse(int idFoodMeeting, int idUser,int idPlaceItem, int quantity, String details, double cost,
@@ -88,6 +92,27 @@ public class CreateOrderCommand implements CommandUnit {
 						.setCost(cost)
 						.setUser(userOrder)
 						.setPlaceItem(placeItemOrder)
+						.build()
+				)
+				.build()
+		);
+
+		MessageContext messageContext = MessageContext.newBuilder()
+				.setRoom(Integer.toString(idFoodMeeting))
+				.setUser(idUser)
+				.setEvents(events)
+				.build();
+
+		return OutBuilder.response(messageContext);
+	}
+	private Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
+		List<MessageEvent> events = new ArrayList<>();
+
+		events.add(MessageEvent.newBuilder()
+				.setEvent(
+						ErrorEvent.newBuilder()
+						.setErrorMessage(errorMessage)
+						.setIdUser(idUser)
 						.build()
 				)
 				.build()

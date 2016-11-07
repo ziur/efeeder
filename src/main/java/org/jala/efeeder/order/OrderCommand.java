@@ -25,19 +25,16 @@ public class OrderCommand implements CommandUnit {
 	@Override
 	public Out execute(In parameters) throws Exception {
 		String idFoodMeeting = parameters.getParameter("id_food_meeting");
-		int idUser = parameters.getUser().getId();
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
 
 		FoodMeeting foodMeeting = getFoodMeeting(connection, idFoodMeeting);
 		Place placeSelected = getPlaceSelect(connection, foodMeeting);
 		List<Order> orders = getOrders(connection, idFoodMeeting);
-		List<Order> myOrders = extractMyOrder(idUser, orders);
 
 		out.addResult("foodMeeting", foodMeeting);
 		out.addResult("place", placeSelected);
 		out.addResult("orders", orders);
-		out.addResult("myOrders", myOrders);
 		out.addResult("myUser", parameters.getUser());
 		out.addResult("orderTime",  getOrderTime(connection, idFoodMeeting));
 		out.forward("order/orders.jsp");
@@ -63,18 +60,5 @@ public class OrderCommand implements CommandUnit {
 	private Place getPlaceSelect(Connection connection, FoodMeeting foodMeeting) throws SQLException {
 		PlaceManager placeManager = new PlaceManager(connection);
 		return placeManager.getPlaceByFoodMeeting(foodMeeting);
-	}
-
-	private List<Order> extractMyOrder(int idUser, List<Order> orders) {
-		List<Order> myOrders = new ArrayList<>();
-
-		for (Order order : orders) {
-			if (order.getIdUser() == idUser) {
-				myOrders.add(order);
-			}
-		}
-
-		orders.remove(myOrders);
-		return myOrders;
 	}
 }

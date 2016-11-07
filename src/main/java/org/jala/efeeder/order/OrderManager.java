@@ -24,6 +24,8 @@ public class OrderManager {
 	private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
 	private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user, id_place_item, quantity) VALUES(?, ?, ?, ?, ?, ?);";
 	private static final String UPDATE_ORDER = "UPDATE orders SET order_name=?, cost=? WHERE id_food_meeting=? AND id_user=?;";
+	private static final String DELETE_ORDER = "DELETE FROM orders ";
+	private static final String WHERE_PRIMARY_KEY = " WHERE id_food_meeting = ? AND id_user = ? AND id_place_item = ?";
 
 	private final Connection connection;
 
@@ -91,6 +93,17 @@ public class OrderManager {
 		//executeUpdateOrder(idFoodMeeting, idUser, details, cost, UPDATE_ORDER);
 	}
 
+	public void deleteOrder(int idFoodMeeting, int idUser, int idPlaceItem)
+			throws SQLException {
+		PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ORDER + WHERE_PRIMARY_KEY);
+
+		preparedStatement.setInt(1, idFoodMeeting);
+		preparedStatement.setInt(2, idUser);
+		preparedStatement.setInt(3, idPlaceItem);
+
+		preparedStatement.executeUpdate();
+	}
+	
 	private void executeUpdateOrder(int idFoodMeeting, int idUser, int idPlaceItem, int quantity, String details, double cost, String query)
 			throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(query);

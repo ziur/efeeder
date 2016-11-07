@@ -1,6 +1,5 @@
 package org.jala.efeeder.order;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -19,22 +18,10 @@ public class GetOrdersByFoodMeetingCommand implements CommandUnit {
 	@Override
 	public Out execute(In parameters) throws Exception {
 		int idFoodMeeting = Integer.parseInt(parameters.getParameter("idFoodMeeting"));
-		int idUser = parameters.getUser().getId();
-		
+
 		OrderManager orderManager = new OrderManager(parameters.getConnection());
 		List<Order> orders = orderManager.getOrdersWithUserByFoodMeeting(idFoodMeeting);
-		extractMyOrder(orders, idUser);
-		
+
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(orders));
-	}
-	
-	private void extractMyOrder(List<Order> orders, int idUser) {
-		List<Order> listToRemove = new ArrayList<Order>();
-		for (Order order : orders) {
-			if (order.getIdUser() == idUser) {
-				listToRemove.add(order);
-			}
-		}
-		orders.removeAll(listToRemove);
 	}
 }

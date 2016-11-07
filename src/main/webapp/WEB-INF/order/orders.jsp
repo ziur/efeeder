@@ -23,31 +23,14 @@
 				<%@include file='searchMenu.jsp'%>
 			</div>
 			<div class="col-sm-12">
-				<ul id="order-list" class="collection">
+				<ul id="order-list-myorder" class="collection">
 					<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
 					<input type="hidden" id="order_time" value="${orderTime}" />
 					<c:if test="${foodMeeting.status == 'Order'}">
 						<t:orderItem/>
 					</c:if>
-					<c:forEach var="myOrder" items="#{myOrders}">
-						<li class="collection-item avatar">
-							<div id="my-order-container">
-								<i class="material-icons circle">perm_identity</i>
-	
-								<span id="my-order-details" class="title">${myOrder.placeItem.name}</span>
-								<br />
-								<p class="user-order">Cantidad: ${myOrder.quantity}</p>
-								<p class="user-order">Detalles: ${myOrder.details}</p>
-								<p class="order-cost">Costo: ${myOrder.cost}</p>
-								<p class="user-order">Usuario: ${myUser.name} ${myUser.lastName}</p>
-								<c:if test="${foodMeeting.status == 'Order'}">
-									<a href="#" id="btn-edit-my-order" class="btn-edit secondary-content">
-										<i class="material-icons">remove</i>
-									</a>
-								</c:if>
-							</div>
-						</li>
-					</c:forEach>
+				</ul>
+				<ul id="order-list" class="collection">
 				</ul>
 			</div>
 			<c:if test="${foodMeeting.userOwner.id == myUser.id}">
