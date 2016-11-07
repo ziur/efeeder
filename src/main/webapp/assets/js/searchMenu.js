@@ -45,7 +45,6 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 		});
 
 		self.addNewItemBtn.click(function(event) {
-
 			event.preventDefault();
 
 			var formData = form.serialize();
@@ -62,7 +61,6 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 				contentType: false,
 				cache : false,
 				success : function(data) {
-
 					id = data.id;
 					name = data.name;
 					price = data.price;
@@ -70,7 +68,6 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 					self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
 				},
 				error: function(data){
-					alert("xxxxxx");
 				}
 			});
 		});
