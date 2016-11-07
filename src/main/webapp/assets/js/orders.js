@@ -1,6 +1,7 @@
 $(document).ready(function () {
 	var idUser = parseInt(Cookies.get("userId"));
 	var idFoodMeeting = $('#id-food-meeting').val();
+	var idPlace = $('#id-place').val();
 	var orderListContainer = $("#order-list");
 	var myOrderContainer = $("#my-order-container");
 	var foodMeetingInfo = new FoodMeetingInfo($("#food-meeting-info"));
@@ -8,7 +9,7 @@ $(document).ready(function () {
 	var toastMessage = new ToastMessage();
 	
 	var orderList = new OrderList(idFoodMeeting, idUser, orderListContainer, toastMessage);
-	var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, toastMessage);
+	var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, toastMessage, idPlace);
 	myOrder.init();
 
 	$(function () {

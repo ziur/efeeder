@@ -1,4 +1,4 @@
-var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCost, btnEditIcon, btnAdd, idPlaceItem, messageOrder) {
+var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCost, btnEditIcon, btnAdd, idPlaceItem, messageOrder, idPlace) {
 	this.orderName = orderName;
 	this.orderCost = orderCost;
 	this.orderQuantity = orderQuantity;
@@ -9,6 +9,7 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	this.idPlaceItem =idPlaceItem;
 	this.imageList = $('.image-link');
 	this.messageOrder = messageOrder;
+	this.idPlace = idPlace;
 
 	var self = this;
 
@@ -43,13 +44,16 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 			self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
 		});
 
-		self.addNewItemBtn.click(function() {
+		self.addNewItemBtn.click(function(event) {
+
+			event.preventDefault();
+
 			var formData = form.serialize();
 
 			var commandUrl = form.attr( "action" );
 
 			var createData = new FormData(form[0]);
-			
+			createData.append("id_place", idPlace);
 			$.ajax({
 				url : commandUrl,
 				type : "post",
@@ -58,11 +62,15 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 				contentType: false,
 				cache : false,
 				success : function(data) {
-					
-					onModalHide();
+
+					id = data.id;
+					name = data.name;
+					price = data.price;
+
+					self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
 				},
 				error: function(data){
-					
+					alert("xxxxxx");
 				}
 			});
 		});

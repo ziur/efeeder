@@ -19,6 +19,7 @@ public class PlaceManager {
 	private static final String INSERT_PLACE_QUERY = "INSERT INTO places(name, description, phone, direction, image_link) values(?, ?, ?, ?, ?)";
 	private static final String SELECT_PLACE_QUERY = "SELECT p.id, p.name, p.description, p.phone, p.direction, p.image_link FROM places p ";
 	private static final String BY_FOOD_MEETING_ID_QUERY = " , FOOD_MEETING fm WHERE p.id = fm.id_place AND fm.id = ? ";
+	private static final String BY_ID_QUERY = " WHERE p.id = ? ";
 
 	private final Connection connection;
 	private final PlaceItemManager placeManager;
@@ -52,6 +53,16 @@ public class PlaceManager {
 
 		ResultSet resultSet = stm.executeQuery();
 		
+		return createPlaceByResultSet(resultSet);
+	}
+	
+	public Place getPlaceById(int idPlace) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(SELECT_PLACE_QUERY + BY_ID_QUERY);
+
+		stm.setInt(1, idPlace);
+
+		ResultSet resultSet = stm.executeQuery();
+
 		return createPlaceByResultSet(resultSet);
 	}
 
