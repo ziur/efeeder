@@ -27,16 +27,20 @@ import org.jala.efeeder.places.Place;
 @Command
 public class GetSuggestionsCommand implements CommandUnit {
 
-    private static final String SELECT_VOTE_FINISHER_SQL =
-            "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
 	private static final String SELECT_USERS_BY_MEETING_SQL =
             "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
     private static final String SELECT_PLACES_BY_MEETING_SQL =
             "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
     private static final String SELECT_WINNER_PLACE_SQL =
 			"SELECT id_place,count(*) AS votes FROM food_meeting_user WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
-	
+	private static final String SELECT_FOOD_MEETING_SQL =
+			"SELECT food_meeting.id_user, user.name, user.last_name, food_meeting.name, food_meeting.image_link, event_date, voting_time, order_time, payment_time FROM food_meeting, user WHERE food_meeting.id_user=user.id AND food_meeting.id=? AND status='Voting'";
+    private static final String SELECT_VOTE_FINISHER_SQL =
+            "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
+
 	/**
+	 * @param feastId The id of the feast to look for
+	 * @param connection The database connection 
 	 * @return Either the feast owner id or zero if the voting phase is over
 	 */
 	static public int getVoteFinisherUserId(int feastId, Connection connection) throws Exception {
@@ -45,6 +49,38 @@ public class GetSuggestionsCommand implements CommandUnit {
         ResultSet resSet = ps.executeQuery();
         if(resSet.next()) return resSet.getInt("id_user");
 		return 0;
+	}
+	
+	static String concatenate(String name, String lastName)
+	{
+		String result = name;
+		if (result.length() > 0 && lastName.length() > 0) result += " "; 
+		return result + lastName;
+	}
+	
+	/**
+	 * @param feastId The id of the feast to look for
+	 * @param connection The database connection
+	 * @return The feast data
+	 */
+	static public String getFeastAsString(int feastId, Connection connection) throws Exception {
+        PreparedStatement ps = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
+        ps.setInt(1, feastId);
+        ResultSet resSet = ps.executeQuery();
+        if(resSet.next()) 
+		{
+			return JsonConverter.objectToJSON(new Feast(
+					resSet.getInt("food_meeting.id_user"),
+					concatenate(resSet.getString("user.name"),
+							resSet.getString("user.last_name")),
+					resSet.getString("food_meeting.name"),
+					resSet.getString("food_meeting.image_link"),
+					resSet.getTimestamp("event_date"),
+					resSet.getTimestamp("voting_time"),
+					resSet.getTimestamp("order_time"),
+					resSet.getTimestamp("payment_time")));
+		}
+		return "";
 	}
 	
 	static public String getUserSuggestionsAsString(int feastId, Connection connection) throws Exception {
@@ -57,7 +93,7 @@ public class GetSuggestionsCommand implements CommandUnit {
             usersAndPlaces.add(new UserAndPlace(
                     resSet.getInt("id_user"),
                     resSet.getInt("id_place"),
-                    resSet.getString("user.name") + " " + resSet.getString("user.last_name") ));
+                    resSet.getString("user.name") + " " + resSet.getString("user.last_name")));
         }
         
 		return JsonConverter.objectToJSON(usersAndPlaces);
@@ -106,8 +142,8 @@ public class GetSuggestionsCommand implements CommandUnit {
 				getUserSuggestionsAsString(feastId, connection) +
 				",\"places\":" +
 				getPlacesSuggestionsAsString(feastId, connection) +
-				",\"ownerId\":" +
-				Integer.toString(getVoteFinisherUserId(feastId, connection)) +
+				",\"feast\":" +
+				getFeastAsString(feastId, connection) +
 				"}";
 	}
 
