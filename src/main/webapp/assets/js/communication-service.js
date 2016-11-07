@@ -68,14 +68,6 @@
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
-													"name": "CloseVotingEvent",
-													"alias": "CloseVotingEvent",
-													"fields": [
-													]
-												},
-												{
-													"namespace": "org.jala.efeeder.servlets.websocket.avro",
-													"type": "record",
 													"name": "RaffleEvent",
 													"alias": "RaffleEvent",
 													"fields": [
@@ -149,12 +141,17 @@
 														{
 															"name": "userOwner",
 															"type": [
+																"null",
 																{
 																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
 																	"type": "record",
 																	"name": "UserOwner",
 																	"alias": "UserOwner",
 																	"fields": [
+																		{
+																			"name": "id",
+																			"type": "int"
+																		},
 																		{
 																			"name": "name",
 																			"type": "string"
@@ -284,10 +281,6 @@
 														{
 															"name": "newStatus",
 															"type": "string"
-														},
-														{
-															"name": "redirectTo",
-															"type": ["null", "string"]
 														}
 													]
 												}
