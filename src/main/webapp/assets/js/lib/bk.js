@@ -70,7 +70,7 @@ let BkCoord = function(x = 0, y = 0, w = 0, h = 0, type = 0)
 	// w, h in pixels
 	// center is x + w/2, y + h/2
 	// Becomes Type 0 when undocked
-		
+
 	// Type 6:
 	// x, y, w, h are relative to current canvas dimensions and fixed
 	// x, y are guaranteed to be in screen for [0..1[
