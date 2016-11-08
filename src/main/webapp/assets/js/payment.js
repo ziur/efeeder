@@ -255,10 +255,6 @@ var DetailsButton = function (idFoodMeeting, idUser, communicationService) {
     var self = this;
 
     function addEvents() {
-//		if (self.btnPayment === undefined) {
-//			return false;
-//		}
-
         self.btnPayment.click(function () {
             changeFoodMeetingStatus();
         });
