@@ -31,7 +31,7 @@ public class FoodMeeting {
 	}
 
 	public FoodMeeting(int id, String name,String imageLink, FoodMeetingStatus status, Timestamp eventDate, Timestamp createdAt,
-			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
+						Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
 		this.id = id;
 		this.name = name;
 		this.createdAt = createdAt;
@@ -45,7 +45,7 @@ public class FoodMeeting {
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, new Timestamp(System.currentTimeMillis()), eventDate, eventDate, eventDate, userOwner);
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, FoodMeetingStatus status, Timestamp eventDate, User userOwner) {
@@ -57,7 +57,7 @@ public class FoodMeeting {
 		LocalDate endEventDate = new LocalDate(eventDate);
 		int days = Days.daysBetween(today, endEventDate).getDays();
 		return calculateWidth(days);
-	}	
+	}
 
 	private int calculateWidth(int days) {
 		int maxWidth = 500;
@@ -75,18 +75,18 @@ public class FoodMeeting {
 
 		return width;
 	}
-	
+
 	public java.time.LocalDate getDate() {
 		return eventDate.toLocalDateTime().toLocalDate();
 	}
-	
+
 	public String getTime() {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm");
 		return fmt.print(eventDate.getTime());
 	}
 
 	public FoodMeetingStatus getStatusByTime(Timestamp time) {
-		FoodMeetingStatus state = FoodMeetingStatus.Voting;		
+		FoodMeetingStatus state = FoodMeetingStatus.Voting;
 		if(this.votingDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Order;
 		}
@@ -98,7 +98,7 @@ public class FoodMeeting {
 		}
 		if(this.eventDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Finish;
-		}		
+		}
 		return state;
 	}
 }

@@ -18,21 +18,10 @@ public class GetOrdersByFoodMeetingCommand implements CommandUnit {
 	@Override
 	public Out execute(In parameters) throws Exception {
 		int idFoodMeeting = Integer.parseInt(parameters.getParameter("idFoodMeeting"));
-		int idUser = parameters.getUser().getId();
-		
+
 		OrderManager orderManager = new OrderManager(parameters.getConnection());
 		List<Order> orders = orderManager.getOrdersWithUserByFoodMeeting(idFoodMeeting);
-		extractMyOrder(orders, idUser);
-		
+
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(orders));
-	}
-	
-	private void extractMyOrder(List<Order> orders, int idUser) {
-		for (Order order : orders) {
-			if (order.getIdUser() == idUser) {
-				orders.remove(order);
-				break;
-			}
-		}
 	}
 }

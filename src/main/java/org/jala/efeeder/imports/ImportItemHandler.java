@@ -4,14 +4,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.jala.efeeder.places.ItemPlace;
-import org.jala.efeeder.places.ItemPlaceManager;
+import org.jala.efeeder.places.PlaceItem;
+import org.jala.efeeder.places.PlaceItemManager;
 import org.jala.efeeder.places.Place;
 
 public class ImportItemHandler implements ImportHandler {
 	private static final String SEP = ", ";
 
-	private final ItemPlaceManager itemPlaceManager;
+	private final PlaceItemManager placeItemManager;
 	private StringBuilder importLine;
 	private String name;
 	private String description;
@@ -20,7 +20,7 @@ public class ImportItemHandler implements ImportHandler {
 	private Place placeParent;
 
 	public ImportItemHandler(Connection connection) {
-		itemPlaceManager = new ItemPlaceManager(connection);
+		placeItemManager = new PlaceItemManager(connection);
 	}
 
 	@Override
@@ -30,9 +30,9 @@ public class ImportItemHandler implements ImportHandler {
 		try {
 			StringBuilder errorMessage = validItems(lineNumber, values, place);
 			if(errorMessage.length() == 0) {
-				ItemPlace itemPlace = new ItemPlace(name, description, price, imageLink, placeParent);
+				PlaceItem placeItem = new PlaceItem(name, description, price, imageLink, placeParent);
 
-				itemPlaceManager.insertItemPlace(itemPlace);
+				placeItemManager.insertPlaceItem(placeItem);
 			}
 			else {
 				importResult.setMessageLog(errorMessage.toString());

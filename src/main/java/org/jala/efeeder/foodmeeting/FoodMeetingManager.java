@@ -4,9 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import org.jala.efeeder.user.Buyer;
+import org.jala.efeeder.user.BuyerManager;
+import org.jala.efeeder.user.User;
 
 import org.jala.efeeder.user.UserManager;
 import org.joda.time.DateTime;
@@ -21,6 +25,8 @@ public class FoodMeetingManager {
 			+ "created_at, voting_time, order_time, payment_time, id_user "
 			+ "from food_meeting where status != 'Finish' order by event_date";	
 	private static final String UPDATE_STATUS_BY_ID_AND_USER = "UPDATE food_meeting SET status=? WHERE id=? AND id_user=?";
+	private static final String INSERT_FOOD_MEETING_SQL = "insert into food_meeting(name,image_link, status, event_date, id_user, created_at, voting_time, order_time, payment_time) "
+            + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
 			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
 	private static final String SELECT_BY_USER_ID = "SELECT fm.id, fm.name, fm.image_link, fm.status, fm.event_date, fm.id_user " +
@@ -30,10 +36,12 @@ public class FoodMeetingManager {
 
 	private final Connection connection;
 	private UserManager userManager;
+	private BuyerManager buyerManager;
 
 	public FoodMeetingManager(Connection connection) {
 		this.connection = connection;
 		this.userManager = new UserManager(connection);
+		this.buyerManager = new BuyerManager(connection);
 	}
 
 	public FoodMeeting getFoodMeetingById(int id) throws SQLException {
@@ -94,7 +102,33 @@ public class FoodMeetingManager {
 
 		return meetings;
 	}
+	
+	public FoodMeeting insertMeeting(FoodMeeting meeting) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(INSERT_FOOD_MEETING_SQL, RETURN_GENERATED_KEYS);		
+		
+		stm.setString(1, meeting.getName());
+		stm.setString(2, meeting.getImageLink());
+		stm.setString(3, FoodMeetingStatus.Voting.name());
+		stm.setTimestamp(4, meeting.getEventDate());
+		stm.setInt(5, meeting.getUserOwner().getId());
+		stm.setTimestamp(6, meeting.getCreatedAt());
+		stm.setTimestamp(7, meeting.getEventDate());
+		stm.setTimestamp(8, meeting.getEventDate());
+		stm.setTimestamp(9, meeting.getEventDate());
 
+		stm.executeUpdate();
+		
+		ResultSet generatedKeysResultSet = stm.getGeneratedKeys();
+		generatedKeysResultSet.next();
+		int meetingId = generatedKeysResultSet.getInt(1);
+		meeting.setId(meetingId);
+		stm.close();
+		
+		buyerManager.insertUser(new Buyer(meeting.getId(), meeting.getUserOwner().getId()));
+		
+		return meeting;
+	}
+	
 	public void updateFoodMeeting(FoodMeeting meeting) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(UPDATE_FOOD_MEETING_SQL);
 
