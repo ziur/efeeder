@@ -45,7 +45,7 @@ public class FoodMeeting {
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
-		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, eventDate, eventDate, eventDate, null, userOwner);
+		this(id, name, imageLink, FoodMeetingStatus.Voting, eventDate, new Timestamp(System.currentTimeMillis()), eventDate, eventDate, eventDate, userOwner);
 	}
 
 	public int getWidth() {

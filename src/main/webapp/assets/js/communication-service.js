@@ -52,6 +52,22 @@
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
+													"name": "ErrorEvent",
+													"alias": "ErrorEvent",
+													"fields": [
+														{
+															"name": "errorMessage",
+															"type": "string"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
 													"name": "RaffleEvent",
 													"alias": "RaffleEvent",
 													"fields": [
@@ -165,6 +181,14 @@
 															"type": "int"
 														},
 														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
+														{
+															"name": "quantity",
+															"type": "int"
+														},
+														{
 															"name": "details",
 															"type": "string"
 														},
@@ -196,7 +220,48 @@
 																	]
 																}
 															]
+														},
+														{
+															"name": "placeItem",
+															"type": [
+																"null",
+																{
+																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																	"type": "record",
+																	"name": "PlaceItemOrder",
+																	"fields": [
+																		{
+																			"name": "id",
+																			"type": "int"
+																		},
+																		{
+																			"name": "name",
+																			"type": "string"
+																		}
+																	]
+																}
+															]
 														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "RemoveOrderEvent",
+													"alias": "RemoveOrderEvent",
+													"fields": [
+														{
+															"name": "idFoodMeeting",
+															"type": "int"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														},
+														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
 													]
 												},
 												{
@@ -271,10 +336,6 @@
       }
     };
 
-  CommunicationService.prototype.disconnect = function () {
-	  this.socket.close();
-  }
-  
   CommunicationService.prototype.sendMessage = function(message) {
     var obj = this.serialize(message);
     obj = JSON.stringify(obj);
