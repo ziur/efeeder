@@ -25,6 +25,7 @@
 			<div class="col-sm-12">
 				<ul id="order-list-myorder" class="collection">
 					<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
+					<input type="hidden" id="id-place" value="${place.id}" />
 					<input type="hidden" id="order_time" value="${orderTime}" />
 					<c:if test="${foodMeeting.status == 'Order'}">
 						<t:orderItem/>

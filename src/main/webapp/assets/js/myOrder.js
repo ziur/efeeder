@@ -1,4 +1,4 @@
-var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage) {
+var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage, idPlace) {
 	this.myOrderContainer = myOrderContainer;
 	this.userOrder = myOrderContainer.children('#my-user-order');
 	this.orderDetails = myOrderContainer.children('#my-order-details');
@@ -13,6 +13,7 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage) {
 	this.idPlaceItem = $("#id-place-item");
 	this.idUser = idUser;
 	this.toastMessage = toastMessage;
+	this.idPlace = idPlace;
 	this.messageOrder = $("#message-order");
 
 	var communicationService;
@@ -40,7 +41,8 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage) {
 		self.btnMenu.click(function () {
 			self.menuModal.openModal();
 			var modal = new ModalSearchMenu(self.menuModal, self.orderName, self.orderQuantity,
-					self.orderCostInput, self.btnEditIcon, self.btnAdd, self.idPlaceItem, self.messageOrder);
+					self.orderCostInput, self.btnEditIcon, self.btnAdd, self.idPlaceItem, self.messageOrder,
+					self.idPlace);
 			modal.init();
 		});
 	}
