@@ -8,7 +8,7 @@
 				<a id="logo-container" href="/" class="brand-logo center">Efeeder</a>
 				<div class="countdown right" style="font-size: 16pt" data-date=""></div>
                 <ul id="slide-out" class="side-nav" style="margin: 0;">
-                    <li><div class="userView" style="background-color: #000c47">
+                    <li><div class="userView blue darken-3">
 							<a><img class="circle" src="action/image?file_name=${user.getImage()}&type=user"></a>
 							<a><span class="white-text name">${user.getUserName()}</span></a>
 							<a><span class="white-text email">${user.getEmail()}</span></a>
