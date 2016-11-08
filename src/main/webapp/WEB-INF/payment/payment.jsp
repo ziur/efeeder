@@ -99,5 +99,11 @@
                 <h5 id="total_items_price_id" class="right-align">${total_item_price}</h5>
             </div>
         </div>
+        
+        <div class="col-sm-12">
+            <div class="fixed-action-btn horizontal">
+                <a id="btn-finished" class="btn-floating btn-large waves-effect waves-light" style="display:${estate}"><i class="material-icons">receipt</i></a>
+            </div>
+        </div>
     </jsp:body>
 </t:template>

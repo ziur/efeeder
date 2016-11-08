@@ -10,7 +10,7 @@ $(document).ready(function () {
         var communicationService = new CommunicationService();
         var inputState = $("#input-state-id").val();
 
-        var paymentItem = new PaymentItem();
+        var paymentItem = new PaymentItem(idUser, communicationService);
         paymentItem.init();
 
         communicationService.onMessage(function (event) {
@@ -54,6 +54,9 @@ $(document).ready(function () {
                         paymentItem.updateTotal(itemPrice);
                         Materialize.toast("Item delete!", 2000);
                         break;
+                    case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
+						document.location.href = "/action/FoodMeeting";
+						break;
                 }
             });
         });
@@ -63,13 +66,16 @@ $(document).ready(function () {
     });
 });
 
-var PaymentItem = function () {
+var PaymentItem = function (idUser, communicationService) {
     var table = $("#items_id");
     var foodMeetingId = $("#input-food-meeting-id");
     var deleteItemButton = $('.delete-item');
     var formAddItem = $('#formAddItemId');
     var totalItemsPrice = $("#total_items_price_id");
-    var selft = this;
+    var bttnBuyerStateChanged = $("#btn-finished");
+    this.idUser = idUser;
+	this.communicationService = communicationService;
+    var self = this;
 
     var messageUser = $("#message-user");
 
@@ -81,7 +87,31 @@ var PaymentItem = function () {
         table.on('click', 'a.delete-item', function () {
             deletePayItem(this.parentNode.parentNode.id);
         });
+        
+        bttnBuyerStateChanged.click(function (){
+            changeFoodMeetingStatus();
+        });
     };
+    
+    function changeFoodMeetingStatus() {
+		self.communicationService.sendMessage({
+			user: self.idUser,
+			room: foodMeetingId.val(),
+			command: "ChangeFoodMeetingStatus",
+			events: [
+				{
+					event: {
+						ChangeFoodMeetingStatusEvent: {
+							idFoodMeeting: parseInt(foodMeetingId.val()),
+							idUser: self.idUser,
+							newStatus: "Buying",
+							redirectTo: null
+						}
+					}
+				}
+			]
+		});
+	}
 
     var createItem = function (event, isNew) {
         var createUserData = new FormData($(formAddItem)[0]);
