@@ -56,7 +56,7 @@ $(document).ready(function () {
                         break;
                     case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
                         document.location.href = "/action/details?id_food_meeting=" + idFoodMeeting;
-                    break;
+                        break;
                 }
             });
         });
@@ -187,11 +187,20 @@ var PaymentItem = function () {
 var MyPayment = function (myOrderContainer, idFoodMeeting, idUser) {
     this.btnEdit = myOrderContainer.children().children(".btn-edit-my-order");
     this.lnkSave = myOrderContainer.children().children(".lnk-save");
+    this.inputs = $('.ipt-number');
     this.btnEditIcon = this.btnEdit.children('.material-icons:first');
     this.txtTotalItems = $('#total_items_price_id');
 
     var self = this;
     function addEvents() {
+        self.inputs.each(function (index, item) {
+            var input = $(item).val();
+            if (input) {
+                var inputVal = parseFloat(input);
+                $(item).val(inputVal.toFixed(2));
+            }
+        });
+
         self.lnkSave.each(function (index, item) {
             $(item).click(function () {
                 var userIdSelected = $(item).parent().children('#user-id');
@@ -213,7 +222,7 @@ var MyPayment = function (myOrderContainer, idFoodMeeting, idUser) {
         if (paymentVal) {
             var shortageVal = paymentVal - total.val();
             shortage.val(shortageVal.toFixed(2));
-            if (shortageVal > 0) {
+            if (shortageVal >= 0) {
                 lnkCheck.text('done');
                 shortage.css("color", "green");
             } else {

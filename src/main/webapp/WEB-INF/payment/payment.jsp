@@ -43,7 +43,7 @@
                                                 <span style="padding-left: 60px;">Bs.-</span>
                                             </div>                                                
                                             <div class="input-field col s3">
-                                                <input id="ipt-total${order.user.id}" type="number" disabled type="text" class="validate" value="${partialByOrder + order.cost}">
+                                                <input id="ipt-total${order.user.id}" class="ipt-number" type="number" disabled type="text" class="validate" value="${partialByOrder + order.cost}">
                                                 <label for="ipt-total">Total</label>
                                             </div>                                            
                                         </div>
@@ -55,8 +55,8 @@
                                             <span style="padding-left: 60px;">Bs.-</span>
                                         </div> 
                                         <div class="input-field col s5">
-                                            <input id="ipt-shortage${order.user.id}" disabled type="number" value="${order.payment > 0 ? order.payment - (partialByOrder + order.cost) : 0}"
-                                                   style="color:${order.payment >= partialByOrder + order.cost ? "green":"red"}"/>
+                                            <input id="ipt-shortage${order.user.id}" disabled type="number" class="ipt-number" value="${order.payment > 0 ? order.payment - (partialByOrder + order.cost) : 0.0}"
+                                                   style="color:${(order.payment >= partialByOrder + order.cost) || order.payment == 0  ? "green":"red"}"/>
                                             <label for="ipt-shortage">Shortage</label>
                                         </div>
                                         <div class="input-field col s1" style="margin-top: 27px;">
