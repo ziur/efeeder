@@ -18,6 +18,8 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.foodmeeting.FoodMeeting;
+import org.jala.efeeder.foodmeeting.FoodMeetingManager;
 import org.jala.efeeder.order.Order;
 import org.jala.efeeder.order.OrderManager;
 import org.jala.efeeder.user.Buyer;
@@ -50,6 +52,9 @@ public class PaymentCommand implements CommandUnit {
 
         double itemTotalPrice = getTotalExternalItemPrice(itemList);
         double partialByOrder = itemTotalPrice > 0 ? itemTotalPrice / orders.size() : 0;
+
+        FoodMeeting foodMeeting = getFoodMeeting(connection, idFoodMeeting);
+        out.addResult("foodMeeting", foodMeeting);
         out.addResult("items", itemList);
         out.addResult("estate", isBuyer);
         out.addResult("id_food_meeting", foodMeetingId);
@@ -64,6 +69,11 @@ public class PaymentCommand implements CommandUnit {
         } else {
             return out.forward("payment/payment.jsp");
         }
+    }
+
+    private FoodMeeting getFoodMeeting(Connection connection, String idFoodMeeting) throws SQLException {
+        FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
+        return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting));
     }
 
     private List<PaymentItem> getExtraItems(int foodMeetingId, Connection connection) throws Exception {

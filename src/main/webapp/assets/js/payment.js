@@ -38,9 +38,9 @@ $(document).ready(function () {
 
                         $("#items_id tr:last").after("<tr id='" + itemId + "'><td>" + itemDescription + "</td><td>" + itemPrice + "</td>" + button + "</tr>");
 
-                        $(".validate").val("");
+                        $(".ipt-item").val("");
                         var numAux = parseFloat(totalItemsPrice.text()) + itemPrice;
-                        totalItemsPrice.text(numAux);
+                        totalItemsPrice.text(numAux.toFixed(2));
                         paymentItem.updatePartial(numAux);
 
                         Materialize.toast($toastContent, 5000);
@@ -54,12 +54,16 @@ $(document).ready(function () {
                         paymentItem.updateTotal(itemPrice);
                         Materialize.toast("Item delete!", 2000);
                         break;
+                    case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
+                        document.location.href = "/action/details?id_food_meeting=" + idFoodMeeting;
+                    break;
                 }
             });
         });
 
         communicationService.connect('ws://' + location.host + '/ws', addExternalItemId);
-
+        var detailsButton = new DetailsButton(idFoodMeeting, idUser, communicationService);
+        detailsButton.init();
     });
 });
 
@@ -122,7 +126,7 @@ var PaymentItem = function () {
 
     var updatePayDeletedOnTotal = function (num) {
         var numAux = parseFloat(totalItemsPrice.text()) - parseFloat(num);
-        totalItemsPrice.text(numAux);
+        totalItemsPrice.text(numAux.toFixed(2));
         updatePartial(numAux);
     };
 
@@ -131,28 +135,38 @@ var PaymentItem = function () {
         var ordersSize = myOrderContainer.children().size();
         var totalItemsVal = parseFloat(totalItems);
         var newPartial = totalItemsVal > 0 ? totalItemsVal / ordersSize : 0;
-
-        myOrderContainer.children().each(function (index, order) {
-            var partial = $(order).children('.partial-by-order');
-            var cost = parseFloat($(order).children('.my-order-cost').text());
-            var btnEditIcon = $(order).children('a').children('.material-icons:first')
-            var payment = $(order).children('#my-order-cost-input');
-            var paymentVal = parseFloat($(order).children('#my-order-cost-input').val());
-            var labelPayment = $(order).children('.label-payment');
-
-            var totalToPay = newPartial + cost;
-            $(partial).text("+ " + newPartial + " = " + totalToPay);
-            if (paymentVal >= totalToPay) {
-                btnEditIcon.text('done');
-                labelPayment.show();
-                payment.hide();
-            } else {
-                btnEditIcon.text('crop_square');
-                labelPayment.hide();
-                payment.show();
-            }
+        newPartial = newPartial.toFixed(2);
+        myOrderContainer.children().each(function (index, item) {
+            var userIdSelected = $(item).children('#user-id');
+            var userIdSelectedVal = userIdSelected.val();
+            var lnkCheck = $('#lnk-check' + userIdSelectedVal).children('.material-icons:first');
+            var payment = $('#ipt-payment' + userIdSelectedVal);
+            var orderCost = $('#ipt-cost' + userIdSelectedVal);
+            var extraPay = $('#ipt-extra-pay' + userIdSelectedVal);
+            var total = $('#ipt-total' + userIdSelectedVal);
+            var shortage = $('#ipt-shortage' + userIdSelectedVal);
+            updatePaymentView(userIdSelected, newPartial, orderCost, payment, shortage, total, extraPay, lnkCheck);
         });
     };
+    function updatePaymentView(userId, newPartial, cost, payment, shortage, total, extraPay, lnkCheck) {
+        var paymentVal = payment.val();
+        if (paymentVal) {
+            var costVal = parseFloat(cost.val());
+            var totalVal = costVal + parseFloat(newPartial);
+            total.val(totalVal.toFixed(2));
+            extraPay.val(newPartial);
+            var shortageVal = parseFloat(paymentVal) - parseFloat(total.val());
+            shortageVal = shortageVal.toFixed(2);
+            shortage.val(shortageVal);
+            if (shortageVal > 0) {
+                lnkCheck.text('done');
+                shortage.css("color", "green");
+            } else {
+                lnkCheck.text('crop_square');
+                shortage.css("color", "red");
+            }
+        }
+    }
 
     return {
         init: function () {
@@ -164,51 +178,106 @@ var PaymentItem = function () {
         updateClick: function () {
             updateClickDeleteItem();
         },
-        updatePartial : function(num){
-            updatePartial(num)
+        updatePartial: function (num) {
+            updatePartial(num);
         }
     };
 };
 
 var MyPayment = function (myOrderContainer, idFoodMeeting, idUser) {
     this.btnEdit = myOrderContainer.children().children(".btn-edit-my-order");
+    this.lnkSave = myOrderContainer.children().children(".lnk-save");
     this.btnEditIcon = this.btnEdit.children('.material-icons:first');
     this.txtTotalItems = $('#total_items_price_id');
 
     var self = this;
     function addEvents() {
-        self.btnEdit.each(function (index, item) {
+        self.lnkSave.each(function (index, item) {
             $(item).click(function () {
-                var btnEditIcon = $(item).children('.material-icons:first');
                 var userIdSelected = $(item).parent().children('#user-id');
-                var payment = $(item).parent().children('#my-order-cost-input');
-                var labelPayment = $(item).parent().children('.label-payment');
-                var orderCost = $(item).parent().children('.my-order-cost');
-                var orderDetails = $(item).parent().children('.my-order-details');
-                if (btnEditIcon.text() === 'crop_square') {
-                    btnEditIcon.text('done');
-                    labelPayment.show();
-                    payment.hide();
-                    updateMyPaymentFields(payment, labelPayment, userIdSelected, orderDetails, orderCost);
-                } else {
-                    btnEditIcon.text('crop_square');
-                    labelPayment.hide();
-                    payment.show();
-
-                }
+                var userIdSelectedVal = userIdSelected.val();
+                var lnkCheck = $('#lnk-check' + userIdSelectedVal).children('.material-icons:first');
+                var payment = $('#ipt-payment' + userIdSelectedVal);
+                var orderCost = $('#ipt-cost' + userIdSelectedVal);
+                var total = $('#ipt-total' + userIdSelectedVal);
+                var shortage = $('#ipt-shortage' + userIdSelectedVal);
+                var orderDetails = $('#spn-details' + userIdSelectedVal);
+                savePayment(payment, userIdSelected, orderDetails, orderCost);
+                updatePaymentView(userIdSelected, orderCost, payment, shortage, total, lnkCheck);
+                return false;
             });
         });
     }
-    function updateMyPaymentFields(payment, labelPayment, userIdSelected, details, cost) {
+    function updatePaymentView(userId, cost, payment, shortage, total, lnkCheck) {
         var paymentVal = payment.val();
-        labelPayment.text(paymentVal);
-        $.post('/action/AddPayment', {id_food_meeting: idFoodMeeting, id_user: userIdSelected.val(), details: details.text(), cost: cost.text(), payment: paymentVal}).done(function (response) {
-            console.log(response);
+        if (paymentVal) {
+            var shortageVal = paymentVal - total.val();
+            shortage.val(shortageVal.toFixed(2));
+            if (shortageVal > 0) {
+                lnkCheck.text('done');
+                shortage.css("color", "green");
+            } else {
+                lnkCheck.text('crop_square');
+                shortage.css("color", "red");
+            }
+        }
+    }
+    function savePayment(payment, userIdSelected, details, cost) {
+        var paymentVal = payment.val();
+        $.post('/action/AddPayment', {id_food_meeting: idFoodMeeting, id_user: userIdSelected.val(), details: details.text(), cost: cost.val(), payment: paymentVal}).done(function (response) {
+            Materialize.toast(response.name + " " + response.lastName + "'s payment was updated", 3000);
         });
     }
+
     return {
         init: function () {
             addEvents();
         }
     };
 }
+
+var DetailsButton = function (idFoodMeeting, idUser, communicationService) {
+    this.idFoodMeeting = idFoodMeeting;
+    this.idUser = idUser;
+    this.communicationService = communicationService;
+    this.btnPayment = $("#btn-details");
+    this.newStatus = "Finish";
+
+    var self = this;
+
+    function addEvents() {
+//		if (self.btnPayment === undefined) {
+//			return false;
+//		}
+
+        self.btnPayment.click(function () {
+            changeFoodMeetingStatus();
+        });
+    }
+
+    function changeFoodMeetingStatus() {
+        self.communicationService.sendMessage({
+            user: self.idUser,
+            room: self.idFoodMeeting,
+            command: "ChangeFoodMeetingStatus",
+            events: [
+                {
+                    event: {
+                        ChangeFoodMeetingStatusEvent: {
+                            idFoodMeeting: parseInt(self.idFoodMeeting),
+                            idUser: self.idUser,
+                            newStatus: self.newStatus,
+                            redirectTo: null
+                        }
+                    }
+                }
+            ]
+        });
+    }
+
+    return {
+        init: function () {
+            addEvents();
+        }
+    };
+};
