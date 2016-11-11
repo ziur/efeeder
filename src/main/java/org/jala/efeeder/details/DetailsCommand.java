@@ -24,6 +24,8 @@ import org.jala.efeeder.user.User;
  */
 @Command
 public class DetailsCommand implements CommandUnit {
+    
+    private static final String GET_FOOD_MEETING_SUGGESTIONS_IDS = "select id_place from food_meeting_suggestions where id_food_meeting=?";
 
 	@Override
 	public Out execute(In parameters) {
@@ -97,7 +99,7 @@ public class DetailsCommand implements CommandUnit {
 	
 	private Place getPlace(int idFoodMeeting, Connection connection) throws Exception {
 		try {
-			PreparedStatement prepareStatement = connection.prepareStatement("select id_place from food_meeting_user where id_food_meeting=?");
+			PreparedStatement prepareStatement = connection.prepareStatement(GET_FOOD_MEETING_SUGGESTIONS_IDS);
 			prepareStatement.setInt(1, idFoodMeeting);
 			ResultSet resp = prepareStatement.executeQuery();
 

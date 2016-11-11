@@ -513,41 +513,6 @@
 		</insert>
 	</changeSet>	
 
-	<changeSet author="ricardo" id="food_meeting_user.table">
-		<createTable catalogName="efeeder" tableName="food_meeting_user">
-			<column name="id_food_meeting" type="INT(11)">
-				<constraints nullable="false"/>
-			</column>
-			<column name="id_user" type="INT(11)">
-				<constraints nullable="true"/>
-			</column>
-			<column name="id_place"  type="INT(11)">
-				<constraints nullable="true"/>
-			</column>
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
-				baseTableName="food_meeting_user"
-				constraintName="food_meeting_user_id_food_meeting_fk"
-				onDelete="CASCADE"
-				onUpdate="RESTRICT"
-				referencedColumnNames="id"
-				referencedTableName="food_meeting"/>
-		<addForeignKeyConstraint baseColumnNames="id_user"
-				baseTableName="food_meeting_user"
-				constraintName="food_meeting_user_id_user_fk"
-				onDelete="CASCADE"
-				onUpdate="RESTRICT"
-				referencedColumnNames="id"
-				referencedTableName="user"/>
-		<addForeignKeyConstraint baseColumnNames="id_place"
-			baseTableName="food_meeting_user"
-			constraintName="food_meeting_user_id_place_fk"
-			onDelete="CASCADE"
-			onUpdate="RESTRICT"
-			referencedColumnNames="id"
-			referencedTableName="places"/>
-	</changeSet>
-
 	<changeSet author="0x3" id="insert.winnerplace">
 		<addColumn catalogName="efeeder" tableName="food_meeting">
 			<column name="id_place" type="INT">
@@ -562,5 +527,91 @@
 			onUpdate="RESTRICT"
 			referencedColumnNames="id"
 			referencedTableName="places"/>
-	</changeSet>	
+	</changeSet>
+        
+        <changeSet author="vicente" id="create_table_food_meeting_participants">
+                <createTable catalogName="efeeder" tableName="food_meeting_participants">
+                        <column name="id" type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="id_food_meeting" type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id_user" type="INT(11)">
+				<constraints nullable="false"/>
+                        </column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="food_meeting_participants"
+				constraintName="fm_particpants_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="food_meeting_participants"
+				constraintName="participants_fm_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
+        
+        <changeSet author="vicente" id="create_table_food_meeting_suggestions">
+                <createTable catalogName="efeeder" tableName="food_meeting_suggestions">
+                        <column name="id" type="INT(11)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="id_food_meeting" type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id_place" type="INT(11)">
+				<constraints nullable="false"/>
+                        </column>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="food_meeting_participants"
+				constraintName="fm_suggestions_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+		<addForeignKeyConstraint baseColumnNames="id_place"
+				baseTableName="food_meeting_suggestions"
+				constraintName="suggestions_fm_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="places"/>
+	</changeSet>
+        
+        <changeSet author="vicente" id="create_votes_table">
+		<createTable catalogName="efeeder" tableName="votes">
+			<column name="id_food_meeting" type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id_participant" type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="id_suggestion"  type="INT(11)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+                <createIndex catalogName="efeeder"
+                        indexName="participant_vote"
+                        tableName="votes"
+                        unique="true">
+                        <column name="id_food_meeting" type="INT(11)"/>
+                        <column name="id_participant" type="INT(11)"/>
+                </createIndex>
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="votes"
+				constraintName="votes_id_food_meeting_fk"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+		
+	</changeSet>
+                	
 </databaseChangeLog>

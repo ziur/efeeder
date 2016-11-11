@@ -30,11 +30,19 @@ public class GetSuggestionsCommand implements CommandUnit {
     private static final String SELECT_VOTE_FINISHER_SQL =
             "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
 	private static final String SELECT_USERS_BY_MEETING_SQL =
-            "SELECT id_user,user.name,user.last_name,id_place FROM food_meeting_user,user WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_user=user.id";
+            "SELECT id, name, last_name FROM efeeder.user WHERE id in (SELECT id_user FROM efeeder.food_meeting_participants WHERE id_food_meeting = ?)";
     private static final String SELECT_PLACES_BY_MEETING_SQL =
-            "SELECT places.id,places.name,places.description,places.phone,places.direction,places.image_link,count(food_meeting_user.id_user) AS votes FROM food_meeting_user,places WHERE food_meeting_user.id_food_meeting=? AND food_meeting_user.id_place=places.id GROUP BY places.id";
+            "SELECT id, name, description, phone, direction, image_link FROM efeeder.places WHERE id IN"
+            + "(SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id_food_meeting = ?)";
     private static final String SELECT_WINNER_PLACE_SQL =
-			"SELECT id_place,count(*) AS votes FROM food_meeting_user WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
+            "SELECT id_place,count(*) AS votes FROM food_meeting_suggestions WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
+    private static final String GET_PARTICIPANT_VOTED_PLACE = 
+            "SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id = " +
+            "(SELECT id_suggestion FROM efeeder.votes WHERE id_participant = " +
+            "(SELECT id FROM efeeder.food_meeting_participants WHERE id_user = ? LIMIT 1) LIMIT 1) LIMIT 1; ";
+    private static final String GET_SUGGESTION_VOTES = 
+            "SELECT COUNT(id_suggestion) FROM efeeder.votes WHERE id_suggestion = "
+            + "(SELECT id FROM efeeder.food_meeting_suggestions WHERE id_place = ? LIMIT 1); ";
 	
 	/**
 	 * @return Either the feast owner id or zero if the voting phase is over
@@ -54,9 +62,17 @@ public class GetSuggestionsCommand implements CommandUnit {
         
         List<UserAndPlace> usersAndPlaces = new ArrayList<>();
         while(resSet.next()) {
+            int userId = resSet.getInt("id");
+            PreparedStatement getPlaceStm = connection.prepareStatement(GET_PARTICIPANT_VOTED_PLACE);
+            getPlaceStm.setInt(1, userId);
+            ResultSet placeResSet = getPlaceStm.executeQuery();
+            int placeId = 0;
+            if(placeResSet.next()) {
+                placeId = placeResSet.getInt("id_place");
+            }
             usersAndPlaces.add(new UserAndPlace(
-                    resSet.getInt("id_user"),
-                    resSet.getInt("id_place"),
+                    userId,
+                    placeId,
                     resSet.getString("user.name") + " " + resSet.getString("user.last_name") ));
         }
         
@@ -70,13 +86,19 @@ public class GetSuggestionsCommand implements CommandUnit {
         
         List<Place> places = new ArrayList<>();
         while(resSet.next()) {
-            places.add(new Place(resSet.getInt("places.id"), 
+            int placeId = resSet.getInt("places.id");
+            PreparedStatement votesStm = connection.prepareStatement(GET_SUGGESTION_VOTES);
+            votesStm.setInt(1, placeId);
+            ResultSet votesResSet = votesStm.executeQuery();
+            votesResSet.next();
+            int votesCount = votesResSet.getInt(1);
+            places.add(new Place(placeId,
                     resSet.getString("places.name"), 
                     resSet.getString("places.description"), 
                     resSet.getString("places.phone"),
                     resSet.getString("places.direction"),
                     resSet.getString("places.image_link"),
-                    resSet.getInt("votes")));
+                    votesCount));
         }
 
         return JsonConverter.objectToJSON(places);
