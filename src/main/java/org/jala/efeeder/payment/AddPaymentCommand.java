@@ -13,6 +13,8 @@ import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
 import org.jala.efeeder.order.OrderManager;
+import org.jala.efeeder.user.User;
+import org.jala.efeeder.user.UserManager;
 
 /**
  *
@@ -25,13 +27,17 @@ public class AddPaymentCommand implements CommandUnit {
     public Out execute(In parameters) throws Exception {
         String idFoodMeeting = parameters.getParameter("id_food_meeting");
         String idUser = parameters.getParameter("id_user");
+        int idUserVal = !idUser.equals("") ? Integer.valueOf(idUser) : 0;
         String details = parameters.getParameter("details");
         String cost = parameters.getParameter("cost");
+        double costVal = !cost.equals("") ? Double.valueOf(cost) : 0;
         String payment = parameters.getParameter("payment");
+        double paymentVal = !payment.equals("")?Double.valueOf(payment):0;
         Connection connection = parameters.getConnection();
         OrderManager orderManager = new OrderManager(connection);
-        orderManager.updatePayment(Integer.valueOf(idFoodMeeting), Integer.valueOf(idUser), Double.valueOf(payment));
-        
-        return OutBuilder.response("application/json", JsonConverter.objectToJSON("{}"));
+        orderManager.updatePayment(Integer.valueOf(idFoodMeeting), idUserVal, paymentVal);
+        UserManager userManager = new UserManager(connection);
+        User user = userManager.getUserById(idUserVal);
+        return OutBuilder.response("application/json", JsonConverter.objectToJSON(user));
     }
 }
