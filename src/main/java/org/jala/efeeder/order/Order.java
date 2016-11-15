@@ -21,8 +21,9 @@ public class Order {
 	private int quantity;
 	private PlaceItem placeItem;
 	private Double cost;
-
-	public Order(int idFoodMeeting, int idUser, String details, Double cost, PlaceItem placeItem, int quantity) {
+        private Double payment;
+        
+	public Order(int idFoodMeeting, int idUser, String details, Double cost, PlaceItem placeItem, int quantity, Double payment) {
 		this.idFoodMeeting = idFoodMeeting;
 		this.idUser = idUser;
 		this.user = null;
@@ -30,6 +31,7 @@ public class Order {
 		this.cost = cost;
 		this.placeItem = placeItem;
 		this.quantity = quantity;
+                this.payment = payment;
 	}
 
 	public void setUser(User user) {

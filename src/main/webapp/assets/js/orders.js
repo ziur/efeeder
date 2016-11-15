@@ -33,7 +33,7 @@ $(document).ready(function () {
 						orderList.removeOrderFromList(event);
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
-						document.location.href = "/action/FoodMeeting";
+						document.location.href = "/action/payment?id_food_meeting=" + idFoodMeeting;
 						break;
 				}
 			});
