@@ -5,9 +5,11 @@
 <t:template>
     <jsp:attribute name="javascript">
         <link rel="stylesheet" type="text/css" href="/assets/css/printDetails.css" media="print">
+		<script src="/assets/js/details.js"></script>
     </jsp:attribute>
     <jsp:body>
         <div class="row">
+			<input type="hidden" id="payment_time" value="${paymentTime}" />
             <div class="row">
                 <h2>Details of "${food_meeting.name}"</h2>
                 <div class="col s6">

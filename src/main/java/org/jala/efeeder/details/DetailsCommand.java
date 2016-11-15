@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -42,6 +43,7 @@ public class DetailsCommand implements CommandUnit {
 			out.addResult("orders", orderList);
 			out.addResult("payment", getPayment(orderList));
 			out.addResult("place", getPlace(idFoodMeeting, connection));
+			out.addResult("paymentTime",  getPaymentTime(connection, String.valueOf(idFoodMeeting)));
 
 			return out.forward("details/details.jsp");
 		} catch (Exception ex) {
@@ -130,5 +132,10 @@ public class DetailsCommand implements CommandUnit {
 		}
 
 		return null;
+	}
+	
+	private Timestamp getPaymentTime(Connection connection, String idFoodMeeting) throws SQLException {
+		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
+		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting)).getPaymentDate();
 	}
 }
