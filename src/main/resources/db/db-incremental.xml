@@ -529,4 +529,71 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet author="roger" id="addColumn.quantity.orders">
+		<addColumn catalogName="efeeder"
+				schemaName="public"
+				tableName="orders">
+			<column name="quantity" type="INT"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="roger" id="addColumn.id_place_item.orders">
+		<addColumn catalogName="efeeder"
+				schemaName="public"
+				tableName="orders">
+			<column name="id_place_item" type="INT(11)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Roger" id="dropForeignKeyConstraint.fk_id_food_meeting">
+		<dropForeignKeyConstraint baseTableName="orders" constraintName="fk_id_food_meeting"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="dropForeignKeyConstraint.fk_id_user">
+		<dropForeignKeyConstraint baseTableName="orders" constraintName="fk_id_user"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="dropPrimaryKey.pk_orders">
+		<dropPrimaryKey catalogName="efeeder"
+				constraintName="pk_orders"
+				schemaName="public"
+				tableName="orders"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="1-addForeignKeyConstraint.fk_id_food_meeting">
+		<addForeignKeyConstraint baseColumnNames="id_food_meeting"
+				baseTableName="orders"
+				constraintName="fk_id_food_meeting"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="food_meeting"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="1-addForeignKeyConstraint.fk_id_user">
+		<addForeignKeyConstraint baseColumnNames="id_user"
+				baseTableName="orders"
+				constraintName="fk_id_user"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="user"/>
+	</changeSet>
+	
+	<changeSet author="roger" id="1-addForeignKeyConstraint.fk_id_place_item">
+		<addForeignKeyConstraint baseColumnNames="id_place_item"
+				baseTableName="orders"
+				constraintName="fk_id_place_item"
+				onDelete="CASCADE"
+				onUpdate="RESTRICT"
+				referencedColumnNames="id"
+				referencedTableName="place_item"/>
+	</changeSet>
+
+	<changeSet author="Roger" id="addPrimaryKey.table.orders">
+		<addPrimaryKey catalogName="efeeder"
+				columnNames="id_food_meeting, id_user, id_place_item"
+				constraintName="pk_orders"
+				tableName="orders"/>
+	</changeSet>
 </databaseChangeLog>

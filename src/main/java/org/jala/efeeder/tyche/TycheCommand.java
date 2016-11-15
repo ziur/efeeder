@@ -140,15 +140,13 @@ public class TycheCommand implements CommandUnit{
 		return null;
 	}
 
-	public static String concatenate(String name, String lastName)
-	{
+	public static String concatenate(String name, String lastName){
 		String result = name;
 		if (result.length() > 0 && lastName.length() > 0) result += " "; 
 		return result + lastName;
 	}
 
-	public static String getDrawnLots(int feastId, Connection connection)
-	{
+	public static String getDrawnLots(int feastId, Connection connection){
 		List<DrawnLot> drawnLots = new ArrayList<>();
 		try {
 			PreparedStatement stm = connection.prepareStatement(GET_DRAWN_LOTS_SQL);
@@ -163,12 +161,12 @@ public class TycheCommand implements CommandUnit{
 			}
 		}
 		catch (Exception e) {
+			System.err.println(e);
 		}
 		return JsonConverter.objectToJSON(drawnLots);
 	}
 
-	public static String getWinnerPlaceAsString(int feastId, Connection connection)
-	{
+	public static String getWinnerPlaceAsString(int feastId, Connection connection){
 		Place place = null;
 		try {
 			PreparedStatement ps = connection.prepareStatement(GET_WINNER_PLACE_SQL);
@@ -183,16 +181,16 @@ public class TycheCommand implements CommandUnit{
 						resSet.getString("places.image_link"));
 			}
 		} catch (Exception e) {
+			System.err.println(e);
 		}
 		return JsonConverter.objectToJSON(place);
 	}
 	
 	static public String getFeastAsString(int feastId, Connection connection) throws Exception {
-        PreparedStatement ps = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
-        ps.setInt(1, feastId);
-        ResultSet resSet = ps.executeQuery();
-        if(resSet.next()) 
-		{
+		PreparedStatement ps = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
+		ps.setInt(1, feastId);
+		ResultSet resSet = ps.executeQuery();
+		if(resSet.next()){
 			return JsonConverter.objectToJSON(new Feast(
 					resSet.getInt("food_meeting.id_user"),
 					concatenate(resSet.getString("user.name"),
@@ -225,8 +223,7 @@ public class TycheCommand implements CommandUnit{
 			error = "Failed to get buyer id for feast id: " + feastId;
 		}
 
-		if (buyerId == 0)
-		{
+		if (buyerId == 0){
 			error = drawLot(feastId, userId, connection);
 		}
 

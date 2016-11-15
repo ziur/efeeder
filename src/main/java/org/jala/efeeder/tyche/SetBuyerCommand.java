@@ -32,8 +32,7 @@ public class SetBuyerCommand implements CommandUnit {
 	private static final String SET_BUYER =
 			"UPDATE food_meeting SET id_buyer = ? WHERE id = ?";
 
-	static int getBuyer(int feastId, Connection connection)
-	{
+	static int getBuyer(int feastId, Connection connection) {
 		try {
 			PreparedStatement stm = connection.prepareStatement(GET_BUYER);
 			stm.setInt(1, feastId);
