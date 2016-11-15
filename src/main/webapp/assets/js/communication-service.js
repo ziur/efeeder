@@ -52,19 +52,16 @@
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
-													"name": "RaffleEvent",
-													"alias": "RaffleEvent",
+													"name": "ErrorEvent",
+													"alias": "ErrorEvent",
 													"fields": [
 														{
-															"name": "chosen",
-															"type": "int"
+															"name": "errorMessage",
+															"type": "string"
 														},
 														{
-															"name": "items",
-															"type": {
-																"type": "array",
-																"items": "string"
-															}
+															"name": "idUser",
+															"type": "int"
 														}
 													]
 												},
@@ -201,6 +198,14 @@
 															"type": "int"
 														},
 														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
+														{
+															"name": "quantity",
+															"type": "int"
+														},
+														{
 															"name": "details",
 															"type": "string"
 														},
@@ -232,7 +237,48 @@
 																	]
 																}
 															]
+														},
+														{
+															"name": "placeItem",
+															"type": [
+																"null",
+																{
+																	"namespace": "org.jala.efeeder.servlets.websocket.avro",
+																	"type": "record",
+																	"name": "PlaceItemOrder",
+																	"fields": [
+																		{
+																			"name": "id",
+																			"type": "int"
+																		},
+																		{
+																			"name": "name",
+																			"type": "string"
 														}
+													]
+																}
+															]
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "RemoveOrderEvent",
+													"alias": "RemoveOrderEvent",
+													"fields": [
+														{
+															"name": "idFoodMeeting",
+															"type": "int"
+														},
+														{
+															"name": "idUser",
+															"type": "int"
+														},
+														{
+															"name": "idPlaceItem",
+															"type": "int"
+														},
 													]
 												},
 												{
