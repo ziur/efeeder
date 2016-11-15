@@ -20,9 +20,13 @@ public class CommandExecutor {
         try {
             connection.setAutoCommit(false);
             parameters.setConnection(connection);
-            Out result = command.execute(parameters);
-            connection.commit();
-            return result;
+			if (command != null) {
+				Out result = command.execute(parameters);
+				connection.commit();
+				return result;
+			}
+			System.err.println("Null command unit");
+			return OutBuilder.response("text/plain", "Null command unit");
         }catch(Throwable throwable) {
 
             Out result = OutBuilder.newError(throwable);

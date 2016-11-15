@@ -99,9 +99,6 @@ public class FoodMeetingManager {
 		int meetingId = generatedKeysResultSet.getInt(1);
 		meeting.setId(meetingId);
 		stm.close();
-		
-		buyerManager.insertUser(new Buyer(meeting.getId(), meeting.getUserOwner().getId()));
-		
 		return meeting;
 	}
 	

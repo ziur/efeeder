@@ -25,6 +25,7 @@ import org.jala.efeeder.user.User;
  * @author alexander_castro
  */
 @Command
+@Deprecated
 public class WheeldecideCommand implements CommandUnit{
 
 	public static final String SELECT_USERS_BY_MEETING_SQL =

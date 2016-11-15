@@ -71,6 +71,42 @@
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
+													"name": "DrawLotsEvent",
+													"alias": "DrawLotsEvent",
+													"fields": [
+														{
+															"name": "userId",
+															"type": "int"
+														},
+														{
+															"name": "name",
+															"type": "string"
+														},
+														{
+															"name": "lastName",
+															"type": "string"
+														},
+														{
+															"name": "dice",
+															"type": "int"
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
+													"name": "SetBuyerEvent",
+													"alias": "SetBuyerEvent",
+													"fields": [
+														{
+															"name": "userId",
+															"type": "int"
+														}
+													]
+												},
+												{
+													"namespace": "org.jala.efeeder.servlets.websocket.avro",
+													"type": "record",
 													"name": "CreateSuggestionEvent",
 													"alias": "CreateSuggestionEvent",
 													"fields": [
