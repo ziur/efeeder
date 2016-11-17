@@ -1,12 +1,16 @@
 $(document).ready(function () {
 	var idUser = parseInt(Cookies.get("userId"));
 	var idFoodMeeting = $('#id-food-meeting').val();
+	var idPlace = $('#id-place').val();
 	var orderListContainer = $("#order-list");
 	var myOrderContainer = $("#my-order-container");
 	var foodMeetingInfo = new FoodMeetingInfo($("#food-meeting-info"));
 	foodMeetingInfo.init();
 	var toastMessage = new ToastMessage();
+	
 	var orderList = new OrderList(idFoodMeeting, idUser, orderListContainer, toastMessage);
+	var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, toastMessage, idPlace);
+	myOrder.init();
 
 	$(function () {
 		var communicationService = new CommunicationService();
@@ -16,26 +20,37 @@ $(document).ready(function () {
 				var event = item.event[eventType];
 
 				switch (eventType) {
+					case "org.jala.efeeder.servlets.websocket.avro.ErrorEvent":
+						myOrder.setErrorMessage(event);
+					break;
 					case "org.jala.efeeder.servlets.websocket.avro.WelcomeEvent":
 						console.log("Welcome to WebSockets");
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.CreateOrderEvent":
 						orderList.updateOrders(event);
 						break;
+					case "org.jala.efeeder.servlets.websocket.avro.RemoveOrderEvent":
+						orderList.removeOrderFromList(event);
+						break;
 					case "org.jala.efeeder.servlets.websocket.avro.ChangeFoodMeetingStatusEvent":
-						document.location.href = event.redirectTo['string'];
+						document.location.href = "/action/FoodMeeting";
 						break;
 				}
 			});
 		});
 
 		communicationService.connect('ws://' + location.host + '/ws', idFoodMeeting);
+		
+		orderList.setCommunicationService(communicationService);
 
-		var myOrder = new MyOrder(myOrderContainer, idFoodMeeting, idUser, communicationService, toastMessage);
-		myOrder.init();
+		myOrder.setCommunicationService(communicationService);
 
 		var paymentButton = new PaymentButton(idFoodMeeting, idUser, communicationService);
 		paymentButton.init();
+		
+		$(window).on('beforeunload', function() {
+			communicationService.disconnect();
+		});
 	});
 });
 
@@ -46,6 +61,7 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer, toastMessag
 	this.orders = [];
 	this.orderTemplate;
 	this.toastMessage = toastMessage;
+	var communicationService;
 
 	var self = this;
 
@@ -53,20 +69,31 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer, toastMessag
 		orderTemplate = template;
 		$.post('/action/getOrdersByFoodMeeting', {idFoodMeeting: idFoodMeeting}).done(function (orders) {
 			_.each(orders, function (order) {
-				addOrder(order, false);
+				var isSameUser = false;
+
+				if (order.idUser === self.idUser) {
+					isSameUser = true;
+				}
+
+				addOrder(order, false, isSameUser);
 			});
 		});
 	});
 
 	var fixUserProperty = function (orderEvent) {
 		var userProp = orderEvent.user['org.jala.efeeder.servlets.websocket.avro.UserOrder'];
+		var placeItemProp = orderEvent.placeItem['org.jala.efeeder.servlets.websocket.avro.PlaceItemOrder'];
 		if (userProp === undefined) {
 			userProp = orderEvent.user;
 		}
+		if (placeItemProp === undefined) {
+			placeItemProp = orderEvent.placeItem;
+		}
 		orderEvent.user = userProp;
+		orderEvent.placeItem = placeItemProp;
 	};
 
-	var addOrder = function (newOrder, showToast) {
+	var addOrder = function (newOrder, showToast, isSameUser) {
 		fixUserProperty(newOrder);
 
 		var $orderTemplate = $.templates(orderTemplate);
@@ -74,15 +101,35 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer, toastMessag
 
 		var data = {
 			"idUser": newOrder.idUser,
+			"idPlaceItem": newOrder.placeItem.id,
+			"itemName": decodeURIComponent(newOrder.placeItem.name),
+			"quantity": newOrder.quantity,
 			"details": newOrder.details,
 			"cost": newOrder.cost,
 			"userName": userOwner.name,
-			"userLastName": userOwner.lastName
+			"userLastName": userOwner.lastName,
+			"isSameUser": !isSameUser
 		};
 
 		var $newOrder = $($orderTemplate.render(data));
-		orderListContainer.append($newOrder);
-		self.orders.push(newOrder);
+
+		var removeBtn = $newOrder.children('.btn-edit');
+
+		if (isSameUser){
+			self.orders.unshift(newOrder);
+			
+			removeBtn.click(function () {
+				removeMyOrder(newOrder.idUser, newOrder.placeItem.id);
+			});
+			
+			orderListContainer.prepend($newOrder);
+		}
+		else{
+			self.orders.push(newOrder);
+			removeBtn.attr("hidden", "true");
+			orderListContainer.append($newOrder);
+		}
+		
 		if (showToast) {
 			self.toastMessage.showMessage(self.toastMessage.OrderStates.NEW, userOwner.name + " " + userOwner.lastName);
 		}
@@ -103,122 +150,55 @@ var OrderList = function (idFoodMeeting, idUser, orderListContainer, toastMessag
 
 	var addOrUpdateOrder = function (orderEvent) {
 		fixUserProperty(orderEvent);
+		var isSameUser = false;
 
 		if (orderEvent.idUser === self.idUser) {
-			return;
+			isSameUser = true;
 		}
 
 		var updateIndex = -1;
 
-		_.each(self.orders, function (order, index) {
-			if (order.idUser === orderEvent.idUser) {
-				updateIndex = index;
-				return false;
-			}
-		});
-
 		if (updateIndex > -1) {
 			updateOrder(orderEvent, updateIndex);
 		} else {
-			addOrder(orderEvent, true);
+			addOrder(orderEvent, true, isSameUser);
 		}
 	};
-
-	return {
-		updateOrders: function (orderEvent) {
-			addOrUpdateOrder(orderEvent);
-		}
+	
+	var removeOrderFromList = function (orderEvent) {
+		var componentToRemove = $("#order-"+orderEvent.idUser+"-"+orderEvent.idPlaceItem);
+		componentToRemove.remove();
 	};
-};
-
-var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, communicationService, toastMessage) {
-	this.myOrderContainer = myOrderContainer;
-	this.userOrder = myOrderContainer.children('#my-user-order');
-	this.orderDetails = myOrderContainer.children('#my-order-details');
-	this.orderDetailsInput = myOrderContainer.children('#my-order-details-input');
-	this.orderCost = myOrderContainer.children('#my-order-cost');
-	this.orderCostInput = myOrderContainer.children('#my-order-cost-input');
-	this.btnEdit = myOrderContainer.children("#btn-edit-my-order");
-	this.btnEditIcon = this.btnEdit.children('.material-icons:first');
-	this.idFoodMeeting = idFoodMeeting;
-	this.idUser = idUser;
-	this.communicationService = communicationService;
-	this.toastMessage = toastMessage;
-
-	var self = this;
-
-	function enableEditMode() {
-		if (self.orderDetails.text() === '' || self.orderCost.text() === '') {
-			self.btnEditIcon.text('done');
-			self.orderDetails.hide();
-			self.orderCost.hide();
-			self.orderDetailsInput.show();
-			self.orderCostInput.show();
-		}
-	}
-
-	function addEvents() {
-		self.btnEdit.click(function () {
-			if (self.btnEditIcon.text() === 'mode_edit') {
-				self.btnEditIcon.text('done');
-				self.orderDetails.hide();
-				self.orderCost.hide();
-				self.orderDetailsInput.show();
-				self.orderCostInput.show();
-			} else {
-				self.btnEditIcon.text('mode_edit');
-				self.orderDetailsInput.hide();
-				self.orderCostInput.hide();
-				self.orderDetails.show();
-				self.orderCost.show();
-
-				updateMyOrderFields();
-			}
-		});
-	}
-
-	function updateMyOrderFields() {
-		var orderDetailsText = self.orderDetailsInput.children('#my-order-text').val();
-		var orderDetailsLabel = self.orderDetails.text();
-
-		var orderCostText = self.orderCostInput.val();
-		var orderCostLabel = self.orderCost.text();
-
-		if (orderDetailsText !== orderDetailsLabel || orderCostText !== orderCostLabel) {
-			self.orderDetails.text(orderDetailsText);
-			self.orderCost.text(orderCostText);
-
-			saveMyOrder();
-			self.toastMessage.showMessage(self.toastMessage.OrderStates.UPDATE_MY_ORDER, self.userOrder.text());
-		}
-	}
-
-	function saveMyOrder() {
-		self.communicationService.sendMessage({
+	
+	var removeMyOrder = function(idUser, idPlaceItem) {
+		communicationService.sendMessage({
 			user: self.idUser,
 			room: self.idFoodMeeting,
-			command: "CreateOrder",
+			command: "RemoveOrder",
 			events: [
 				{
 					event: {
-						CreateOrderEvent: {
+						RemoveOrderEvent: {
 							idFoodMeeting: parseInt(self.idFoodMeeting),
-							idUser: self.idUser,
-							details: self.orderDetails.text(),
-							cost: parseFloat(self.orderCost.text()),
-							user: null
+							idUser: idUser,
+							idPlaceItem: idPlaceItem
 						}
 					}
 				}
 			]
 		});
 	}
+	
+	var setCommunicationService = function(newCommunicationService) {
+		communicationService = newCommunicationService;
+	}
 
 	return {
-		init: function () {
-			enableEditMode();
-			addEvents();
-		}
+		updateOrders: function (orderEvent) {
+			addOrUpdateOrder(orderEvent);
+		},
+		setCommunicationService: setCommunicationService,
+		removeOrderFromList: removeOrderFromList
 	};
 };
 

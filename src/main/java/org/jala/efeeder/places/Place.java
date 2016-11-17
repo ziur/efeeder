@@ -5,6 +5,8 @@
  */
 package org.jala.efeeder.places;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -19,6 +21,7 @@ public class Place {
 	private String phone;
 	private String direction;
 	private String image_link;
+	private List<PlaceItem> placeItems;
 	private int votes;
 
 	public Place(int id, String name, String description, String phone, String direction, String image_link, int votes) {

@@ -1,5 +1,7 @@
 'use strict';
 
+const MAX_ANIMATION_TICKS = 30;
+
 let BkTransform = function(width, height, ratio = 1)
 {
 	this.resize(width, height, ratio);
@@ -14,7 +16,7 @@ BkTransform.prototype.resize = function(width, height, ratio)
 	this.invScale = 1 / this.scale;
 }
 
-BkTransform.prototype.screenToAbsoluteDelta = function (dx, dy)
+BkTransform.prototype.screenToNormalizedDelta = function (dx, dy)
 {
 	let scale = this.invScale;
 	return {
@@ -34,44 +36,47 @@ BkTransform.prototype.equalCoords = function(a, b)
 		Math.abs(sa.h - sb.h) < 1;
 }
 
-let BkCoord = function(x = 0, y = 0, w = 0, h = 0, z = 0, type = 0)
+let BkCoord = function(x = 0, y = 0, w = 0, h = 0, type = 0)
 {
-	// x,y denotes the center of the object
-	// w,h are the dimensions of the object
-	// z is the z order of the object for drawing
+	// x, y coordinates of the object center
+	// w, h object dimensions
 	// type is the type of coordinates
 	this.x = x;
 	this.y = y;
-	this.z = z;
 	this.w = w;
 	this.h = h;
 	this.type = type;
 	
-	// Type 0:
-	// x, y, w, h are absolute and movable
+	// Type 0: (Screen coordinates, default)
+	// x, y, w, h in pixels
+	// center is x, y
+	// Can be docked
+	
+	// Type 1: (Normalized coordinates)
+	// x, y, w, h in normalized coordinates
 	// x is guaranteed to be in screen for [-ratio..ratio]
 	// y is guaranteed to be in screen for [-1..1]
-	// Type 0 can become Type 1 if the object is docked to borders
-	// Type 0 can become Type 2 if the object is docked to center
+	// center is x, y
+	// Can be docked
 
-	// Type 1:
-	// x, y are relative to the borders and movable
+	// Dockable types use z as the parent object
+	
+	// Type 5: (TBD)
+	// x, y in pixels
 	// x positive is anchored to the left
 	// x negative is anchored to the right
 	// y positive is anchored to the top
 	// y negative is anchored to the bottom
-	// x, y negative can use -0.
-	// w, h are absolute
-	// x is guaranteed to be in screen for [-ratio..ratio]
-	// y is guaranteed to be in screen for [-1..1]
-	// h, w are proportional to current canvas dimensions [0..1[
+	// w, h in pixels
+	// center is x + w/2, y + h/2
 	// Becomes Type 0 when undocked
-	
+
 	// Type 6:
 	// x, y, w, h are relative to current canvas dimensions and fixed
 	// x, y are guaranteed to be in screen for [0..1[
 	// if x, y are negative [-1..0[ they are relative to right or bottom.
 	// h, w are proportional to the current smaller canvas dimension
+	// center is x + w/2, y + h/2
 	// Becomes Type 0 when undocked
 	
 	// Type 7:
@@ -80,28 +85,29 @@ let BkCoord = function(x = 0, y = 0, w = 0, h = 0, z = 0, type = 0)
 	// x, y are guaranteed to be in screen for [0..1[
 	// h, w are proportional to current canvas dimensions [0..1[
 	// A negative h or w makes it the complement of a positive w or h in type 6
+	// center is x + w/2, y + h/2
 	// Becomes Type 0 when undocked
 	
 	// Type 8:
 	// x, y, w, h are relative to current canvas dimensions and fixed
 	// x, y are guaranteed to be in screen for [0..1[
 	// h, w are proportional to current canvas dimensions [0..1[
-	// Becomes Type 0 when undocked
+	// center is x, y
 }
 
 BkCoord.prototype.toScreen = function(transform)
 {
-	if (this.type === 0)
+	let type = this.type;
+	if (type === 1)
 	{
 		let scale = transform.scale;
 		return new BkCoord(
 			this.x * scale + transform.dx,
 			this.y * scale + transform.dy,
 			this.w * scale,
-			this.h * scale,
-			this.z);
+			this.h * scale);
 	}
-	else if (this.type >= 8)
+	else if (type === 8)
 	{
 		let sw = transform.dx * 2;
 		let sh = transform.dy * 2;
@@ -109,10 +115,9 @@ BkCoord.prototype.toScreen = function(transform)
 			this.x * sw,
 			this.y * sh,
 			this.w * sw,
-			this.h * sh,
-			this.z);
+			this.h * sh);
 	}
-	else if (this.type === 6)
+	else if (type === 6)
 	{
 		let sw = transform.dx * 2;
 		let sh = transform.dy * 2;
@@ -138,10 +143,9 @@ BkCoord.prototype.toScreen = function(transform)
 			(this.x + ((this.x < 0) ? (uw - w * 0.5) : (w * 0.5))) * sm,
 			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5))) * sm,
 			w * sm,
-			h * sm,
-			this.z);
+			h * sm);
 	}
-	else if (this.type === 7)
+	else if (type === 7)
 	{
 		let sw = transform.dx * 2;
 		let sh = transform.dy * 2;
@@ -166,16 +170,20 @@ BkCoord.prototype.toScreen = function(transform)
 			(this.x + ((this.x < 0) ? (uw - w * 0.5) : (w * 0.5))) * sw,
 			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5))) * sh,
 			w * sw,
-			h * sh,
-			this.z);
-	}	
+			h * sh);
+	}
+	else if (type === 0)
+	{
+		return this.clone();
+	}
 	return null;
 }
 
-BkCoord.prototype.toAbsolute = function(transform)
+BkCoord.prototype.toNormalized = function(transform)
 {
-	// Only for non absolute coordinates
-	if (this.type >= 8)
+	// Only for non normalized coordinates
+	let type = this.type;
+	if (type === 8)
 	{
 		let scale = transform.invScale;
 		let sw = transform.dx * 2;
@@ -185,9 +193,9 @@ BkCoord.prototype.toAbsolute = function(transform)
 			(this.y * sh - transform.dy) * scale,
 			(this.w * sw) * scale,
 			(this.h * sh) * scale,
-			this.z);
+			1);
 	}
-	else if (this.type === 6)
+	else if (type === 6)
 	{
 		let scale = 2 * transform.invScale;
 		let sw = transform.dx * scale;
@@ -202,9 +210,9 @@ BkCoord.prototype.toAbsolute = function(transform)
 			(this.y + ((this.y < 0) ? (sh / sm - h * 0.5) : (h * 0.5))) * sm - 0.5 * sh,
 			w * sm,
 			h * sm,
-			this.z);
+			1);
 	}
-	else if (this.type === 7)
+	else if (type === 7)
 	{
 		let scale = 2.0 * transform.invScale;
 		let sw = transform.dx * scale;
@@ -231,15 +239,15 @@ BkCoord.prototype.toAbsolute = function(transform)
 			(this.y + ((this.y < 0) ? (uh - h * 0.5) : (h * 0.5)) - 0.5) * sh,
 			w * sw,
 			h * sh,
-			this.z);
+			1);
 	}
-	else if (this.type === 0)
-	{
-		return this.clone();
-	}
-	return null;
+
+	return this.clone();
 }
 
+/**
+ * @param coord Must be screen coordinates (type 0)
+ */
 BkCoord.prototype.toScreenCoord = function(coord)
 {
 	let nCoord = this.toScreen(new BkTransform(coord.w, coord.h));
@@ -248,56 +256,60 @@ BkCoord.prototype.toScreenCoord = function(coord)
 	return nCoord;
 }
 
-BkCoord.prototype.fromScreen = function(transform)
+BkCoord.prototype.toParentScreen = function(transform)
 {
-	// Only for absolute coordinates
-	if (this.type !== 0) return null;
-	
-	let scale = transform.invScale;
-	return new BkCoord(
-		(this.x - transform.dx) * scale,
-		(this.y - transform.dy) * scale,
-		this.w * scale,
-		this.h * scale,
-		this.z);
+	if (this.parent && this.parent.coord)
+	{
+		return this.toScreenCoord(this.parent.coord.toParentScreen(transform));
+	}
+	return this.toScreen(transform);
 }
 
 BkCoord.prototype.growScaleMin = function(scale)
 {
-	// Only for absolute coordinates
+	// Only for screen coordinates
 	if (this.type !== 0) return null;
-	
+
 	let amount = this.w < this.h ? this.w : this.h;
 	amount *= scale - 1;
 	return new BkCoord(
 		this.x,
 		this.y,
 		this.w + amount,
-		this.h + amount,
-		this.z);
+		this.h + amount);
 }
 
 BkCoord.prototype.growPixels = function(pixels)
 {
-	// Only for absolute coordinates
+	// Only for screen coordinates
 	if (this.type !== 0) return null;
+
 	return new BkCoord(
 		this.x,
 		this.y,
 		this.w + pixels,
-		this.h + pixels,
-		this.z);
+		this.h + pixels);
+}
+
+/**
+ * @param x, y Screen coordinates to transform into normalized using transform
+ */
+function _bkScreenPointToNormCoord(x, y, transform)
+{
+	let scale = transform.invScale;
+	return new BkCoord((x - transform.dx) * scale, (y - transform.dy) * scale,
+		0, 0, 1);
 }
 
 // Resizes to the new w and h moving it relative to sx, sy.
 // Use it when resizing a selected object.
-// w and h in absolute coordinates, sx, sy in screen coordinates.
+// w and h in normalized coordinates, sx, sy in screen coordinates.
 BkCoord.prototype.resizeAndMove = function(transform, w, h, sx, sy)
 {
-	// Only for absolute coordinates
-	if (this.type !== 0) return null;
+	// Only for normalized coordinates
+	if (this.type !== 1) return null;
 	
-	let p = new BkCoord(sx, sy, 0, 0).fromScreen(transform);
+	let p = _bkScreenPointToNormCoord(sx, sy, transform);
 	this.x = p.x + (this.x - p.x) * w / this.w;
 	this.y = p.y + (this.y - p.y) * h / this.h;
 	this.w = w;
@@ -306,13 +318,7 @@ BkCoord.prototype.resizeAndMove = function(transform, w, h, sx, sy)
 
 BkCoord.prototype.clone = function(scale)
 {
-	return new BkCoord(
-		this.x,
-		this.y,
-		this.w,
-		this.h,
-		this.z,
-		this.type);
+	return new BkCoord(this.x, this.y, this.w, this.h, this.type);
 }
 
 const BK_INV_255 = 1 / 255;
@@ -503,8 +509,8 @@ let BkSystem = function(canvasName, ratio = null)
 		ady: 0
 	};
 	
-	this.bgImg = null;
-	this.bgImgAlpha = null;
+	this.backgroundImage = null;
+	this.backgroundImageAlpha = null;
 	this.canvas.onclick = this.doOnClick.bind(this);	
 };
 
@@ -581,12 +587,6 @@ BkSystem.prototype.createImage = function(src, imgObject = null)
 		imgObject.addEventListener("load", bkOnImageLoad.bind(imgObject), false);
 	}
 	return imgObject;
-}
-
-BkSystem.prototype.setBackgroundImage = function(src, alpha = null)
-{
-	this.bgImg = this.createImage(src);
-	this.bgImgAlpha = alpha;
 }
 
 function _bkGetSquareDist(w, h, n)
@@ -818,9 +818,10 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 			w = factorW * coord.w;
 			h = factorH * coord.h;
 			
-			if (updateSizes && (o.coord.type >= 8))
+			if (updateSizes && (o.coord.type === 8))
 			{
-				o.nextCoord = new BkCoord(x, y, w, h, 0, 8);
+				o.nextCoord = new BkCoord(x, y, w, h, 8);
+				o.nextCoord.ticks = MAX_ANIMATION_TICKS;
 			}
 			else
 			{
@@ -829,7 +830,6 @@ BkSystem.prototype.redistributeArea = function(id, area, updateSizes)
 				o.coord.y = y;
 				o.coord.w = w;
 				o.coord.h = h;
-				o.coord.z = 0;
 				o.coord.type = 8;
 			}
 			
@@ -899,6 +899,12 @@ BkSystem.prototype.doOnMouseMove = function(e)
 		let hover = this.select(mouse.x, mouse.y);
 		if (mouse.hover !== hover)
 		{
+			let cursorStyle = 'auto';
+			if (hover && hover.onclick) cursorStyle = 'pointer';
+			if (this.canvas.style.cursor !== cursorStyle)
+			{
+				this.canvas.style.cursor = cursorStyle;
+			}
 			mouse.hover = hover;
 			this.onmousehover();
 		}
@@ -1112,11 +1118,11 @@ BkSystem.prototype.__draw = function()
 	if ((this.width < 1) || (this.height < 1)) return;
 	
 	this.ctx.clearRect(0, 0, this.width, this.height);
-	if (this.bgImg !== null)
+	if (this.backgroundImage !== null)
 	{
-		if (this.bgImgAlpha !== null) this.ctx.globalAlpha = this.bgImgAlpha;
-		this.bgImg.drawFit(this.ctx, this.__screenCoord);
-		if (this.bgImgAlpha !== null) this.ctx.globalAlpha = 1;
+		if (this.backgroundImageAlpha !== null) this.ctx.globalAlpha = this.backgroundImageAlpha;
+		this.backgroundImage.drawFit(this.ctx, this.__screenCoord);
+		if (this.backgroundImageAlpha !== null) this.ctx.globalAlpha = 1;
 	}
 	
 	let count = this.item.length;
@@ -1125,25 +1131,30 @@ BkSystem.prototype.__draw = function()
 	for (let i = 0; i < count; ++i)
 	{
 		let o = this.item[i];
-		if (o.coord.type >= 8 && o.nextCoord !== undefined)
+		if (o.coord.type === 8 && o.nextCoord !== undefined)
 		{
 			let nextCoord = o.nextCoord;
 			let coord = o.coord;
 			
-			if ((coord.type !== nextCoord.type) || this.transform.equalCoords(coord, nextCoord))
+			--nextCoord.ticks;
+			
+			if ((coord.type !== nextCoord.type) || this.transform.equalCoords(coord, nextCoord) || 0 === nextCoord.ticks)
 			{
 				o.coord = nextCoord;
 				delete o.nextCoord;
 			}
 			else
 			{
-				coord.x = coord.x * 0.875 + nextCoord.x * 0.125;
-				coord.y = coord.y * 0.875 + nextCoord.y * 0.125;
-				coord.w = coord.w * 0.875 + nextCoord.w * 0.125;
-				coord.h = coord.h * 0.875 + nextCoord.h * 0.125;
-				o.resize();
+				--nextCoord.ticks;
+				let f0 = nextCoord.ticks / MAX_ANIMATION_TICKS;
+				let f1 = 1 - f0;
+				coord.x = coord.x * f0 + nextCoord.x * f1;
+				coord.y = coord.y * f0 + nextCoord.y * f1;
+				coord.w = coord.w * f0 + nextCoord.w * f1;
+				coord.h = coord.h * f0 + nextCoord.h * f1;
 				this.redraw = true;
 			}
+			o.resize();
 		}
 		o.draw();
 	}
@@ -1201,11 +1212,9 @@ BkSystem.prototype.bringToFront = function(o)
 BkSystem.prototype.undock = function(o)
 {
 	if (o === null) return false;
-	
 	if (!o.area) return false;
-	
 	o.area = null;
-	o.coord = o.coord.toAbsolute(this.transform);
+	o.coord = o.coord.toNormalized(this.transform);
 	this.redistribute();
 	return true;
 }
@@ -1213,51 +1222,35 @@ BkSystem.prototype.undock = function(o)
 BkSystem.prototype.dockToArea = function(o, x, y)
 {
 	if (o === null) return false;
-
-	let p = new BkCoord(x, y).fromScreen(this.transform);
-
 	let count = this.area.length;
 	for (let i = count - 1; i >= 0; --i)
 	{
 		let c = this.area[i].coord;
-		if (c.type !== 0)
-		{
-			c = c.toAbsolute(this.transform);
-		}
+		if (c.type !== 0) c = c.toParentScreen(this.transform);
 		
-		if ((p.x >= (c.x - c.w * 0.5)) && (p.x < (c.x + c.w * 0.5)) &&
-			(p.y >= (c.y - c.h * 0.5)) && (p.y < (c.y + c.h * 0.5)))
+		if ((Math.abs(x - c.x) < c.w * 0.5) && (Math.abs(y - c.y) < c.h * 0.5))
 		{
 			o.area = this.area[i];
 			this.redistribute();
 			return true;
 		}
 	}
-
 	return false;
 }
 
 BkSystem.prototype.select = function(x, y)
 { 
 	let count = this.item.length;
-	if (count <= 0) return null;
-	
-	let p = new BkCoord(x, y).fromScreen(this.transform);
 	for (let i = count - 1; i >= 0; --i)
 	{
 		let c = this.item[i].coord;
-		if (c.type !== 0)
-		{
-			c = c.toAbsolute(this.transform);
-		}
+		if (c.type !== 0) c = c.toParentScreen(this.transform);
 		
-		if ((p.x >= (c.x - c.w * 0.5)) && (p.x < (c.x + c.w * 0.5)) &&
-			(p.y >= (c.y - c.h * 0.5)) && (p.y < (c.y + c.h * 0.5)))
+		if (Math.abs(x - c.x) < c.w * 0.5 && Math.abs(y - c.y) < c.h * 0.5)
 		{
 			return this.item[i];
 		}
 	}
-
 	return null;
 }
 
@@ -1266,9 +1259,9 @@ BkSystem.prototype.move = function(o, dx, dy)
 	if (o === null) return false;
 	
 	let coord = o.coord;
-	if (coord.type !== 0) return false;
+	if (coord.type !== 1) return false;
 	
-	let d = this.transform.screenToAbsoluteDelta(dx, dy);
+	let d = this.transform.screenToNormalizedDelta(dx, dy);
 	coord.x += d.dx;
 	coord.y += d.dy;
 	return true;
@@ -1485,9 +1478,10 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	let x1 = x0 + w;
 	let y1 = y0 + h;
 	let blur2 = blur * 2;
+	let epsilon = 0.1;
 	
 	ctx.fillStyle = colStr;
-	ctx.fillRect(x0 + blur, y0 + blur, w - blur2, h - blur2);
+	ctx.fillRect(x0 + blur, y0 + blur, w - blur2 + epsilon, h - blur2 + epsilon);
 	
 	let grad = ctx.createLinearGradient(
 		0, y0, 0, y0 + blur);
@@ -1495,7 +1489,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, colStr);
 	
 	ctx.fillStyle = grad;
-	ctx.fillRect(x0 + blur, y0, w - blur2, blur);
+	ctx.fillRect(x0 + blur, y0, w - blur2 + epsilon, blur + epsilon);
 	
 	grad = ctx.createLinearGradient(
 		0, y1 - blur, 0, y1);
@@ -1503,7 +1497,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 	
 	ctx.fillStyle = grad;
-	ctx.fillRect(x0 + blur, y1 - blur, w - blur2, blur);
+	ctx.fillRect(x0 + blur, y1 - blur, w - blur2 + epsilon, blur + epsilon);
 	
 	grad = ctx.createLinearGradient(
 		x0, 0, x0 + blur, 0);
@@ -1511,7 +1505,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, colStr);
 	
 	ctx.fillStyle = grad;
-	ctx.fillRect(x0, y0 + blur, blur, h - blur2);
+	ctx.fillRect(x0, y0 + blur, blur + epsilon, h - blur2 + epsilon);
 	
 	grad = ctx.createLinearGradient(
 		x1 - blur, 0, x1, 0);
@@ -1519,7 +1513,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(1, fade);
 
 	ctx.fillStyle = grad;
-	ctx.fillRect(x1 - blur, y0 + blur, blur, h - blur2);
+	ctx.fillRect(x1 - blur, y0 + blur, blur + epsilon, h - blur2 + epsilon);
 	
 	let x = x0 + blur;
 	let y = y0 + blur;
@@ -1528,7 +1522,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.fillRect(x - blur, y - blur, blur, blur);
+	ctx.fillRect(x - blur, y - blur, blur + epsilon, blur + epsilon);
 	
 	y = y1 - blur;
 	
@@ -1536,7 +1530,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.fillRect(x - blur, y, blur, blur);
+	ctx.fillRect(x - blur, y, blur + epsilon, blur + epsilon);
 	
 	x = x1 - blur;
 	
@@ -1544,7 +1538,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.fillRect(x, y, blur, blur);
+	ctx.fillRect(x, y, blur + epsilon, blur + epsilon);
 	
 	y = y0 + blur;
 	
@@ -1552,7 +1546,7 @@ function bkDrawShadowRect(ctx, coord, blur, col)
 	grad.addColorStop(0, colStr);
 	grad.addColorStop(1, fade);
 	ctx.fillStyle = grad;
-	ctx.fillRect(x, y - blur, blur, blur);
+	ctx.fillRect(x, y - blur, blur + epsilon, blur + epsilon);
 }
 
 function bkDrawGlassBoard(ctx, coord, col, drawShadow = false, plainColor = false)
