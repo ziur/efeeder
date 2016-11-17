@@ -4,24 +4,8 @@
 <div class="modal-content">
 	<div class="row">
 		<p class="col s12 grey-text">Please select one item for your order.<p>
-		<div class="image-links col s12">
-			<c:forEach var="placeItem" items="#{place.placeItems}">
-				<div class="grid-item" style="width:200px">
-					<div class="card">
-						<div class="card-image waves-effect waves-block waves-light">
-							<img class="image-link" src="${placeItem.imageLink}"
-								data-image-link="${placeItem.imageLink}"
-								data-id="${placeItem.id}"
-								data-name="${placeItem.name}"
-								data-price="${placeItem.price}">
-						</div>
-						<div class="card-content">
-							<p>${placeItem.name}</p>
-							<p>Price: ${placeItem.price} Bs.</p>
-						</div>
-					</div>
-				</div>
-			</c:forEach>
+		<div id="container-place-item" class="row">
+			
 		</div>
 	</div>
 	<hr/>

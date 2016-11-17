@@ -39,11 +39,13 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage, i
 		});
 		
 		self.btnMenu.click(function () {
-			self.menuModal.openModal();
-			var modal = new ModalSearchMenu(self.menuModal, self.orderName, self.orderQuantity,
-					self.orderCostInput, self.btnEditIcon, self.btnAdd, self.idPlaceItem, self.messageOrder,
-					self.idPlace);
-			modal.init();
+			
+				self.menuModal.openModal();
+				var modal = new ModalSearchMenu(self.menuModal, self.orderName, self.orderQuantity,
+						self.orderCostInput, self.btnEditIcon, self.btnAdd, self.idPlaceItem, self.messageOrder,
+						self.idPlace);
+				modal.init();
+			
 		});
 	}
 

@@ -52,6 +52,16 @@ public class PlaceItemManager {
 		
 		return createPlaceItemsByResultSet(resultSet, place);
 	}
+
+	public List<PlaceItem> getPlaceItemByPlaceWithoutPlace(Place place) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement(SELECT_PLACE_ITEM_QUERY + BY_PLACE);
+
+		stm.setInt(1, place.getId());
+
+		ResultSet resultSet = stm.executeQuery();
+		
+		return createPlaceItemsByResultSet(resultSet, null);
+	}
 	
 	public PlaceItem getPlaceItemById(int id) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(SELECT_PLACE_ITEM_QUERY + BY_ID);

@@ -3,6 +3,7 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	this.orderCost = orderCost;
 	this.orderQuantity = orderQuantity;
 	this.modalContainer = modalContainer;
+	this.placeItemContainer = $("#container-place-item");
 	this.btnEditIcon = btnEditIcon;
 	this.btnAdd = btnAdd;
 	this.addNewItemBtn  = $("#add_new_item_button");
@@ -10,6 +11,7 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	this.imageList = $('.image-link');
 	this.messageOrder = messageOrder;
 	this.idPlace = idPlace;
+	this.placeItemTemplate;
 
 	var self = this;
 
@@ -18,11 +20,43 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	var id;
 	var name;
 	var price;
-
-	var addEventChange = function() {
 	
-	};
+	
+	$.get('/assets/templates/placeItem.html', function (template) {
+		placeItemTemplate = template;
+		$.post('/action/GetItemsByPlace', {idPlace: self.idPlace}).done(function (placeItems) {
+			_.each(placeItems, function (placeItem) {
+				var $placeItemTemplate = $.templates(placeItemTemplate);
+				
+				var data = {
+					"imageLink": placeItem.imageLink,
+					"id": placeItem.id,
+					"name": placeItem.name,
+					"price": placeItem.price
+				};
 
+				var $newPlaceItem = $($placeItemTemplate.render(data));
+				
+				self.placeItemContainer.append($newPlaceItem);
+				
+				//organizeModalImages();
+				var imageBtn = $newPlaceItem.children('.image-link');
+				
+				imageBtn.click(function () {
+					id = $(this).data("id");
+					name = $(this).data("name");
+					price = $(this).data("price");
+					self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
+				});
+				
+				
+			});
+			
+		});
+	});
+	
+
+	
 	var onModalHide = function() {
 		self.messageOrder.removeClass("red-text");
 		self.messageOrder.addClass('grey-text');
@@ -37,12 +71,6 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	};
 
 	var addEventClick = function() {
-		self.imageList.click(function() {
-			id = $(this).data("id");
-			name = $(this).data("name");
-			price = $(this).data("price");
-			self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
-		});
 
 		self.addNewItemBtn.click(function(event) {
 			event.preventDefault();
@@ -84,8 +112,9 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 
 	return {
 		init: function() {
-			addEventClick();
-			organizeModalImages();
+			//loadPlaceItem();
+			//addEventClick();
+			//organizeModalImages();
 		}
 	};
 };
