@@ -207,7 +207,6 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 	this.idUser = idUser;
 	this.communicationService = communicationService;
 	this.btnPayment = $("#btn-payment");
-	this.newStatus = "Payment";
 
 	var self = this;
 
@@ -217,28 +216,13 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 		}
 
 		self.btnPayment.click(function () {
-			changeFoodMeetingStatus();
+			drawLots();
 		});
 	}
 
-	function changeFoodMeetingStatus() {
-		self.communicationService.sendMessage({
-			user: self.idUser,
-			room: self.idFoodMeeting,
-			command: "ChangeFoodMeetingStatus",
-			events: [
-				{
-					event: {
-						ChangeFoodMeetingStatusEvent: {
-							idFoodMeeting: parseInt(self.idFoodMeeting),
-							idUser: self.idUser,
-							newStatus: self.newStatus,
-							redirectTo: null
-						}
-					}
-				}
-			]
-		});
+	function drawLots()
+	{
+		window.location.href = "tyche?id_food_meeting=" + idFoodMeeting.toString();
 	}
 
 	return {

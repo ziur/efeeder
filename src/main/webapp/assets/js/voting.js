@@ -731,7 +731,7 @@ function processUserPlaceJson(json)
 		m_uiSystem.remove(m_finishButton);
 	}
 	
-	upTimeBrightenedUsers(m_uiSystem.mouse.hover);
+	updateBrightenedUsers(m_uiSystem.mouse.hover);
 	
 	m_uiSystem.redistribute();
 }
@@ -879,7 +879,7 @@ function placeClick()
 	}
 }
 
-function upTimeBrightenedUsers(hover)
+function updateBrightenedUsers(hover)
 {
 	let hoverId = -1;
 	if (hover)
@@ -929,7 +929,7 @@ function onCanvasClick()
 
 function onMouseHover()
 {
-	upTimeBrightenedUsers(this.mouse.hover);
+	updateBrightenedUsers(this.mouse.hover);
 	this.redraw = true;
 }
 
@@ -955,6 +955,10 @@ function handleWsOnMessage(event)
 				break;
 		}
 	});
+}
+
+function closeWebsocketConnection() {
+	m_comService.disconnect();
 }
 
 function finishClick()
@@ -1156,28 +1160,19 @@ function initialize()
 	$('#mainSideNav').get(0).style = "position:fixed;visibility:hidden;width:300px;left:-300px;top:" +
 		$("nav").height() + "px;margin:0;padding-bottom:60px;background-color:#fff; overflow:auto;z-index:1;transition:visibility 1s,left 1s;"
 	$('#mainCanvas').get(0).className = "";
+
+	$(window).on("load", function() {
+		run();
+	});
+
+	$(window).on('beforeunload', function() {
+		closeWebsocketConnection();
+	});
+	
+	return {addSuggestion:addSuggestion};
 }
 
-function closeWebsocketConnection() {
-	m_comService.disconnect();
-}
-
-initialize();
-return {
-	run:run,
-	addSuggestion:addSuggestion,
-	closeWebsocketConnection: closeWebsocketConnection
-};
-
+return initialize();
 }
 
 let ef_votingView = new VotingView(g_feastId);
-
-$(window).on("load", function() {
-	ef_votingView.run();
-});
-
-$(window).on('beforeunload', function() {
-	ef_votingView.closeWebsocketConnection();
-});
-
