@@ -130,11 +130,12 @@ ButtonDrawer.prototype.draw = function(o)
 	}
 }
 
+const MAX_ANIMATION_COUNTER = 3;
 let Bubbles = function(coord, drawer, drawnLots, buyerId)
 {
 	this.coord = coord;
 	this.drawer = drawer;
-	this.animate = true;
+	this.animationCounter = MAX_ANIMATION_COUNTER;
 	this.animationFrames = BUBBLES_FRAMES_ANIMATION;
 	this.bubbles = [];
 	for (let i = 0; i < drawnLots.length; ++i)
@@ -155,7 +156,7 @@ Bubbles.prototype._updateWinner = function()
 		this.winnerId = this.bubbles[this.bubbles.length - 1].userId;
 	}
 	this.animationFrames = BUBBLES_FRAMES_ANIMATION;
-	this.animate = true;
+	this.animationCounter = MAX_ANIMATION_COUNTER;
 }
 
 let _dummyEscape = document.createElement('textarea');
@@ -205,33 +206,13 @@ let BubbleDrawer = function(system)
 
 BubbleDrawer.prototype.draw = function(o)
 {
+	const DIAMETER_FACTOR = 0.2;
 	let coord = o.coord.toScreen(this._transform);
 	let ctx = this._ctx;
 
 	let min = coord.w < coord.h ? coord.w : coord.h;
-	let r = min * 0.4;
+	const DIAMETER = min * DIAMETER_FACTOR;
 	let count = o.bubbles.length
-	let stopAnimation = true;
-
-	for (let i = 0; i < count; ++i)
-	{
-		let a = o.bubbles[i];
-		for (let j = i + 1; j < count; ++j)
-		{
-			let b = o.bubbles[j];
-			let dx = a.x - b.x;
-			let dy = a.y - b.y;
-			let d2 = (dx * dx + dy * dy);
-			let angle = Math.atan2(dy, dx);
-			let force = 0.0000002 / d2;
-			let ddx = force * Math.cos(angle);
-			let ddy = force * Math.sin(angle);
-			a.dx += ddx;
-			b.dx += -ddx;
-			a.dy += ddy;
-			b.dy += -ddy;
-		}
-	}
 
 	for (let i = 0; i < count; ++i)
 	{
@@ -270,11 +251,49 @@ BubbleDrawer.prototype.draw = function(o)
 			item.y = -.5;
 			item.dy *= -0.9;
 		}
-		item.r = r * (1.5 - item.y) * 0.5;
-		item.dx *= 0.995;
-		item.dy *= 0.995;
-		if (Math.abs(item.dy) > 1E-4) stopAnimation = false;
-		if (Math.abs(item.dx) > 1E-4) stopAnimation = false;
+		item.d = DIAMETER * (1.5 - item.y);
+		item.dx *= 0.99;
+		item.dy *= 0.99;
+	}
+
+	for (let i = 0; i < count; ++i)
+	{
+		let a = o.bubbles[i];
+		for (let j = i + 1; j < count; ++j)
+		{
+			let b = o.bubbles[j];
+			let dx = a.x - b.x;
+			let dy = a.y - b.y;
+			let d2 = dx * dx + dy * dy;
+			let angle = Math.atan2(dy, dx);
+			let ndx = Math.cos(angle);
+			let ndy = Math.sin(angle);
+			let ar = DIAMETER_FACTOR * (1.5 - a.y) * 0.5;
+			let br = DIAMETER_FACTOR * (1.5 - b.y) * 0.5;
+			let d = Math.sqrt(d2) - ar - br;
+			if (d < 0)
+			{
+				let r = -d * 0.4;
+				a.dx *= 0.99;
+				a.dy *= 0.99;
+				b.dx *= 0.99;
+				b.dy *= 0.99;
+				a.dx += r * ndx;
+				b.dx -= r * ndx;
+				a.dy += r * ndy;
+				b.dy -= r * ndy;
+			}
+			else
+			{
+				let force = 0.0000002 / d2;
+				let ddx = force * ndx;
+				let ddy = force * ndy;
+				a.dx += ddx;
+				b.dx += -ddx;
+				a.dy += ddy;
+				b.dy += -ddy;
+			}
+		}
 	}
 
 	for (let i = 0; i < count; ++i)
@@ -285,9 +304,13 @@ BubbleDrawer.prototype.draw = function(o)
 			if (item.userId !== m_buyerId) continue;
 		}
 		item.img.draw(ctx, new BkCoord(
-			coord.x + item.x * (coord.w - item.r),
-			coord.y + item.y * (coord.h - item.r),
-			item.r, item.r));
+			coord.x + item.x * (coord.w - item.d),
+			coord.y + item.y * (coord.h - item.d),
+			item.d, item.d));
+		if ((Math.abs(item.dy) > 1E-4) || (Math.abs(item.dx) > 1E-4))
+		{
+			o.animationCounter = MAX_ANIMATION_COUNTER;
+		}
 	}
 
 	if (o.animationFrames > 0)
@@ -305,8 +328,12 @@ BubbleDrawer.prototype.draw = function(o)
 			}
 		}
 	}
-	
-	if (o.animate && !stopAnimation) this._system.redraw = true;
+
+	if (o.animationCounter > 0)
+	{
+		--o.animationCounter;
+		this._system.redraw = true;
+	}
 }
 
 function timeStampToString(timeStamp)
