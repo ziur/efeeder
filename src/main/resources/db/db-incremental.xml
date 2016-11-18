@@ -457,62 +457,6 @@
 				referencedTableName="user"/>
 	</changeSet>
 	
-	<changeSet author="mirko" id="insert.buyer.CoffeeTime">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="1"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.DiaDelProgramador">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="2"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.ReleaseCelebration">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="3"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.jalasoftAnniversary">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="4"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.tacosDay">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="5"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.teamBuilding">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="6"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>
-	
-	<changeSet author="mirko" id="insert.buyer.sciquestAnniversary">
-		<insert catalogName="efeeder"
-				tableName="buyer">
-			<column name="id_food_meeting"          value="7"/>
-			<column name="id_user"                  value="1"/>			
-		</insert>
-	</changeSet>	
-
 	<changeSet author="ricardo" id="food_meeting_user.table">
 		<createTable catalogName="efeeder" tableName="food_meeting_user">
 			<column name="id_food_meeting" type="INT(11)">
@@ -562,6 +506,27 @@
 			onUpdate="RESTRICT"
 			referencedColumnNames="id"
 			referencedTableName="places"/>
+	</changeSet>
+
+	<changeSet author="0x3" id="insert.winnerbuyer">
+		<addColumn catalogName="efeeder" tableName="food_meeting">
+			<column name="id_buyer" type="INT">
+			<constraints nullable="true"/>
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint
+			baseColumnNames="id_buyer"
+			baseTableName="food_meeting"
+			constraintName="food_meeting_id_buyer_fk"
+			onDelete="CASCADE"
+			onUpdate="RESTRICT"
+			referencedColumnNames="id"
+			referencedTableName="user"/>
+		<addColumn catalogName="efeeder" tableName="buyer">
+			<column name="dice" type="INT">
+			<constraints nullable="false"/>
+			</column>
+		</addColumn>
 	</changeSet>
 
 	<changeSet author="roger" id="addColumn.quantity.orders">
