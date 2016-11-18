@@ -40,7 +40,7 @@
 		</div>		
 	<div id="mainSideNav" style="visibility:hidden">
 	    <div class="search-box-container">
-		<input id="search" type="text" autocomplete="off" placeholder="Search for ..." >
+		<input id="search" type="text" placeholder="Search for ..." >
 	    </div>
 	    <div id="custom-card" class="card">
 		<div class="card-content">
@@ -62,7 +62,7 @@
 		</div>
 		<div id="custom-card-level" class="card-reveal">
 		    <span class="card-title grey-text text-darken-4">New Place<i class="material-icons right">close</i></span>
-		    <form id="place-form" class="col s12">
+		    <form id="place-form" class="col s12" autocomplete="off">
 			<div class="input-field col s12">
 			    <input id="id-place" type="text" class="validate">
 			    <label for="id-place">Name place:</label>
@@ -89,6 +89,7 @@
 				<label for="id-img">Image:</label>
 			    </div>
 			</div>
+			<div id="tag-chip" class="chips-placeholder"></div>
 		    </form>
 		    <button id="place-form-sumit-button"class="btn waves-effect waves-light" type="submit">save</button>
 		</div>
