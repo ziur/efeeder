@@ -31,7 +31,7 @@ public class CreatePlaceCommand implements CommandUnit {
 		int placeId;
 		connection = parameters.getConnection();
 		PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_PLACE_QUERY, RETURN_GENERATED_KEYS);
-		prepareStatement.setString(1, parameters.getParameter("name"));
+		prepareStatement.setString(1, parameters.getParameter("name").toLowerCase());
 		prepareStatement.setString(2, parameters.getParameter("description"));
 		prepareStatement.setString(3, parameters.getParameter("phone"));
 		prepareStatement.setString(4, parameters.getParameter("address"));
@@ -77,7 +77,7 @@ public class CreatePlaceCommand implements CommandUnit {
 
 	private int createNewTag(String tag) throws SQLException {
 		PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_TAG_QUERY, RETURN_GENERATED_KEYS);
-		prepareStatement.setString(1, tag);
+		prepareStatement.setString(1, tag.toLowerCase());
 		prepareStatement.executeUpdate();
 		ResultSet generatedKeys = prepareStatement.getGeneratedKeys();
 		generatedKeys.next();

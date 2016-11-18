@@ -40,7 +40,7 @@
 		</div>		
 	<div id="mainSideNav" style="visibility:hidden">
 	    <div class="search-box-container">
-		<input id="search" type="text" autocomplete="off" placeholder="Search for ..." >
+		<input id="search" type="text" placeholder="Search for ..." >
 	    </div>
 	    <div id="custom-card" class="card">
 		<div class="card-content">

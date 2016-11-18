@@ -4,7 +4,7 @@ $(document).ready( function () {
 	var term = $(this).val();
 	$.post("/action/searchplace",
 	{
-	    term: term,
+	    term: term.toLowerCase(),
 	    page: 1
 	},
        function (data, status) {
@@ -45,8 +45,9 @@ $(document).ready( function () {
 			'</ul>';
 	    $("#places").prepend(newPlace);
 	});
+	$("form").trigger("reset");
     });
-
+    
     $(document).on('click', 'li', function () {
 	ef_votingView.addSuggestion(g_feastId, parseInt($(this).attr("id")));
     });

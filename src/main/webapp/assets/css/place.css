@@ -72,8 +72,9 @@
     transform: translateX(-50%);
 }
 button#add-new-place {
-    float: right;
-    top: -8px;
+    position: fixed;
+    top: 60%;
+    left: 0.1%;
 }
 #place-form input {
     color: #4d4d4d;
