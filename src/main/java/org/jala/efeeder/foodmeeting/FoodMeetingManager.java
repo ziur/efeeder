@@ -30,7 +30,7 @@ public class FoodMeetingManager {
 	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
 			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
 	private static final String SELECT_BY_USER_ID = "SELECT fm.id, fm.name, fm.image_link, fm.status, fm.event_date, fm.id_user " +
-			"FROM food_meeting fm, food_meeting_user fmu " +
+			"FROM food_meeting fm, food_meeting_participants fmu " +
 			"WHERE fmu.id_user = ? and fm.id = fmu.id_food_meeting " +
 			"ORDER BY CASE WHEN fm.status = 'Payment' THEN 1 WHEN fm.status = 'Finish' THEN 3 ELSE 2 END, fm.event_date DESC";
 
