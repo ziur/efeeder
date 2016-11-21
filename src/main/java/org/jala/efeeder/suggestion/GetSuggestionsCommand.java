@@ -27,24 +27,30 @@ import org.jala.efeeder.places.Place;
 @Command
 public class GetSuggestionsCommand implements CommandUnit {
 
+	private static final String SELECT_USERS_BY_MEETING_SQL =
+            "SELECT id, name, last_name FROM user WHERE id in (SELECT id_user FROM food_meeting_participants WHERE id_food_meeting = ?)";
+    private static final String SELECT_PLACES_BY_MEETING_SQL =
+            "SELECT id, name, description, phone, direction, image_link FROM places WHERE id IN"
+            + "(SELECT id_place FROM food_meeting_suggestions WHERE id_food_meeting = ?)";
+    private static final String SELECT_WINNER_PLACE_SQL =
+            "SELECT id_suggestion AS suggestionId, count(*) AS votes, " +
+            "(SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id = suggestionId) AS placeId " +
+            "FROM efeeder.votes WHERE id_food_meeting = ? GROUP BY id_suggestion ORDER BY votes DESC LIMIT 0, 2";
+    private static final String GET_PARTICIPANT_VOTED_PLACE = 
+            "SELECT id_place FROM food_meeting_suggestions WHERE id = " +
+            "(SELECT id_suggestion FROM votes WHERE id_participant = " +
+            "(SELECT id FROM food_meeting_participants WHERE id_user = ? LIMIT 1) LIMIT 1) LIMIT 1; ";
+    private static final String GET_SUGGESTION_VOTES = 
+            "SELECT COUNT(id_suggestion) FROM votes WHERE id_suggestion = "
+            + "(SELECT id FROM food_meeting_suggestions WHERE id_place = ? LIMIT 1); ";
+    private static final String SELECT_FOOD_MEETING_SQL =
+			"SELECT food_meeting.id_user, user.name, user.last_name, food_meeting.name, food_meeting.image_link, event_date, voting_time, order_time, payment_time FROM food_meeting, user WHERE food_meeting.id_user=user.id AND food_meeting.id=? AND status='Voting'";
     private static final String SELECT_VOTE_FINISHER_SQL =
             "SELECT id_user FROM food_meeting WHERE food_meeting.id=? AND status='Voting'";
-	private static final String SELECT_USERS_BY_MEETING_SQL =
-            "SELECT id, name, last_name FROM efeeder.user WHERE id in (SELECT id_user FROM efeeder.food_meeting_participants WHERE id_food_meeting = ?)";
-    private static final String SELECT_PLACES_BY_MEETING_SQL =
-            "SELECT id, name, description, phone, direction, image_link FROM efeeder.places WHERE id IN"
-            + "(SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id_food_meeting = ?)";
-    private static final String SELECT_WINNER_PLACE_SQL =
-            "SELECT id_place,count(*) AS votes FROM food_meeting_suggestions WHERE id_food_meeting=? GROUP BY id_place ORDER BY votes DESC LIMIT 0, 2";
-    private static final String GET_PARTICIPANT_VOTED_PLACE = 
-            "SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id = " +
-            "(SELECT id_suggestion FROM efeeder.votes WHERE id_participant = " +
-            "(SELECT id FROM efeeder.food_meeting_participants WHERE id_user = ? LIMIT 1) LIMIT 1) LIMIT 1; ";
-    private static final String GET_SUGGESTION_VOTES = 
-            "SELECT COUNT(id_suggestion) FROM efeeder.votes WHERE id_suggestion = "
-            + "(SELECT id FROM efeeder.food_meeting_suggestions WHERE id_place = ? LIMIT 1); ";
 	
 	/**
+	 * @param feastId The id of the feast to look for
+	 * @param connection The database connection 
 	 * @return Either the feast owner id or zero if the voting phase is over
 	 */
 	static public int getVoteFinisherUserId(int feastId, Connection connection) throws Exception {
@@ -53,6 +59,38 @@ public class GetSuggestionsCommand implements CommandUnit {
         ResultSet resSet = ps.executeQuery();
         if(resSet.next()) return resSet.getInt("id_user");
 		return 0;
+	}
+	
+	static String concatenate(String name, String lastName)
+	{
+		String result = name;
+		if (result.length() > 0 && lastName.length() > 0) result += " "; 
+		return result + lastName;
+	}
+	
+	/**
+	 * @param feastId The id of the feast to look for
+	 * @param connection The database connection
+	 * @return The feast data
+	 */
+	static public String getFeastAsString(int feastId, Connection connection) throws Exception {
+        PreparedStatement ps = connection.prepareStatement(SELECT_FOOD_MEETING_SQL);
+        ps.setInt(1, feastId);
+        ResultSet resSet = ps.executeQuery();
+        if(resSet.next()) 
+		{
+			return JsonConverter.objectToJSON(new Feast(
+					resSet.getInt("food_meeting.id_user"),
+					concatenate(resSet.getString("user.name"),
+							resSet.getString("user.last_name")),
+					resSet.getString("food_meeting.name"),
+					resSet.getString("food_meeting.image_link"),
+					resSet.getTimestamp("event_date"),
+					resSet.getTimestamp("voting_time"),
+					resSet.getTimestamp("order_time"),
+					resSet.getTimestamp("payment_time")));
+		}
+		return "";
 	}
 	
 	static public String getUserSuggestionsAsString(int feastId, Connection connection) throws Exception {
@@ -110,7 +148,7 @@ public class GetSuggestionsCommand implements CommandUnit {
         ResultSet resSet = ps.executeQuery();
 
         if (resSet.next()){
-			int winnerId = resSet.getInt("id_place");
+			int winnerId = resSet.getInt("placeId");
 			int winnerVotes = resSet.getInt("votes");
 			int secondVotes = 0;
 			if (resSet.next()){
@@ -128,8 +166,8 @@ public class GetSuggestionsCommand implements CommandUnit {
 				getUserSuggestionsAsString(feastId, connection) +
 				",\"places\":" +
 				getPlacesSuggestionsAsString(feastId, connection) +
-				",\"ownerId\":" +
-				Integer.toString(getVoteFinisherUserId(feastId, connection)) +
+				",\"feast\":" +
+				getFeastAsString(feastId, connection) +
 				"}";
 	}
 
