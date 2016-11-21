@@ -9,6 +9,7 @@ import java.sql.SQLException;
  *
  * @author rodrigo_ruiz
  */
+@Deprecated
 public class BuyerManager {
 
     private static final String SELECT_QUERY = "SELECT id_food_meeting, id_user FROM buyer WHERE id_food_meeting = ?";

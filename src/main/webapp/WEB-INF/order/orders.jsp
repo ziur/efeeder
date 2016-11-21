@@ -34,13 +34,13 @@
 				<ul id="order-list" class="collection">
 				</ul>
 			</div>
-			<c:if test="${foodMeeting.userOwner.id == myUser.id}">
+
 				<div class="col-sm-12">
 					<div class="fixed-action-btn horizontal">
 						<a id="btn-payment" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">payment</i></a>
 					</div>
 				</div>
-			</c:if>
+
 		</div>
 	</jsp:body>
 </t:template>

@@ -18,7 +18,7 @@ public class PlaceManager {
 
 	private static final String INSERT_PLACE_QUERY = "INSERT INTO places(name, description, phone, direction, image_link) values(?, ?, ?, ?, ?)";
 	private static final String SELECT_PLACE_QUERY = "SELECT p.id, p.name, p.description, p.phone, p.direction, p.image_link FROM places p ";
-	private static final String BY_FOOD_MEETING_ID_QUERY = " , FOOD_MEETING fm WHERE p.id = fm.id_place AND fm.id = ? ";
+	private static final String BY_FOOD_MEETING_ID_QUERY = " , food_meeting fm WHERE p.id = fm.id_place AND fm.id = ? ";
 	private static final String BY_ID_QUERY = " WHERE p.id = ? ";
 
 	private final Connection connection;
