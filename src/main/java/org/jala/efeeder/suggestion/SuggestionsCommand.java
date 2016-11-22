@@ -21,7 +21,7 @@ import org.jala.efeeder.places.Place;
  */
 @Command
 public class SuggestionsCommand implements CommandUnit {
-	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 5";
+	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 10";
 
 	@Override
 	public Out execute(In parameters) throws Exception {

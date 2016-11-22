@@ -1,9 +1,10 @@
 $(document).ready( function () {
+    var tags = [];
     $("#search").keyup(function (event) {
 	var term = $(this).val();
 	$.post("/action/searchplace",
 	{
-	    term: term,
+	    term: term.toLowerCase(),
 	    page: 1
 	},
        function (data, status) {
@@ -22,7 +23,8 @@ $(document).ready( function () {
 	    'description': $('input[id = id-desc]').val(),
 	    'phone': $('input[id = id-telf]').val(),
 	    'address': $('input[id = id-address]').val(),
-	    'image_link': $('input[id = id-img]').val()
+	    'image_link': $('input[id = id-img]').val(),
+	    'tags': tags.join(":")
 	};
 	$.ajax({
 	    cache: false,
@@ -43,9 +45,19 @@ $(document).ready( function () {
 			'</ul>';
 	    $("#places").prepend(newPlace);
 	});
+	$("form").trigger("reset");
     });
-
+    
     $(document).on('click', 'li', function () {
-		ef_votingView.addSuggestion(g_feastId, parseInt($(this).attr("id")));   
+	ef_votingView.addSuggestion(g_feastId, parseInt($(this).attr("id")));
+    });
+    
+    $('.chips-placeholder').material_chip({
+	placeholder: 'Enter a tag',
+	secondaryPlaceholder: '+Tag'
+    });
+    
+    $('.chips').on('chip.add', function(e, chip) {
+	tags.push(chip.tag);
     });
 });

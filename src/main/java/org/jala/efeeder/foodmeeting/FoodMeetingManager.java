@@ -29,6 +29,10 @@ public class FoodMeetingManager {
             + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String UPDATE_FOOD_MEETING_SQL = "UPDATE food_meeting SET name= ?, image_link= ?, event_date=?, "
 			+ "voting_time=?, order_time=?, payment_time=? WHERE id= ?;";
+	private static final String SELECT_BY_USER_ID = "SELECT fm.id, fm.name, fm.image_link, fm.status, fm.event_date, fm.id_user " +
+			"FROM food_meeting fm, food_meeting_user fmu " +
+			"WHERE fmu.id_user = ? and fm.id = fmu.id_food_meeting " +
+			"ORDER BY CASE WHEN fm.status = 'Payment' THEN 1 WHEN fm.status = 'Finish' THEN 3 ELSE 2 END, fm.event_date DESC";
 
 	private final Connection connection;
 	private UserManager userManager;
@@ -54,6 +58,26 @@ public class FoodMeetingManager {
 		}
 
 		return foodMeeting;
+	}
+
+	public List<FoodMeeting> getFoodMeetingByUser(int userId) throws SQLException {
+		List<FoodMeeting> meetings = new ArrayList<>();
+		FoodMeeting foodMeeting = null;
+
+		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_ID);
+		preparedStatement.setInt(1, userId);
+		ResultSet resultSet = preparedStatement.executeQuery();
+
+		UserManager userManager = new UserManager(connection);
+
+		while (resultSet.next()) {
+			foodMeeting = new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3),
+					FoodMeetingStatus.valueOf(resultSet.getString(4)), resultSet.getTimestamp(5),
+					userManager.getUserById(resultSet.getInt(6)));
+			meetings.add(foodMeeting);
+		}
+
+		return meetings;
 	}
 
 	public void setStatusById(int id, int idUser, FoodMeetingStatus newStatus) throws SQLException {
@@ -99,9 +123,6 @@ public class FoodMeetingManager {
 		int meetingId = generatedKeysResultSet.getInt(1);
 		meeting.setId(meetingId);
 		stm.close();
-		
-		buyerManager.insertUser(new Buyer(meeting.getId(), meeting.getUserOwner().getId()));
-		
 		return meeting;
 	}
 	

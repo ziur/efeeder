@@ -1,0 +1,21 @@
+<div class="col s12 m12 l6">
+    <div class="card horizontal z-depth-3">
+        <div class="card-stacked">
+            <div class="card-content">
+                <span class="card-title">{{:name}}</span>
+                <div>
+                	<span class="grey-text">{{:quickViewDate}}</span>
+                	<span class="new badge {{:backgroundColor}}" data-badge-caption={{:status}}></span>
+                </div>
+            </div>
+            <div class="card-action">
+                <a href="{{:link}}">Go to {{:goToPage}}</a>
+            </div>
+        </div>
+        <div class="{{:backgroundColor}}" style="padding: 10px">
+            <a href="{{:link}}"><i class="medium material-icons white-text" style="position: relative; top: 50%; transform: translateY(-50%);">
+                {{:icon}}
+            </i></a>
+        </div>
+    </div>
+</div>
