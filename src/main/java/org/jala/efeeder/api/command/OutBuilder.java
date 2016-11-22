@@ -1,6 +1,7 @@
 package org.jala.efeeder.api.command;
 
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.payment.PaymentItem;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 
 /**

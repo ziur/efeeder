@@ -101,6 +101,25 @@
 														}
 													]
 												},
+                                                {
+                                                    "namespace": "org.jala.efeeder.servlets.websocket.avro",
+                                                    "type": "record",
+                                                    "name": "RaffleEvent",
+                                                    "alias": "RaffleEvent",
+                                                    "fields": [
+                                                        {
+                                                            "name": "chosen",
+                                                            "type": "int"
+                                                        },
+                                                        {
+                                                            "name": "items",
+                                                            "type": {
+                                                                "type": "array",
+                                                                "items": "string"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
 												{
 													"namespace": "org.jala.efeeder.servlets.websocket.avro",
 													"type": "record",
@@ -300,7 +319,43 @@
 															"type": "string"
 														}
 													]
-												}
+												},
+                 								{
+                                                    "namespace": "org.jala.efeeder.servlets.websocket.avro",
+                                                    "type": "record",
+                                                    "name": "CreateExtraItemPayment",
+                                                    "alias": "CreateExtraItemPayment",
+                                                    "fields": [
+                                                        {
+                                                            "name": "itemId",
+                                                            "type": "int"
+                                                        },
+                                                        {
+                                                            "name": "itemDescription",
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "name": "itemPrice",
+                                                            "type": "double"
+                                                        },
+                                                        {
+                                                            "name": "status",
+                                                            "type": "string"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "namespace": "org.jala.efeeder.servlets.websocket.avro",
+                                                    "type": "record",
+                                                    "name": "DeleteExtraItemPayment",
+                                                    "alias": "DeleteExtraItemPayment",
+                                                    "fields": [
+                                                        {
+                                                            "name": "tableIndex",
+                                                            "type": "int"
+                                                        }
+                                                    ]
+                                                }
 											]
 										}
 									]

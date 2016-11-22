@@ -16,5 +16,5 @@ public class Buyer {
     public Buyer(int foodMeetingId, int userId) {
         this.foodMeetingId = foodMeetingId;
         this.userId = userId;
-    }    
+    }
 }

@@ -427,6 +427,7 @@
 			<column name="id_user"         type="INT"/>
 			<column name="order_name"      type="VARCHAR(200)"/>
 			<column name="Cost"            type="DECIMAL(10,2)"/>
+            <column name="payment"         type="DECIMAL(10,2)"/>
 		</createTable>
 	</changeSet>
 
@@ -491,6 +492,62 @@
 				referencedTableName="user"/>
 	</changeSet>
 	
+	<changeSet author="mirko" id="insert.buyer.CoffeeTime">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="1"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.DiaDelProgramador">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="2"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.ReleaseCelebration">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="3"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.jalasoftAnniversary">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="4"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.tacosDay">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="5"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.teamBuilding">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="6"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>
+	
+	<changeSet author="mirko" id="insert.buyer.sciquestAnniversary">
+		<insert catalogName="efeeder"
+				tableName="buyer">
+			<column name="id_food_meeting"          value="7"/>
+			<column name="id_user"                  value="1"/>			
+		</insert>
+	</changeSet>	
+
 	<changeSet author="ricardo" id="food_meeting_user.table">
 		<createTable catalogName="efeeder" tableName="food_meeting_user">
 			<column name="id_food_meeting" type="INT(11)">
@@ -563,6 +620,26 @@
 		</addColumn>
 	</changeSet>
 
+    <changeSet id="payment.table" author="alexander">
+        <createTable catalogName="efeeder" tableName="payment">
+                    <column name="id" type="INT(11)" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="id_food_meeting"   type="INT(11)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="item_description" type="VARCHAR(200)"/>
+        <column name="price" type="DECIMAL(10,2)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+            baseTableName="payment"
+            constraintName="fk_food_meeting"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="food_meeting"/>
+    </changeSet>
+
 	<changeSet author="roger" id="addColumn.quantity.orders">
 		<addColumn catalogName="efeeder"
 				schemaName="public"
@@ -629,5 +706,5 @@
 				columnNames="id_food_meeting, id_user, id_place_item"
 				constraintName="pk_orders"
 				tableName="orders"/>
-	</changeSet>
+	</changeSet>    
 </databaseChangeLog>
