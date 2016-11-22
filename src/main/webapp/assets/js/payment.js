@@ -10,7 +10,7 @@ $(document).ready(function () {
         var communicationService = new CommunicationService();
         var inputState = $("#input-state-id").val();
 
-        var paymentItem = new PaymentItem();
+        var paymentItem = new PaymentItem(idUser, communicationService);
         paymentItem.init();
 
         communicationService.onMessage(function (event) {
@@ -67,13 +67,15 @@ $(document).ready(function () {
     });
 });
 
-var PaymentItem = function () {
+var PaymentItem = function (idUser, communicationService) {
     var table = $("#items_id");
     var foodMeetingId = $("#input-food-meeting-id");
     var deleteItemButton = $('.delete-item');
     var formAddItem = $('#formAddItemId');
     var totalItemsPrice = $("#total_items_price_id");
-    var selft = this;
+    this.idUser = idUser;
+	this.communicationService = communicationService;
+    var self = this;
 
     var messageUser = $("#message-user");
 
