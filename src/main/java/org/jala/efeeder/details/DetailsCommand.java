@@ -3,6 +3,7 @@ package org.jala.efeeder.details;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
@@ -54,10 +55,11 @@ public class DetailsCommand implements CommandUnit {
 			out.addResult("extra_items_by_users", roundTwoDecimals(partialByOrder));
 			out.addResult("extra_items_list", itemList);
 			out.addResult("extra_items_total_price", itemTotalPrice);
-			out.addResult("buyer_details", buildItemDetails(connection,orderList, itemList));
+			out.addResult("buyer_details", buildItemDetails(connection, orderList, itemList));
 			out.addResult("payment", roundTwoDecimals(getPaymentByUsers(orderList)));
 			out.addResult("total_extra_item_price", itemTotalPrice);
 			out.addResult("food_meeting_totalCost", getTotalCostFromFoodMeeting(orderList, partialByOrder));
+			out.addResult("paymentTime", getPaymentTime(connection, String.valueOf(idFoodMeeting)));
 
 			return out.forward("details/details.jsp");
 		} catch (Exception ex) {
@@ -127,7 +129,7 @@ public class DetailsCommand implements CommandUnit {
 
 		return resultItemsList;
 	}
-	
+
 	private double getTotalExternalItemPrice(List<PaymentItem> itemList) {
 		double resp = 0;
 
@@ -137,48 +139,48 @@ public class DetailsCommand implements CommandUnit {
 
 		return resp;
 	}
-	
-	private List<ItemDetails> buildItemDetails(Connection connection, List<Order> orders, List<PaymentItem> itemList){
+
+	private List<ItemDetails> buildItemDetails(Connection connection, List<Order> orders, List<PaymentItem> itemList) {
 		List<ItemDetails> itemDetailsList = new ArrayList<>();
 		PlaceItemManager placeItemManager = new PlaceItemManager(connection);
-		
+
 		for (Order order : orders) {
 			int index = searchPlaceItem(itemDetailsList, order.getPlaceItem());
-			if(index >=0){
+			if (index >= 0) {
 				ItemDetails itemDetails = itemDetailsList.get(index);
 				itemDetails.setQuantity(itemDetails.getQuantity() + order.getQuantity());
 				itemDetails.setTotalCost(itemDetails.getTotalCost() + order.getTotalCost());
-				if(!order.getDetails().isEmpty()) {
+				if (!order.getDetails().isEmpty()) {
 					itemDetails.getDetailsFromItem().add(order.getDetails());
 				}
-			}else {
+			} else {
 				String detailOrder = order.getDetails();
 				List<String> listOfDetail = new ArrayList<String>();
 				listOfDetail.add(detailOrder);
-				itemDetailsList.add(new ItemDetails(order.getPlaceItem().getName(), 
-						order.getPlaceItem().getPrice(), 
-						order.getQuantity(), 
-						listOfDetail, 
+				itemDetailsList.add(new ItemDetails(order.getPlaceItem().getName(),
+						order.getPlaceItem().getPrice(),
+						order.getQuantity(),
+						listOfDetail,
 						order.getPlaceItem().getPrice()));
-				
+
 			}
 		}
-		
+
 		for (PaymentItem extraItem : itemList) {
-			itemDetailsList.add(new ItemDetails(extraItem.getDescription(), 
-					extraItem.getPrice(), 
-					1, 
-					new ArrayList<String>(), 
+			itemDetailsList.add(new ItemDetails(extraItem.getDescription(),
+					extraItem.getPrice(),
+					1,
+					new ArrayList<String>(),
 					extraItem.getPrice()));
 		}
-		
+
 		return itemDetailsList;
 	}
 
 	private int searchPlaceItem(List<ItemDetails> itemDetailsList, PlaceItem placeItem) {
 		int index = 0;
 		for (ItemDetails itemDetails : itemDetailsList) {
-			if(itemDetails.getName().equals(placeItem.getName())){
+			if (itemDetails.getName().equals(placeItem.getName())) {
 				return index;
 			}
 			index++;
@@ -188,11 +190,11 @@ public class DetailsCommand implements CommandUnit {
 
 	private double getTotalCostFromFoodMeeting(List<Order> orderList, double extraItem) {
 		double resp = 0;
-		
+
 		for (Order order : orderList) {
-			resp += (order.getTotalCost()+ extraItem);
+			resp += (order.getTotalCost() + extraItem);
 		}
-		
+
 		return resp;
 	}
 
@@ -203,10 +205,15 @@ public class DetailsCommand implements CommandUnit {
 		}
 		return paymentRes;
 	}
-	
+
 	private double roundTwoDecimals(double number) {
 		number = Math.round(number * 100);
-		number = number/100;
+		number = number / 100;
 		return number;
+	}
+
+	private Timestamp getPaymentTime(Connection connection, String idFoodMeeting) throws SQLException {
+		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
+		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting)).getPaymentDate();
 	}
 }

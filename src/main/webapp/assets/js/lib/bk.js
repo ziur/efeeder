@@ -1,6 +1,6 @@
 'use strict';
 
-const MAX_ANIMATION_TICKS = 30;
+const MAX_ANIMATION_TICKS = 70;
 
 let BkTransform = function(width, height, ratio = 1)
 {
