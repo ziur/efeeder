@@ -31,7 +31,7 @@ import org.jala.efeeder.user.User;
  */
 @Command
 public class DetailsCommand implements CommandUnit {
-
+    
 	@Override
 	public Out execute(In parameters) {
 		Out out = new DefaultOut();
