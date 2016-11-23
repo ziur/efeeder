@@ -9,7 +9,7 @@
     </jsp:attribute>
     <jsp:body>
         <div class="row">
-			<input type="hidden" id="payment_time" value="${paymentTime}" />
+            <input type="hidden" id="payment_time" value="${paymentTime}" />
             <div class="row">
                 <h2>Details of "${food_meeting.name}"</h2>
                 <div class="col s6">

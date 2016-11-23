@@ -15,6 +15,7 @@ import lombok.Data;
  */
 @Data
 public class ItemDetails {
+
 	private String name;
 	private double price;
 	private int quantity;
@@ -36,24 +37,24 @@ public class ItemDetails {
 		this.detailsFromItem = new ArrayList<String>();
 		this.totalCost = 0;
 	}
-	
-	public String getListOfDetails(){
+
+	public String getListOfDetails() {
 		String resp = "";
-		
+
 		for (String detail : detailsFromItem) {
 			resp += "- " + detail + "\n";
 		}
-		
+
 		return resp;
 	}
-	
-	public double getTotalCost(){
+
+	public double getTotalCost() {
 		return roundTwoDecimals(totalCost);
 	}
-	
+
 	private double roundTwoDecimals(double number) {
 		number = Math.round(number * 100);
-		number = number/100;
+		number = number / 100;
 		return number;
 	}
 }
