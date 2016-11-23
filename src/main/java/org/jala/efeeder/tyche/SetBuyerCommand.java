@@ -30,7 +30,7 @@ public class SetBuyerCommand implements CommandUnit {
 			"SELECT id_buyer FROM food_meeting WHERE id = ?";
 
 	private static final String SET_BUYER =
-			"UPDATE food_meeting SET id_buyer = ? WHERE id = ?";
+			"UPDATE food_meeting SET id_buyer = ?, status = 'Payment' WHERE id = ?";
 
 	static int getBuyer(int feastId, Connection connection) {
 		try {

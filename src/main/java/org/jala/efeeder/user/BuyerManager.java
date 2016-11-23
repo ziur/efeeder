@@ -12,7 +12,7 @@ import java.sql.SQLException;
 @Deprecated
 public class BuyerManager {
 
-    private static final String SELECT_QUERY = "SELECT id_food_meeting, id_user FROM buyer WHERE id_food_meeting = ?";
+    private static final String SELECT_QUERY = "SELECT id, id_buyer FROM food_meeting WHERE id = ?";
     private static final String INSERT_USER_QUERY = "INSERT INTO buyer(id_food_meeting, id_user) values(?, ?)";
 
     private final Connection connection;

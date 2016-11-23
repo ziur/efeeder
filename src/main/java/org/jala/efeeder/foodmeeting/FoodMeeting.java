@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 @Data
 public class FoodMeeting {
+
 	private int id;
 	private String name;
 	private String imageLink;
@@ -26,12 +27,13 @@ public class FoodMeeting {
 	private Timestamp paymentDate;
 	private User userOwner;
 	private Timestamp createdAt;
+	private int buyerId;
 
 	public FoodMeeting() {
 	}
 
-	public FoodMeeting(int id, String name,String imageLink, FoodMeetingStatus status, Timestamp eventDate, Timestamp createdAt,
-						Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
+	public FoodMeeting(int id, String name, String imageLink, FoodMeetingStatus status, Timestamp eventDate, Timestamp createdAt,
+			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner) {
 		this.id = id;
 		this.name = name;
 		this.createdAt = createdAt;
@@ -42,6 +44,12 @@ public class FoodMeeting {
 		this.status = status;
 		this.imageLink = imageLink;
 		this.userOwner = userOwner;
+	}
+
+	public FoodMeeting(int id, String name, String imageLink, FoodMeetingStatus status, Timestamp eventDate, Timestamp createdAt,
+			Timestamp votingDate, Timestamp orderDate, Timestamp paymentDate, User userOwner, int buyer_id) {
+		this(id, name, imageLink, status, eventDate, createdAt, votingDate, orderDate, paymentDate, userOwner);
+		this.buyerId = buyer_id;
 	}
 
 	public FoodMeeting(int id, String name, String imageLink, Timestamp eventDate, User userOwner) {
@@ -66,10 +74,9 @@ public class FoodMeeting {
 		int widthToSubstractPerDay = (maxWidth - minWidth) / maxNumberOfDays;
 		int width;
 
-		if(days >= maxNumberOfDays) {
+		if (days >= maxNumberOfDays) {
 			width = minWidth;
-		}
-		else {
+		} else {
 			width = maxWidth - widthToSubstractPerDay * days;
 		}
 
@@ -87,16 +94,16 @@ public class FoodMeeting {
 
 	public FoodMeetingStatus getStatusByTime(Timestamp time) {
 		FoodMeetingStatus state = FoodMeetingStatus.Voting;
-		if(this.votingDate.compareTo(time) <= 0) {
+		if (this.votingDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Order;
 		}
-		if(this.orderDate.compareTo(time) <= 0) {
+		if (this.orderDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Payment;
 		}
-		if(this.paymentDate.compareTo(time) <= 0) {
+		if (this.paymentDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Buying;
 		}
-		if(this.eventDate.compareTo(time) <= 0) {
+		if (this.eventDate.compareTo(time) <= 0) {
 			state = FoodMeetingStatus.Finish;
 		}
 		return state;
