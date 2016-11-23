@@ -33,6 +33,14 @@ public class Order {
 		this.quantity = quantity;
                 this.payment = payment;
 	}
+	
+	public double getTotalCost(){
+		return roundTwoDecimals(cost * quantity);
+	}
+	
+	public double getDebt(){
+		return roundTwoDecimals(getTotalCost() - payment);
+	}
 
 	public void setUser(User user) {
 		setIdUserFromUser(user);
@@ -45,5 +53,11 @@ public class Order {
 		} else {
 			this.idUser = 0;
 		}
+	}
+	
+	private double roundTwoDecimals(double number) {
+		number = Math.round(number * 100);
+		number = number/100;
+		return number;
 	}
 }

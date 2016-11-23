@@ -12,35 +12,97 @@
                 <h2>Details of "${food_meeting.name}"</h2>
                 <div class="col s6">
                     <h5 class="left-align">Lucky Buyer: ${buyer.name} ${buyer.lastName}</h5>
+                    <br/>
                     <img src="action/image?file_name=${buyer.getImage()}&type=user" width="200" height="200" class="circle">
                 </div>
                 <div class="col s6">
-                    <h5 class="left-align">The place: ${place.name}</h5>
-                    <h5 class="left-align">The address place: ${place.direction}</h5>
+                    <h5 class="left-align">Place: ${place.name}</h5>
+                    <h5 class="left-align">Address Place: ${place.direction}</h5>
                     <img src="${place.image_link}" width="200" height="200" class="circle">
                 </div>
             </div>
+                
             <div class="row">
-                <table class="responsive-table">
-                    <thead>
-                        <tr>
-                            <th data-field="id">Name</th>
-                            <th data-field="name">Order</th>
-                            <th data-field="price">Cost</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <c:forEach var="order" items="#{orders}">
+                <div class="col s12 m5">
+                    <div class="card-panel teal">
+                          <h5 class="left-align white-text">Total To Pay: ${food_meeting_totalCost}</h5>
+                          <h5 class="left-align white-text">Current Payment: ${payment}</h5>
+                          <h5 class="left-align white-text">Extra Items Details: ${total_extra_item_price} / ${orders.size()} = ${extra_items_by_users}</h5>
+                    </div>
+                </div>
+                
+            </div>    
+            
+            <div class="row">
+              <div class="col s12">
+                <ul class="tabs">
+                  <li class="tab col s3"><a href="#prinsipal_details_id">General Details</a></li>
+                  <li class="tab col s3"><a href="#buyer_details_id">Buyer Details</a></li>
+                </ul>
+              </div>
+              <div id="prinsipal_details_id" class="row">
+                  <br/>
+                  <br/>
+                  <br/>
+                    <table class="responsive-table">
+                        <thead>
                             <tr>
-                                <td>${order.user.name}</td>
-                                <td>${order.details}</td>
-                                <td>${order.cost}</td>
+                                <th data-field="id" class="center-align">Name</th>
+                                <th data-field="order" class="center-align">Order</th>
+                                <th data-field="order_detais" class="center-align">Order Details</th>
+                                <th data-field="quantity" class="center-align">Quantity</th>
+                                <th data-field="unity" class="center-align">Unity Price</th>
+                                <th data-field="extra_item" class="center-align">Extra items</th>
+                                <th data-field="price" class="center-align">Total Cost</th>
+                                <th data-field="current_payment" class="center-align">Current payment</th>
+                                <th data-field="debt" class="center-align">Debt</th>
                             </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-                <h5 class="right-align">Total To Pay: ${payment}</h5>
+                        </thead>
+
+                        <tbody>
+                            <c:forEach var="order" items="#{orders}">
+                                <tr>
+                                    <td>${order.user.name} ${order.user.lastName}</td>
+                                    <td>${order.placeItem.name}, ${order.placeItem.description}</td>
+                                    <td>${order.details}</td>
+                                    <td class="center-align number">${order.quantity}</td>
+                                    <td class="right-align number">${order.cost}</td>
+                                    <td class="right-align">${extra_items_by_users}</td>
+                                    <td class="right-align number">${order.totalCost + extra_items_by_users}</td>
+                                    <td class="right-align number">${order.payment}</td>
+                                    <td class="right-align number" style="color:${(order.totalCost + extra_items_by_users < order.payment) ? "green":"red"}">${order.debt + extra_items_by_users}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="buyer_details_id" class="row">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th data-field="place_item_name">Name</th>
+                                <th data-field="place_item_price">Price</th>
+                                <th data-field="place_item_quantity">Quantity</th>
+                                <th data-field="place_item_details">Details</th>
+                                <th data-field="place_item_total">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="buyer_detail" items="#{buyer_details}">
+                                <tr>
+                                    <td>${buyer_detail.name}</td>
+                                    <td>${buyer_detail.price}</td>
+                                    <td>${buyer_detail.quantity}</td>
+                                    <td>${buyer_detail.listOfDetails}</td>
+                                    <td>${buyer_detail.price * buyer_detail.quantity}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </jsp:body>
