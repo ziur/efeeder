@@ -14,115 +14,132 @@ import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
 
 /**
- * 
+ *
  * @author amir_aranibar
  *
  */
 public class OrderManager {
-	private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost, quantity, id_place_item FROM orders";
-	private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
-	private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
-	private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user, id_place_item, quantity) VALUES(?, ?, ?, ?, ?, ?);";
-	private static final String DELETE_ORDER = "DELETE FROM orders ";
-	private static final String WHERE_PRIMARY_KEY = " WHERE id_food_meeting = ? AND id_user = ? AND id_place_item = ?";
 
-	private final Connection connection;
+    private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost, quantity, id_place_item, payment FROM orders";
+    private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
+    private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
+    private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user, id_place_item, quantity) VALUES(?, ?, ?, ?, ?, ?);";
+    private static final String DELETE_ORDER = "DELETE FROM orders ";
+    private static final String WHERE_PRIMARY_KEY = " WHERE id_food_meeting = ? AND id_user = ? AND id_place_item = ?";
+    private static final String UPDATE_PAYMENT = "UPDATE orders SET payment=? WHERE id_food_meeting=? AND id_user=?;";
 
-	public OrderManager(Connection connection) {
-		this.connection = connection;
-	}
+    private final Connection connection;
 
-	public List<Order> getOrdersWithUserByFoodMeeting(int idFoodMeeting) throws SQLException {
-		List<Order> orders = getOrdersByFoodMeeting(idFoodMeeting);
-		List<Integer> idUsers = new ArrayList<>();
+    public OrderManager(Connection connection) {
+        this.connection = connection;
+    }
 
-		orders.stream().forEach((order) -> {
-			idUsers.add(order.getIdUser());
-		});
+    public List<Order> getOrdersWithUserByFoodMeeting(int idFoodMeeting) throws SQLException {
+        List<Order> orders = getOrdersByFoodMeeting(idFoodMeeting);
+        List<Integer> idUsers = new ArrayList<>();
 
-		joinUserToOrder(orders, idUsers);
+        orders.stream().forEach((order) -> {
+            idUsers.add(order.getIdUser());
+        });
 
-		return orders;
-	}
+        joinUserToOrder(orders, idUsers);
 
-	public List<Order> getOrdersByFoodMeeting(int idFoodMeeting) throws SQLException {
-		List<Order> orders = new ArrayList<>();
+        return orders;
+    }
 
-		PlaceItemManager placeItemManager = new PlaceItemManager(connection);
+    public List<Order> getOrdersByFoodMeeting(int idFoodMeeting) throws SQLException {
+        List<Order> orders = new ArrayList<>();
 
-		PreparedStatement preparedStatement = connection.prepareStatement(ORDERS_BY_FOOD_MEETING_QUERY);
-		preparedStatement.setInt(1, idFoodMeeting);
-		ResultSet resultSet = preparedStatement.executeQuery();
+        PlaceItemManager placeItemManager = new PlaceItemManager(connection);
 
-		while (resultSet.next()) {
-			int idUser = resultSet.getInt(2);
-			PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
+        PreparedStatement preparedStatement = connection.prepareStatement(ORDERS_BY_FOOD_MEETING_QUERY);
+        preparedStatement.setInt(1, idFoodMeeting);
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-			Order order = new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5));
-			orders.add(order);
-		}
+        while (resultSet.next()) {
+            int idUser = resultSet.getInt(2);
+            PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
 
-		return orders;
-	}
+            Order order = new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5), resultSet.getDouble(7));
+            orders.add(order);
+        }
 
-	public List<Order> getMyOrder(int idUser, int idFoodMeeting) throws SQLException {
-		List<Order> myOrders = new ArrayList<Order>();
+        return orders;
+    }
 
-		PlaceItemManager placeItemManager = new PlaceItemManager(connection);
+    public List<Order> getMyOrder(int idUser, int idFoodMeeting) throws SQLException {
+        List<Order> myOrders = new ArrayList<Order>();
 
-		PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
-		preparedStatement.setInt(1, idFoodMeeting);
-		preparedStatement.setInt(2, idUser);
-		ResultSet resultSet = preparedStatement.executeQuery();
+        PlaceItemManager placeItemManager = new PlaceItemManager(connection);
 
-		if (resultSet.next()) {
-			PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
-			
-			myOrders.add(new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5)));
-		}
+        PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
+        preparedStatement.setInt(1, idFoodMeeting);
+        preparedStatement.setInt(2, idUser);
+        ResultSet resultSet = preparedStatement.executeQuery();
 
-		return myOrders;
-	}
+        if (resultSet.next()) {
+            PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
 
-	public void insertOrder(int idFoodMeeting, int idUser,int idPlaceItem, int quantity, String details, double cost) throws SQLException {
-		executeUpdateOrder(idFoodMeeting, idUser,idPlaceItem, quantity, details, cost, INSERT_ORDER);
-	}
+            myOrders.add(new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5), resultSet.getDouble(6)));
+        }
 
-	public void deleteOrder(int idFoodMeeting, int idUser, int idPlaceItem)
-			throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ORDER + WHERE_PRIMARY_KEY);
+        return myOrders;
+    }
 
-		preparedStatement.setInt(1, idFoodMeeting);
-		preparedStatement.setInt(2, idUser);
-		preparedStatement.setInt(3, idPlaceItem);
+    public void updatePayment(int idFoodMeeting, int idUser, double payment) throws SQLException {
+        executeUpdatePayment(idFoodMeeting, idUser, payment, UPDATE_PAYMENT);
+    }
 
-		preparedStatement.executeUpdate();
-	}
-	
-	private void executeUpdateOrder(int idFoodMeeting, int idUser, int idPlaceItem, int quantity, String details, double cost, String query)
-			throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(query);
+    public void insertOrder(int idFoodMeeting, int idUser, int idPlaceItem, int quantity, String details, double cost) throws SQLException {
+        executeUpdateOrder(idFoodMeeting, idUser, idPlaceItem, quantity, details, cost, INSERT_ORDER);
+    }
 
-		preparedStatement.setString(1, details);
-		preparedStatement.setDouble(2, cost);
-		preparedStatement.setInt(3, idFoodMeeting);
-		preparedStatement.setInt(4, idUser);
-		preparedStatement.setInt(5, idPlaceItem);
-		preparedStatement.setInt(6, quantity);
+    public void deleteOrder(int idFoodMeeting, int idUser, int idPlaceItem)
+            throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ORDER + WHERE_PRIMARY_KEY);
 
-		preparedStatement.executeUpdate();
-	}
+        preparedStatement.setInt(1, idFoodMeeting);
+        preparedStatement.setInt(2, idUser);
+        preparedStatement.setInt(3, idPlaceItem);
 
-	private void joinUserToOrder(List<Order> orders, List<Integer> idUsers) throws SQLException {
-		UserManager userManager = new UserManager(connection);
-		List<User> users = userManager.getUsersById(idUsers);
+        preparedStatement.executeUpdate();
+    }
 
-		orders.stream().forEach((order) -> {
-			Optional<User> result = users.stream()
-					.filter(user -> order.getIdUser() == user.getId()).findFirst();
-			if (result.isPresent()) {
-				order.setUser(result.get());
-			}
-		});
-	}
+    private void executeUpdateOrder(int idFoodMeeting, int idUser, int idPlaceItem, int quantity, String details, double cost, String query)
+            throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setString(1, details);
+        preparedStatement.setDouble(2, cost);
+        preparedStatement.setInt(3, idFoodMeeting);
+        preparedStatement.setInt(4, idUser);
+        preparedStatement.setInt(5, idPlaceItem);
+        preparedStatement.setInt(6, quantity);
+
+        preparedStatement.executeUpdate();
+    }
+
+    private void executeUpdatePayment(int idFoodMeeting, int idUser, double payment, String query)
+            throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setDouble(1, payment);
+        preparedStatement.setInt(2, idFoodMeeting);
+        preparedStatement.setInt(3, idUser);
+
+        preparedStatement.executeUpdate();
+    }
+
+    private void joinUserToOrder(List<Order> orders, List<Integer> idUsers) throws SQLException {
+        UserManager userManager = new UserManager(connection);
+        List<User> users = userManager.getUsersById(idUsers);
+
+        orders.stream().forEach((order) -> {
+            Optional<User> result = users.stream()
+                    .filter(user -> order.getIdUser() == user.getId()).findFirst();
+            if (result.isPresent()) {
+                order.setUser(result.get());
+            }
+        });
+    }
 }

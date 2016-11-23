@@ -427,6 +427,7 @@
 			<column name="id_user"         type="INT"/>
 			<column name="order_name"      type="VARCHAR(200)"/>
 			<column name="Cost"            type="DECIMAL(10,2)"/>
+			<column name="payment"         type="DECIMAL(10,2)"/>
 		</createTable>
 	</changeSet>
 
@@ -583,8 +584,28 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="payment.table" author="alexander">
+        <createTable catalogName="efeeder" tableName="payment">
+                    <column name="id" type="INT(11)" autoIncrement="true">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="id_food_meeting"   type="INT(11)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="item_description" type="VARCHAR(200)"/>
+        <column name="price" type="DECIMAL(10,2)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_food_meeting"
+            baseTableName="payment"
+            constraintName="fk_food_meeting"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="food_meeting"/>
+    </changeSet>
         
-        <changeSet author="roger" id="addColumn.quantity.orders">
+	<changeSet author="roger" id="addColumn.quantity.orders">
 		<addColumn catalogName="efeeder"
 				schemaName="public"
 				tableName="orders">

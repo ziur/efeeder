@@ -11,7 +11,7 @@ import org.jala.efeeder.user.User;
  * @author Mirko Terrazas
  */
 @Data
-@EqualsAndHashCode(exclude={"details", "quantity", "cost"})
+@EqualsAndHashCode(exclude = {"details", "quantity", "cost"})
 public class Order {
 
 	private int idFoodMeeting;
@@ -21,8 +21,9 @@ public class Order {
 	private int quantity;
 	private PlaceItem placeItem;
 	private Double cost;
+	private Double payment;
 
-	public Order(int idFoodMeeting, int idUser, String details, Double cost, PlaceItem placeItem, int quantity) {
+	public Order(int idFoodMeeting, int idUser, String details, Double cost, PlaceItem placeItem, int quantity, Double payment) {
 		this.idFoodMeeting = idFoodMeeting;
 		this.idUser = idUser;
 		this.user = null;
@@ -30,6 +31,15 @@ public class Order {
 		this.cost = cost;
 		this.placeItem = placeItem;
 		this.quantity = quantity;
+		this.payment = payment;
+	}
+
+	public double getTotalCost() {
+		return roundTwoDecimals(cost * quantity);
+	}
+
+	public double getDebt() {
+		return roundTwoDecimals(getTotalCost() - payment);
 	}
 
 	public void setUser(User user) {
@@ -43,5 +53,11 @@ public class Order {
 		} else {
 			this.idUser = 0;
 		}
+	}
+
+	private double roundTwoDecimals(double number) {
+		number = Math.round(number * 100);
+		number = number / 100;
+		return number;
 	}
 }

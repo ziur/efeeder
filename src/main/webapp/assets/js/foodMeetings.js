@@ -131,7 +131,7 @@ var FoodMeetingsList = function(foodMeetingsContainer, newMeetingPlaceholder) {
 				page = "tyche";
 				break;
 			case 'Payment':
-				page = "details";
+				page = "payment";
 				break;	
 			case 'Buying':
 				page = "details";
