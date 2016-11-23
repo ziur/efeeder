@@ -70,7 +70,7 @@
                                     </div>
                                 </div>                   
 
-                                <c:if test="${buyer.getUserId() == user.getId()}">
+                                <c:if test="${foodMeeting.buyerId == user.getId()}">
                                     <a href="#" id="lnk-check${order.user.id}" class="secondary-content" style="padding-right:35px">
                                         <i class="material-icons">${order.payment >= partialByOrder + order.cost ? "done":"crop_square"}</i>
                                     </a>      
@@ -83,7 +83,7 @@
                     </div>
                 </ul>
             </div>
-            <c:if test="${foodMeeting.userOwner.id == myUser.id}">
+            <c:if test="${foodMeeting.buyerId == myUser.id}">
                 <div class="col-sm-12">
                     <div class="fixed-action-btn horizontal">
                         <a id="btn-details" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">view_list</i></a>

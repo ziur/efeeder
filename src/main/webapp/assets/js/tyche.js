@@ -607,15 +607,9 @@ function handleSetBuyerEvent(userId)
 {
 	console.log("SetBuyer: UserId: " + userId);
 	m_buyerId = userId;
-	if (m_buyerId !== m_userId)
-	{
-		m_finishButton.isDisabled = true;
-		m_uiSystem.redraw = true;
-	}
-	else
-	{
-		gotoPayment();
-	}
+	m_finishButton.isDisabled = true;
+	m_uiSystem.redraw = true;
+	gotoPayment();
 }
 
 function onResize()
