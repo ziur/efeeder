@@ -99,3 +99,77 @@ button#add-new-place {
     line-height: 24px;
     border-radius: 10px
 }
+
+
+
+.label-horizontal {
+    height: 3rem;
+    display: inline-block;
+    line-height: normal;
+    margin-top: 3rem;
+}
+
+.right-container {
+    padding: 0 !important;
+}
+
+.table-image {
+    width: 50px;
+    height: 50px;
+}
+.body-content.layout-list {
+    height: calc(100% - 128px);
+}
+
+.title-section {
+    padding: 0 0.75rem;
+    font-weight: 500;
+    color: #a8a8a8;
+}
+
+.field .value {
+    font-weight: 300;
+    color: #a8a8a8;
+}
+.field .label {
+    font-weight: 500;
+}
+
+.clear-shadow {
+    box-shadow: none !important;
+}
+
+.secundary-toolbar.fixed {
+    position: fixed;
+    top: 64px;
+    width: 100%;
+}
+
+#btn-action-main {
+    top: 45px;
+    background-color: #26a69a
+}
+
+.body-content.layout-list {
+    margin-top: 66px; 
+}
+
+.label-field {
+    height: 3rem;
+}
+input.clear-field {
+    margin-bottom: 0 !important;
+    border-bottom: none !important; 
+}
+input[type="text"]:disabled.clear-field {
+    border-bottom: none; 
+    color: #a8a8a8;
+    font-weight: 300;
+}
+
+.img-card-left-side {
+    width: 256px;
+    height: 256px;
+    margin: 10 20px;
+
+}

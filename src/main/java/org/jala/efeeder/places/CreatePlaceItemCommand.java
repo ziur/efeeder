@@ -18,24 +18,16 @@ public class CreatePlaceItemCommand implements CommandUnit {
 
 	@Override
 	public Out execute(In parameters) throws Exception {
-
-		Connection connection = parameters.getConnection();
-
-		PlaceManager placeManager = new PlaceManager(connection);
-		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id_place")));
-
+		PlaceManager placeManager = new PlaceManager(parameters.getConnection());
+		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id-place")));
 		String name = parameters.getParameter("item-name");
 		String description = parameters.getParameter("item-description");
 		double price = Double.valueOf(parameters.getParameter("item-price"));
 		String imageLink = parameters.getParameter("image-link");
-
 		PlaceItem placeItem = new PlaceItem(name, description, price, imageLink, place);
-
-		PlaceItemManager placeItemManager = new PlaceItemManager(connection);
+		PlaceItemManager placeItemManager = new PlaceItemManager(parameters.getConnection());
 		placeItemManager.insertPlaceItem(placeItem);
-
 		placeItem.setPlace(null);
-
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(placeItem), ExitStatus.SUCCESS);
 	}
 }

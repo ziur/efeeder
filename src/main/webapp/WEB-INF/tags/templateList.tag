@@ -1,6 +1,7 @@
 <%@tag description="Page template" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@attribute name="javascript" fragment="true" %>
+<%@attribute name="modal" fragment="true" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,13 +30,10 @@
 
 	<body>
 		<t:header/>
-
-		<div class="container" >
-			<jsp:doBody/>
-		</div>
-
+		<jsp:doBody/>
+		<jsp:invoke fragment="modal"/>
 		<!--<t:footer/>-->
-
+		
 		<script src="/assets/js/lib/jquery.js"></script>
 		<script src="/assets/js/lib/js.cookie.js"></script>
 		<script src="/assets/js/lib/bootstrap.js"></script>
@@ -58,5 +56,6 @@
 		<script src="/assets/js/formPlaceValidation.js"></script>
 		<script src="/assets/js/mainScript.js"></script>
 		<jsp:invoke fragment="javascript"/>
+
 	</body>
 </html>

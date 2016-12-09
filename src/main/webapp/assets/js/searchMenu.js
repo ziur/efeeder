@@ -52,7 +52,7 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 			var commandUrl = form.attr( "action" );
 
 			var createData = new FormData(form[0]);
-			createData.append("id_place", idPlace);
+			createData.append("id-place", idPlace);
 			$.ajax({
 				url : commandUrl,
 				type : "post",
