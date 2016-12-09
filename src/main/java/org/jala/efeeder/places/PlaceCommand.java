@@ -14,7 +14,6 @@ import org.jala.efeeder.api.utils.JsonConverter;
 
 @Command
 public class PlaceCommand implements CommandUnit {
-	
 	@Override 
 	public Out execute(In parameters) throws Exception {
 		PlaceManager placeManager = new PlaceManager(parameters.getConnection());

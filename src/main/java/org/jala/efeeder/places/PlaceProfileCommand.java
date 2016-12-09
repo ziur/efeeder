@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 @Command
 public class PlaceProfileCommand implements CommandUnit {
 	private static final Logger LOG = Logger.getLogger(SearchPlaceCommand.class.getName());
-	private static final String FIND_ONE_PLACE = "select * from places where id = %d";
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
@@ -32,12 +31,4 @@ public class PlaceProfileCommand implements CommandUnit {
 		out.addResult("placeItems", listItem);
 		return out.forward("place/placeProfile.jsp");
 	}
-
-	public String prepareQuery(int id) {
-		if(id != 0) {
-			return String.format(FIND_ONE_PLACE, id);
-		}
-		return "";
-	}
-
 }

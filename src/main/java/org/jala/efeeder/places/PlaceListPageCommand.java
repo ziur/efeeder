@@ -15,7 +15,6 @@ import org.jala.efeeder.places.Place;
 
 @Command
 public class PlaceListPageCommand  implements CommandUnit {
-	private static final String ALL_PLACE_QUERY = "select * from places";
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Connection connection = parameters.getConnection();
