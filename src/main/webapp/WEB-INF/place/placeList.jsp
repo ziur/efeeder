@@ -6,7 +6,6 @@
 	<jsp:attribute name="javascript">
 		<script src="/assets/js/placeList.js"></script>
 	</jsp:attribute>
-
 	<jsp:attribute name="modal">
 		<!-- Modal Structure -->
 		  <div id="modal1" class="modal">
@@ -43,7 +42,6 @@
 					<div id="tag-chip" class="chips-placeholder chips"><input name="tags" class="input" placeholder="+Tag"></div>
 				</div>
 			    </form> 
-
 		    </div>
 		    <div class="modal-footer">
 		      <a id="btn-action-cancel" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
@@ -51,12 +49,10 @@
 		    </div>
 		  </div>
 	</jsp:attribute>
-
 	<jsp:body>
-	
 		<div class="row body-content layout-list">
 			<div class="col s10">
-				<table>
+				<table class="highlight">
 			        <thead>
 			          <tr>
 			              <th data-field="image"></th>
@@ -66,7 +62,6 @@
 			              <th data-field="options"></th>
 			          </tr>
 			        </thead>
-
 			        <tbody id="list-place-body">
 			          <c:forEach var="place" items="#{places}">
 			          <tr id="${place.id}" class="row-item">
@@ -80,24 +75,17 @@
 							  <ul id='dropdown-${place.id}' class='dropdown-content'>
 							    <li><a href="/action/placeProfile?id=${place.id}">List Items</a></li>
 							  </ul>
-
 			              </td>
-
 			          </tr>
 			          </c:forEach>
-			          
 			        </tbody>
       			</table>
-
-        
-
 			</div>
 			<div class="col s2 blue-grey lighten-5 right-container">
 				<div class="header-left-content">
 					<img id="d-place-image-link" src="/assets/img/food.svg" alt="" class="card-header img-card-left-side">
 				</div>
 				<div class="divider"></div>
-				
 				<div id="info">
 					<p class="title-section">Info</p>
 					<div class="row field">
@@ -108,7 +96,6 @@
 							<input id="d-place-name"  class="clear-field" type="text" name="place-name" value="Donald" disabled>
 						</div>
 					</div>
-					
 					<div class="row field">
 						<div class="col s4 valign-wrapper label-field">
 							<label class="label valign">Description</label>
@@ -117,7 +104,6 @@
 							<textarea id="d-place-description" class="clear-field" name="d-place-description" value="Description" disabled></textarea>
 						</div>
 					</div>
-				
 				</div>
 				<div class="divider"></div>
 				<div id="cost">
@@ -130,7 +116,6 @@
 							<input id="d-place-phone" type="text" name="d-place-phone" class="clear-field" value="4578" disabled>
 						</div>
 					</div>
-
 					<div class="row field">
 						<div class="col s4 valign-wrapper label-field">
 							<label class="label-field label valign">Address</label>
@@ -141,9 +126,7 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
-		
 		<div  id="log-message-container" class="row" hidden="true">
 			<form class="col s12">
 				<div class="row">
@@ -154,6 +137,5 @@
 				</div>
 			</form>
 		</div>
-	
 	</jsp:body>
 </t:templateList>

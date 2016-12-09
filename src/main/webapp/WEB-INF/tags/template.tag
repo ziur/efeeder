@@ -58,7 +58,5 @@
 		<script src="/assets/js/formPlaceValidation.js"></script>
 		<script src="/assets/js/mainScript.js"></script>
 		<jsp:invoke fragment="javascript"/>
-
-
 	</body>
 </html>

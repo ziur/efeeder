@@ -11,6 +11,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
+
 @Command
 public class PlaceCommand implements CommandUnit {
 	
@@ -22,5 +23,4 @@ public class PlaceCommand implements CommandUnit {
 		place.setPlaceItems(null);
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(place));
 	}
-
 }

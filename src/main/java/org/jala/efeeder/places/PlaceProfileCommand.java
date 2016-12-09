@@ -1,23 +1,14 @@
 package org.jala.efeeder.places;
-
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
-
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.logging.Logger;
-
-
-
-
-
 
 @Command
 public class PlaceProfileCommand implements CommandUnit {
@@ -35,9 +26,7 @@ public class PlaceProfileCommand implements CommandUnit {
 		catch(Exception exception) {
 			LOG.info("Not foud place");
 		}
-		
 		Place place = managerPlace.getPlaceById(idPlace); 
-		
 		out.addResult("place", place);
 		List<PlaceItem> listItem = managerPlaceItem.getPlaceItemByPlace(place);
 		out.addResult("placeItems", listItem);

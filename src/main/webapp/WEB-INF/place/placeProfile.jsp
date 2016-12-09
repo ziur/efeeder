@@ -34,7 +34,6 @@
 									type="text" class="validate" autofocus="autofocus"> <label for="image-link">Image Link</label>
 						</div>
 					</div>
-					
 					</form>
 				</div>
 		    </div>
@@ -42,15 +41,11 @@
 		    	<div class="row">
 		    		 <a id="btn-action-cancel" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
 				     <a id="btn-action-add" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat modal-close">Save</a>
-				    
-		    	</div>
-		      
-		      
+				</div>
 		    </div>
 		  </div>
 	</jsp:attribute>
 	<jsp:body>
-			
 		<div class="row body-content layout-list">
 			<div class="col s10">
 				<table class="highlight">
@@ -62,7 +57,6 @@
 			              <th data-field="phone">Precio</th>
 			          </tr>
 			        </thead>
-
 			        <tbody id="table-place-item">
 			          <c:forEach var="placeItem" items="#{placeItems}">
 			          <tr id="${placeItem.id}" class="row-item">
@@ -70,22 +64,16 @@
 			              <td>${placeItem.name}</td>
 			              <td>${placeItem.description}</td>
 			              <td>${placeItem.price}</td>
-
 			          </tr> 
 			          </c:forEach> 
-			          
 			        </tbody>
       			</table>
-
-        
-
 			</div>
 			<div class="col s2 blue-grey lighten-5 right-container">
 				<div class="header-left-content">
 					<img id="d-place-item-imageLink" src="/assets/img/food.svg" alt="" class="card-header img-card-left-side">
 				</div>
 				<div class="divider"></div>
-				
 				<div id="info">
 					<p class="title-section">Info</p>
 					<div class="row field">
@@ -96,7 +84,6 @@
 							<input id="d-place-item-name"  class="clear-field" type="text" name="place-item-name" value="Donald" disabled>
 						</div>
 					</div>
-					
 					<div class="row field">
 						<div class="col s4 valign-wrapper label-field">
 							<label class="label valign">Description</label>
@@ -105,7 +92,6 @@
 							<textarea id="d-place-item-description" class="clear-field" name="d-place-item-description" value="Description" disabled></textarea>
 						</div>
 					</div>
-				
 				</div>
 				<div class="divider"></div>
 				<div id="cost">
@@ -120,9 +106,7 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
-		
 		<div  id="log-message-container" class="row" hidden="true">
 			<form class="col s12">
 				<div class="row">
@@ -133,8 +117,5 @@
 				</div>
 			</form>
 		</div>
-	
-
 	</jsp:body>
-	
 </t:templateList>

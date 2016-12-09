@@ -29,12 +29,8 @@
 	</head>
 
 	<body>
-
 		<t:header/>
-
-		
 		<jsp:doBody/>
-		
 		<jsp:invoke fragment="modal"/>
 		<!--<t:footer/>-->
 		

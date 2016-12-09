@@ -17,7 +17,6 @@ public class PlaceItemCommand implements CommandUnit {
 	
 	@Override
 	public Out execute(In paramters) throws Exception {
-		
 		PlaceItemManager managerPLaceItem = new PlaceItemManager(paramters.getConnection());
 		int id = Integer.parseInt(paramters.getParameter("id"));
 		PlaceItem placeItem = managerPLaceItem.getPlaceItemById(id);

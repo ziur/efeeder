@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jala.efeeder.foodmeeting.FoodMeeting;
 
@@ -20,6 +22,7 @@ public class PlaceManager {
 	private static final String SELECT_PLACE_QUERY = "SELECT p.id, p.name, p.description, p.phone, p.direction, p.image_link FROM places p ";
 	private static final String BY_FOOD_MEETING_ID_QUERY = " , food_meeting fm WHERE p.id = fm.id_place AND fm.id = ? ";
 	private static final String BY_ID_QUERY = " WHERE p.id = ? ";
+	private static final String ALL_PLACE_QUERY = "select * from places";
 
 	private final Connection connection;
 	private final PlaceItemManager placeManager;
@@ -64,6 +67,21 @@ public class PlaceManager {
 		ResultSet resultSet = stm.executeQuery();
 
 		return createPlaceByResultSet(resultSet);
+	}
+	
+	public List<Place> getAllPlace() throws SQLException {
+		PreparedStatement preparedStatement	= connection.prepareStatement(ALL_PLACE_QUERY);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		List<Place> places = new ArrayList<>();
+		while(resultSet.next()) {
+			places.add(new Place(resultSet.getInt("id"), 
+				resultSet.getString("name"),
+				resultSet.getString("description"),
+				resultSet.getString("phone"),
+				resultSet.getString("direction"),
+				resultSet.getString("image_link")));
+		}
+		return places;
 	}
 
 	private Place createPlaceByResultSet(ResultSet resultSet) throws SQLException{
