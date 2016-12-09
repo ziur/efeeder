@@ -22,8 +22,6 @@ public class PlaceManager {
 	private static final String SELECT_PLACE_QUERY = "SELECT p.id, p.name, p.description, p.phone, p.direction, p.image_link FROM places p ";
 	private static final String BY_FOOD_MEETING_ID_QUERY = " , food_meeting fm WHERE p.id = fm.id_place AND fm.id = ? ";
 	private static final String BY_ID_QUERY = " WHERE p.id = ? ";
-	private static final String ALL_PLACE_QUERY = "select * from places";
-
 	private final Connection connection;
 	private final PlaceItemManager placeManager;
 
@@ -34,72 +32,54 @@ public class PlaceManager {
 
 	public void insertPlace(Place place) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(INSERT_PLACE_QUERY, RETURN_GENERATED_KEYS);
-
 		stm.setString(1, place.getName());
 		stm.setString(2, place.getDescription());
 		stm.setString(3, place.getPhone());
 		stm.setString(4, place.getDirection());
 		stm.setString(5, place.getImage_link());
 		stm.executeUpdate();
-
 		ResultSet generatedKeys = stm.getGeneratedKeys();
-
 		generatedKeys.next();
-
 		place.setId(generatedKeys.getInt(1));
 	}
 
 	public Place getPlaceByFoodMeeting(FoodMeeting foodMeeting) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(SELECT_PLACE_QUERY + BY_FOOD_MEETING_ID_QUERY);
-
 		stm.setInt(1, foodMeeting.getId());
-
 		ResultSet resultSet = stm.executeQuery();
-		
-		return createPlaceByResultSet(resultSet);
+		return createPlacesByResultSet(resultSet).get(0);
 	}
 	
 	public Place getPlaceById(int idPlace) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(SELECT_PLACE_QUERY + BY_ID_QUERY);
-
 		stm.setInt(1, idPlace);
-
 		ResultSet resultSet = stm.executeQuery();
-
-		return createPlaceByResultSet(resultSet);
+		Place place = null;
+		return createPlacesByResultSet(resultSet).get(0);
 	}
 	
 	public List<Place> getAllPlace() throws SQLException {
-		PreparedStatement preparedStatement	= connection.prepareStatement(ALL_PLACE_QUERY);
+		PreparedStatement preparedStatement	= connection.prepareStatement(SELECT_PLACE_QUERY);
 		ResultSet resultSet = preparedStatement.executeQuery();
-		List<Place> places = new ArrayList<>();
-		while(resultSet.next()) {
-			places.add(new Place(resultSet.getInt("id"), 
-				resultSet.getString("name"),
-				resultSet.getString("description"),
-				resultSet.getString("phone"),
-				resultSet.getString("direction"),
-				resultSet.getString("image_link")));
-		}
+		List<Place> places = createPlacesByResultSet(resultSet);
 		return places;
 	}
-
-	private Place createPlaceByResultSet(ResultSet resultSet) throws SQLException{
-		Place place = null;
-
-		if (resultSet.next()) {
+	
+	private List<Place> createPlacesByResultSet(ResultSet resultSet) throws SQLException{
+		Place place;
+		List<Place> list = new ArrayList<>();
+		while(resultSet.next()) {
 			int id = resultSet.getInt(1);
 			String name = resultSet.getString(2);
 			String description = resultSet.getString(3);
 			String phone = resultSet.getString(4);
 			String direction = resultSet.getString(5);
 			String image_link = resultSet.getString(6);
-
 			place = new Place(id, name, description, phone, direction, image_link);
 			place.setPlaceItems(placeManager.getPlaceItemByPlace(place));
+			list.add(place);
 		}
-
-		return place;
+		return list;
 	}
 
 }
