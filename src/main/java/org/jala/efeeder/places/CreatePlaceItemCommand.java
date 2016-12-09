@@ -20,9 +20,8 @@ public class CreatePlaceItemCommand implements CommandUnit {
 	public Out execute(In parameters) throws Exception {
 
 		Connection connection = parameters.getConnection();
-
 		PlaceManager placeManager = new PlaceManager(connection);
-		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id_place")));
+		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id-place")));
 
 		String name = parameters.getParameter("item-name");
 		String description = parameters.getParameter("item-description");
