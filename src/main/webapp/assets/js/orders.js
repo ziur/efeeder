@@ -207,7 +207,7 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 	this.idUser = idUser;
 	this.communicationService = communicationService;
 	this.btnPayment = $("#btn-payment");
-
+	
 	var self = this;
 
 	function addEvents() {
@@ -216,6 +216,7 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 		}
 
 		self.btnPayment.click(function () {
+			
 			drawLots();
 		});
 	}
