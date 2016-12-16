@@ -2,7 +2,7 @@
 
 let TicheView = function(m_feastId, m_buyerId, m_feast, m_place, m_drawnLots)
 {
-	
+
 const BUTTON_COLOR = 0xFF26A69A;
 const LIGHTEN_BUTTON_COLOR = bkColorLighten(BUTTON_COLOR);
 const BUTTON_HOVER_COLOR = bkColorMix31(BUTTON_COLOR, LIGHTEN_BUTTON_COLOR);
