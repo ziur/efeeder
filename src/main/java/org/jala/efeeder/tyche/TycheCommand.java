@@ -109,7 +109,6 @@ public class TycheCommand implements CommandUnit{
 			dice = diceResult[0];
 			if (dice == -1)
 			{
-				//dice = 1 + (int)Math.floor(secureRandom.nextDouble() * Integer.MAX_VALUE);
 				dice = rand.nextInt((999999999 - 100000000) + 1) + 1;
 				error = updateBuyer(feastId, userId, dice, connection);
 				broadcast = true;
