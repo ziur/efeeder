@@ -48,10 +48,8 @@ public class TycheCommand implements CommandUnit{
 			"SELECT name, last_name FROM user WHERE id = ?";
 	private static final String SET_BUYER_DICE =
 			"INSERT INTO buyer(id_food_meeting, id_user, dice) VALUES(?, ?, ?)";
-
-	private static final Integer MAX_NUMBER_RANDOM = 999999999;
-
-	private static final Integer MIN_NUMBER_RANDOM = 100000000;
+	
+	private static final Integer RANGE = (999999999 - 100000000) + 1;
 
 	static SecureRandom secureRandom = new SecureRandom();
 
@@ -113,7 +111,7 @@ public class TycheCommand implements CommandUnit{
 			dice = diceResult[0];
 			if (dice == -1)
 			{
-				dice = rand.nextInt((MAX_NUMBER_RANDOM - MIN_NUMBER_RANDOM) + 1);
+				dice = rand.nextInt(RANGE);
 				error = updateBuyer(feastId, userId, dice, connection);
 				broadcast = true;
 			}
