@@ -15,13 +15,52 @@
             <div class="col-sm-12">
                 <ul class="collection" >
                     <div id="my-order-container">
-                        <c:forEach var="order" items="#{orders}">
-                            <li class="collection-item avatar" id="order-${order.idUser}">
-                                <i class="material-icons circle">perm_identity</i>
-                                <p><b>${order.user.name} ${order.user.lastName}</b></p>
-                                <span id="spn-details${order.user.id}" class="title">${order.details}</span>
+                    	<c:forEach var="userWithOrders" items="#{usersWithOrders}">
+                    		<li class="collection-item avatar" id="order-${userWithOrder.id} }">
+                    			<i class="material-icons circle">perm_identity</i>
+                                <p><b>${userWithOrders.name} ${userWithOrders.lastName}</b></p>
+                                <div class="row" style="margin-bottom: 0px;">
+                                	<div class="col s12 m12 l12">
+                                		<div class="col s1">
+                                        	<label>Quantity</label>
+                                        </div>
+                                        <div class="col s2">
+                                        	<label>Item</label>
+                                        </div>
+                                        <div class="col s4">
+                                        	<label>Details</label>
+                                        </div>
+                                        <div class="col s2">
+                                        	<label>Unit Cost</label>
+                                        </div>
+                                        <div class="col s2">
+                                        	<label>Cost</label>
+                                        </div>
+                                	</div>
+                                </div>
+                                <c:forEach var="order" items="#{userWithOrders.orders}">
+                                	<div class="row" style="margin-bottom: 0px;">
+	                                	<div class="col s12 m12 l12">
+	                                		<div class="col s1">
+	                                        	<label>${order.quantity}</label>
+	                                        </div>
+	                                        <div class="col s2">
+	                                        	<label>${order.placeItem}</label>
+	                                        </div>
+	                                        <div class="col s4">
+	                                        	<label>${order.details}</label>
+	                                        </div>
+	                                        <div class="col s2">
+	                                        	<label>Bs.- ${order.cost}</label>
+	                                        </div>
+	                                        <div class="col s2">
+	                                        	<label>Bs.- ${order.getTotalCost()}</label>
+	                                        </div>
+	                                	</div>
+	                                </div>
+                                </c:forEach>
                                 <br/>
-                                <input id="user-id" hidden="true" value="${order.idUser}" type="text"/>
+                                <input id="user-id" hidden="true" value="${userWithOrders.id}" type="text"/>
                                 <div class="row" style="margin-bottom: 0px;">
                                     <div class="col s12 m12 l12">
                                         <div class="row">
@@ -29,21 +68,21 @@
                                                 <span style="padding-left: 60px;">Bs.-</span>
                                             </div>                                            
                                             <div class="input-field col s3">
-                                                <input id="ipt-cost${order.user.id}" disabled type="number" type="text" class="validate" value="${order.cost}">
+                                                <input id="ipt-cost${userWithOrders.id}" disabled type="number" type="text" class="validate" value="${userWithOrders.getTotalOrders()}">
                                                 <label for="ipt-cost">Cost</label>
                                             </div>
                                             <div class="input-field col s1" style="margin-top: 27px;">
                                                 <span style="padding-left: 60px;">Bs.-</span>
                                             </div>                                                
                                             <div class="input-field col s3">
-                                                <input id="ipt-extra-pay${order.user.id}" type="number" disabled type="text" class="validate" value="${partialByOrder}">
+                                                <input id="ipt-extra-pay${userWithOrders.id}" type="number" disabled type="text" class="validate" value="${partialByOrder}">
                                                 <label for="ipt-extra-pay">Extra pay</label>
                                             </div>
                                             <div class="input-field col s1" style="margin-top: 27px;">
                                                 <span style="padding-left: 60px;">Bs.-</span>
                                             </div>                                                
                                             <div class="input-field col s3">
-                                                <input id="ipt-total${order.user.id}" class="ipt-number" type="number" disabled type="text" class="validate" value="${partialByOrder + order.cost}">
+                                                <input id="ipt-total${userWithOrders.id}" class="ipt-number" type="number" disabled type="text" class="validate" value="${partialByOrder + userWithOrders.getTotalOrders()}">
                                                 <label for="ipt-total">Total</label>
                                             </div>                                            
                                         </div>
@@ -55,31 +94,31 @@
                                             <span style="padding-left: 60px;">Bs.-</span>
                                         </div> 
                                         <div class="input-field col s5">
-                                            <input id="ipt-shortage${order.user.id}" disabled type="number" class="ipt-number" value="${order.payment > 0 ? order.payment - (partialByOrder + order.cost) : 0.0}"
-                                                   style="color:${(order.payment >= partialByOrder + order.cost) || order.payment == 0  ? "green":"red"}"/>
+                                            <input id="ipt-shortage${userWithOrders.id}" disabled type="number" class="ipt-number" value="${userWithOrders.payment > 0 ? userWithOrders.payment - (partialByOrder + userWithOrders.getTotalOrders()) : 0.0}"
+                                                   style="color:${(userWithOrders.payment >= (partialByOrder + userWithOrders.getTotalOrders())) || userWithOrders.payment == 0  ? "green":"red"}"/>
                                             <label for="ipt-shortage">Shortage</label>
                                         </div>
                                         <div class="input-field col s1" style="margin-top: 27px;">
                                             <span style="padding-left: 60px;">Bs.-</span>
                                         </div>                                                                                    
                                         <div class="input-field col s5">
-                                            <input id="ipt-payment${order.user.id}" ${buyer.getUserId() != user.getId() ? "disabled":""} type="number" id="my-order-cost-input" value="${order.payment}" placeholder="Payment" />                                                
-                                            <label for="ipt-payment${order.user.id}">Payment</label>
+                                            <input id="ipt-payment${userWithOrders.id}" ${buyer.getUserId() != user.getId() ? "disabled":""} type="number" id="my-order-cost-input" value="${userWithOrders.payment}" placeholder="Payment" />                                                
+                                            <label for="ipt-payment${userWithOrders.id}">Payment</label>
 
                                         </div>                                        
                                     </div>
-                                </div>                   
-
+                                </div>
+                                
                                 <c:if test="${foodMeeting.buyerId == user.getId()}">
-                                    <a href="#" id="lnk-check${order.user.id}" class="secondary-content" style="padding-right:35px">
-                                        <i class="material-icons">${order.payment >= partialByOrder + order.cost ? "done":"crop_square"}</i>
+                                    <a href="#" id="lnk-check${userWithOrders.id}" class="secondary-content" style="padding-right:35px">
+                                        <i class="material-icons">${userWithOrders.payment >= (partialByOrder + userWithOrders.getTotalOrders()) ? "done":"crop_square"}</i>
                                     </a>      
                                     <a href="#" class="lnk-save secondary-content">
                                         <i class="material-icons">save</i>
                                     </a>                                      
                                 </c:if>
-                            </li>
-                        </c:forEach>
+                    		</li>
+                    	</c:forEach>
                     </div>
                 </ul>
             </div>

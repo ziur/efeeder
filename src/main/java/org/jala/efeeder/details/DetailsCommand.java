@@ -24,6 +24,7 @@ import org.jala.efeeder.places.PlaceManager;
 import org.jala.efeeder.user.Buyer;
 import org.jala.efeeder.user.BuyerManager;
 import org.jala.efeeder.user.User;
+import org.jala.efeeder.user.UserManager;
 
 /**
  *
@@ -43,8 +44,9 @@ public class DetailsCommand implements CommandUnit {
 			List<PaymentItem> itemList = getExtraItems(idFoodMeeting, connection);
 
 			orderList = getOrders(connection, idFoodMeeting);
+			List<User> usersWithOrders = getUsersWithOrders(connection, idFoodMeeting);
 			double itemTotalPrice = getTotalExternalItemPrice(itemList);
-			double partialByOrder = itemTotalPrice > 0 ? itemTotalPrice / orderList.size() : 0;
+			double partialByOrder = getSharedPriceByUser(itemTotalPrice, usersWithOrders != null ? usersWithOrders.size() : 0);
 
 			Buyer buyer = getBuyerId(idFoodMeeting, connection);
 
@@ -56,10 +58,11 @@ public class DetailsCommand implements CommandUnit {
 			out.addResult("extra_items_list", itemList);
 			out.addResult("extra_items_total_price", itemTotalPrice);
 			out.addResult("buyer_details", buildItemDetails(connection, orderList, itemList));
-			out.addResult("payment", roundTwoDecimals(getPaymentByUsers(orderList)));
+			out.addResult("payment", roundTwoDecimals(getPaymentByUsers(usersWithOrders)));
 			out.addResult("total_extra_item_price", itemTotalPrice);
 			out.addResult("food_meeting_totalCost", getTotalCostFromFoodMeeting(orderList, partialByOrder));
 			out.addResult("paymentTime", getPaymentTime(connection, String.valueOf(idFoodMeeting)));
+			out.addResult("usersWithOrders", usersWithOrders);
 
 			return out.forward("details/details.jsp");
 		} catch (Exception ex) {
@@ -198,10 +201,10 @@ public class DetailsCommand implements CommandUnit {
 		return resp;
 	}
 
-	private double getPaymentByUsers(List<Order> orderList) {
+	private double getPaymentByUsers(List<User> userList) {
 		double paymentRes = 0;
-		for (Order order : orderList) {
-			paymentRes += order.getPayment();
+		for (User user : userList) {
+			paymentRes += user.getPayment();
 		}
 		return paymentRes;
 	}
@@ -215,5 +218,18 @@ public class DetailsCommand implements CommandUnit {
 	private Timestamp getPaymentTime(Connection connection, String idFoodMeeting) throws SQLException {
 		FoodMeetingManager foodMeetingManager = new FoodMeetingManager(connection);
 		return foodMeetingManager.getFoodMeetingById(Integer.parseInt(idFoodMeeting)).getPaymentDate();
+	}
+	
+	private List<User> getUsersWithOrders(Connection connection, int idFoodMeeting) throws SQLException {
+		UserManager userManager = new UserManager(connection);
+		return userManager.getUsersWithOrders(idFoodMeeting);
+	}
+	
+	private double getSharedPriceByUser(double itemTotalPrice, int usersSize) {
+		double result = 0.0;
+		
+		result = itemTotalPrice > 0 ? (usersSize > 0 ? itemTotalPrice / usersSize : 0) : 0;
+
+		return result;
 	}
 }

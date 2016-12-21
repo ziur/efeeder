@@ -757,5 +757,11 @@
 				referencedTableName="food_meeting"/>
 		
 	</changeSet>
+	
+	<changeSet author="Mauricio" id="alter_food_meeting_participants_table">
+		<addColumn catalogName="efeeder" schemaName="public" tableName="food_meeting_participants">
+			<column name="payment" type="DECIMAL(10,2)"/>
+		</addColumn>
+	</changeSet>
                 	
 </databaseChangeLog>

@@ -29,7 +29,7 @@
                     <div class="card-panel teal">
                           <h5 class="left-align white-text">Total To Pay: ${food_meeting_totalCost}</h5>
                           <h5 class="left-align white-text">Current Payment: ${payment}</h5>
-                          <h5 class="left-align white-text">Extra Items Details: ${total_extra_item_price} / ${orders.size()} = ${extra_items_by_users}</h5>
+                          <h5 class="left-align white-text">Extra Items Details: ${total_extra_item_price} / ${usersWithOrders.size()} = ${extra_items_by_users}</h5>
                     </div>
                 </div>
                 
@@ -62,17 +62,41 @@
                         </thead>
 
                         <tbody>
-                            <c:forEach var="order" items="#{orders}">
-                                <tr>
-                                    <td>${order.user.name} ${order.user.lastName}</td>
-                                    <td>${order.placeItem.name}, ${order.placeItem.description}</td>
-                                    <td>${order.details}</td>
-                                    <td class="center-align number">${order.quantity}</td>
-                                    <td class="right-align number">${order.cost}</td>
+                            <c:forEach var="user" items="#{usersWithOrders}">
+                                <tr class="grey lighten-3">
+                                    <td>${user.name} ${user.lastName}</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td class="right-align number">${user.getTotalOrders() + extra_items_by_users}</td>
+                                    <td class="right-align number">${user.payment}</td>
+                                    <td class="right-align number" style="color:${((user.getTotalOrders() + extra_items_by_users) < user.payment) ? "green":"red"}">${user.payment - (user.getTotalOrders() + extra_items_by_users)}</td>
+                                </tr>
+                                <c:forEach var="order" items="#{user.orders}">
+	                                <tr>
+	                                    <td>&nbsp;</td>
+	                                    <td>${order.placeItem.name}, ${order.placeItem.description}</td>
+	                                    <td>${order.details}</td>
+	                                    <td class="center-align number">${order.quantity}</td>
+	                                    <td class="right-align number">${order.cost}</td>
+	                                    <td>&nbsp;</td>
+	                                    <td class="right-align number">${order.totalCost}</td>
+	                                    <td>&nbsp;</td>
+	                                    <td>&nbsp;</td>
+	                                </tr>
+	                            </c:forEach>
+	                            <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
                                     <td class="right-align">${extra_items_by_users}</td>
-                                    <td class="right-align number">${order.totalCost + extra_items_by_users}</td>
-                                    <td class="right-align number">${order.payment}</td>
-                                    <td class="right-align number" style="color:${(order.totalCost + extra_items_by_users < order.payment) ? "green":"red"}">${order.debt + extra_items_by_users}</td>
+                                    <td class="right-align">${extra_items_by_users}</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
                                 </tr>
                             </c:forEach>
                         </tbody>

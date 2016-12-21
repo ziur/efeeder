@@ -1,14 +1,18 @@
 package org.jala.efeeder.user;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import org.jala.efeeder.order.Order;
 
 /**
  *
  * @author rodrigo_ruiz
  */
 @Data
-@EqualsAndHashCode(exclude={"email", "name", "lastName", "image", "userName", "password"})
+@EqualsAndHashCode(exclude={"email", "name", "lastName", "image", "userName", "password", "orders", "payment"})
 public class User {
 	private int id;
 	private String email;
@@ -17,6 +21,8 @@ public class User {
 	private String image;
 	private String userName;
 	private String password;
+	private List<Order> orders;
+	private double payment;
 	
 	public User(int id, String email, String name, String lastName, String image, String userName, String password) {
 		this.id = id;
@@ -46,6 +52,18 @@ public class User {
 	public User(int idUser, String nameUser) {
 		this.id = idUser;
 		this.name = nameUser;
+	}
+	
+	public double getTotalOrders() {
+		double result = 0.0;
+		
+		if (orders != null) {
+			for (Order order : orders) {
+				result += order.getTotalCost();
+			};
+		}
+		
+		return result;
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
-import org.jala.efeeder.order.OrderManager;
 import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
 
@@ -34,9 +33,8 @@ public class AddPaymentCommand implements CommandUnit {
         String payment = parameters.getParameter("payment");
         double paymentVal = !payment.equals("")?Double.valueOf(payment):0;
         Connection connection = parameters.getConnection();
-        OrderManager orderManager = new OrderManager(connection);
-        orderManager.updatePayment(Integer.valueOf(idFoodMeeting), idUserVal, paymentVal);
         UserManager userManager = new UserManager(connection);
+        userManager.updatePayment(Integer.valueOf(idFoodMeeting), idUserVal, paymentVal);
         User user = userManager.getUserById(idUserVal);
         return OutBuilder.response("application/json", JsonConverter.objectToJSON(user));
     }
