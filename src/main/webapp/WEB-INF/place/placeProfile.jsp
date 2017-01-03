@@ -54,7 +54,7 @@
 			              <th data-field="image"></th>
 			              <th data-field="name">Name</th>
 			              <th data-field="description">Description</th>
-			              <th data-field="phone">Precio</th>
+			              <th data-field="price">Price</th>
 			          </tr>
 			        </thead>
 			        <tbody id="table-place-item">

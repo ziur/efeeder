@@ -26,7 +26,10 @@ $(document).ready( function () {
 	    'image_link': $('input[id = id-img]').val(),
 	    'tags': tags.join(":")
 	};
-	$.ajax({
+        if (formData.image_link === "") {
+            formData.image_link = "/assets/img/place.svg";
+        }
+ 	$.ajax({
 	    cache: false,
 	    type: 'POST',
 	    url: "/action/createplace",

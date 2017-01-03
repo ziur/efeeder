@@ -100,7 +100,7 @@ var PaymentItem = function (idUser, communicationService) {
             contentType: false,
             cache: false,
             success: function (data) {
-                console.log("was sended and success");
+                console.log(data.text);
             },
             error: function (data) {
                 errorMessage(data.responseJSON.message);
