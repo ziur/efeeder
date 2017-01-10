@@ -26,7 +26,7 @@ $(document).ready( function () {
 	    'image_link': $('input[id = id-img]').val(),
 	    'tags': tags.join(":")
 	};
-        if (formData.image_link === "") {
+        if (formData.image_link === "" || formData.image_link === null) {
             formData.image_link = "/assets/img/place.svg";
         }
  	$.ajax({
