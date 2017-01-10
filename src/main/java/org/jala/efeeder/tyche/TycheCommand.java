@@ -5,6 +5,7 @@
  */
 package org.jala.efeeder.tyche;
 
+import java.util.Random;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,6 +50,8 @@ public class TycheCommand implements CommandUnit{
 			"INSERT INTO buyer(id_food_meeting, id_user, dice) VALUES(?, ?, ?)";
 
 	static SecureRandom secureRandom = new SecureRandom();
+	
+	static Random rand = new Random();
 	
 	static String getBuyerDice(int feastId, int userId, Connection connection, int[] diceResult, String[] nameResult) {
 		diceResult[0] = -1;
@@ -106,7 +109,7 @@ public class TycheCommand implements CommandUnit{
 			dice = diceResult[0];
 			if (dice == -1)
 			{
-				dice = 1 + (int)Math.floor(secureRandom.nextDouble() * Integer.MAX_VALUE);
+				dice = rand.nextInt((999999999 - 100000000) + 1) + 1;
 				error = updateBuyer(feastId, userId, dice, connection);
 				broadcast = true;
 			}

@@ -216,6 +216,7 @@ var PaymentButton = function (idFoodMeeting, idUser, communicationService) {
 		}
 
 		self.btnPayment.click(function () {
+
 			drawLots();
 		});
 	}
