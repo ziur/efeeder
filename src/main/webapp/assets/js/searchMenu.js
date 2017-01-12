@@ -30,7 +30,6 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 
 		self.idPlaceItem.val(id);
 		self.orderName.val(name);
-		self.orderQuantity.val(1);
 		self.orderCost.val(price);
 		self.btnEditIcon.text('mode_edit');
 		self.btnAdd.show();
