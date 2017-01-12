@@ -226,10 +226,6 @@ public class DetailsCommand implements CommandUnit {
 	}
 	
 	private double getSharedPriceByUser(double itemTotalPrice, int usersSize) {
-		double result = 0.0;
-		
-		result = itemTotalPrice > 0 ? (usersSize > 0 ? itemTotalPrice / usersSize : 0) : 0;
-
-		return result;
+		return itemTotalPrice > 0 && usersSize > 0 ? itemTotalPrice / usersSize : 0.0;
 	}
 }
