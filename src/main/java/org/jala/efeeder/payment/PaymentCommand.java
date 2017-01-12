@@ -23,6 +23,7 @@ import org.jala.efeeder.order.OrderManager;
 import org.jala.efeeder.user.Buyer;
 import org.jala.efeeder.user.BuyerManager;
 import org.jala.efeeder.user.User;
+import org.jala.efeeder.user.UserManager;
 
 /**
  *
@@ -37,8 +38,7 @@ public class PaymentCommand implements CommandUnit {
 		Connection connection = parameters.getConnection();
 		BuyerManager buyerManager = new BuyerManager(connection);
 		String idFoodMeeting = parameters.getParameter("id_food_meeting");
-		int idUser = parameters.getUser().getId();
-		List<Order> orders = getOrders(connection, idFoodMeeting);
+		List<User> usersWithOrders = getUsersWithOrders(connection, idFoodMeeting);
 		Buyer buyer = buyerManager.getBuyerByFoodMeetingId(Integer.valueOf(idFoodMeeting));
 		User user = parameters.getUser();
 
@@ -49,7 +49,7 @@ public class PaymentCommand implements CommandUnit {
 		List<PaymentItem> itemList = getExtraItems(foodMeetingId, connection);
 
 		double itemTotalPrice = getTotalExternalItemPrice(itemList);
-		double partialByOrder = itemTotalPrice > 0 ? itemTotalPrice / orders.size() : 0;
+		double partialByOrder = getSharedPriceByUser(itemTotalPrice, usersWithOrders != null ? usersWithOrders.size() : 0);
 
 		FoodMeeting foodMeeting = getFoodMeeting(connection, idFoodMeeting);
 		out.addResult("foodMeeting", foodMeeting);
@@ -60,7 +60,7 @@ public class PaymentCommand implements CommandUnit {
 		out.addResult("partialByOrder", partialByOrder);
 		out.addResult("myUser", user);
 		out.addResult("buyer", buyer);
-		out.addResult("orders", orders);
+		out.addResult("usersWithOrders", usersWithOrders);
 
 		if (buyer == null) {
 			return out.redirect("wheeldecide/wheel.jsp");
@@ -98,23 +98,12 @@ public class PaymentCommand implements CommandUnit {
 		return resp;
 	}
 
-	private List<Order> getOrders(Connection connection, String idFoodMeeting) throws SQLException {
-		OrderManager orderManager = new OrderManager(connection);
-		return orderManager.getOrdersWithUserByFoodMeeting(Integer.parseInt(idFoodMeeting));
+	private List<User> getUsersWithOrders(Connection connection, String idFoodMeeting) throws SQLException {
+		UserManager userManager = new UserManager(connection);
+		return userManager.getUsersWithOrders(Integer.parseInt(idFoodMeeting));
 	}
 
-	private Order extractMyOrder(int idUser, List<Order> orders) {
-		Order myOrder = null;
-
-		for (Order order : orders) {
-			if (order.getIdUser() == idUser) {
-				myOrder = order;
-				break;
-			}
-		}
-
-		orders.remove(myOrder);
-		return myOrder;
+	private double getSharedPriceByUser(double itemTotalPrice, int usersSize) {
+		return itemTotalPrice > 0 && usersSize > 0 ? itemTotalPrice / usersSize : 0.0;
 	}
-
 }

@@ -21,7 +21,7 @@ import org.jala.efeeder.user.UserManager;
 public class OrderManager {
 
     private static final String SELECT_ORDER = "SELECT id_food_meeting, id_user, order_name, Cost, quantity, id_place_item, payment FROM orders";
-    private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=?;";
+    private static final String MY_ORDER_QUERY = SELECT_ORDER + " WHERE id_food_meeting=? AND id_user=? LIMIT ?;";
     private static final String ORDERS_BY_FOOD_MEETING_QUERY = SELECT_ORDER + " WHERE id_food_meeting=?;";
     private static final String INSERT_ORDER = "INSERT INTO orders(order_name, cost, id_food_meeting, id_user, id_place_item, quantity) VALUES(?, ?, ?, ?, ?, ?);";
     private static final String DELETE_ORDER = "DELETE FROM orders ";
@@ -68,22 +68,11 @@ public class OrderManager {
     }
 
     public List<Order> getMyOrder(int idUser, int idFoodMeeting) throws SQLException {
-        List<Order> myOrders = new ArrayList<Order>();
-
-        PlaceItemManager placeItemManager = new PlaceItemManager(connection);
-
-        PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
-        preparedStatement.setInt(1, idFoodMeeting);
-        preparedStatement.setInt(2, idUser);
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        if (resultSet.next()) {
-            PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
-
-            myOrders.add(new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5), resultSet.getDouble(6)));
-        }
-
-        return myOrders;
+        return getOrdersByUserFootMeeting(idUser, idFoodMeeting, 1);
+    }
+    
+    public List<Order> getMyOrders(int idUser, int idFoodMeeting) throws SQLException {
+    	return getOrdersByUserFootMeeting(idUser, idFoodMeeting, 0);
     }
 
     public void updatePayment(int idFoodMeeting, int idUser, double payment) throws SQLException {
@@ -141,5 +130,25 @@ public class OrderManager {
                 order.setUser(result.get());
             }
         });
+    }
+    
+    private List<Order> getOrdersByUserFootMeeting(int idUser, int idFoodMeeting, int limit) throws SQLException {
+    	List<Order> result = new ArrayList<Order>();
+
+        PlaceItemManager placeItemManager = new PlaceItemManager(connection);
+
+        PreparedStatement preparedStatement = connection.prepareStatement(MY_ORDER_QUERY);
+        preparedStatement.setInt(1, idFoodMeeting);
+        preparedStatement.setInt(2, idUser);
+        preparedStatement.setInt(3, limit < 1 ? 1000 : limit);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            PlaceItem placeItem = placeItemManager.getPlaceItemById(resultSet.getInt(6));
+
+            result.add(new Order(resultSet.getInt(1), idUser, resultSet.getString(3), resultSet.getDouble(4), placeItem, resultSet.getInt(5), resultSet.getDouble(6)));
+        }
+
+        return result;
     }
 }
