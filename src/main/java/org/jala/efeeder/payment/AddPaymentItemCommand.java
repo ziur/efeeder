@@ -50,7 +50,7 @@ public class AddPaymentItemCommand implements CommandUnit {
 			return OutBuilder.response("application/json", objectToJSON(e.toString()));
 		}
 
-		return OutBuilder.response("application/json", objectToJSON("Command complite"));
+		return OutBuilder.response("application/json", objectToJSON("Command executed"));
 
 	}
 
