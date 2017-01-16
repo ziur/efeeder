@@ -101,7 +101,7 @@
                     </div>
                     <div class="input-field col s2">
                         <i class="material-icons prefix">payment</i>
-                        <input id="input-item-price-id" type="number" name="item_price" class="ipt-item" required="true" step="any">
+                        <input id="input-item-price-id" type="number" name="item_price" class="ipt-item" required="true" step="any" min="0">
                         <label for="input-item-price-id">price</label>
                     </div>
                     <div class="col s2">

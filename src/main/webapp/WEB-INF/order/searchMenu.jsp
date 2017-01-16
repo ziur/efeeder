@@ -42,7 +42,7 @@
 					<label for="item-name">Name:</label>
 				</div>
 				<div class="input-field col s2">
-					<input name="item-price" id="item-price" type="number"  autofocus="autofocus"/>
+					<input name="item-price" id="item-price" type="number"  autofocus="autofocus" min="0"/>
 					<label for="item-price">Cost:</label>
 				</div>
 				<div class="input-field col s12">
