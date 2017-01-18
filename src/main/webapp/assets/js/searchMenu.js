@@ -26,12 +26,12 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 	var onModalHide = function() {
 		self.messageOrder.removeClass("red-text");
 		self.messageOrder.addClass('grey-text');
-		self.messageOrder.text("Please add your orders.");
+		self.messageOrder.text("Please select your orders.");
 
 		self.idPlaceItem.val(id);
 		self.orderName.val(name);
 		self.orderCost.val(price);
-		self.btnEditIcon.text('mode_edit');
+		self.btnEditIcon.text('search');
 		self.btnAdd.show();
 	};
 

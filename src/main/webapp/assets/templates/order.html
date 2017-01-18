@@ -1,16 +1,14 @@
-<li id="order-{{:idUser}}-{{:idPlaceItem}}" class="collection-item avatar order-entry">
-	<i class="material-icons circle">perm_identity</i>
-	<span class="title order-details">Item: {{:itemName}}</span>
-	<br/>
-	<p class="user-order">Cantidad: {{:quantity}}</p>
-	<p class="user-order">Detalles: {{:details}}</p>
-	<p class="user-order">Costo: {{:cost}}</p>
-	<p class="user-order">Usuario: {{:userName}} {{:userLastName}}</p>
-
-	
-	<div class="btn-edit secondary-content">
-		<a href="#" id="btn-remove-my-order">
-			<i class="material-icons">remove</i>
-		</a>
-	</div>
-</li>
+	<tr id="order-{{:idUser}}-{{:idPlaceItem}}" class="collection-item avatar order-entry" class="user-order">
+		<td><i class="material-icons circle">perm_identity</i></td>
+		<td class=""><span class="title order-details">{{:itemName}}</span></td>
+	    <td>{{:details}}</td>
+	    <td>{{:cost}}</td>
+	    <td>{{:quantity}}</td>
+	    <td>{{:userName}} {{:userLastName}}</td>
+	    <td class="btn-edit secondary-content">
+	        <a href="#" id="btn-remove-my-order">
+	        	<i class="material-icons">remove_circle</i>
+	        </a>
+	    </td>
+	</tr>
+	                                

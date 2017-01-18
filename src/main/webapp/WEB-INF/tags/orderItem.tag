@@ -17,10 +17,10 @@
 
 			<div class="btn-edit secondary-content">
 				<a href="#" id="btn-edit-my-order">
-					<i class="material-icons">menu</i>
+					<i class="material-icons">search</i>
 				</a>
 				<a href="#" id="btn-add-my-order">
-					<i class="material-icons">add</i>
+					<i class="material-icons">add_circle</i>
 				</a>
 			</div>
 		</div>
