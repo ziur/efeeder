@@ -12,7 +12,10 @@ Order healthy food as fast as possible!!!.
 
 - Download and install Java 8 : 
 http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-- Download and install MySQL Server 5.7: 
+- Download and install MySQL Server 5.7 and the workbench: https://dev.mysql.com/downloads/workbench/
+	* User and password for the admin are: root, root
+	* Launch the workbench, connect to the database with login:root, pass:root
+	* Create a schema called efeeder (CREATE SCHEMA efeeder)
 - Download and install Tomcat 7: https://tomcat.apache.org/download-70.cgi
 	* There is a zip version which should be unzipped in a folder, or
 	* there is windows installer for those with this OS.
@@ -23,7 +26,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.h
 - For Development
 One aditional requirement is to download and install Eclipse
 
-#### Githum
+#### Github
 
 Create and account in git to have access https://github.com/ziur/efeeder
 
