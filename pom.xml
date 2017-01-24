@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tomcat.version>7.0.72</tomcat.version>
 	</properties>
+	
 
 	<dependencies>
 		<dependency>
@@ -54,6 +55,7 @@
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 			<version>3.5.1</version>
+			
 		</dependency>
 
 		<dependency>
@@ -74,6 +76,7 @@
 			<artifactId>lombok</artifactId>
 			<version>1.16.10</version>
 			<scope>provided</scope>
+			
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -143,6 +146,20 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-maven-plugin</artifactId>
+				<version>1.16.12.0</version>
+				<executions>
+					<execution>
+					  <phase>generate-sources</phase>
+					  <goals>
+						<goal>delombok</goal>
+					  </goals>
+					</execution>
+				  </executions>
+			</plugin>
+		
+			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.1.1</version>
@@ -156,13 +173,14 @@
 						<configuration>
 							<enableNaming>true</enableNaming>
 						</configuration>
-					</execution>
+					</execution>					  
 				</executions>
 				<configuration>
-					<server>TomcatServer</server>
+                    <server>TomcatServer</server>
+                    <url>http://localhost:9999/manager/text</url>
 					<path>/</path>
 					<contextFile>${project.basedir}/src/main/webapp/META-INF/context.xml</contextFile>
-				</configuration>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.avro</groupId>
@@ -180,6 +198,7 @@
 					<stringType>String</stringType>
 				</configuration>
 			</plugin>
+					
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -214,10 +233,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<version>3.5.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+					</execution>
+				</executions>
+				
 				<configuration>
 					<changeLogFile>
 						${basedir}/src/main/resources/db/db-incremental.xml
@@ -228,6 +263,27 @@
 					<password>root</password>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<copy file="${basedir}/src/main/resources/settings.properties.template" tofile="${basedir}/src/main/resources/settings.properties" />
+								<copy file="${basedir}/src/main/resources/log4j.properties.template" tofile="${basedir}/src/main/resources/log4j.properties" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
