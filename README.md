@@ -19,12 +19,27 @@ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.h
 - Download and install Tomcat 7: https://tomcat.apache.org/download-70.cgi
 	* There is a zip version which should be unzipped in a folder, or
 	* there is windows installer for those with this OS.
-	* Configure it in port 9999
+	* In file path_to_tomcat/conf/server.xml: Configure it in port 9999 (go to your Path_to_apache-tomcat-7.0/conf/server.xml and modify the line 71)
+	* Modify file path_to_tomcat/conf/tomcat-users.xml and add:
+	<role rolename="tomcat"/>
+	<role rolename="manager-gui"/>
+	<role rolename="manager-script"/>
+		
+	<user username="admin" password="admin" roles="manager-gui,manager-script" />
+	* Modify file path_to_maven/conf/server.xml and add (in the servers section):
+	<server>
+      		<id>TomcatServer</id>
+      		<username>admin</username>
+      		<password>admin</password>
+    	</server>
+	
+	
 - Launch the Tomcat server recently installed.	
+
 - Download and install maven 3.3.X: https://maven.apache.org/download.cgi
 
 - For Development
-One aditional requirement is to download and install Eclipse
+One additional requirement is to download and install Eclipse
 
 #### Github
 
@@ -47,14 +62,37 @@ Path_to_java_folder\jdk1.X.XX    Example: C:\Program Files (x86)\Java\jdk1.8.0_1
 PATH
 Path_to_apache_maven_directory\bin; Example: ~\apache-maven-3.3.9\bin;
 
+M2_HOME
+Path_to_apache_maven_directory
+
+MAVEN_HOME
+Path_to_apache_maven_directory
 
 ### Download and install efeeder
-
+     
 1. Create a directory where the application will be downloaded from git.  For example: ~/USER_HOME/git_projects/
 2. Go to the directory just created and perform the following command: git clone https://github.com/ziur/efeeder
-3. Go to folder efeeder, created in step 2.
-4. Execute the command: mvn tomcat7:deploy (the tomcat server should be running before executing this step)
+3. Create the database schema:
+      Launch mysql workbench
+      Create a database with the name efeeder (CREATE SCHEMA efeeder)
+   Open a command prompt and execute the following command:
+      mvn liquibase:update
+4. Start tomcat server
+5. Go to folder efeeder, created in step 2
+6. In a command prompt window, execute: mvn tomcat7:deploy (the tomcat server should be running before executing this step).
 
+Note: If the line above doesn't work, execute: mvn tomcat7:redeploy
+7. Open a webpage with localhost:9999 and check it works.
+
+### Jacoco configuration
+* In path_to_tomcat/bin: Create a new file called setenv.bat and put the following line:
+	set CATALINA_OPTS=%CATALINA_OPTS% -javaagent:"c:\jacoco-jar-pez\org.jacoco.agent.jar=jmx=true,output=tcpserver,address=localhost,port=6300"
+
+	NOTE:  Modify jacoco agent location according to yours (either in .m2 or in another location)
+### Generate reports with jacoco
+1. Deploy efeeder in tomcat (startup tomcat before deploying)
+2. Execute mvn jacoco:dump
+3. Execute mvn jacoco:report
 
 ## License
 
