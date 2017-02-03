@@ -1,5 +1,6 @@
 *.class
 src/main/resources/settings.properties
+src/main/resources/log4j.properties
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
