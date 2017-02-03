@@ -31,8 +31,28 @@
 						<t:orderItem/>
 					</c:if>
 				</ul>
+			 <%-- 20170117 pescalera: old container for the orders
 				<ul id="order-list" class="collection">
 				</ul>
+				--%>
+				<table id="order-list" class="table bordered">
+					<thead>
+						<tr>
+							<th><i class="material-icons circle">perm_identity</i></th>
+							<th>Order</th>
+							<th>Details</th>
+							<th>Cost</th>
+							<th>Quantity</th>
+							<th>Participant</th>
+							
+						</tr>
+		         	</thead>
+		         	<tbody>
+		         		
+		         	</tbody>
+		         	
+				</table>
+				
 			</div>
 
 				<div class="col-sm-12">

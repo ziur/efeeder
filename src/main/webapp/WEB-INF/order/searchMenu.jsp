@@ -3,7 +3,7 @@
 
 <div class="modal-content">
 	<div class="row">
-		<p class="col s12 grey-text">Please select one item for your order.<p>
+		<p class="col s12 grey-text">Please select your orders.<p>
 		<div class="image-links col s12">
 			<c:forEach var="placeItem" items="#{place.placeItems}">
 				<div class="grid-item" style="width:200px">
@@ -47,7 +47,7 @@
 				</div>
 				<div class="input-field col s12">
 					<input name="item-description" id="item-description" type="text" autofocus="autofocus"/>
-					<label for="item-description">Descripcion:</label>
+					<label for="item-description">Description:</label>
 				</div>
 				<div class="input-field col s12">
 					<input name="image-link" id="image-link-id" 

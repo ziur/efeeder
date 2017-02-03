@@ -24,7 +24,7 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage, i
 
 	function enableEditMode() {
 		if (self.orderDetails.text() === '' || self.orderCost.text() === '') {
-			self.btnEditIcon.text('menu');
+			self.btnEditIcon.text('search');
 			self.btnAdd.hide();
 			self.orderDetails.hide();
 			self.orderDetailsInput.show();

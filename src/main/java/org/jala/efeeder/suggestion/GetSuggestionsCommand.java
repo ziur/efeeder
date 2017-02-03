@@ -27,22 +27,37 @@ import org.jala.efeeder.places.Place;
 @Command
 public class GetSuggestionsCommand implements CommandUnit {
 
-	private static final String SELECT_USERS_BY_MEETING_SQL =
-            "SELECT id, name, last_name FROM user WHERE id in (SELECT id_user FROM food_meeting_participants WHERE id_food_meeting = ?)";
+	
     private static final String SELECT_PLACES_BY_MEETING_SQL =
-            "SELECT id, name, description, phone, direction, image_link FROM places WHERE id IN"
-            + "(SELECT id_place FROM food_meeting_suggestions WHERE id_food_meeting = ?)";
+    		"SELECT p.id, p.name, p.description, p.phone, p.direction, p.image_link "
+    	    		+" FROM places p, food_meeting_suggestions fms"
+    	            +" WHERE fms.id_food_meeting = ?"		
+    	    		+" AND p.id = fms.id_place";
     private static final String SELECT_WINNER_PLACE_SQL =
             "SELECT id_suggestion AS suggestionId, count(*) AS votes, " +
             "(SELECT id_place FROM efeeder.food_meeting_suggestions WHERE id = suggestionId) AS placeId " +
             "FROM efeeder.votes WHERE id_food_meeting = ? GROUP BY id_suggestion ORDER BY votes DESC LIMIT 0, 2";
+    
+    //20170118 pescalera: The query now retrieves the right voted place for every user at a specific food meeting. 
     private static final String GET_PARTICIPANT_VOTED_PLACE = 
-            "SELECT id_place FROM food_meeting_suggestions WHERE id = " +
-            "(SELECT id_suggestion FROM votes WHERE id_participant = " +
-            "(SELECT id FROM food_meeting_participants WHERE id_user = ? LIMIT 1) LIMIT 1) LIMIT 1; ";
+    		"SELECT fmp.id_user as id_user, fms.id_place as id_place, "
+    		+" u.last_name as last_name, u.name as name" 
+    		+ " FROM food_meeting_participants fmp"
+    		+ " LEFT JOIN votes v"
+    		+ " ON fmp.id = v.id_participant"
+    		+ " JOIN food_meeting_suggestions fms"
+    		+ " ON v.id_suggestion = fms.id"
+    		+ " JOIN user u"
+    		+ " ON fmp.id_user=u.id"
+    		+ " WHERE fmp.id_food_meeting = ?";
+          
     private static final String GET_SUGGESTION_VOTES = 
-            "SELECT COUNT(id_suggestion) FROM votes WHERE id_suggestion = "
-            + "(SELECT id FROM food_meeting_suggestions WHERE id_place = ? LIMIT 1); ";
+    		"select count(*)"
+    	    + " FROM food_meeting_suggestions fms, votes v"
+    	    + " WHERE fms.id_food_meeting= ?"
+    	    + " AND fms.id_place = ?"
+    	    + " AND fms.id_food_meeting = v.id_food_meeting"
+    	    + " AND fms.id = v.id_suggestion";
     private static final String SELECT_FOOD_MEETING_SQL =
 			"SELECT food_meeting.id_user, user.name, user.last_name, food_meeting.name, food_meeting.image_link, event_date, voting_time, order_time, payment_time FROM food_meeting, user WHERE food_meeting.id_user=user.id AND food_meeting.id=? AND status='Voting'";
     private static final String SELECT_VOTE_FINISHER_SQL =
@@ -92,26 +107,27 @@ public class GetSuggestionsCommand implements CommandUnit {
 		}
 		return "";
 	}
-	
+	/**
+	 * Retrieves users votes and transform each vote in a string.
+	 * 
+	 * Changes:
+	 * The query was not retrieving the right vote for each user.
+	 * Instead of 2 queries, it was reduced to one, so one call to the DB.
+	 *
+	 * */
 	static public String getUserSuggestionsAsString(int feastId, Connection connection) throws Exception {
-        PreparedStatement ps = connection.prepareStatement(SELECT_USERS_BY_MEETING_SQL);
-        ps.setInt(1, feastId);
-        ResultSet resSet = ps.executeQuery();
+        PreparedStatement getVotePerUserStm = connection.prepareStatement(GET_PARTICIPANT_VOTED_PLACE);
+        getVotePerUserStm.setInt(1, feastId);
+        ResultSet votePerUserResSet = getVotePerUserStm.executeQuery();
         
         List<UserAndPlace> usersAndPlaces = new ArrayList<>();
-        while(resSet.next()) {
-            int userId = resSet.getInt("id");
-            PreparedStatement getPlaceStm = connection.prepareStatement(GET_PARTICIPANT_VOTED_PLACE);
-            getPlaceStm.setInt(1, userId);
-            ResultSet placeResSet = getPlaceStm.executeQuery();
-            int placeId = 0;
-            if(placeResSet.next()) {
-                placeId = placeResSet.getInt("id_place");
-            }
+        while(votePerUserResSet.next()) {
+            int userId = votePerUserResSet.getInt("id_user");
+            int placeId = votePerUserResSet.getInt("id_place");
             usersAndPlaces.add(new UserAndPlace(
                     userId,
                     placeId,
-                    resSet.getString("user.name") + " " + resSet.getString("user.last_name") ));
+                    votePerUserResSet.getString("name") + " " + votePerUserResSet.getString("last_name") ));
         }
         
 		return JsonConverter.objectToJSON(usersAndPlaces);
@@ -124,18 +140,19 @@ public class GetSuggestionsCommand implements CommandUnit {
         
         List<Place> places = new ArrayList<>();
         while(resSet.next()) {
-            int placeId = resSet.getInt("places.id");
+            int placeId = resSet.getInt("p.id");
             PreparedStatement votesStm = connection.prepareStatement(GET_SUGGESTION_VOTES);
-            votesStm.setInt(1, placeId);
+            votesStm.setInt(1, feastId);
+            votesStm.setInt(2, placeId);
             ResultSet votesResSet = votesStm.executeQuery();
             votesResSet.next();
             int votesCount = votesResSet.getInt(1);
             places.add(new Place(placeId,
-                    resSet.getString("places.name"), 
-                    resSet.getString("places.description"), 
-                    resSet.getString("places.phone"),
-                    resSet.getString("places.direction"),
-                    resSet.getString("places.image_link"),
+                    resSet.getString("p.name"), 
+                    resSet.getString("p.description"), 
+                    resSet.getString("p.phone"),
+                    resSet.getString("p.direction"),
+                    resSet.getString("p.image_link"),
                     votesCount));
         }
 
