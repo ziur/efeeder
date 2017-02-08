@@ -3,6 +3,7 @@ package org.jala.efeeder.login;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.User;
@@ -13,7 +14,7 @@ import org.jala.efeeder.util.Encrypt;
  * Created by roger on 09-09-19.
  */
 @Command
-public class LoginCommand implements CommandUnit {
+public class LoginCommand extends MockCommandUnit{
 
 	@Override
 	public Out execute(In parameters) throws Exception {

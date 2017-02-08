@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 
@@ -25,7 +26,7 @@ import static org.jala.efeeder.suggestion.GetSuggestionsCommand.getVoteFinisherU
  * @author 0x3
  */
 @Command
-public class CreateSuggestionCommand implements CommandUnit {
+public class CreateSuggestionCommand extends MockCommandUnit {
 
 	private static final String DELETE_USER_SUGGESTION =
 			"DELETE FROM votes WHERE id_food_meeting=? AND id_participant=(SELECT id FROM food_meeting_participants WHERE id_food_meeting = ? AND id_user = ?)";

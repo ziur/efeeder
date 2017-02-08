@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 
@@ -19,7 +20,7 @@ import org.jala.efeeder.api.command.OutBuilder;
  * @author alexander_castro
  */
 @Command
-public class ImageCommand implements CommandUnit {
+public class ImageCommand extends MockCommandUnit {
 	private static final String USER_IMG_PATH = "/assets/img/empty_user.jpeg";
 	private static final String PLACE_IMG_PATH = "/assets/img/empty_place.jpeg";
 	private static final String FOOD_MEETING_IMG_PATH = "/assets/img/empty_food.jpeg";

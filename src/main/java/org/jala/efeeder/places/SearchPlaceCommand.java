@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
@@ -18,7 +19,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
  * @author ricardo_ramirez
  */
 @Command
-public class SearchPlaceCommand implements CommandUnit {
+public class SearchPlaceCommand extends MockCommandUnit {
 	private static final Logger LOG = Logger.getLogger(SearchPlaceCommand.class.getName());
 	private static final int ENTRIES_BY_PAGE = 10;
 	private static final String SEARCH_PLACES_QUERY_PATTERN =

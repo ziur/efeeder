@@ -13,6 +13,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
@@ -24,7 +25,7 @@ import org.jala.efeeder.servlets.websocket.avro.SetBuyerEvent;
  * @author 0x3
  */
 @Command
-public class SetBuyerCommand implements CommandUnit {
+public class SetBuyerCommand extends MockCommandUnit {
 
 	private static final String GET_BUYER =
 			"SELECT id_buyer FROM food_meeting WHERE id = ?";

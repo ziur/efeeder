@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.servlets.StartUpServlet;
@@ -23,7 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Danitza Machicado
  */
 @Command
-public class EditFoodMeetingCommand implements CommandUnit {
+public class EditFoodMeetingCommand extends MockCommandUnit {
 	private final static Logger logger = Logger.getLogger(StartUpServlet.class);
 
 	@Override

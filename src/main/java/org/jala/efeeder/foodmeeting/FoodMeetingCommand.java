@@ -11,6 +11,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.UserManager;
@@ -19,7 +20,7 @@ import org.jala.efeeder.user.UserManager;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class FoodMeetingCommand implements CommandUnit {
+public class FoodMeetingCommand extends MockCommandUnit {
 
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
 	

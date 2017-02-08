@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
@@ -19,7 +20,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
  * @author ricardo_ramirez
  */
 @Command
-public class CreatePlaceCommand implements CommandUnit {
+public class CreatePlaceCommand extends MockCommandUnit{
 	private static final String UPDATE_PLACE_QUERY = "INSERT INTO places(name, description, phone, direction, image_link) values(?, ?, ?, ?, ?)";
 	private static final String UPDATE_TAG_QUERY = "INSERT INTO tags(name) values(?)";
 	private static final String GET_TAG_ID_QUERY = "SELECT id FROM tags WHERE name=?";

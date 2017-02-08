@@ -6,7 +6,6 @@
 package org.jala.efeeder.wheel;
 
 import org.jala.efeeder.api.command.*;
-import org.jala.efeeder.api.command.OutBuilder;
 
 
 /**
@@ -14,7 +13,7 @@ import org.jala.efeeder.api.command.OutBuilder;
  */
 @Command
 @Deprecated
-public class WheeldecideCommand implements CommandUnit{
+public class WheeldecideCommand extends MockCommandUnit{
 
 	@Override
 	public Out execute(In context) throws Exception {

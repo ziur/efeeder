@@ -8,6 +8,7 @@ package org.jala.efeeder.user;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 
@@ -16,7 +17,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  * @author rodrigo_ruiz
  */
 @Command
-public class UpdateUserPageCommand implements CommandUnit{
+public class UpdateUserPageCommand extends MockCommandUnit{
 	@Override
 	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();

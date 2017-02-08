@@ -8,6 +8,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags"%>
 
+<%@ page import="org.jala.efeeder.api.command.DisplayBean" %>
+<%@ page import="org.jala.efeeder.order.OrdersDisplayBean" %>
+
+
 <t:template>
 	<jsp:attribute name="javascript">
 		<script src="/assets/js/orders.js"></script>
@@ -16,18 +20,21 @@
 	</jsp:attribute>
 
 	<jsp:body>
-		<t:foodMeetingInfo foodMeeting="${foodMeeting}"/>
-
+		<c:out value="${DisplayBean.foodMeeting.id}"/>
+		<c:set var="place" value="${DisplayBean.place}"/>
+		<c:set var="placeX" value="${DisplayBean.place}"/>
+		<c:out value="${placeX.name} ${placeX.id}" />
+		<t:foodMeetingInfo foodMeeting="${DisplayBean.foodMeeting}" place="${place.name}"/>
 		<div class="row">
 			<div id="search-menu-modal" class="modal modal-fixed-footer" >
 				<%@include file='searchMenu.jsp'%>
 			</div>
 			<div class="col-sm-12">
 				<ul id="order-list-myorder" class="collection">
-					<input type="hidden" id="id-food-meeting" value="${foodMeeting.id}" />
-					<input type="hidden" id="id-place" value="${place.id}" />
-					<input type="hidden" id="order_time" value="${orderTime}" />
-					<c:if test="${foodMeeting.status == 'Order'}">
+					<input type="hidden" id="id-food-meeting" value="${DisplayBean.foodMeeting.id}" />
+					<input type="hidden" id="id-place" value="${DisplayBean.place.id}" />
+					<input type="hidden" id="order_time" value="${DisplayBean.orderTime}" />
+					<c:if test="${DisplayBean.foodMeeting.status == 'Order'}">
 						<t:orderItem/>
 					</c:if>
 				</ul>

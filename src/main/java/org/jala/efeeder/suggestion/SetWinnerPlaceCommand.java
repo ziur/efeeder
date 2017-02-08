@@ -13,6 +13,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
@@ -31,7 +32,7 @@ import org.jala.efeeder.util.constants.WebsocketsConstants;
  * @author 0x3
  */
 @Command
-public class SetWinnerPlaceCommand implements CommandUnit {
+public class SetWinnerPlaceCommand extends MockCommandUnit {
 	private static final String SET_WINNER_PLACE =
 			"UPDATE food_meeting SET id_place=? WHERE id=? AND id_user=?";
 	@Override

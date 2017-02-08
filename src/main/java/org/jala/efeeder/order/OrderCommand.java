@@ -5,8 +5,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
@@ -18,25 +21,35 @@ import org.jala.efeeder.places.PlaceManager;
 /**
  *
  * @author Mirko Terrazas
+ * @author Patricia Escalera
  */
 @Command
-public class OrderCommand implements CommandUnit {
-
+public class OrderCommand extends AbstractCommandUnit {
+	
+	@Override
+	public boolean checkParameters(In parameters){
+		return true;
+	}
+	
 	@Override
 	public Out execute(In parameters) throws Exception {
 		String idFoodMeeting = parameters.getParameter("id_food_meeting");
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
+		OrdersDisplayBean displayBean= new OrdersDisplayBean();
 
 		FoodMeeting foodMeeting = getFoodMeeting(connection, idFoodMeeting);
 		Place placeSelected = getPlaceSelect(connection, foodMeeting);
 		List<Order> orders = getOrders(connection, idFoodMeeting);
-
-		out.addResult("foodMeeting", foodMeeting);
-		out.addResult("place", placeSelected);
-		out.addResult("orders", orders);
-		out.addResult("myUser", parameters.getUser());
-		out.addResult("orderTime",  getOrderTime(connection, idFoodMeeting));
+		
+		displayBean.setFoodMeeting(foodMeeting);
+		displayBean.setPlace(placeSelected);
+		displayBean.setOrders(orders);
+		displayBean.setOrderTime(getOrderTime(connection, idFoodMeeting));
+		displayBean.setMyUser(parameters.getUser());
+		
+		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, displayBean);
+		
 		out.forward("order/orders.jsp");
 
 		return out;
@@ -61,4 +74,6 @@ public class OrderCommand implements CommandUnit {
 		PlaceManager placeManager = new PlaceManager(connection);
 		return placeManager.getPlaceByFoodMeeting(foodMeeting);
 	}
+
+	
 }

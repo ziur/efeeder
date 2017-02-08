@@ -5,6 +5,7 @@ package org.jala.efeeder.places;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 
@@ -14,7 +15,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  *
  */
 @Command
-public class ImportPlacePageCommand implements CommandUnit {
+public class ImportPlacePageCommand extends MockCommandUnit{
 
 	@Override
 	public Out execute(In parameters) throws Exception {

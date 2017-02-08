@@ -15,6 +15,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.command.impl.DefaultOut;
@@ -33,7 +34,7 @@ import static org.jala.efeeder.tyche.SetBuyerCommand.getBuyer;
  * @author 0x3
  */
 @Command
-public class TycheCommand implements CommandUnit{
+public class TycheCommand extends MockCommandUnit{
 
 	private static final String GET_DRAWN_LOTS_SQL =
 			"SELECT user.id, user.name, user.last_name, buyer.dice FROM buyer, user WHERE buyer.id_food_meeting = ? AND buyer.id_user = user.id";

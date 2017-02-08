@@ -8,6 +8,7 @@ import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
@@ -21,7 +22,7 @@ import org.jala.efeeder.imports.ImportResult;
  *
  */
 @Command
-public class ImportPlaceCommand implements CommandUnit {
+public class ImportPlaceCommand extends MockCommandUnit {
 	final static Logger logger = Logger.getLogger(ImportPlaceCommand.class);
 
 	@Override

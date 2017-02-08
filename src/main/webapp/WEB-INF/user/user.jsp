@@ -8,6 +8,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
+<%@ page import="org.jala.efeeder.api.command.DisplayBean" %>
+<%@ page import="org.jala.efeeder.user.UserDisplayBean" %>
+<%@ page import="org.jala.efeeder.user.User" %>
+
 
 <t:template>
 	<jsp:attribute name="javascript">
@@ -15,6 +19,9 @@
 	</jsp:attribute>
 	
 	<jsp:body>
+		<!-- Creation of a variable "user" (retrieve from DisplayBean) in order to not impact components already using this variable -->
+		<c:set var="user" value="${DisplayBean.user}" />
+		<c:out value="${user.name}"></c:out>
 		<div class="row">
 			<div class="row">
 				<div class="col offset-m3 s12 m6">
@@ -60,10 +67,10 @@
 								</div>
 								<div class="row">
 									<div class="right">
-										<input type="hidden" id="new-user-hiden" name="inputName" value="${newUser}">
+										<input type="hidden" id="new-user-hiden" name="inputName" value="${DisplayBean.newUser}">
 										<button id="cancel-button" class="btn btn-primary" type="button">Cancel</button>
 										<c:choose>
-											<c:when test="${newUser}">
+											<c:when test="${DisplayBean.newUser}">
 												<button id="create-button" class="btn btn-primary" type="submit">Add User</button>
 											</c:when>	
 											<c:otherwise>

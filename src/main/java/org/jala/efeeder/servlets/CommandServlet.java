@@ -31,6 +31,7 @@ import org.jala.efeeder.api.utils.FileResourceManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 import org.jala.efeeder.user.User;
 
+
 /**
  * Created by alejandro on 07-09-16.
  */
@@ -61,7 +62,9 @@ public class CommandServlet extends HttpServlet {
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		boolean commandResult;
+		CommandUnit command = null;
+		
 		HttpSession session = request.getSession(true);
 
 		if (request.getRequestURI().equals("/action/logout")) {
@@ -76,6 +79,10 @@ public class CommandServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else {
+			
+			command = getCommand(request);
+			boolean resultCommand = true;
+			
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			In parameters;
 			if (isMultipart) {
@@ -91,26 +98,39 @@ public class CommandServlet extends HttpServlet {
 			parameters.setUser(User.class.cast(session.getAttribute("user")));
 			parameters.setContext(getServletContext());
 			parameters.setPathEfeederImages(getImagePath());
-
-			Out out = executor.executeCommand(parameters, getCommand(request));
-
-			if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-					&& !request.getRequestURI().equals("/action/CreateUpdateUser")) {
-				out.addResult("showNavBar", true);
-			}
-
-			if (out.getUser() != null) {
-				session.setAttribute("user", out.getUser());
-				response.addCookie(new Cookie("userId", String.valueOf(out.getUser().getId())));
-			}
-
-			if (out.getExitStatus() == ExitStatus.ERROR) {
-				for (String msg : out.getMessages(MessageType.ERROR)) {
-					System.out.println("ERROR:" + msg);
+			
+			command.setIn(parameters);
+			
+			//pescalera : Check request parameters before executing the command
+			resultCommand = command.checkParameters(parameters);
+			if (!resultCommand) {
+				//TODO
+				System.out.println("PEZ: Error in CommandServlet");
+				Out out = new DefaultOut();
+				out.addResult("error", "PEZ: CheckParameters didnt pass");
+			}else {
+				//
+				
+				
+				Out out = executor.executeCommand(parameters, command);
+	
+				if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
+						&& !request.getRequestURI().equals("/action/CreateUpdateUser")) {
+					out.addResult("showNavBar", true);
 				}
+	
+				if (out.getUser() != null) {
+					session.setAttribute("user", out.getUser());
+					response.addCookie(new Cookie("userId", String.valueOf(out.getUser().getId())));
+				}
+	
+				if (out.getExitStatus() == ExitStatus.ERROR) {
+					for (String msg : out.getMessages(MessageType.ERROR)) {
+						System.out.println("ERROR:" + msg);
+					}
+				}
+				processResponse(out, request, response);
 			}
-
-			processResponse(out, request, response);
 		}
 	}
 

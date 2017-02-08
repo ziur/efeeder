@@ -9,6 +9,7 @@ import java.sql.Connection;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
@@ -20,7 +21,7 @@ import org.jala.efeeder.user.UserManager;
  * @author rodrigo_ruiz
  */
 @Command
-public class AddPaymentCommand implements CommandUnit {
+public class AddPaymentCommand extends MockCommandUnit {
 
     @Override
     public Out execute(In parameters) throws Exception {

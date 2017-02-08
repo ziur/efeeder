@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class CommandFactory {
     public static final String COMMAND_FACTORY_KEY = "COMMAND_FACTORY_KEY";
+    public static final String COMMAND_NAME_SUFFIX= "command";
 
     private final Map<String, Class<?>> commands = new HashMap<>();
     public void registerCommand(String name, Class klass) {
@@ -15,7 +16,7 @@ public class CommandFactory {
     }
 
     public CommandUnit getInstance(String name) {
-        String commandName = name.toLowerCase() + "command";
+        String commandName = name.toLowerCase() + COMMAND_NAME_SUFFIX;
         if (!commands.containsKey(commandName)) {
             return null;
         }

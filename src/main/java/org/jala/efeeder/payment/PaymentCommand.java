@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.foodmeeting.FoodMeeting;
@@ -30,7 +31,7 @@ import org.jala.efeeder.user.UserManager;
  * @author alexander_castro
  */
 @Command
-public class PaymentCommand implements CommandUnit {
+public class PaymentCommand extends MockCommandUnit {
 
 	@Override
 	public Out execute(In parameters) throws Exception {

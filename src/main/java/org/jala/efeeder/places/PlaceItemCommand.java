@@ -5,15 +5,11 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.jala.efeeder.api.command.Command;
-import org.jala.efeeder.api.command.CommandUnit;
-import org.jala.efeeder.api.command.In;
-import org.jala.efeeder.api.command.Out;
-import org.jala.efeeder.api.command.OutBuilder;
+
 import org.jala.efeeder.api.utils.JsonConverter;
 
 @Command
-public class PlaceItemCommand implements CommandUnit {
+public class PlaceItemCommand extends MockCommandUnit {
 	
 	@Override
 	public Out execute(In paramters) throws Exception {

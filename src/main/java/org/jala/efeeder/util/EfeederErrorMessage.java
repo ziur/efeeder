@@ -5,7 +5,7 @@ import org.jala.efeeder.order.CreateOrderCommand;
 
 public class EfeederErrorMessage {
 	
-	static String DUPLICATE_KEY_ORDER = "El Item ya fue ingresado, porfavor seleccione otro."; 
+	static String DUPLICATE_KEY_ORDER = "El Item ya fue ingresado, por favor seleccione otro."; 
 	
 	public static String getEfeederMessage(String errorMessage, CommandUnit command) {
 		

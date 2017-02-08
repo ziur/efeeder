@@ -13,6 +13,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.utils.JsonConverter;
@@ -25,7 +26,7 @@ import org.jala.efeeder.places.Place;
  * Supports AJAX and provides functionality for the Web Sockets version 
  */
 @Command
-public class GetSuggestionsCommand implements CommandUnit {
+public class GetSuggestionsCommand extends MockCommandUnit {
 
 	
     private static final String SELECT_PLACES_BY_MEETING_SQL =

@@ -8,6 +8,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
+import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 /**
@@ -15,7 +16,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
  * @author ricardo_ramirez
  */
 @Command
-public class PlacesCommand implements CommandUnit {
+public class PlacesCommand extends MockCommandUnit {
 	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 5";
 
 	@Override
