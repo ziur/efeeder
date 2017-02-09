@@ -25,9 +25,12 @@ public final class InUtils {
 		return parameter;
 	}
 	public float getFloatParameter(String paramName){
-		return Float.parseFloat(parameters.getParameter(paramName));
+		return Float.valueOf(parameters.getParameter(paramName));
 	}
 	public int getIntegerParam(String paramName){
-		return Integer.parseInt(paramName);
+		return Integer.valueOf(parameters.getParameter(paramName));
+	}
+	public double getDoubleParam(String paramName){
+		return Double.valueOf(parameters.getParameter(paramName));
 	}
 }

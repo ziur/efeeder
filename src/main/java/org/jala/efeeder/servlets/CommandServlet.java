@@ -19,18 +19,20 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jala.efeeder.api.command.CommandExecutor;
 import org.jala.efeeder.api.command.CommandFactory;
 import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.ErrorInfo;
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
+import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.command.ResponseAction;
 import org.jala.efeeder.api.command.SettingsManager;
+import org.jala.efeeder.api.command.ResponseAction.ResponseType;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.FileResourceManager;
 import org.jala.efeeder.servlets.support.InBuilder;
 import org.jala.efeeder.user.User;
-
 
 /**
  * Created by alejandro on 07-09-16.
@@ -38,13 +40,13 @@ import org.jala.efeeder.user.User;
 public class CommandServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5585317604797123555L;
-	
-	private static final Map<String, String> FileAction = new HashMap<String, String>(){
-        {
-            put("/action/CreateUpdateUser", "saveImage");
-            put("/action/ImportPlace", "importFile");
-        }
-    };
+
+	private static final Map<String, String> FileAction = new HashMap<String, String>() {
+		{
+			put("/action/CreateUpdateUser", "saveImage");
+			put("/action/ImportPlace", "importFile");
+		}
+	};
 
 	private static Pattern COMMAND_PATTERN = Pattern.compile(".*/action/(\\w*)");
 
@@ -62,9 +64,9 @@ public class CommandServlet extends HttpServlet {
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		boolean commandResult;
+
 		CommandUnit command = null;
-		
+
 		HttpSession session = request.getSession(true);
 
 		if (request.getRequestURI().equals("/action/logout")) {
@@ -73,16 +75,18 @@ public class CommandServlet extends HttpServlet {
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-				&& !request.getRequestURI().equals("/action/image") && !request.getRequestURI().equals("/action/CreateUpdateUser")
+				&& !request.getRequestURI().equals("/action/image")
+				&& !request.getRequestURI().equals("/action/CreateUpdateUser")
 				&& session.getAttribute("user") == null) {
 
 			request.getRequestDispatcher("/WEB-INF/home/login.jsp").forward(request, response);
 
 		} else {
-			
+
 			command = getCommand(request);
-			boolean resultCommand = true;
-			
+			boolean commandResult = true;
+			Out out = null;
+
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			In parameters;
 			if (isMultipart) {
@@ -98,39 +102,25 @@ public class CommandServlet extends HttpServlet {
 			parameters.setUser(User.class.cast(session.getAttribute("user")));
 			parameters.setContext(getServletContext());
 			parameters.setPathEfeederImages(getImagePath());
-			
-			command.setIn(parameters);
-			
-			//pescalera : Check request parameters before executing the command
-			resultCommand = command.checkParameters(parameters);
-			if (!resultCommand) {
-				//TODO
-				System.out.println("PEZ: Error in CommandServlet");
-				Out out = new DefaultOut();
-				out.addResult("error", "PEZ: CheckParameters didnt pass");
-			}else {
-				//
-				
-				
-				Out out = executor.executeCommand(parameters, command);
-	
-				if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
-						&& !request.getRequestURI().equals("/action/CreateUpdateUser")) {
-					out.addResult("showNavBar", true);
-				}
-	
-				if (out.getUser() != null) {
-					session.setAttribute("user", out.getUser());
-					response.addCookie(new Cookie("userId", String.valueOf(out.getUser().getId())));
-				}
-	
-				if (out.getExitStatus() == ExitStatus.ERROR) {
-					for (String msg : out.getMessages(MessageType.ERROR)) {
-						System.out.println("ERROR:" + msg);
-					}
-				}
-				processResponse(out, request, response);
+
+			out = executor.executeCommand(parameters, command);
+
+			if (!request.getRequestURI().equals("/action/login") && !request.getRequestURI().equals("/action/user")
+					&& !request.getRequestURI().equals("/action/CreateUpdateUser")) {
+				out.addResult("showNavBar", true);
 			}
+
+			if (out.getUser() != null) {
+				session.setAttribute("user", out.getUser());
+				response.addCookie(new Cookie("userId", String.valueOf(out.getUser().getId())));
+			}
+
+			if (out.getExitStatus() == ExitStatus.ERROR) {
+				for (String msg : out.getMessages(MessageType.ERROR)) {
+					System.out.println("ERROR:" + msg);
+				}
+			}
+			processResponse(out, request, response);
 		}
 	}
 
@@ -181,6 +171,7 @@ public class CommandServlet extends HttpServlet {
 		}
 		String command = matcher.group(1);
 		return commandFactory.getInstance(command);
+
 	}
 
 	private String getImagePath() {
@@ -189,5 +180,21 @@ public class CommandServlet extends HttpServlet {
 
 		String startPath = "" + settings.getData("image_folder_path");
 		return Paths.get(startPath, FileResourceManager.ASSETS_FILE, FileResourceManager.IMG_FILE).toString();
+	}
+
+	/*
+	 * 
+	 * 
+	*/
+	protected void populateErrorInfoInRequest(Out out, Map<String, String> messages/**
+																					 * CommandExecutionResult
+																					 * commandResult,
+																					 * Throwable
+																					 * exception
+																					 */
+	) {
+		ErrorInfo errorInfo = new ErrorInfo(0, out.getUser().getId(), messages);
+		out.addResult(ErrorInfo.ATTR_ERROR_INFO, errorInfo);
+
 	}
 }
