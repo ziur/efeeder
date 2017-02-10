@@ -26,7 +26,7 @@ import org.jala.efeeder.util.constants.WebsocketsConstants;
 public class ChangeFoodMeetingStatusCommand extends  MockCommandUnit {
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		MessageContext receivedMessage = parameters.getMessageContext();
 		ChangeFoodMeetingStatusEvent receivedEvent = MessageContextUtils.getEvent(receivedMessage, ChangeFoodMeetingStatusEvent.class);
 

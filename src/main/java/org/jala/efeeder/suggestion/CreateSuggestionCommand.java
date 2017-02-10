@@ -136,7 +136,7 @@ public class CreateSuggestionCommand extends MockCommandUnit {
 	}
 	
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		String error = null;		
 		int idUser = parameters.getUser().getId();
 		Connection connection = parameters.getConnection();

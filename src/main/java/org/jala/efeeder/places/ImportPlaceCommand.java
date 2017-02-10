@@ -26,7 +26,7 @@ public class ImportPlaceCommand extends MockCommandUnit {
 	final static Logger logger = Logger.getLogger(ImportPlaceCommand.class);
 
 	@Override
-	public Out execute(In in) throws Exception {
+	public Out execute() throws Exception {
 		ExitStatus status = ExitStatus.SUCCESS;
 
 		StringBuilder messageLog = new StringBuilder();
@@ -35,7 +35,7 @@ public class ImportPlaceCommand extends MockCommandUnit {
 		messageLog.append("Total lines failed = %2$d");
 		messageLog.append(System.getProperty("line.separator"));
 
-		ImportFactory importFactory = new ImportFactory(in.getConnection());
+		ImportFactory importFactory = new ImportFactory(parameters.getConnection());
 		ImportHandler importHandler = null;
 		ImportResult importResult = null;
 
@@ -43,7 +43,7 @@ public class ImportPlaceCommand extends MockCommandUnit {
 
 		Place currentPlace = null;
 
-		Map<String, List<String>> placeOrItems = in.getAllParameters();
+		Map<String, List<String>> placeOrItems = parameters.getAllParameters();
 
 		int size = placeOrItems.size();
 		int countCorrectImport = 0;

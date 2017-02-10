@@ -35,7 +35,7 @@ import org.jala.efeeder.user.UserManager;
 public class DetailsCommand extends MockCommandUnit {
     
 	@Override
-	public Out execute(In parameters) {
+	public Out execute() {
 		Out out = new DefaultOut();
 		int idFoodMeeting = Integer.parseInt(parameters.getParameter("id_food_meeting"));
 		Connection connection = parameters.getConnection();

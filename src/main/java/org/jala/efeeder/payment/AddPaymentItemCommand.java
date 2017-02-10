@@ -25,7 +25,7 @@ import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 public class AddPaymentItemCommand extends MockCommandUnit{
 
 	@Override
-	public Out execute(In parameters) {
+	public Out execute() {
 		try {
 			String itemDescription = parameters.getParameter("item_description");
 			double itemPrice = Double.parseDouble(parameters.getParameter("item_price"));

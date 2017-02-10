@@ -17,7 +17,7 @@ import org.jala.efeeder.util.Encrypt;
 public class LoginCommand extends MockCommandUnit{
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 
 		Out out = new DefaultOut();
 
@@ -39,4 +39,5 @@ public class LoginCommand extends MockCommandUnit{
 			return out.forward("home/login.jsp");
 		}
 	}
+	
 }

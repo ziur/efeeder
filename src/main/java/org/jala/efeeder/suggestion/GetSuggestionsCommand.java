@@ -190,7 +190,7 @@ public class GetSuggestionsCommand extends MockCommandUnit {
 	}
 
     @Override
-    public Out execute(In parameters) throws Exception {
+    public Out execute() throws Exception {
 		return OutBuilder.response("application/json", getSuggestionsAsString(parameters));
     }
 }
