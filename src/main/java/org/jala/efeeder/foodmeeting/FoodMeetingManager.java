@@ -102,7 +102,7 @@ public class FoodMeetingManager {
 
 		return meetings;
 	}
-	
+		
 	public FoodMeeting insertMeeting(FoodMeeting meeting) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(INSERT_FOOD_MEETING_SQL, RETURN_GENERATED_KEYS);		
 		

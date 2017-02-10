@@ -30,7 +30,7 @@ import org.jala.efeeder.user.UserManager;
 public class RemoveOrderCommand extends MockCommandUnit {
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = removeOrder(parameters);
 		return out;
 	}

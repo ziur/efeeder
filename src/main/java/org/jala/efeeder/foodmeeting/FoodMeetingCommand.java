@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
@@ -25,12 +26,14 @@ public class FoodMeetingCommand extends MockCommandUnit {
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
 	
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
+		FoodMeetingDisplayBean fdMeetingDisplayBean = new FoodMeetingDisplayBean();
 		
 		out.addResult("images", getImageFoodMeeting(connection));
-
+		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, fdMeetingDisplayBean);
+		
 		return out.forward("foodmeeting/foodMeeting.jsp");
 	}
 	
@@ -43,5 +46,20 @@ public class FoodMeetingCommand extends MockCommandUnit {
 			images.add(resultSet.getString(1));
 		}
 		return images;
+	}
+	
+	public void setIn(In parameters){
+		
+	}
+	
+	
+	public boolean checkParameters(In parameters){
+		return true;
+	}	   
+
+	public DisplayBean getDisplayBean(){
+		FoodMeetingDisplayBean dp = new FoodMeetingDisplayBean();
+		return dp;
+		
 	}
 }

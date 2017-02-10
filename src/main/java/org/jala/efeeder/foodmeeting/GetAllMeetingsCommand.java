@@ -27,7 +27,7 @@ public class GetAllMeetingsCommand extends MockCommandUnit{
 			+ "from food_meeting where event_date >= ? order by event_date";
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		PreparedStatement stm = parameters.getConnection().prepareStatement(SELECT_FOOD_MEETING_SQL);
 		stm.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 		ResultSet resultSet = stm.executeQuery();
@@ -35,6 +35,7 @@ public class GetAllMeetingsCommand extends MockCommandUnit{
 		UserManager userManager = new UserManager(parameters.getConnection());
 
 		List<FoodMeeting> foodMeetings = new ArrayList<>();
+		
 		while (resultSet.next()) {			
 			foodMeetings.add(new FoodMeeting(resultSet.getInt(1), resultSet.getString(2), resultSet.getString(3), FoodMeetingStatus.valueOf(resultSet.getString(4)), 
 					resultSet.getTimestamp(5), resultSet.getTimestamp(6), resultSet.getTimestamp(7),

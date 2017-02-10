@@ -19,7 +19,7 @@ public class UserCommand extends  MockCommandUnit{
 	
 	
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = new DefaultOut();
 		
 		bean = new UserDisplayBean(0,"myemail@xyz.com", "Patty", "hello","empty","","");
@@ -34,7 +34,7 @@ public class UserCommand extends  MockCommandUnit{
 
 
 	@Override
-	public boolean checkParameters(In parameters) {
+	public boolean checkParameters() {
 		// TODO Auto-generated method stub
 		return true;
 	}

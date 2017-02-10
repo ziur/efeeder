@@ -27,12 +27,12 @@ import org.jala.efeeder.places.PlaceManager;
 public class OrderCommand extends AbstractCommandUnit {
 	
 	@Override
-	public boolean checkParameters(In parameters){
+	public boolean checkParameters(){
 		return true;
 	}
 	
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		String idFoodMeeting = parameters.getParameter("id_food_meeting");
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();

@@ -38,22 +38,22 @@ public class CreateOrderCommand extends AbstractCommandUnit {
 	public static String KEY_COST = "cost";
 
 	@Override
-	public boolean checkParameters(In inParameters) {
+	public boolean checkParameters() {
 		String errorMessage = null;
-		if (inParameters == null) {
+		if (parameters == null) {
 			return false;
 		}
-		Integer quantity = Integer.parseInt(inParameters.getParameter(KEY_QUANTITY));
+		Integer quantity = Integer.parseInt(parameters.getParameter(KEY_QUANTITY));
 		if (quantity <= 0) {
 			errorMessage = "There is no quantity specified for the current order";
 			return false;
 		}
-		Float cost = Float.parseFloat(inParameters.getParameter(KEY_COST));
+		Float cost = Float.parseFloat(parameters.getParameter(KEY_COST));
 		if (cost <= 0) {
 			errorMessage = "The cost of the new item cannot be 0 or negative";
 		}
 		if (errorMessage != null) {
-			buildErrorResponse(this.foodMeetingId, Integer.parseInt(inParameters.getParameter("user")),
+			buildErrorResponse(this.foodMeetingId, Integer.parseInt(parameters.getParameter("user")),
 					errorMessage);
 			return false;
 		}
@@ -69,7 +69,7 @@ public class CreateOrderCommand extends AbstractCommandUnit {
 		return true;
 	}
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = saveOrder(parameters);
 		return out;
 	}
@@ -145,7 +145,7 @@ public class CreateOrderCommand extends AbstractCommandUnit {
 		return OutBuilder.response(messageContext);
 	}
 
-	private Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
+	public Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
 		List<MessageEvent> events = new ArrayList<>();
 
 		events.add(MessageEvent.newBuilder()

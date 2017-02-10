@@ -13,7 +13,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 @Command
 public class HomeCommand extends MockCommandUnit{
     @Override
-    public Out execute(In parameters) throws Exception {
+    public Out execute() throws Exception {
         return new DefaultOut().forward("home/home.jsp");
     }
 }

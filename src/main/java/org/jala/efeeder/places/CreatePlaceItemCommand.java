@@ -19,7 +19,7 @@ public class CreatePlaceItemCommand extends MockCommandUnit {
 
 	public static String KEY_ITEM_PRICE = "item-price";
 	@Override
-	public boolean checkParameters(In parameters) {
+	public boolean checkParameters() {
 		Float price = Float.parseFloat(parameters.getParameter(KEY_ITEM_PRICE));
 		String message = null;
 		if (price <= 0) {
@@ -29,7 +29,7 @@ public class CreatePlaceItemCommand extends MockCommandUnit {
 		return true;
 	}
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		PlaceManager placeManager = new PlaceManager(parameters.getConnection());
 		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id-place")));
 		String name = parameters.getParameter("item-name");
