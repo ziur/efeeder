@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jala.efeeder.api.database.DatabaseManager;
-import org.jala.efeeder.foodmeeting.FoodMeetingCommand;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -21,17 +20,11 @@ public class CommandExecutor {
 		// Set parameters inside command to be used by all methods.
 		command.setIn(parameters);
 
-		command.initialize();
 		// Check parameters before executing the command
 		boolean commandResult = command.checkParameters();
 		if (!commandResult) {
-			// Build output with an event
-			//System.out.println("Error in parameters:Completar");
-			
-			int foodMeetingId = command.getFoodMeetingId();
-			int idUser = parameters.getUser().getId();
-			String errorMessage = "Error/Warning:" + command.getErrors().values().iterator().next();
-			return OutBuilder.buildErrorResponse(foodMeetingId, idUser, errorMessage);
+			//
+			System.out.println("Completar");
 		}
 
 		Connection connection = databaseManager.getConnection();

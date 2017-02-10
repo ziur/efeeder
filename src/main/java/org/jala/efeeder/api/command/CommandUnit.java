@@ -23,6 +23,4 @@ public interface CommandUnit {
 	public Map<String, String> getErrors();
 	
 	public boolean initialize();
-	
-	public int getFoodMeetingId();
 }
