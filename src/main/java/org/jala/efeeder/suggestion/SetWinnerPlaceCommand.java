@@ -36,7 +36,7 @@ public class SetWinnerPlaceCommand extends MockCommandUnit {
 	private static final String SET_WINNER_PLACE =
 			"UPDATE food_meeting SET id_place=? WHERE id=? AND id_user=?";
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		int feastId = 0;
 		try {
 			int idUser = parameters.getUser().getId();

@@ -17,7 +17,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class GetOrdersByFoodMeetingCommand extends MockCommandUnit{
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		int idFoodMeeting = Integer.parseInt(parameters.getParameter("idFoodMeeting"));
 
 		OrderManager orderManager = new OrderManager(parameters.getConnection());

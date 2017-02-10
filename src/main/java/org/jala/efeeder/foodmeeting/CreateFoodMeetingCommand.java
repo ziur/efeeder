@@ -31,8 +31,8 @@ import org.jala.efeeder.util.constants.WebsocketsConstants;
 public class CreateFoodMeetingCommand extends MockCommandUnit {
 
 	@Override
-	public Out execute(In context) throws Exception {		
-		FoodMeeting foodMeeting = this.insertMeeting(context);
+	public Out execute() throws Exception {		
+		FoodMeeting foodMeeting = this.insertMeeting(parameters);
 		UserOwner userOwner = new UserOwner(foodMeeting.getUserOwner().getId(), foodMeeting.getUserOwner().getName(), foodMeeting.getUserOwner().getLastName());
 		
 		List<MessageEvent> events = new ArrayList<>();

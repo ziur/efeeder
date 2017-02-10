@@ -28,7 +28,7 @@ public class GetAllPlacesCommand extends MockCommandUnit {
     private Connection connection;
 
     @Override
-    public Out execute(In parameters) throws Exception {
+    public Out execute() throws Exception {
         connection = parameters.getConnection();
         
         PreparedStatement preparedStatement = connection.prepareStatement("Select * from places");

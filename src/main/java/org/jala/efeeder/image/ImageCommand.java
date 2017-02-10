@@ -28,7 +28,7 @@ public class ImageCommand extends MockCommandUnit {
 	private String defaultPath = "";
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		String imageName = parameters.getParameter("file_name");
 
 		String type = parameters.getParameter("type");

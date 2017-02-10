@@ -16,7 +16,7 @@ import org.jala.efeeder.api.command.*;
 public class WheeldecideCommand extends MockCommandUnit{
 
 	@Override
-	public Out execute(In context) throws Exception {
+	public Out execute() throws Exception {
 		return OutBuilder.response("text/plain", "Deprecated");
 	}
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
-import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
@@ -25,51 +24,68 @@ import org.jala.efeeder.user.UserManager;
 import org.jala.efeeder.util.EfeederErrorMessage;
 import org.jala.efeeder.util.InUtils;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
- * Created by alejandro on 09-09-16.
+ * Created by alejandro on 09-09-16. pescalera 10/02/2017: This class contains
+ * its attributes (coming from the jsp) in parameters.messageContext.
+ * 
  */
 @Command
 public class CreateOrderCommand extends AbstractCommandUnit {
 
-	public static String KEY_QUANTITY = "quantity";
-	public static String KEY_COST = "cost";
+	public static String KEY_QUANTITY = "my-order-quantity";
+	public static String KEY_COST = "my-order-cost-input";
 
+	/*
+	 * Performs a check of values quantity and cost to be greater than zero. To
+	 * retrieve the values coming from jsp, it's required to retrieve
+	 * parameters.getMessageContext() where the values are stored.
+	 */
 	@Override
-	public boolean checkParameters(In inParameters) {
+	public boolean checkParameters() {
 		String errorMessage = null;
-		if (inParameters == null) {
+		if (parameters == null) {
 			return false;
 		}
-		Integer quantity = Integer.parseInt(inParameters.getParameter(KEY_QUANTITY));
+		CreateOrderEvent createOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(),
+				CreateOrderEvent.class);
+		Integer quantity = createOrderEvent.getQuantity();
 		if (quantity <= 0) {
 			errorMessage = "There is no quantity specified for the current order";
-			return false;
+			errors.put("CREATE_ORDER-1", errorMessage);
 		}
-		Float cost = Float.parseFloat(inParameters.getParameter(KEY_COST));
+		Double cost = createOrderEvent.getCost();
 		if (cost <= 0) {
 			errorMessage = "The cost of the new item cannot be 0 or negative";
+			errors.put("CREATE_ORDER-2", errorMessage);
 		}
 		if (errorMessage != null) {
-			buildErrorResponse(this.foodMeetingId, Integer.parseInt(inParameters.getParameter("user")),
-					errorMessage);
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean initialize(){
 		if (!super.initialize()) {
 			return false;
 		}
 		inUtils = new InUtils(parameters);
+		try{
+			foodMeetingId = Integer.valueOf(parameters.getParameter("idFoodMeeting"));
+		}catch(NumberFormatException ex){
+			if (parameters.getMessageContext()!=null) {
+				foodMeetingId = MessageContextUtils.getEvent(parameters.getMessageContext(),
+						CreateOrderEvent.class).getIdFoodMeeting();
+			}
+		}finally{
+			//do nothing
+		}
+		
 		return true;
 	}
+
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = saveOrder(parameters);
 		return out;
 	}
@@ -145,7 +161,7 @@ public class CreateOrderCommand extends AbstractCommandUnit {
 		return OutBuilder.response(messageContext);
 	}
 
-	private Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
+	public Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
 		List<MessageEvent> events = new ArrayList<>();
 
 		events.add(MessageEvent.newBuilder()

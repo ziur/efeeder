@@ -1,7 +1,12 @@
 package org.jala.efeeder.api.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jala.efeeder.api.command.impl.DefaultOut;
+import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
+import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 
 /**
  * Created by alejandro on 07-09-16.
@@ -43,4 +48,25 @@ public class OutBuilder {
 		out.setMessageContext(messageContext);
 		return out;
 	}
+	
+	public static Out buildErrorResponse(int idFoodMeeting, int idUser, String errorMessage) {
+		List<MessageEvent> events = new ArrayList<>();
+
+		events.add(MessageEvent.newBuilder()
+				.setEvent(
+						ErrorEvent.newBuilder()
+								.setErrorMessage(errorMessage)
+								.setIdUser(idUser)
+								.build())
+				.build());
+
+		MessageContext messageContext = MessageContext.newBuilder()
+				.setRoom(Integer.toString(idFoodMeeting))
+				.setUser(idUser)
+				.setEvents(events)
+				.build();
+
+		return OutBuilder.response(messageContext);
+	}
+
 }

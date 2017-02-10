@@ -19,7 +19,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 @Command
 public class UpdateUserPageCommand extends MockCommandUnit{
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = new DefaultOut();
 
 		out.addResult("user", parameters.getUser());

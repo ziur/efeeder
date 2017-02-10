@@ -210,7 +210,7 @@ public class TycheCommand extends MockCommandUnit{
 	}
 
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		int userId = parameters.getUser().getId();
 		Connection connection = parameters.getConnection();
 		String error = null;

@@ -21,11 +21,13 @@ import org.jala.efeeder.user.UserManager;
  */
 @Command
 public class FoodMeetingCommand extends MockCommandUnit {
-
+	
+	public static String KEY_FOOD_MEETING_ID = "idFoodMeeting";
+	
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
 	
 	@Override
-	public Out execute(In parameters) throws Exception {
+	public Out execute() throws Exception {
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
 		
