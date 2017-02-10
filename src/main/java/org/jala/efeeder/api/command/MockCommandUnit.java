@@ -53,8 +53,12 @@ public abstract class MockCommandUnit implements CommandUnit {
 	
 	@Override
 	public boolean initialize(){
+		if (parameters == null) {
+			return false;
+		}
+		this.inUtils = new InUtils(parameters);
 		return true;
-		
+			
 	}
 	
 }
