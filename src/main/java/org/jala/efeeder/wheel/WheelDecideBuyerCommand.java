@@ -25,7 +25,7 @@ import org.jala.efeeder.user.User;
 public class WheelDecideBuyerCommand extends MockCommandUnit{
 
     @Override
-    public Out execute() throws Exception {
+    public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();           
         Connection connection = parameters.getConnection();
         

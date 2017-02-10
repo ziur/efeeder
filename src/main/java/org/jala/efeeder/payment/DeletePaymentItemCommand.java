@@ -25,7 +25,7 @@ import static org.jala.efeeder.api.utils.JsonConverter.objectToJSON;
 public class DeletePaymentItemCommand extends MockCommandUnit {
 
 	@Override
-	public Out execute() {
+	public Out execute(In parameters) {
 		try {
 			Connection connection = parameters.getConnection();
 			int index = Integer.parseInt(parameters.getParameter("index"));

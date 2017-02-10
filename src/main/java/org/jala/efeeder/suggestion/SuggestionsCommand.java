@@ -25,7 +25,7 @@ public class SuggestionsCommand extends MockCommandUnit {
 	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 10";
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Connection connection = parameters.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(TOP_FIVE_PLACES_QUERY);
 		ResultSet resultSet = preparedStatement.executeQuery();

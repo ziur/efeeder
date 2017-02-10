@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.In;
@@ -28,10 +27,10 @@ import org.jala.efeeder.user.UserManager;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class RemoveOrderCommand extends AbstractCommandUnit {
+public class RemoveOrderCommand extends MockCommandUnit {
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Out out = removeOrder(parameters);
 		return out;
 	}
@@ -72,11 +71,5 @@ public class RemoveOrderCommand extends AbstractCommandUnit {
 				.build();
 
 		return OutBuilder.response(messageContext);
-	}
-
-	@Override
-	public boolean checkParameters() {
-		//Nothing to check
-		return true;
 	}
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Command
 public class GetAllMeetingsByUserCommand extends MockCommandUnit{
     @Override
-    public Out execute() throws Exception {
+    public Out execute(In parameters) throws Exception {
         Connection connection = parameters.getConnection();
 
         int userId = parameters.getUser().getId();

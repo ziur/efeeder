@@ -20,7 +20,7 @@ public class PlacesCommand extends MockCommandUnit {
 	private static final String TOP_FIVE_PLACES_QUERY = "SELECT * FROM places ORDER BY created_at DESC limit 5";
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		PreparedStatement preparedStatement = parameters.getConnection().prepareStatement(TOP_FIVE_PLACES_QUERY);
 		ResultSet resultSet = preparedStatement.executeQuery();

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class PlaceProfileCommand extends MockCommandUnit {
 	private static final Logger LOG = Logger.getLogger(SearchPlaceCommand.class.getName());
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		PlaceManager managerPlace = new PlaceManager(parameters.getConnection());
 		PlaceItemManager managerPlaceItem = new PlaceItemManager(parameters.getConnection());

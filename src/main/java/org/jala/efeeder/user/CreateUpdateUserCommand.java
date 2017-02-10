@@ -25,7 +25,7 @@ public class CreateUpdateUserCommand extends MockCommandUnit{
 
 	@SuppressWarnings("finally")
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		ExitStatus status = ExitStatus.SUCCESS;
 		String result = "";
 		JsonMessage jsonMessage = new JsonMessage("The user was created correctly");

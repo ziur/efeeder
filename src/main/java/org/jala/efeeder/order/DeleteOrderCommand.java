@@ -20,7 +20,7 @@ import org.jala.efeeder.user.User;
 @Command
 public class DeleteOrderCommand extends MockCommandUnit{
     @Override
-    public Out execute() throws Exception {
+    public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();           
         Connection connection = parameters.getConnection();
         

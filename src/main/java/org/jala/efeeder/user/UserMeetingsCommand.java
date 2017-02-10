@@ -10,7 +10,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 @Command
 public class UserMeetingsCommand extends MockCommandUnit{
     @Override
-    public Out execute() throws Exception {
+    public Out execute(In parameters) throws Exception {
         Out out = new DefaultOut();
         return out.forward("user/history.jsp");
     }

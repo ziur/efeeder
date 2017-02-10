@@ -26,7 +26,7 @@ public class SearchPlaceCommand extends MockCommandUnit {
 		"select * from places where places.name like '%%%s%%' or id in (select tp.id_place from tag_places as tp where tp.id_tag in (select t.id from tags as t where t.name like '%%%s%%')) LIMIT %d OFFSET %d";
 	         
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		int page = 1;
 		String term = parameters.getParameter("term");
 		try {

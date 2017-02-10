@@ -28,7 +28,7 @@ public class CreatePlaceCommand extends MockCommandUnit{
 			
 	private Connection connection;
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		int placeId;
 		connection = parameters.getConnection();
 		PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_PLACE_QUERY, RETURN_GENERATED_KEYS);

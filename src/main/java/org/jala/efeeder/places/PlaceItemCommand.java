@@ -12,9 +12,9 @@ import org.jala.efeeder.api.utils.JsonConverter;
 public class PlaceItemCommand extends MockCommandUnit {
 	
 	@Override
-	public Out execute() throws Exception {
-		PlaceItemManager managerPLaceItem = new PlaceItemManager(parameters.getConnection());
-		int id = Integer.parseInt(parameters.getParameter("id"));
+	public Out execute(In paramters) throws Exception {
+		PlaceItemManager managerPLaceItem = new PlaceItemManager(paramters.getConnection());
+		int id = Integer.parseInt(paramters.getParameter("id"));
 		PlaceItem placeItem = managerPLaceItem.getPlaceItemById(id);
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(placeItem));
 	}

@@ -24,7 +24,7 @@ import org.jala.efeeder.user.UserManager;
 public class AddPaymentCommand extends MockCommandUnit {
 
     @Override
-    public Out execute() throws Exception {
+    public Out execute(In parameters) throws Exception {
         String idFoodMeeting = parameters.getParameter("id_food_meeting");
         String idUser = parameters.getParameter("id_user");
         int idUserVal = !idUser.equals("") ? Integer.valueOf(idUser) : 0;

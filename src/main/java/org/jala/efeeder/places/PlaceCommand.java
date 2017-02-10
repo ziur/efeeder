@@ -11,7 +11,7 @@ import org.jala.efeeder.api.utils.JsonConverter;
 @Command
 public class PlaceCommand extends MockCommandUnit {
 	@Override 
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		PlaceManager placeManager = new PlaceManager(parameters.getConnection());
 		int id = Integer.parseInt(parameters.getParameter("id"));
 		Place place = placeManager.getPlaceById(id);

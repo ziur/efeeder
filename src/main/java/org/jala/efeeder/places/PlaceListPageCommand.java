@@ -17,7 +17,7 @@ import org.jala.efeeder.places.Place;
 @Command
 public class PlaceListPageCommand  extends MockCommandUnit {
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Connection connection = parameters.getConnection();
 		PlaceManager managerPlace = new PlaceManager(parameters.getConnection());
 		List<Place> places = managerPlace.getAllPlace();

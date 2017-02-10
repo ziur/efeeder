@@ -18,7 +18,7 @@ import org.jala.efeeder.api.command.impl.DefaultOut;
 public class ImportPlacePageCommand extends MockCommandUnit{
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		
 		return out.forward("place/importPlace.jsp");

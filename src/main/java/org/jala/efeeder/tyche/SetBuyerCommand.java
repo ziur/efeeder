@@ -69,7 +69,7 @@ public class SetBuyerCommand extends MockCommandUnit {
 	}
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		String error = null;
 		int userId = parameters.getUser().getId();
 		Connection connection = parameters.getConnection();

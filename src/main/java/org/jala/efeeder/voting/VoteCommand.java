@@ -19,8 +19,8 @@ import java.util.List;
 @Command
 public class VoteCommand extends MockCommandUnit {
     @Override
-    public Out execute() throws Exception {
-        Connection connection = parameters.getConnection();
+    public Out execute(In context) throws Exception {
+        Connection connection = context.getConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("Select * from items");
         Out out = new DefaultOut();

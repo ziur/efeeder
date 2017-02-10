@@ -28,7 +28,7 @@ public class EditFoodMeetingCommand extends MockCommandUnit {
 	private final static Logger logger = Logger.getLogger(StartUpServlet.class);
 
 	@Override
-	public Out execute() throws Exception {
+	public Out execute(In parameters) throws Exception {
 		Out out = new DefaultOut();
 		
 		FoodMeetingManager meetingManager = new FoodMeetingManager(parameters.getConnection());
