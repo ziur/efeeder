@@ -13,21 +13,25 @@ import org.jala.efeeder.util.InUtils;
  *
  */
 public abstract class MockCommandUnit implements CommandUnit {
-	
+
 	DisplayBean displayBean;
 	/**
 	 * 
 	 */
 	protected In parameters;
-	
+
 	protected InUtils inUtils;
-	
+
 	public MockCommandUnit() {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jala.efeeder.api.command.CommandUnit#checkParameters(org.jala.efeeder.api.command.In)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.jala.efeeder.api.command.CommandUnit#checkParameters(org.jala.efeeder
+	 * .api.command.In)
 	 */
 	@Override
 	public boolean checkParameters() {
@@ -35,30 +39,32 @@ public abstract class MockCommandUnit implements CommandUnit {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.jala.efeeder.api.command.CommandUnit#getDisplayBean()
 	 */
 	@Override
 	public DisplayBean getDisplayBean() {
 		return displayBean;
 	}
+
 	@Override
-	public void setIn(In parameters){
+	public void setIn(In parameters) {
 		inUtils = new InUtils(parameters);
 	}
-	
-	public Map<String, String> getErrors(){
+
+	public Map<String, String> getErrors() {
 		return Collections.<String, String>emptyMap();
 	}
-	
+
 	@Override
-	public boolean initialize(){
+	public boolean initialize() {
 		if (parameters == null) {
 			return false;
 		}
 		this.inUtils = new InUtils(parameters);
 		return true;
-			
 	}
-	
+
 }
