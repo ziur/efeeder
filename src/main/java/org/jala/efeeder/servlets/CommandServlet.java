@@ -19,15 +19,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jala.efeeder.api.command.CommandExecutor;
 import org.jala.efeeder.api.command.CommandFactory;
 import org.jala.efeeder.api.command.CommandUnit;
-import org.jala.efeeder.api.command.ErrorInfo;
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
-import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.command.ResponseAction;
 import org.jala.efeeder.api.command.SettingsManager;
-import org.jala.efeeder.api.command.ResponseAction.ResponseType;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.FileResourceManager;
@@ -84,9 +81,7 @@ public class CommandServlet extends HttpServlet {
 		} else {
 
 			command = getCommand(request);
-			boolean commandResult = true;
 			Out out = null;
-
 			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			In parameters;
 			if (isMultipart) {
@@ -193,8 +188,9 @@ public class CommandServlet extends HttpServlet {
 																					 * exception
 																					 */
 	) {
+		/*
 		ErrorInfo errorInfo = new ErrorInfo(0, out.getUser().getId(), messages);
 		out.addResult(ErrorInfo.ATTR_ERROR_INFO, errorInfo);
-
+*/
 	}
 }

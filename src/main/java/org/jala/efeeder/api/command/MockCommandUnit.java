@@ -6,6 +6,7 @@ package org.jala.efeeder.api.command;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jala.efeeder.common.ErrorManager;
 import org.jala.efeeder.util.InUtils;
 
 /**
@@ -21,6 +22,8 @@ public abstract class MockCommandUnit implements CommandUnit {
 	protected In parameters;
 
 	protected InUtils inUtils;
+	
+	protected ErrorManager errorManager;
 
 	public MockCommandUnit() {
 		super();
@@ -52,6 +55,7 @@ public abstract class MockCommandUnit implements CommandUnit {
 	@Override
 	public void setIn(In parameters) {
 		inUtils = new InUtils(parameters);
+		this.parameters = parameters;
 	}
 
 	public Map<String, String> getErrors() {
@@ -60,11 +64,16 @@ public abstract class MockCommandUnit implements CommandUnit {
 
 	@Override
 	public boolean initialize() {
+		errorManager = new ErrorManager();
 		if (parameters == null) {
 			return false;
 		}
 		this.inUtils = new InUtils(parameters);
 		return true;
+	}
+	@Override
+	public int getFoodMeetingId(){
+		return 0;
 	}
 
 }
