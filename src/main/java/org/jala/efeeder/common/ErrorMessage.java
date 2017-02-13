@@ -9,6 +9,8 @@ package org.jala.efeeder.common;
  */
 public final class ErrorMessage {
 	
+	public static String KEY_ERROR_MESSAGE = "ErrorMessage";
+	
 	private String errorId;
 
 	/** The field the error is associated with */

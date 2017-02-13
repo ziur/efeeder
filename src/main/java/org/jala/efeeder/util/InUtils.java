@@ -15,22 +15,39 @@ public final class InUtils {
 
 	private In parameters;
 
-
 	public InUtils(In parameters) {
 		this.parameters = parameters;
 	}
-	
-	public String getStringParameter(String paramName){
+
+	public String getStringParameter(String paramName) {
 		String parameter = parameters.getParameter(paramName);
 		return parameter;
 	}
-	public float getFloatParameter(String paramName){
-		return Float.valueOf(parameters.getParameter(paramName));
+
+	public Float getFloatParameter(String paramName) {
+		try {
+			return Float.valueOf(parameters.getParameter(paramName));
+		} catch (NullPointerException npe) {
+			// Do nothing and return null
+			return null;
+		}
 	}
-	public int getIntegerParam(String paramName){
-		return Integer.valueOf(parameters.getParameter(paramName));
+
+	public Integer getIntegerParameter(String paramName) {
+		try {
+			return Integer.valueOf(parameters.getParameter(paramName));
+		} catch (NullPointerException npe) {
+			// Do nothing and return null
+			return null;
+		}
 	}
-	public double getDoubleParam(String paramName){
-		return Double.valueOf(parameters.getParameter(paramName));
+
+	public Double getDoubleParameter(String paramName) {
+		try {
+			return Double.valueOf(parameters.getParameter(paramName));
+		} catch (NullPointerException npe) {
+			// Do nothing and return null
+			return null;
+		}
 	}
 }

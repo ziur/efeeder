@@ -8,6 +8,7 @@ import java.util.List;
 import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.EventCommand;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
@@ -32,49 +33,46 @@ import lombok.Setter;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class CreateOrderCommand extends AbstractCommandUnit {
+public class CreateOrderCommand extends EventCommand {
 
 	public static String KEY_QUANTITY = "quantity";
 	public static String KEY_COST = "cost";
 
 	@Override
 	public boolean checkParameters() {
-		String errorMessage = null;
-		if (parameters == null) {
-			return false;
-		}
-		Integer quantity = Integer.parseInt(parameters.getParameter(KEY_QUANTITY));
-		if (quantity <= 0) {
+
+		Integer quantity = inUtils.getIntegerParameter(KEY_QUANTITY);
+		String errorMessage;
+		if (quantity == null || quantity <= 0) {
 			errorMessage = "There is no quantity specified for the current order";
+			this.errorManager.addErrorString(errorMessage);
 			return false;
 		}
-		Float cost = Float.parseFloat(parameters.getParameter(KEY_COST));
+		Float cost = inUtils.getFloatParameter(parameters.getParameter(KEY_COST));
 		if (cost <= 0) {
 			errorMessage = "The cost of the new item cannot be 0 or negative";
-		}
-		if (errorMessage != null) {
-			buildErrorResponse(this.foodMeetingId, Integer.parseInt(parameters.getParameter("user")),
-					errorMessage);
+			this.errorManager.addErrorString(errorMessage);
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean initialize(){
+	public boolean initialize() {
 		if (!super.initialize()) {
 			return false;
 		}
 		inUtils = new InUtils(parameters);
 		return true;
 	}
+
 	@Override
 	public Out execute() throws Exception {
-		Out out = saveOrder(parameters);
+		Out out = saveOrder();
 		return out;
 	}
 
-	private Out saveOrder(In parameters) {
+	private Out saveOrder() {
 
 		CreateOrderEvent createOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(),
 				CreateOrderEvent.class);
@@ -98,8 +96,8 @@ public class CreateOrderCommand extends AbstractCommandUnit {
 			return buildResponse(idFoodMeeting, idUser, idPlaceItem, quantity, details, cost, userOrder,
 					placeItemOrder);
 		} catch (SQLException e) {
-
-			return buildErrorResponse(idFoodMeeting, idUser,
+			this.errorManager.addErrorString(EfeederErrorMessage.getEfeederMessage(e.getMessage(), this));
+			  return buildErrorResponse(idFoodMeeting, idUser,
 					EfeederErrorMessage.getEfeederMessage(e.getMessage(), this));
 		}
 	}

@@ -3,9 +3,13 @@
  */
 package org.jala.efeeder.api.command;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jala.efeeder.common.ErrorManager;
+import org.jala.efeeder.common.ErrorMessage;
+import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
 import org.jala.efeeder.util.InUtils;
 
 /**
@@ -14,6 +18,7 @@ import org.jala.efeeder.util.InUtils;
  */
 public abstract class MockCommandUnit implements CommandUnit {
 
+	protected String nextPage;
 	DisplayBean displayBean;
 	/**
 	 * 
@@ -21,6 +26,8 @@ public abstract class MockCommandUnit implements CommandUnit {
 	protected In parameters;
 
 	protected InUtils inUtils;
+
+	protected ErrorManager errorManager;
 
 	public MockCommandUnit() {
 		super();
@@ -52,14 +59,12 @@ public abstract class MockCommandUnit implements CommandUnit {
 	@Override
 	public void setIn(In parameters) {
 		inUtils = new InUtils(parameters);
-	}
-
-	public Map<String, String> getErrors() {
-		return Collections.<String, String>emptyMap();
+		this.parameters = parameters;
 	}
 
 	@Override
 	public boolean initialize() {
+		errorManager = new ErrorManager();
 		if (parameters == null) {
 			return false;
 		}
@@ -67,4 +72,17 @@ public abstract class MockCommandUnit implements CommandUnit {
 		return true;
 	}
 
+	public int getFoodMeetingId() {
+		return 0;
+	}
+
+	@Override
+	public Out getErrorResponse() {
+		// TODO Auto-generated method stub
+		return OutBuilder.DEFAULT;
+	}
+
+	public String getNextPage() {
+		return this.nextPage;
+	}
 }

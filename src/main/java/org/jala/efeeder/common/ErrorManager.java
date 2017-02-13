@@ -4,9 +4,12 @@
 package org.jala.efeeder.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 
 
 
@@ -37,11 +40,17 @@ public class ErrorManager {
 
 		return errorMessage;
 	}
-	//TODO check if whe change for addError only
+	//TODO check if whe change for addError() only
 	public void addErrorString(String message) {
 		// Create an ErrorMessage object to add
 		addError(
 				new ErrorMessage(message));
 	}
+	
+	public Collection<ErrorMessage> getAllErrorMessages(){
+		return errorMessages;
+	}
+	
+
 
 }

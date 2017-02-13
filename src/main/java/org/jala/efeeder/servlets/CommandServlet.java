@@ -2,7 +2,6 @@ package org.jala.efeeder.servlets;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -19,15 +18,13 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jala.efeeder.api.command.CommandExecutor;
 import org.jala.efeeder.api.command.CommandFactory;
 import org.jala.efeeder.api.command.CommandUnit;
-import org.jala.efeeder.api.command.ErrorInfo;
+
 import org.jala.efeeder.api.command.ExitStatus;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MessageType;
 import org.jala.efeeder.api.command.Out;
-import org.jala.efeeder.api.command.OutBuilder;
 import org.jala.efeeder.api.command.ResponseAction;
 import org.jala.efeeder.api.command.SettingsManager;
-import org.jala.efeeder.api.command.ResponseAction.ResponseType;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.FileResourceManager;
@@ -182,19 +179,4 @@ public class CommandServlet extends HttpServlet {
 		return Paths.get(startPath, FileResourceManager.ASSETS_FILE, FileResourceManager.IMG_FILE).toString();
 	}
 
-	/*
-	 * 
-	 * 
-	*/
-	protected void populateErrorInfoInRequest(Out out, Map<String, String> messages/**
-																					 * CommandExecutionResult
-																					 * commandResult,
-																					 * Throwable
-																					 * exception
-																					 */
-	) {
-		ErrorInfo errorInfo = new ErrorInfo(0, out.getUser().getId(), messages);
-		out.addResult(ErrorInfo.ATTR_ERROR_INFO, errorInfo);
-
-	}
 }

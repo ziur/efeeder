@@ -12,6 +12,7 @@ import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
+import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.foodmeeting.FoodMeeting;
 import org.jala.efeeder.foodmeeting.FoodMeetingManager;
@@ -24,7 +25,14 @@ import org.jala.efeeder.places.PlaceManager;
  * @author Patricia Escalera
  */
 @Command
-public class OrderCommand extends AbstractCommandUnit {
+public class OrderCommand extends PageCommand {
+	
+	
+	public boolean initialize(){
+		super.initialize();
+		this.nextPage="order/orders.jsp";
+		return true;
+	}
 	
 	@Override
 	public boolean checkParameters(){
@@ -33,7 +41,7 @@ public class OrderCommand extends AbstractCommandUnit {
 	
 	@Override
 	public Out execute() throws Exception {
-		String idFoodMeeting = parameters.getParameter("id_food_meeting");
+		String idFoodMeeting = this.inUtils.getStringParameter("id_food_meeting");
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
 		OrdersDisplayBean displayBean= new OrdersDisplayBean();
@@ -50,7 +58,8 @@ public class OrderCommand extends AbstractCommandUnit {
 		
 		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, displayBean);
 		
-		out.forward("order/orders.jsp");
+		//out.forward("order/orders.jsp");
+		out.forward(this.nextPage);
 
 		return out;
 	}
@@ -74,6 +83,7 @@ public class OrderCommand extends AbstractCommandUnit {
 		PlaceManager placeManager = new PlaceManager(connection);
 		return placeManager.getPlaceByFoodMeeting(foodMeeting);
 	}
+
 
 	
 }
