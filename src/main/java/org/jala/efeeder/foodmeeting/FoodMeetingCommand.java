@@ -48,10 +48,6 @@ public class FoodMeetingCommand extends MockCommandUnit {
 		return images;
 	}
 	
-	public void setIn(In parameters){
-		
-	}
-	
 	
 	public boolean checkParameters(In parameters){
 		return true;
