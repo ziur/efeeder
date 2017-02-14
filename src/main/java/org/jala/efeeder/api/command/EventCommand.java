@@ -20,7 +20,7 @@ import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
  */
 public abstract class EventCommand extends AbstractCommandUnit {
 
-	protected int foodMeetingId;
+	//protected int foodMeetingId;
 
 	/**
 	 * 
@@ -52,7 +52,7 @@ public abstract class EventCommand extends AbstractCommandUnit {
 				.build());
 
 		MessageContext messageContext = MessageContext.newBuilder()
-				.setRoom(Integer.toString(this.foodMeetingId))
+				.setRoom(Integer.toString(this.idFoodMeeting))
 				.setUser(this.userId)
 				.setEvents(events)
 				.build();

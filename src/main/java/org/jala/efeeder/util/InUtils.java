@@ -27,7 +27,7 @@ public final class InUtils {
 	public Float getFloatParameter(String paramName) {
 		try {
 			return Float.valueOf(parameters.getParameter(paramName));
-		} catch (NullPointerException npe) {
+		} catch (NumberFormatException npe) {
 			// Do nothing and return null
 			return null;
 		}
@@ -36,7 +36,7 @@ public final class InUtils {
 	public Integer getIntegerParameter(String paramName) {
 		try {
 			return Integer.valueOf(parameters.getParameter(paramName));
-		} catch (NullPointerException npe) {
+		} catch (NumberFormatException npe) {
 			// Do nothing and return null
 			return null;
 		}
@@ -45,7 +45,7 @@ public final class InUtils {
 	public Double getDoubleParameter(String paramName) {
 		try {
 			return Double.valueOf(parameters.getParameter(paramName));
-		} catch (NullPointerException npe) {
+		} catch (NumberFormatException npe) {
 			// Do nothing and return null
 			return null;
 		}
