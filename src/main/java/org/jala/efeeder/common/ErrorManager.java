@@ -51,6 +51,15 @@ public class ErrorManager {
 		return errorMessages;
 	}
 	
-
+	/**
+	 * This allows to concat a list of error messages in one String
+	 */
+	public static String getConcatMessages(Collection<ErrorMessage> listOfErrors){
+		StringBuilder messageText = new StringBuilder();
+		for (ErrorMessage errorMsg : listOfErrors) {
+			messageText.append(errorMsg.getMessage()).append("\n");
+		}
+		return messageText.toString();
+	}
 
 }

@@ -9,6 +9,7 @@
 	<jsp:body>
 		<input type="hidden" id="hidden-field" name="inputName" value="hdnSalt">
 		<br/><br/><br/>
+
 		<div class="row">
 				<div class="col offset-s1 offset-m3 s10 m6">
 					<div class="card">

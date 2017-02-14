@@ -10,7 +10,7 @@
         <input id="food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
         <input id="input-food-meeting-id" hidden="true" value="${id_food_meeting}" type="text"/>
         <input id="input-state-id" hidden="true" value="${estate}" type="text"/>
-        <t:foodMeetingInfo foodMeeting="${foodMeeting}"/>
+        <t:foodMeetingInfo foodMeeting="${foodMeeting}" place="" />
         <div class="row">
             <div class="col-sm-12">
                 <ul class="collection" >

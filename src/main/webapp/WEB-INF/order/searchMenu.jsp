@@ -35,6 +35,9 @@
 			</div>
 		</div>
 		<form id="create-place-item-form" role="form" action="CreatePlaceItem" method="post">
+			<div>
+				${ErrorMessage.message}
+			</div>
 			<div class="col s9">
 				<p class="grey-text col s12">Add new item:<p>
 				<div class="input-field col s10">

@@ -28,6 +28,7 @@ import org.jala.efeeder.api.command.SettingsManager;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.api.database.DatabaseManager;
 import org.jala.efeeder.api.utils.FileResourceManager;
+import org.jala.efeeder.common.ErrorMessage;
 import org.jala.efeeder.servlets.support.InBuilder;
 import org.jala.efeeder.user.User;
 
@@ -113,8 +114,9 @@ public class CommandServlet extends HttpServlet {
 			}
 
 			if (out.getExitStatus() == ExitStatus.ERROR) {
-				for (String msg : out.getMessages(MessageType.ERROR)) {
-					System.out.println("ERROR:" + msg);
+				Object errorMessage = out.getResult(ErrorMessage.KEY_ERROR_MESSAGE);
+				if (errorMessage != null) {
+					System.out.println(errorMessage);
 				}
 			}
 			processResponse(out, request, response);

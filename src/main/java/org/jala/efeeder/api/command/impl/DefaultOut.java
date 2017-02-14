@@ -128,4 +128,9 @@ public class DefaultOut implements Out {
                 + ", context=" + context
                 + '}';
     }
+
+	@Override
+	public Object getResult(String key) {
+		return context.get(key);
+	}
 }

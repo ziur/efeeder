@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.common.ErrorManager;
 import org.jala.efeeder.common.ErrorMessage;
 import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
@@ -14,6 +15,8 @@ import org.jala.efeeder.util.InUtils;
 
 /**
  * @author Patricia Escalera
+ * All classes not implemented with checkParameters and error handling inherite from this class.
+ * TODO Change all XXXCommand classes to inherit from PageCommand or EventCommand
  *
  */
 public abstract class MockCommandUnit implements CommandUnit {
@@ -78,8 +81,7 @@ public abstract class MockCommandUnit implements CommandUnit {
 
 	@Override
 	public Out getErrorResponse() {
-		// TODO Auto-generated method stub
-		return OutBuilder.DEFAULT;
+		return new DefaultOut();
 	}
 
 	public String getNextPage() {

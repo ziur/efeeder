@@ -98,13 +98,22 @@ var MyOrder = function (myOrderContainer, idFoodMeeting, idUser, toastMessage, i
 			self.messageOrder.text(orderEvent.errorMessage);
 		}
 	};
-	
+	/*pez*/
+	function resetMessage(orderEvent){
+		if (orderEvent.idUser === self.idUser) {
+			self.messageOrder.removeClass('red-text');
+			self.messageOrder.addClass("grey-text");
+			self.messageOrder.text("Please select your orders.");
+		}
+	};
 	return {
 		init: function () {
 			enableEditMode();
 			addEvents();
 		},
 		setCommunicationService: setCommunicationService,
-		setErrorMessage: setErrorMessage
+		setErrorMessage: setErrorMessage,
+		/*added to be able to reset a previous displayed msg*/
+		resetMessage: resetMessage
 	};
 };

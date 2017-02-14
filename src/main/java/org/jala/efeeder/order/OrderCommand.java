@@ -3,14 +3,10 @@ package org.jala.efeeder.order;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
-import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.DisplayBean;
-import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.command.impl.DefaultOut;
@@ -30,6 +26,8 @@ public class OrderCommand extends PageCommand {
 	
 	public boolean initialize(){
 		super.initialize();
+		//the food meeting id comes always with different names, so it cannot be done in the super class
+		this.idFoodMeeting = this.inUtils.getIntegerParameter("id_food_meeting");
 		this.nextPage="order/orders.jsp";
 		return true;
 	}
@@ -41,7 +39,8 @@ public class OrderCommand extends PageCommand {
 	
 	@Override
 	public Out execute() throws Exception {
-		String idFoodMeeting = this.inUtils.getStringParameter("id_food_meeting");
+		//String idFoodMeeting = this.inUtils.getStringParameter("id_food_meeting");
+		String idFoodMeeting = String.valueOf(this.idFoodMeeting);
 		Out out = new DefaultOut();
 		Connection connection = parameters.getConnection();
 		OrdersDisplayBean displayBean= new OrdersDisplayBean();

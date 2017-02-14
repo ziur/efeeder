@@ -1,39 +1,28 @@
 package org.jala.efeeder.places;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
-import org.jala.efeeder.api.command.CommandUnit;
-import org.jala.efeeder.api.command.EventCommand;
 import org.jala.efeeder.api.command.ExitStatus;
-import org.jala.efeeder.api.command.In;
-import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
+import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.utils.JsonConverter;
-import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
-import org.jala.efeeder.servlets.websocket.avro.MessageContext;
-import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 
 /**
  *
  * @author ricardo_ramirez
  */
 @Command
-public class CreatePlaceItemCommand extends EventCommand {
+public class CreatePlaceItemCommand extends PageCommand {
 
 	public static String KEY_ITEM_PRICE = "item-price";
+	public static String KEY_ITEM_NAME = "item-name";
 
 	@Override
 	public boolean checkParameters() {
 		Float price = inUtils.getFloatParameter(KEY_ITEM_PRICE);
 		String message = "";
 		if (price == null || price <= 0) {
-			message = "The item price should be greater than zero.  Please change the value";
+			message = "The price is not a valid value";
 			errorManager.addErrorString(message);
 			return false;
 		}
@@ -46,7 +35,7 @@ public class CreatePlaceItemCommand extends EventCommand {
 		Place place = placeManager.getPlaceById(Integer.valueOf(parameters.getParameter("id-place")));
 		String name = parameters.getParameter("item-name");
 		String description = parameters.getParameter("item-description");
-		double price = inUtils.getDoubleParameter(KEY_ITEM_PRICE);
+		Double price = inUtils.getDoubleParameter(KEY_ITEM_PRICE);
 		String imageLink = parameters.getParameter("image-link");
 		PlaceItem placeItem = new PlaceItem(name, description, price, imageLink, place);
 		PlaceItemManager placeItemManager = new PlaceItemManager(parameters.getConnection());
@@ -54,7 +43,18 @@ public class CreatePlaceItemCommand extends EventCommand {
 		placeItem.setPlace(null);
 		return OutBuilder.response("application/json", JsonConverter.objectToJSON(placeItem), ExitStatus.SUCCESS);
 	}
-
+	/**
+	 * This command is being called by ajax, so we add the exitStatus in order to
+	 * be identified as error the js who's waiting for a response.
+	 */
+	@Override
+	public Out getErrorResponse() {
+		Out out = super.getErrorResponse();
+		//String errorText = ErrorManager.getConcatMessages(this.errorManager.getAllErrorMessages());
+		//Out out = OutBuilder.response("application/json", JsonConverter.objectToJSON(errorText), ExitStatus.ERROR);
+		//out.addResult(ErrorMessage.KEY_ERROR_MESSAGE, errorText);
+		return out;
+	}
 
 
 }

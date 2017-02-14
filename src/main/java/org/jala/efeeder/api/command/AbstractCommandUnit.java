@@ -3,8 +3,11 @@
  */
 package org.jala.efeeder.api.command;
 
+import java.util.List;
+
 import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.common.ErrorManager;
+import org.jala.efeeder.common.ErrorMessage;
 import org.jala.efeeder.util.InUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -82,6 +85,7 @@ public abstract class AbstractCommandUnit implements CommandUnit {
 	public String getNextPage(){
 		return this.nextPage;
 	}
-	
+
+	public abstract Out getErrorResponse();
 	
 }

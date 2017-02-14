@@ -35,4 +35,6 @@ public interface Out {
     void addHeader(String name, String value);
     MessageContext getMessageContext();
     void setMessageContext(MessageContext messageContext);
+    
+    public Object getResult(String key);
 }

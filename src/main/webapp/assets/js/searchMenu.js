@@ -63,10 +63,11 @@ var ModalSearchMenu = function(modalContainer, orderName, orderQuantity, orderCo
 					id = data.id;
 					name = data.name;
 					price = data.price;
-
 					self.modalContainer.closeModal({dismissible: true, complete: onModalHide});
 				},
-				error: function(data){
+				error: function(xhr,textStatus,text){
+					//TODO Define how the error message will be displayed.
+					//alert("The item cannot be added because the price is not correct");
 				}
 			});
 		});

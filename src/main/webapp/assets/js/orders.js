@@ -28,6 +28,7 @@ $(document).ready(function () {
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.CreateOrderEvent":
 						orderList.updateOrders(event);
+						myOrder.resetMessage(event);
 						break;
 					case "org.jala.efeeder.servlets.websocket.avro.RemoveOrderEvent":
 						orderList.removeOrderFromList(event);

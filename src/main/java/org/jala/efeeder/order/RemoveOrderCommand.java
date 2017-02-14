@@ -3,10 +3,12 @@ package org.jala.efeeder.order;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
+import org.jala.efeeder.api.command.EventCommand;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
@@ -27,16 +29,35 @@ import org.jala.efeeder.user.UserManager;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class RemoveOrderCommand extends MockCommandUnit {
+public class RemoveOrderCommand extends EventCommand {
 
+	private RemoveOrderEvent removeOrderEvent;
+
+	
 	@Override
-	public Out execute() throws Exception {
-		Out out = removeOrder(parameters);
+	public boolean initialize(){
+		super.initialize();
+		this.removeOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(), RemoveOrderEvent.class);
+		this.idFoodMeeting = removeOrderEvent.getIdFoodMeeting();
+		if (removeOrderEvent.getIdFoodMeeting() <= 0 || removeOrderEvent.getIdPlaceItem() <= 0) {
+			this.errorManager.addErrorString("The order to be removed does not exist");
+			return false;
+		}
+		return true;
+	}
+	@Override
+	public boolean checkParameters() {
+		return true;
+	}
+	@Override
+	public Out execute() throws SQLException {
+		Out out = removeOrder();
 		return out;
 	}
 
-	private Out removeOrder(In parameters) throws SQLException {
-		RemoveOrderEvent removeOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(), RemoveOrderEvent.class);
+	private Out removeOrder() throws SQLException {
+		//removeOrderEvent already set in initialize()
+		//RemoveOrderEvent removeOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(), RemoveOrderEvent.class);
 
 		int idFoodMeeting = removeOrderEvent.getIdFoodMeeting();
 		int idUser = removeOrderEvent.getIdUser();
@@ -72,4 +93,5 @@ public class RemoveOrderCommand extends MockCommandUnit {
 
 		return OutBuilder.response(messageContext);
 	}
+
 }

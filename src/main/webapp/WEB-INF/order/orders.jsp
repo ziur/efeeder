@@ -20,10 +20,9 @@
 	</jsp:attribute>
 
 	<jsp:body>
-		<c:out value="${DisplayBean.foodMeeting.id}"/>
+		<!-- the place variable is created because it is used 
+		with that name in other other jsps and js included in this file -->
 		<c:set var="place" value="${DisplayBean.place}"/>
-		<c:set var="placeX" value="${DisplayBean.place}"/>
-		<c:out value="${placeX.name} ${placeX.id}" />
 		<t:foodMeetingInfo foodMeeting="${DisplayBean.foodMeeting}" place="${place.name}"/>
 		<div class="row">
 			<div id="search-menu-modal" class="modal modal-fixed-footer" >

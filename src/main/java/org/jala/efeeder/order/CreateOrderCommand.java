@@ -20,6 +20,7 @@ import org.jala.efeeder.servlets.websocket.avro.ErrorEvent;
 import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 import org.jala.efeeder.servlets.websocket.avro.PlaceItemOrder;
+import org.jala.efeeder.servlets.websocket.avro.RemoveOrderEvent;
 import org.jala.efeeder.servlets.websocket.avro.UserOrder;
 import org.jala.efeeder.user.User;
 import org.jala.efeeder.user.UserManager;
@@ -37,18 +38,38 @@ public class CreateOrderCommand extends EventCommand {
 
 	public static String KEY_QUANTITY = "quantity";
 	public static String KEY_COST = "cost";
+	
+	private CreateOrderEvent createOrderEvent;
+	
 
 	@Override
-	public boolean checkParameters() {
+	public boolean initialize() {
+		if (!super.initialize()) {
+			return false;
+		}
+		
+		this.createOrderEvent = MessageContextUtils.getEvent(parameters.getMessageContext(), CreateOrderEvent.class);
+		this.idFoodMeeting = createOrderEvent.getIdFoodMeeting();
+		this.userId = createOrderEvent.getIdUser();
+		if (createOrderEvent.getIdFoodMeeting() <= 0) {
+			this.errorManager.addErrorString("The order cannot be added due to missing food meeting id");
+			return false;
+		}
+		return true;
+	}
 
-		Integer quantity = inUtils.getIntegerParameter(KEY_QUANTITY);
+	
+	@Override
+	public boolean checkParameters() {
+		//the quantity and price values can be found in the input event (already initialize)
+		Integer quantity = createOrderEvent.getQuantity();
 		String errorMessage;
 		if (quantity == null || quantity <= 0) {
-			errorMessage = "There is no quantity specified for the current order";
+			errorMessage = "There is no valid value for quantity";
 			this.errorManager.addErrorString(errorMessage);
 			return false;
 		}
-		Float cost = inUtils.getFloatParameter(parameters.getParameter(KEY_COST));
+		Double cost = createOrderEvent.getCost();
 		if (cost <= 0) {
 			errorMessage = "The cost of the new item cannot be 0 or negative";
 			this.errorManager.addErrorString(errorMessage);
@@ -57,14 +78,6 @@ public class CreateOrderCommand extends EventCommand {
 		return true;
 	}
 
-	@Override
-	public boolean initialize() {
-		if (!super.initialize()) {
-			return false;
-		}
-		inUtils = new InUtils(parameters);
-		return true;
-	}
 
 	@Override
 	public Out execute() throws Exception {
