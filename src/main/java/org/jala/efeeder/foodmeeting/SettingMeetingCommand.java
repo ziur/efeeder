@@ -10,13 +10,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.jala.efeeder.api.command.AbstractCommandUnit;
 import org.jala.efeeder.api.command.Command;
 import org.jala.efeeder.api.command.CommandUnit;
 import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
+import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.order.OrdersDisplayBean;
 import org.jala.efeeder.user.User;
@@ -27,8 +31,15 @@ import org.jala.efeeder.user.UserManager;
  * @author Danitza Machicado
  */
 @Command
-public class SettingMeetingCommand extends MockCommandUnit{	
-
+public class SettingMeetingCommand extends PageCommand{	
+	
+	private static final String URL_PATTERN = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+//	private static final String URL_PATTERN = ".*http://.*";
+	
+	private Pattern pattern;
+	private Matcher matcher;	
+	
+	
 	@Override
 	public Out execute() throws Exception {
 		Out out = new DefaultOut();
@@ -56,8 +67,7 @@ public class SettingMeetingCommand extends MockCommandUnit{
 		FoodMeetingDisplayBean.setUserOwner(foodMeeting.getUserOwner());
 		FoodMeetingDisplayBean.setCreatedAt(foodMeeting.getCreatedAt());
 		FoodMeetingDisplayBean.setBuyerId(foodMeeting.getBuyerId());
-		
-		out.addResult("foodMeeting", foodMeeting);				
+							
 		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, FoodMeetingDisplayBean);
 
 		if(isMeetingOwner) {
@@ -69,12 +79,8 @@ public class SettingMeetingCommand extends MockCommandUnit{
 		return out;
 	}
 	
-	public void setIn(In parameters){
-		
-	}
-	
-	
-	public boolean checkParameters(In parameters){
+	@Override
+	public boolean checkParameters(){								
 		return true;
 	}	   
 
@@ -82,5 +88,5 @@ public class SettingMeetingCommand extends MockCommandUnit{
 		FoodMeetingDisplayBean dp = new FoodMeetingDisplayBean();
 		return dp;
 		
-	}
+	}	
 }

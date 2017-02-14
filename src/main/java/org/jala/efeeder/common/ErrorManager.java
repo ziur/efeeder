@@ -40,7 +40,7 @@ public class ErrorManager {
 
 		return errorMessage;
 	}
-	//TODO check if whe change for addError() only
+	//TODO check if the change for addError() only
 	public void addErrorString(String message) {
 		// Create an ErrorMessage object to add
 		addError(

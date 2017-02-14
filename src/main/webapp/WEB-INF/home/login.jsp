@@ -13,7 +13,7 @@
 		<div class="row">
 				<div class="col offset-s1 offset-m3 s10 m6">
 					<div class="card">
-						<div class="card-content">
+						<div class="card-content">						
 							<form id="login-form" role="form" action="login" >
 								<div class="row center-align">
 									<i class="large teal-text material-icons prefix">account_circle</i>

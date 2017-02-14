@@ -14,6 +14,7 @@ import org.jala.efeeder.api.command.DisplayBean;
 import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
+import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.command.impl.DefaultOut;
 import org.jala.efeeder.user.UserManager;
 
@@ -21,7 +22,7 @@ import org.jala.efeeder.user.UserManager;
  * Created by alejandro on 09-09-16.
  */
 @Command
-public class FoodMeetingCommand extends MockCommandUnit {
+public class FoodMeetingCommand extends PageCommand {
 
 	private static final String SELECT_IMAGE_FOOD_MEETING_SQL = "Select distinct image_link from food_meeting";
 	
@@ -48,14 +49,14 @@ public class FoodMeetingCommand extends MockCommandUnit {
 		return images;
 	}
 	
-	
-	public boolean checkParameters(In parameters){
-		return true;
-	}	   
-
 	public DisplayBean getDisplayBean(){
 		FoodMeetingDisplayBean dp = new FoodMeetingDisplayBean();
 		return dp;
 		
+	}
+
+	@Override
+	public boolean checkParameters() {	
+		return true;
 	}
 }

@@ -6,6 +6,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@ page import="org.jala.efeeder.foodmeeting.FoodMeetingDisplayBean" %>
 
 <t:template>
 	<jsp:attribute name="javascript">
@@ -21,10 +22,20 @@
 			</div>
 			<br/><br/><br/>
 			<div class="row">
-				<form action="/action/EditFoodMeeting" method="post" role="form" id="edit-meeting" class="col s12"
-					  data-event-date="${foodMeeting.eventDate}" data-created-date="${foodMeeting.createdAt}"
-					  data-voting-date="${foodMeeting.votingDate}" data-order-date="${foodMeeting.orderDate}" data-payment-date="${foodMeeting.paymentDate}">
-					<input id="meeting-id" name="id-food-meeting" type="hidden" value="${foodMeeting.id}">
+				<div>
+					<h6>Test</h6>					
+<%-- 					<% if(request.getAttribute("ErrorMessage").toString().isEmpty()) { %> --%>
+<%-- 			            <div style="color: red">${ErrorMessage}</div> --%>
+<%-- 			        <% } %> --%>
+					
+				</div>
+				<form action="/action/EditFoodMeeting" role="form" id="edit-meeting" class="col s12"
+					  data-event-date="${DisplayBean.eventDate}" data-created-date="${DisplayBean.createdAt}"
+					  data-voting-date="${DisplayBean.votingDate}" data-order-date="${DisplayBean.orderDate}" data-payment-date="${DisplayBean.paymentDate}">
+<!-- 				TODO	 this is a test  -->
+					<div id=created></div>
+					
+					<input id="meeting-id" name="id-food-meeting" type="hidden" value="${DisplayBean.id}">
 					<input id="voting-date" name="voting-date" type="hidden" type="date">
 					<input id="order-date" name="order-date" type="hidden" type="date">
 					<input id="payment-date" name="payment-date" type="hidden" type="date">
@@ -32,33 +43,33 @@
 						<div class="col s12 l4 center">
 							<ul class="collection margin-bottom-0">
 								<li class="collection-item avatar" style="min-height: 0px">
-									<img src="action/image?file_name=${foodMeeting.userOwner.getImage()}&type=user" alt="" class="circle">
+									<img src="action/image?file_name=${DisplayBean.userOwner.getImage()}&type=user" alt="" class="circle">
 									<p class="title">Owner:</p>
-									<p> ${foodMeeting.userOwner}</p>
+									<p> ${DisplayBean.userOwner}</p>
 								</li>
 							</ul>	
 							<div class="card">								
 								<div class="card-image">
-									<img  width="350px" src="${foodMeeting.imageLink}" class="materialboxed" data-caption="${foodMeeting.name}" >									
+									<img  width="350px" src="${DisplayBean.imageLink}" class="materialboxed" data-caption="${DisplayBean.name}" >									
 								</div>
 							</div>
 							
 						</div>
 						<div class="col m12 l8">
 							<div class="input-field col s12">
-								<input id="meeting_name" name="meeting_name" type="text" class="validate" value="${foodMeeting.name}" >
+								<input id="meeting_name" name="meeting_name" type="text" class="validate" value="${DisplayBean.name}" >
 								<label for="meeting_name">Meeting Name</label>
 							</div>
 							<div class="input-field col s12">
-								<input name="image_link" id="image_link" value="${foodMeeting.imageLink}" type="text" class="validate" >
+								<input name="image_link" id="image_link" value="${DisplayBean.imageLink}" type="text" class="validate" >
 								<label for="image_link">Image Link</label>
 							</div>							
 							<div class="input-field col s7">
-								<input id="date-field-id" type="date" name="date" class="datepicker" value="${foodMeeting.date}" >
+								<input id="date-field-id" type="date" name="date" class="datepicker" value="${DisplayBean.date}" >
 								<label for="date">Date</label>
 							</div>
 							<div class="input-field col s5">
-								<input id="time-field-id" name="time" class="timepicker" type="time" value="${foodMeeting.time}" >
+								<input id="time-field-id" name="time" class="timepicker" type="time" value="${DisplayBean.time}" >
 								<label for="timer-id">Schedule</label>
 							</div>
 							<div class="col s6 push-s3">
