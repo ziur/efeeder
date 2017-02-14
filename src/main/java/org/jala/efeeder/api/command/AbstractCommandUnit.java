@@ -20,6 +20,8 @@ public abstract class AbstractCommandUnit implements CommandUnit {
 	
 	@Setter
 	protected int userId = 0;
+	
+	protected int idFoodMeeting;
 
 	// HttpServletRequest request;
 	@Getter
@@ -51,6 +53,11 @@ public abstract class AbstractCommandUnit implements CommandUnit {
 	public void setIn(In parameters) {
 		this.parameters = parameters;
 		this.inUtils = new InUtils(parameters);
+		//try{
+			this.idFoodMeeting = this.inUtils.getIntegerParameter("id_food_meeting");
+		//}catch(NullPointerException npex){
+			
+		//}
 	}
 
 	/**
