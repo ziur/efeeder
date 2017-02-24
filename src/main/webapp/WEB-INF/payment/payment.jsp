@@ -51,10 +51,10 @@
 	                                        	<label>${order.details}</label>
 	                                        </div>
 	                                        <div class="col s2">
-	                                        	<label>Bs.- ${order.cost}</label>
+	                                        	<label>Bs. ${order.cost}</label>
 	                                        </div>
 	                                        <div class="col s2">
-	                                        	<label>Bs.- ${order.getTotalCost()}</label>
+	                                        	<label>Bs. ${order.getTotalCost()}</label>
 	                                        </div>
 	                                	</div>
 	                                </div>
@@ -65,21 +65,21 @@
                                     <div class="col s12 m12 l12">
                                         <div class="row">
                                             <div class="input-field col s1" style="margin-top: 27px;">
-                                                <span style="padding-left: 60px;">Bs.-</span>
+                                                <span style="padding-left: 45px;">Bs.</span>
                                             </div>                                            
                                             <div class="input-field col s3">
                                                 <input id="ipt-cost${userWithOrders.id}" disabled type="number" type="text" class="validate" value="${userWithOrders.getTotalOrders()}">
-                                                <label for="ipt-cost">Cost</label>
+                                                <label for="ipt-cost${userWithOrders.id}">Cost</label>
                                             </div>
                                             <div class="input-field col s1" style="margin-top: 27px;">
-                                                <span style="padding-left: 60px;">Bs.-</span>
+                                                <span style="padding-left: 45px;">Bs.</span>
                                             </div>                                                
                                             <div class="input-field col s3">
                                                 <input id="ipt-extra-pay${userWithOrders.id}" type="number" disabled type="text" class="validate" value="${partialByOrder}">
                                                 <label for="ipt-extra-pay">Extra pay</label>
                                             </div>
                                             <div class="input-field col s1" style="margin-top: 27px;">
-                                                <span style="padding-left: 60px;">Bs.-</span>
+                                                <span style="padding-left: 45px;">Bs.</span>
                                             </div>                                                
                                             <div class="input-field col s3">
                                                 <input id="ipt-total${userWithOrders.id}" class="ipt-number" type="number" disabled type="text" class="validate" value="${partialByOrder + userWithOrders.getTotalOrders()}">
@@ -91,15 +91,15 @@
                                 <div class="row">
                                     <div class="col s12 m12 l12">
                                         <div class="input-field col s1" style="margin-top: 27px;">
-                                            <span style="padding-left: 60px;">Bs.-</span>
+                                            <span style="padding-left: 45px;">Bs.</span>
                                         </div> 
                                         <div class="input-field col s5">
                                             <input id="ipt-shortage${userWithOrders.id}" disabled type="number" class="ipt-number" value="${userWithOrders.payment > 0 ? userWithOrders.payment - (partialByOrder + userWithOrders.getTotalOrders()) : 0.0}"
                                                    style="color:${(userWithOrders.payment >= (partialByOrder + userWithOrders.getTotalOrders())) || userWithOrders.payment == 0  ? "green":"red"}"/>
-                                            <label for="ipt-shortage">Shortage</label>
+                                            <label for="ipt-shortage${userWithOrders.id}">Shortage</label>
                                         </div>
                                         <div class="input-field col s1" style="margin-top: 27px;">
-                                            <span style="padding-left: 60px;">Bs.-</span>
+                                            <span style="padding-left: 45px;">Bs.</span>
                                         </div>                                                                                    
                                         <div class="input-field col s5">
                                             <input id="ipt-payment${userWithOrders.id}" ${buyer.getUserId() != user.getId() ? "disabled":""} type="number" id="my-order-cost-input" value="${userWithOrders.payment}" placeholder="Payment" />                                                
