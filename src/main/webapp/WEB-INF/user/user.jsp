@@ -21,7 +21,7 @@
 	<jsp:body>
 		<!-- Creation of a variable "user" (retrieve from DisplayBean) in order to not impact components already using this variable -->
 		<c:set var="user" value="${DisplayBean.user}" />
-		<c:out value="${user.name}"></c:out>
+		
 		<div class="row">
 			<div class="row">
 				<div class="col offset-m3 s12 m6">

@@ -22,7 +22,7 @@ public class UserCommand extends  MockCommandUnit{
 	public Out execute() throws Exception {
 		Out out = new DefaultOut();
 		
-		bean = new UserDisplayBean(0,"myemail@xyz.com", "Patty", "hello","empty","","");
+		bean = new UserDisplayBean(0,"", "", "","empty","","");
 		
 		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, bean);
 		
