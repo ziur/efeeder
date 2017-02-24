@@ -635,8 +635,8 @@ function processUserPlaceJson(json)
 		m_places[i].drawer = null;
 	}
 	
-	let topCount = 0;
-	let topVotes = 0;
+	let numOfPlacesWithTopVotes = 0;//Number of places having the highest number of votes
+	let topVotes = 0;//The highest number of votes among all voted places
 	list = json.places;
 	let indexes = getOrderList(list, function(o){return o.name.toLowerCase();});
 	count = list.length;
@@ -678,12 +678,12 @@ function processUserPlaceJson(json)
 		{
 			if (votes === topVotes)
 			{
-				++topCount;
+				++numOfPlacesWithTopVotes;
 			}
 			else
 			{
 				topVotes = votes;
-				topCount = 1;
+				numOfPlacesWithTopVotes = 1;
 			}
 		}
 
@@ -723,7 +723,8 @@ function processUserPlaceJson(json)
 
 	if (m_ownerId === m_userId)
 	{
-		m_finishButton.isDisabled = topCount !== 1;
+		//If there are places tied in votes or there is only one place with a vote.
+		m_finishButton.isDisabled = (numOfPlacesWithTopVotes !== 1 || topVotes <= 1);
 		m_uiSystem.add(m_finishButton);
 	}
 	else
