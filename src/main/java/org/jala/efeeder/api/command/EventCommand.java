@@ -13,15 +13,13 @@ import org.jala.efeeder.servlets.websocket.avro.MessageContext;
 import org.jala.efeeder.servlets.websocket.avro.MessageEvent;
 
 /**
- * Command that process an incoming event
- * The error is built differently than PageCommand
+ * Command that process an incoming event The error is built differently than
+ * PageCommand
  * 
  * @author Patricia Escalera
  *
  */
 public abstract class EventCommand extends AbstractCommandUnit {
-
-	//protected int foodMeetingId;
 
 	/**
 	 * 
@@ -30,17 +28,16 @@ public abstract class EventCommand extends AbstractCommandUnit {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jala.efeeder.api.command.CommandUnit#checkParameters()
+	/**
+	 * The message context contains data about the user, the room (alias
+	 * food meeting) an a list of events
 	 */
 	protected MessageContext outMessageContext;
-	
+
 	/**
-	 * TODO For now, all error messages are concatenated.
-	 * Future versions should handle the list of ErrorMessage in
-	 * order to display the messages properly in jsp pages.  
+	 * TODO For now, all error messages are concatenated. Future versions should
+	 * handle the list of ErrorMessage in order to display the messages properly
+	 * in jsp pages.
 	 */
 	@Override
 	public Out getErrorResponse() {

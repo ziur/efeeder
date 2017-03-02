@@ -8,23 +8,24 @@ import org.jala.efeeder.common.ErrorMessage;
 
 /**
  * @author Patricia Escalera This class was created to process errors
- *         differently for normal posts with jsps and jason from those coming
- *         from events.
- *         
+ *         differently for normal POSTS coming from jsps as a normal request and
+ *         requests coming from events as a jason message.
+ * 
  */
 public abstract class PageCommand extends AbstractCommandUnit {
 
 	/**
-	 * 
+	 * The Constructor
 	 */
 	public PageCommand() {
 		super();
 
 	}
+
 	/**
-	 * TODO For now, all error messages are concatenated.
-	 * Future versions should handle the list of ErrorMessage in
-	 * order to display the messages properly in jsp pages.  
+	 * TODO For now, all error messages are concatenated. Future versions should
+	 * handle the list of ErrorMessage in order to display the messages properly
+	 * in jsp pages.
 	 */
 	@Override
 	public Out getErrorResponse() {

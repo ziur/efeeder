@@ -15,13 +15,16 @@ import org.jala.efeeder.util.InUtils;
 
 /**
  * @author Patricia Escalera
- * All classes not implemented with checkParameters and error handling inherite from this class.
+ * All classes not implemented with checkParameters() and error handling inherit from this class.
+ * This is supposed to disappear because it was created to help the transition of all Commands to the new
+ * way architecture. 
  * TODO Change all XXXCommand classes to inherit from PageCommand or EventCommand
  *
  */
 public abstract class MockCommandUnit implements CommandUnit {
 
 	protected String nextPage;
+	
 	DisplayBean displayBean;
 	/**
 	 * 

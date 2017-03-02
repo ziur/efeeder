@@ -3,8 +3,6 @@
  */
 package org.jala.efeeder.util;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jala.efeeder.api.command.In;
 
 /**

@@ -51,24 +51,24 @@ public class SettingMeetingCommand extends PageCommand{
 		foodMeeting = meetingManager.getFoodMeetingById(Integer.parseInt(id));
 		boolean isMeetingOwner = foodMeeting.getUserOwner().equals(parameters.getUser());
 		
-		FoodMeetingDisplayBean FoodMeetingDisplayBean = new FoodMeetingDisplayBean();
+		FoodMeetingDisplayBean foodMeetingDisplayBean = new FoodMeetingDisplayBean();
 		
-		FoodMeetingDisplayBean.setEventDate(foodMeeting.getEventDate());
-		FoodMeetingDisplayBean.setId(foodMeeting.getId());
-		FoodMeetingDisplayBean.setName(foodMeeting.getName());				
-		FoodMeetingDisplayBean.setImageLink(foodMeeting.getImageLink());
-		FoodMeetingDisplayBean.setDate(foodMeeting.getDate());
-		FoodMeetingDisplayBean.setTime(foodMeeting.getTime());
-		FoodMeetingDisplayBean.setStatus(foodMeeting.getStatus());
-		FoodMeetingDisplayBean.setEventDate(foodMeeting.getEventDate());
-		FoodMeetingDisplayBean.setVotingDate(foodMeeting.getVotingDate());
-		FoodMeetingDisplayBean.setOrderDate(foodMeeting.getOrderDate());
-		FoodMeetingDisplayBean.setPaymentDate(foodMeeting.getPaymentDate());
-		FoodMeetingDisplayBean.setUserOwner(foodMeeting.getUserOwner());
-		FoodMeetingDisplayBean.setCreatedAt(foodMeeting.getCreatedAt());
-		FoodMeetingDisplayBean.setBuyerId(foodMeeting.getBuyerId());
+		foodMeetingDisplayBean.setEventDate(foodMeeting.getEventDate());
+		foodMeetingDisplayBean.setId(foodMeeting.getId());
+		foodMeetingDisplayBean.setName(foodMeeting.getName());				
+		foodMeetingDisplayBean.setImageLink(foodMeeting.getImageLink());
+		foodMeetingDisplayBean.setDate(foodMeeting.getDate());
+		foodMeetingDisplayBean.setTime(foodMeeting.getTime());
+		foodMeetingDisplayBean.setStatus(foodMeeting.getStatus());
+		foodMeetingDisplayBean.setEventDate(foodMeeting.getEventDate());
+		foodMeetingDisplayBean.setVotingDate(foodMeeting.getVotingDate());
+		foodMeetingDisplayBean.setOrderDate(foodMeeting.getOrderDate());
+		foodMeetingDisplayBean.setPaymentDate(foodMeeting.getPaymentDate());
+		foodMeetingDisplayBean.setUserOwner(foodMeeting.getUserOwner());
+		foodMeetingDisplayBean.setCreatedAt(foodMeeting.getCreatedAt());
+		foodMeetingDisplayBean.setBuyerId(foodMeeting.getBuyerId());
 							
-		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, FoodMeetingDisplayBean);
+		out.addResult(DisplayBean.DISPLAY_BEAN_ATTRIBUTE, foodMeetingDisplayBean);
 
 		if(isMeetingOwner) {
 			out.forward("foodmeeting/settingMeeting.jsp");

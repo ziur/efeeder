@@ -13,17 +13,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * The Class AbstractCommandUnit
+ * The Class AbstractCommandUnit All Commands should implement or extend this
+ * class. Each command is responsible for setting the displayBean and set the
+ * input parameters
  *
  * @author Patricia Escalera
  */
 public abstract class AbstractCommandUnit implements CommandUnit {
-	
+
 	protected String nextPage;
-	
+
 	@Setter
 	protected int userId = 0;
-	
+	// In general, there is always a food meeting associated to a Command, if
+	// not it is zero by default
 	protected int idFoodMeeting;
 
 	// HttpServletRequest request;
@@ -43,7 +46,6 @@ public abstract class AbstractCommandUnit implements CommandUnit {
 	 * Handles the errors
 	 */
 	protected ErrorManager errorManager = null;
-
 
 	/**
 	 * Instantiates a new abstract command unit.
@@ -81,11 +83,16 @@ public abstract class AbstractCommandUnit implements CommandUnit {
 	public DisplayBean getDisplayBean() {
 		return displayBean;
 	}
-	
-	public String getNextPage(){
+
+	public String getNextPage() {
 		return this.nextPage;
 	}
 
+	/**
+	 * @return an Out object containing the error response to be sent to the
+	 *         calling page The response depends on the caller, if it is a jsp
+	 *         page or a message, thus the response is to be sent as a message
+	 **/
 	public abstract Out getErrorResponse();
-	
+
 }

@@ -12,6 +12,7 @@ import org.jala.efeeder.api.command.In;
 import org.jala.efeeder.api.command.MockCommandUnit;
 import org.jala.efeeder.api.command.Out;
 import org.jala.efeeder.api.command.OutBuilder;
+import org.jala.efeeder.api.command.PageCommand;
 import org.jala.efeeder.api.utils.JsonConverter;
 import org.jala.efeeder.util.Encrypt;
 import org.jala.efeeder.util.JsonMessage;
@@ -21,7 +22,7 @@ import org.jala.efeeder.util.JsonMessage;
  * @author rodrigo_ruiz
  */
 @Command
-public class CreateUpdateUserCommand extends MockCommandUnit{
+public class CreateUpdateUserCommand extends PageCommand{
 
 	@SuppressWarnings("finally")
 	@Override
@@ -63,5 +64,10 @@ public class CreateUpdateUserCommand extends MockCommandUnit{
 		finally {
 			return OutBuilder.response("application/json", result, status);
 		}
+	}
+
+	@Override
+	public boolean checkParameters() {
+		return true;
 	}
 }
