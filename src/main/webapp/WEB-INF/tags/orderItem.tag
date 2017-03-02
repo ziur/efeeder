@@ -10,7 +10,7 @@
 		<div id="my-order-container">
 			<i class="material-icons circle">perm_identity</i>
 			<input type="hidden" id="id-place-item"/>
-			<input class="input-field col s1 m1 l1" type="number" id="my-order-quantity" value="" placeholder="Quantity" />
+			<input class="input-field col s1 m1 l1" type="number" id="my-order-quantity" value="" placeholder="Quantity" min="1" />
 			<input class="input-field col s7 m8 l9" type="text" id="my-order-name" value="" placeholder="Order Name" disabled="true" />
 			<input class="input-field col s1 m1 l1" type="number" id="my-order-cost-input" value="" placeholder="Cost" disabled="true"/>
 			<input class="input-field col s9 m10 l11" type="text" id="my-order-text" value="" placeholder="Details" />
